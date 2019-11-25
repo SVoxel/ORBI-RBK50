@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+
+<% hijack_language() %>
+</head>
+
+<body>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Personalizing your router -->
+		<div id="card-orbi-personalize-router" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_personalizing);</script></div>
+			<div class="desc-text">
+				<script>document.write(bh_orbi_personalizing_msg);</script>
+				<span id="wait_note" style="display:none"><br/><script>document.write(bh_orbi_personalizing_msg_1);</script></span>
+			</div>
+
+			<div class="master-pin-wrapper">
+				<div class="pin-wrapper pin-wrapper-WiFi-pre">
+					<img class="pin-Wifi" src="images/pin_WiFi.png">
+						<div class="pin-title"><% cfg_get_ssid_html("wl_ssid") %></div>
+						<div class="pin-desc"><% passphrase_bg_msg() %></div>
+				</div>
+			</div>
+
+			<div id="wait_img" style="display:none">
+				<div class="spinner"></div>
+				<div class="desc-text wait" ><script>document.write(bh_orbi_pls_wait);</script></div>
+			</div>
+			<div id="confirm_div">
+				<div class="desc-title"><script>document.write(bh_orbi_personalizing_msg_2);</script></div>
+				<button class="waves-effect waves-light btn button-nav" onclick="click_conn();"><script>document.write(bh_orbi_personalizing_conn);</script></button>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+var not_change="<% cfg_get("wireless_not_change") %>";
+var apply_time="<% cfg_get("wlan_apply_time") %>";
+var satellite_num=<% cfg_get("satellite_online_num") %>;
+<% from_wireless() %>
+var c_time=0;
+var wait_time = 120;
+if(not_change == "1")
+        location.href="BRS_orbi_complete.html";
+else if(not_change == "2")
+	wait_time = 5;
+else if(apply_time != "")
+{
+        var d = new Date();
+	var current_time = Math.floor(d.getTime()/1000);
+	wait_time = 120-(current_time - apply_time);
+	wait_time = wait_time > 120? 120: (wait_time < 1? 1: wait_time);
+}
+else
+	wait_time = 120;
+
+if(is_from_wireless != 1)
+	click_conn();
+function click_conn()
+{
+	document.getElementById("confirm_div").style.display="none";
+	document.getElementById("wait_note").style.display="";
+	document.getElementById("wait_img").style.display="";
+	print_time();
+}
+function print_time()
+{
+	c_time++;
+	if(c_time == wait_time)
+		location.href="BRS_orbi_complete.html";
+	else if(c_time >60 && !(c_time%3))
+	{
+		var file="get_satellite_num.txt";
+		var xmlhttp,result;
+		if ( window.XMLHttpRequest)
+			xmlhttp = new XMLHttpRequest();
+		else
+			xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+		xmlhttp.onreadystatechange = function()
+		{
+			if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 )
+			{
+				result=xmlhttp.responseText;
+				if(satellite_num!=0 && result == satellite_num)
+					location.href="BRS_orbi_complete.html";
+			}
+		}
+		xmlhttp.open("GET", file, true);
+		xmlhttp.send();
+		setTimeout("print_time()",1000);
+	}
+	else
+		setTimeout("print_time()",1000);
+}
+</script>
+
+</body>
+
+</html>

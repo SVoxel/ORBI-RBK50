@@ -1,0 +1,12 @@
+#!/bin/sh
+mtd_part="0 1 2 3 5 7 9"
+sum=0
+count=0
+
+for i in $mtd_part 
+do
+count=`nanddump /dev/mtd$i -f /tmp/mtd$i 2>&1 | grep -c "corrected bitflip(s)"`
+sum=$(($count+$sum))
+done
+
+echo $sum > /tmp/uboot_bitflip_count

@@ -1,0 +1,34 @@
+<% http_head("EXT_STR0250","js/setup.js") %>
+<body class="home setup" onload="loadvalue();">
+<% top_bar() %>
+<% save_timestamp("select_language","change_language") %>
+<% lang_change_status_finish() %>
+<script>
+var satellite_status="<% cat_file("/tmp/link_status") %>";
+var satellite_status_5g="<% cat_file("/tmp/link_status_5g") %>";
+var satellite_status_eth="<% cat_file("/tmp/link_status_eth") %>";
+
+function loadvalue()
+{
+	if(satellite_status == "1" || satellite_status_5g == "1" || satellite_status_eth == "1")
+		location.href="status.htm";
+	else
+		document.getElementById("content").style.display="";
+}
+</script>
+
+<div id="content" style="display:none">
+	<div class="container">
+		<div class="main simpleChoiceWrapper">
+			$satellite_not_connect
+			<h1>&nbsp;</h1>
+			<div class="simpleChoice singleBtn">
+				<a class="btn wide primary" href="status.htm" id="extenderBt">$ok_mark</a>
+			</div>
+
+		</div> <!-- end main -->
+	</div> <!-- end container -->
+</div>
+
+</body>
+</html>

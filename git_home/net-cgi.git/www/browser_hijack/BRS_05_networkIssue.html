@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
+<% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
+<!--script language="javascript" type="text/javascript">
+var ap_mode = "<% cfg_get("ap_mode") %>";
+</script-->
+</head>
+
+<body>
+<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+<% save_timestamp("wizard_detwan", "hijack_to_manual")%>
+<script language="javascript" type="text/javascript">
+var ts="<% cfg_get("wizard_detwan") %>";
+function clickNext()
+{
+	var cf = document.forms[0];
+	
+	if($$('#nci-config-yes').is(":checked"))
+	{
+		return true;
+	}
+	if($$('#nci-config-no').is(":checked"))
+	{
+		if(confirm(bh_no_genie_help_confirm) == false)
+			return false;
+
+		cf.action = "/apply.cgi?/BRS_orbi_satellite_start.html timestamp=" + ts;
+		cf.submit_flag.value = "hijack_to_manual";
+		return true;
+	}
+}
+</script>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Networ Connection Issue -->
+		<div id="card-network-connection-issue" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<div class="desc-title"><script>document.write(bh_netword_issue);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_cannot_connect_internet);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_cannot_connect_internet_msg1);</script></div>
+			<ul class="desc-bullet-wrapper">
+				<li class="desc-bullet">
+					<script>document.write(bh_orbi_cannot_connect_internet_msg2);</script>
+				</li>
+				<li class="desc-bullet">
+					<script>document.write(bh_orbi_cannot_connect_internet_msg3);</script>
+				</li>
+			</ul>
+
+			<div class="radio-button-title">
+				<script>document.write(bh_orbi_tryagain_msg);</script>
+			</div>
+			<div class="bullet-wrapper block-one">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="help_choice" type="radio" id="nci-config-yes" checked="" value="0">
+						<label for="nci-config-yes"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_yes_mark);</script></div>
+				</div>
+			</div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="help_choice" type="radio" id="nci-config-no"  value="1">
+						<label for="nci-config-no"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_orbi_problem_conn_ip_no);</script></div>
+					<span class="desc-title-bullet"><script>document.write(bh_orbi_manual_config);</script></span>
+				</div>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return clickNext();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

@@ -1,0 +1,872 @@
+#!/bin/sh
+# Copyright (C) 2006 OpenWrt.org
+
+. /lib/functions.sh
+[ -f /etc/ath/wifi.conf ] && . /etc/ath/wifi.conf
+
+dniconfig()
+{
+    /bin/config $@
+}
+
+usage() {
+	cat <<EOF
+Usage: $0 [down|detect]
+enables (default), disables or detects a wifi configuration.
+EOF
+	exit 1
+}
+
+wlan_updown_lockfile=/tmp/.wlan_updown_lockfile
+wlan_updown_queuedfile=/tmp/.wlan_updown_queue.fifo
+wlan_updateconf_lockfile=/tmp/.wlan_updateconf_lockfile
+wlan_updateconf_eventfile=/tmp/.wlan_updateconf_eventfile
+wlan_updown_eventfile=/tmp/.wlan_updown_eventfile
+POST_WLAN_UPDOWN=/usr/sbin/post_wlan_updown.sh
+find_net_config() {(
+	local vif="$1"
+	local cfg
+	local ifname
+
+	config_get cfg "$vif" network
+
+	[ -z "$cfg" ] && {
+		include /lib/network
+		scan_interfaces
+
+		config_get ifname "$vif" ifname
+
+		cfg="$(find_config "$ifname")"
+	}
+	[ -z "$cfg" ] && return 0
+	echo "$cfg"
+)}
+
+
+bridge_interface() {(
+	local cfg="$1"
+	[ -z "$cfg" ] && return 0
+
+	include /lib/network
+	scan_interfaces
+
+	for cfg in $cfg; do
+		config_get iftype "$cfg" type
+		[ "$iftype" = bridge ] && config_get "$cfg" ifname
+		prepare_interface_bridge "$cfg"
+		return $?
+	done
+)}
+
+prepare_key_wep() {
+	local key="$1"
+	local hex=1
+
+	echo -n "$key" | grep -qE "[^a-fA-F0-9]" && hex=0
+	[ "${#key}" -eq 10 -a $hex -eq 1 ] || \
+	[ "${#key}" -eq 26 -a $hex -eq 1 ] || {
+		[ "$(echo $key | cut -c1-2)" = "s:" ] && key="${key#s:}"
+		key="$(echo -n "$key" | hexdump -ve '1/1 "%02x" ""')"
+	}
+	echo "$key"
+}
+
+wifi_fixup_hwmode() {
+	local device="$1"
+	local default="$2"
+	local hwmode hwmode_11n
+
+	config_get channel "$device" channel
+	config_get hwmode "$device" hwmode
+	case "$hwmode" in
+		11ad) hwmode=ad;;
+		11bg) hwmode=bg;;
+		11a) hwmode=a;;
+		11b) hwmode=b;;
+		11g) hwmode=g;;
+		11n*)
+			hwmode_11n="${hwmode##11n}"
+			case "$hwmode_11n" in
+				a|g) ;;
+				default) hwmode_11n="$default"
+			esac
+			config_set "$device" hwmode_11n "$hwmode_11n"
+		;;
+		*)
+			hwmode=
+			if [ "${channel:-0}" -gt 0 ]; then 
+				if [ "${channel:-0}" -gt 14 ]; then
+					hwmode=a
+				else
+					hwmode=g
+				fi
+			else
+				hwmode="$default"
+			fi
+		;;
+	esac
+	config_set "$device" hwmode "$hwmode"
+}
+
+config_work_mode()
+{
+	mode=$(dniconfig get wl_conf_mode)	# AP_mode: 0 ; extender_mode: 2
+	band_mode=$(dniconfig get 5g_sta)	# wifi1 works on low band(band1 and band2), wifi2 works on high band(band3 and band4):
+						# band_mode=1 ----- indicate wifi1 will create ath1 and act as STA, wifi2 will create ath2 and act as AP
+						# band_mode=2 ----- indecate wifi2 will create ath2 and act as STA, wifi2 will create ath1 and act as AP
+						# Below are work mode list:
+						    #operation_mode_="normal_ap"
+						    #operation_mode_0="none"
+						    #operation_mode_1="normal_ap"
+						    #operation_mode_2="ex_sta"		 # exterder station
+						    #operation_mode_3="normal_ap+ex_sta" # repeater
+						    #operation_mode_4="backhaul_ap"	 # backhaul is running with WDS mode.
+						    #operation_mode_5="backhaul_sta"
+						    #operation_mode_6="backhaul_ap+backhaul_sta"
+						    #operation_mode_7="normal_ap+backhaul_sta"
+						    #operation_mode_8="normal_ap+backhaul_ap+backhaul_sta"
+						    #operation_mode_9="normal_ap+backhaul_ap"
+						    #operation_mode_10="qwrap_sta+qwrap_ap"
+						#################################################################################   
+	if [ "x$mode" = "x0" ];then			    # It means DUT will work on AP modoe			       
+		dniconfig set wlg_operation_mode=1	    
+		dniconfig set wla_operation_mode=1	    
+		dniconfig set wla_2nd_operation_mode=1	    
+	elif [ "x$band_mode" = "x1" ];then		    # It means DUT will work on extender mode and the vap of wifi1 will act as STA, wifi2's vap act as AP
+		dniconfig set wlg_operation_mode=10	     
+		dniconfig set wla_operation_mode=10	     
+		dniconfig set wla_2nd_operation_mode=10	     
+	elif [ "x$band_mode" = "x2" ];then		    # It means DUT will work on extender mode and the vap of wifi2 will act as STA, wifi1's vap act as AP
+		dniconfig set wlg_operation_mode=10	    
+		dniconfig set wla_operation_mode=10	    
+		dniconfig set wla_2nd_operation_mode=10	    
+	fi
+}
+
+add_wifi_updateconf_event(){
+	touch $wlan_updateconf_eventfile 2>/dev/null
+}
+
+add_wifi_updown_event(){
+	touch $wlan_updown_eventfile 2>/dev/null
+}
+
+execute_wifi_updateconf_event(){
+	if [ -f $wlan_updateconf_eventfile ]; then
+		rm -f $wlan_updateconf_eventfile
+		echo "[wlan]=========time:`date` wlan re-updateconf ======" >/dev/console
+		wlan updateconf
+	fi
+
+	[ ! -f $wlan_updown_eventfile ] && exit 0
+		rm -f $wlan_updown_eventfile
+		echo "[wlan]=========time:`date` wlan re-down/up======" >/dev/console
+		{ wlan down;wlan up; } &
+}
+
+wifi_retry_check(){
+        if [ -f $wlan_updateconf_lockfile -o -f $wlan_updown_lockfile ]; then
+            echo "[wlan] wlan is processing, skip retry check" > /dev/console
+        else
+            execute_wifi_updateconf_event
+        fi
+}
+#DNI:
+# Configure Otherband BSSID to backhaul AP interface
+# copy code from repacd-wifimon.sh because it no need include repacd-wifimon.sh.
+__repacd_wifimon_set_otherband_bssid() {
+    local backhaul_ap_iface_5g backhaul_ap_iface_24g
+    local otherband_bssid1 otherband_bssid2 bssid_5g bssid_24g
+
+    echo  "Set backhaul AP OtherBand BSSID" > /dev/console
+
+    backhaul_ap_iface_5g=$(/bin/config get wl5g_BACKHAUL_AP)
+    backhaul_ap_iface_24g=$(/bin/config get wl2g_BACKHAUL_AP)
+
+    bssid_5g=`ifconfig $backhaul_ap_iface_5g | grep "HWaddr" | awk -F" " '{print $5}'`
+    bssid_24g=`ifconfig $backhaul_ap_iface_24g | grep "HWaddr" | awk -F" " '{print $5}'`
+
+    otherband_bssid1=`echo $bssid_5g | sed -e "s/\://g" | cut -b 1-8`
+    otherband_bssid2=`echo $bssid_5g | sed -e "s/\://g" | cut -b 9-12`
+    iwpriv $backhaul_ap_iface_24g otherband_bssid 0x$otherband_bssid1 0x$otherband_bssid2
+
+    otherband_bssid1=`echo $bssid_24g | sed -e "s/\://g" | cut -b 1-8`
+    otherband_bssid2=`echo $bssid_24g | sed -e "s/\://g" | cut -b 9-12`
+    iwpriv $backhaul_ap_iface_5g otherband_bssid 0x$otherband_bssid1 0x$otherband_bssid2
+}
+
+# Do not call this function if there is still anything you want to do after it,
+# because it is exited directly.
+wifi_updateconf() {
+	if [ -f $wlan_updateconf_lockfile -o -f $wlan_updown_lockfile ]; then
+		echo "[wlan]=========time:`date` wlan updateconf already running,will reupdateconf when this restart finished======" >/dev/console
+		add_wifi_updateconf_event
+		exit 0
+	fi
+	echo "[wlan]=========time:`date` wlan updateconf start======" >/dev/console
+	touch $wlan_updateconf_lockfile
+	local cmd=$1
+	local reload_time=3;
+	if eval "type update-wifi" 2>/dev/null >/dev/null; then
+	[ "$DEVICE_TYPE" = "extender" ] && config_work_mode
+		update-wifi
+		uci show wireless > $NEW_WIRELESS_CONF
+		[ -f /etc/wifi_config_comp.awk ] && {
+		    awk -f /etc/wifi_config_comp.awk $OLD_WIRELESS_CONF $NEW_WIRELESS_CONF
+		}
+		for driver in ${DRIVERS}; do
+			devices=
+			for device in ${2:-$DEVICES}; do
+				config_get type $device type
+				if [ "$type" = "$driver" ]; then
+					append devices $device
+				fi
+			done
+			if eval "type reload_time_${driver}" 2>/dev/null >/dev/null; then
+				eval "reload_time_${driver} driver_reload_time \"${devices}\""
+				reload_time=$(( $reload_time + $driver_reload_time ))
+			fi
+		done
+		rm -f $wlan_updateconf_lockfile
+		echo "[wlan]=========time:`date` wlan updateconf end======" >/dev/console
+		if eval "type post_updateconf_${driver}" 2>/dev/null >/dev/null; then
+			eval "post_updateconf_${driver} \"${cmd}\" \"${devices}\""
+		fi
+		execute_wifi_updateconf_event
+		exit $reload_time
+	fi
+	rm -f $wlan_updateconf_lockfile
+	echo "[wlan]=========time:`date` wlan updateconf end======" >/dev/console
+	execute_wifi_updateconf_event
+}
+
+wifi_updown() {
+	i=0
+	if [ "x$1" = "xdisable" -a -f /tmp/allconfig_flag ]; then
+		allconfig_flag=`cat /tmp/allconfig_flag`
+		if [ "$allconfig_flag" = "1" ]; then
+			echo "2" > /tmp/allconfig_flag
+		fi
+	fi
+	if [ -f $wlan_updateconf_lockfile ]; then
+		echo "[wlan]=========time:`date` wlan updateconf already running,will restart wifi when this restart finished======" >/dev/console
+		add_wifi_updown_event
+		exit 0
+	fi
+	if [ -f $wlan_updown_lockfile ]; then
+		echo "[wlan]=========time:`date` wlan down/up already running,will restart wifi when this restart finished======" >/dev/console
+		add_wifi_updown_event
+		exit 0
+	fi
+	if [ "x$1" = "xdisable" ]&&[ "x$2" = "xfronthaul" ];then
+		fronthaul_radio="`grep fronthaul_radio /etc/ath/wifi.conf|awk -F '"' '{print $2}'`"
+		for line in $fronthaul_radio;do
+			/sbin/wlan down $line
+		done
+		exit 0
+	fi
+
+	[ "$1" = "enable" ] && echo "[wlan]=========time:`date` wlan up start==================" >/dev/console
+	[ "$1" = "disable" ] && echo "[wlan]=========time:`date` wlan down start==================" >/dev/console
+	touch $wlan_updown_lockfile
+	echo "wlan $1" > $wlan_updown_lockfile
+	#[ enable = "$1" ] && {
+	#	wifi_updown disable "$2"
+	#	scan_wifi
+	#}
+	
+	wifi_detect_interface
+	# for access control
+	echo "`/bin/config get wl2g_BACKHAUL_AP`" > /proc/sys/net/ipv4/2gbhapifname
+	echo "`/bin/config get wl2g_BACKHAUL_STA`" > /proc/sys/net/ipv4/2gbhstaifname
+	echo "`/bin/config get wl5g_BACKHAUL_AP`" > /proc/sys/net/ipv4/5gbhapifname
+	echo "`/bin/config get wl5g_BACKHAUL_STA`" > /proc/sys/net/ipv4/5gbhstaifname
+
+	for driver in ${DRIVERS}; do (
+		if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+            if eval "type pre_${driver}" 2>/dev/null >/dev/null; then
+                eval "pre_${driver}" ${1}
+            fi
+		fi
+                config_get module_reload ${driver} module_reload 0
+
+                if [ "$module_reload" = "1" -a ${1} = "enable" ]; then # wlan up and module reload
+                        wifi_unload ${driver}
+                fi
+	); done
+	for device in ${2:-$DEVICES}; do (
+		config_get disabled "$device" disabled
+		[ 1 == "$disabled" ] && {
+			echo "'$device' is disabled"
+			set disable
+		}
+		config_get iftype "$device" type
+		if eval "type ${1}_$iftype" 2>/dev/null >/dev/null; then
+			eval "scan_$iftype '$device'"
+			eval "${1}_$iftype '$device' dni" || echo "$device($iftype): ${1} failed"
+		else
+			echo "$device($iftype): Interface type not supported"
+		fi
+	); done
+	for driver in ${DRIVERS}; do (
+		if eval "type post_${driver}" 2>/dev/null >/dev/null; then
+			if eval "type scan_${driver}" 2>/dev/null >/dev/null; then
+				eval "scan_${driver} '$device'"
+			fi
+            if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+                eval "post_${driver}" ${1} ${DEVICES}
+            fi
+		fi
+	); done
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "${1}" = "enable" ]; then
+		for driver in ${DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported on_led function"
+			fi
+		); done
+		uci show wireless > $OLD_WIRELESS_CONF
+
+		if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		    /bin/sh /sbin/factory-test.sh post_wlan_up
+		fi
+
+		if [ "x$(/bin/cat /tmp/hw_revision)" = "x01" ]; then
+			thermaltool -i wifi0 -set -e 1 -lo0 -100 -hi0 113 -off0 0
+			thermaltool -i wifi0 -set -e 1 -lo1 105 -hi1 135 -off1 50
+			thermaltool -i wifi0 -set -e 1 -lo2 115 -hi2 140 -off2 90
+			thermaltool -i wifi0 -set -e 1 -lo3 125 -hi3 150 -off3 100
+
+			thermaltool -i wifi1 -set -e 1 -lo0 -100 -hi0 113 -off0 0
+			thermaltool -i wifi1 -set -e 1 -lo1 105 -hi1 135 -off1 50
+			thermaltool -i wifi1 -set -e 1 -lo2 115 -hi2 140 -off2 90
+			thermaltool -i wifi1 -set -e 1 -lo3 125 -hi3 150 -off3 100
+
+			thermaltool -i wifi2 -set -e 1 -lo0 -100 -hi0 113 -off0 0
+			thermaltool -i wifi2 -set -e 1 -lo1 105 -hi1 135 -off1 50
+			thermaltool -i wifi2 -set -e 1 -lo2 115 -hi2 140 -off2 90
+			thermaltool -i wifi2 -set -e 1 -lo3 125 -hi3 150 -off3 100
+		fi
+	else
+		for driver in ${DRIVERS}; do (
+			if eval "type force_off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "force_off_led_${driver}" || echo "$driver: force off led failed"
+			else
+				echo "$driver: Interface type not supported force_off_led function"
+			fi
+		); done
+		reset_detect_interface
+	fi
+	for driver in ${DRIVERS}; do (
+		config_get thermal_analytics ${driver} thermal_analytics
+		thermaltool_idx=`ps|grep 'thermal_RA.sh'|grep ${driver}|awk '{print $1}'`
+		[ "$1" = "disable" ] && kill $thermaltool_idx
+		[ $thermal_analytics = "1" -a -z "$thermaltool_idx" -a "$1" = "enable" ] && sh /sbin/thermal_RA.sh ${driver} &
+	); done
+
+	rm -rf $wlan_updown_lockfile
+	[ "$1" = "enable" ] && echo "[wlan]=========time:`date` wlan up end==================" >/dev/console
+	[ "$1" = "disable" ] && echo "[wlan]=========time:`date` wlan down end==================" >/dev/console
+    if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+        [ "$1" = "enable" ] && eval "post_lock_${driver}"
+        [ -f "$POST_WLAN_UPDOWN" ] && eval $POST_WLAN_UPDOWN \"$1\"
+        /etc/init.d/hyfi-bridging start
+        /etc/init.d/hyd restart
+        if [ "$1" = "enable" -a `cat /tmp/orbi_type` = "Base" ]; then
+            __repacd_wifimon_set_otherband_bssid 
+        fi
+        [ "$1" = "enable" ] && execute_wifi_updateconf_event
+    fi
+}
+
+wifi_detect() {
+	[ -f $wlan_updateconf_lockfile ] && exit 0
+	for driver in ${2:-$DRIVERS}; do (
+		if eval "type detect_$driver" 2>/dev/null >/dev/null; then
+			eval "detect_$driver dni $1" || echo "$driver: Detect failed" >&2
+		else
+			echo "$driver: Hardware detection not supported" >&2
+		fi
+	); done
+}
+
+wifi_unload() {
+	nrvaps=$(find /sys/class/net/ -name 'ath*'|wc -l)
+	if [ ${nrvaps} -eq 0 ]; then
+		for driver in ${1:-$DRIVERS}; do (
+			if eval "type unload_$driver" 2>/dev/null >/dev/null; then
+				eval "unload_$driver" || echo "$driver: unload failed" >&2
+			else
+				echo "$driver: wifi unload not supported" >&2
+			fi
+		); done
+	else
+		echo "$driver: unload failed, wlan has enable" >&2
+	fi
+}
+
+start_net() {(
+	local iface="$1"
+	local config="$2"
+	local vifmac="$3"
+
+	[ -f "/var/run/$iface.pid" ] && kill "$(cat /var/run/${iface}.pid)" 2>/dev/null
+	[ -z "$config" ] || {
+		include /lib/network
+		scan_interfaces
+		for config in $config; do
+			setup_interface "$iface" "$config" "" "$vifmac"
+		done
+	}
+)}
+
+set_wifi_up() {
+	local cfg="$1"
+	local ifname="$2"
+	uci_set_state wireless "$cfg" up 1
+	uci_set_state wireless "$cfg" ifname "$ifname"
+}
+
+set_wifi_down() {
+	local cfg="$1"
+	local vifs vif vifstr
+
+	[ -f "/var/run/wifi-${cfg}.pid" ] &&
+		kill "$(cat "/var/run/wifi-${cfg}.pid")" 2>/dev/null
+	uci_revert_state wireless "$cfg"
+	config_get vifs "$cfg" vifs
+	for vif in $vifs; do
+		uci_revert_state wireless "$vif"
+	done
+}
+
+scan_wifi() {
+	local cfgfile="$1"
+	DEVICES=
+	config_cb() {
+		local type="$1"
+		local section="$2"
+
+		# section start
+		case "$type" in
+			wifi-device)
+				append DEVICES "$section"
+				config_set "$section" vifs ""
+				config_set "$section" ht_capab ""
+			;;
+		esac
+
+		# section end
+		config_get TYPE "$CONFIG_SECTION" TYPE
+		case "$TYPE" in
+			wifi-iface)
+				config_get device "$CONFIG_SECTION" device
+				config_get vifs "$device" vifs 
+				append vifs "$CONFIG_SECTION"
+				config_set "$device" vifs "$vifs"
+			;;
+		esac
+	}
+	config_load "${cfgfile:-wireless}"
+}
+
+wifi_wps() {
+	for device in ${DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type wps_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wps_$iftype" "$device" "$@" || echo "$iftype: WPS failed" >&2
+		else
+			echo "$iftype: Hardware wps ion not supported" >&2
+		fi
+
+		if [ "x$1" = "x--wps_stop" ]; then
+			echo "5" > /tmp/wps_process_state
+		fi
+	); done
+}
+
+wifi_toggle() {
+	no_update_hw_btn_state=
+	if [ "$2" = "--no-update-hw-btn-state" ]; then
+		no_update_hw_btn_state="$2"
+	fi
+
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_state hw_btn_state"
+		eval "config_get_$CONFIGS _tmp_gui_radio_state gui_radio_state"
+	fi
+	for device in ${DEVICES}; do
+		config_get iftype "$device" type
+		(if eval "type wifitoggle_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wifitoggle_$iftype" "$device" "$_tmp_state" "$_tmp_gui_radio_state" "$@" || echo "$iftype: WIFITOGGLE failed" >&2
+		else
+			echo "$iftype: Hardware wifitoggle not supported" >&2
+		fi);
+	done
+	if [ "$_tmp_state" = "on" ]; then
+		next_state="off"
+	else
+		next_state="on"
+	fi
+	dni_toggle_hw_btn_state
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "$next_state" = "on" ]; then
+		for driver in ${DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	else
+		for driver in ${DRIVERS}; do (
+			if eval "type off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "off_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: force off led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	fi
+	if [ "$no_update_hw_btn_state" ]; then
+		# Revert Wi-Fi button state back to old state
+		dni_toggle_hw_btn_state
+	fi
+}
+
+wifi_schedule() {
+	local band=$2
+	local newstate=$3
+
+	if [ "$DEVICE_TYPE" = "extender" ];then
+		# extender schedule feature is different with router,so call different code
+		wifi_schedule_extender "$@"
+		exit
+	fi
+
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_state hw_btn_state"
+	fi
+	for device in ${DEVICES}; do (
+		config_get hwmode "$device" hwmode
+		is11g=`echo $hwmode | grep -iE "^11.*g$|^11b$"`
+		is11a=`echo $hwmode | grep -iE "^11.*a$|^11.*c$"`
+		[ "$band" = "11g" -a "x$is11g" != "x" ] || [ "$band" = "11a" -a "x$is11a" != "x" ] || continue
+
+		config_get iftype "$device" type
+		if eval "type wifischedule_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wifischedule_$iftype" "$device" "$_tmp_state" "$@" || echo "$iftype: WIFI SCHEDULE failed" >&2
+		else
+			echo "$iftype: Hardware wifi schedule not supported" >&2
+		fi
+	); done
+	if [ "$newstate" = "on" -a "$_tmp_state" = "on" ]; then
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS sched_status $band 0"
+		fi
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS wl_onoff $band 1"
+		fi
+	else
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS sched_status $band 1"
+		fi
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS wl_onoff $band 0"
+		fi
+	fi
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "$newstate" = "on" -a "$_tmp_state" = "on" ]; then
+		for driver in ${DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	else
+		for driver in ${DRIVERS}; do (
+			if eval "type off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "off_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: off led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	fi
+	if eval "type config_commit_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_commit_$CONFIGS"
+	fi
+}
+
+wifi_stainfo() {
+	for device in ${DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type wifistainfo_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wifistainfo_$iftype" "$device" "$@" || echo "$iftype: WIFI STAINFO failed" >&2
+		else
+			echo "$iftype: Hardware wifi stainfo not supported" >&2
+		fi
+	); done
+}
+
+wifi_radio() {
+	local band=$2
+
+	for device in ${DEVICES}; do (
+		config_get hwmode "$device" hwmode
+		is11g=`echo $hwmode | grep -iE "^11.*g$|^11b$"`
+		is11a=`echo $hwmode | grep -iE "^11.*a$|^11.*c$"`
+		[ "$band" = "11g" -a "x$is11g" != "x" ] || [ "$band" = "11a" -a "x$is11a" != "x" ] || continue
+
+		config_get iftype "$device" type
+		if eval "type wifiradio_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wifiradio_$iftype" "$device" "$@" || echo "$iftype: WIFI RADIO failed" >&2
+		else
+			echo "$iftype: Hardware wifi radio not supported" >&2
+		fi
+	); done
+}
+
+wifi_statistic() {
+	for device in ${DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type statistic_$iftype" 2>/dev/null >/dev/null; then
+			eval "statistic_$iftype" "$device" || echo "$iftype: STATISTIC failed" >&2
+		else
+			echo "$iftype: Hardware statistic not supported" >&2
+		fi
+	); done
+}
+
+
+wifi_mac() {
+	MAC_2G_FILE=/tmp/mac_addr_2g
+	MAC_5G_FILE=/tmp/mac_addr_5g
+	[ -f "$MAC_2G_FILE" ] && MAC_2G_ADDR=`cat ${MAC_2G_FILE}`
+	[ -f "$MAC_5G_FILE" ] && MAC_5G_ADDR=`cat ${MAC_5G_FILE}`
+
+	[ -n "$MAC_2G_ADDR" ] && {
+		echo "###2.4G###"
+		echo $MAC_2G_ADDR
+		echo ""
+	}
+	[ -n "$MAC_5G_ADDR" ] && {
+		echo "###5G###"
+		echo $MAC_5G_ADDR
+	}
+}
+
+wifi_kickallclient() {
+	for driver in ${DRIVERS}; do
+		devices=
+		for device in ${2:-$DEVICES}; do
+			config_get type $device type
+			if [ "$type" = "$driver" ]; then
+				append devices $device
+			fi
+		done
+		if eval "type kickallclient_${driver}" 2>/dev/null >/dev/null; then
+			eval "kickallclient_${driver} \"${devices}\""
+		fi
+	done
+}
+
+wifi_lanrestrict() {
+	local enable=${2}
+	for driver in ${DRIVERS}; do
+		if [ "$enable" = "on" ]; then
+			if eval "type lan_restricted_access_${driver}" 2>/dev/null >/dev/null; then
+				eval "lan_restricted_access_${driver}" "${3}" "${4}" "$DEVICES"
+			fi
+		elif [ "$enable" = off ]; then
+			if eval "type clear_lan_restricted_access_${driver}" 2>/dev/null >/dev/null; then
+				eval "clear_lan_restricted_access_${driver}"
+			fi
+		fi
+	done
+}
+
+wifi_lanrestrict_vpn(){
+	local enable=${2}
+	for driver in ${DRIVERS}; do
+		if [ "$enable" = "on" ]; then
+			if eval "type lan_restricted_access_vpn_${driver}" 2>/dev/null >/dev/null; then
+				eval "lan_restricted_access_vpn_${driver}" "$DEVICES"
+			fi
+		elif [ "$enable" = off ]; then
+			if eval "type clear_lan_restricted_access_vpn_${driver}" 2>/dev/null >/dev/null; then
+				eval "clear_lan_restricted_access_vpn_${driver}"
+			fi
+		fi
+
+	done
+}
+
+wifi_connection() {
+	for device in ${DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type connection_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "connection_$iftype" "$device" "$@" || echo "$iftype: connection failed"
+		else
+			echo "$iftype: connection type not supported" >&2
+		fi
+	); done
+}
+
+wifi_restart() {
+	cmd=$1
+	case "$cmd" in
+		"enqueue")
+			local local_time=`date +%Y/%m/%d-%H:%M:%S`
+			if [ ! -p $wlan_updown_queuedfile ]; then
+				mkfifo $wlan_updown_queuedfile
+				killall wlan_restart_queue.sh 2>/dev/null > /dev/null
+				echo "wlan restart $local_time" > $wlan_updown_queuedfile &
+				/tmp/wlan_restart_queue.sh $wlan_updown_queuedfile &
+			else
+				echo "wlan restart $local_time" > $wlan_updown_queuedfile &
+			fi
+		;;
+		*)
+			wifi_updown "disable"
+			wifi_updown "enable"
+		;;
+	esac
+}
+
+wifi_detect_interface() {
+	for device in ${DEVICES}; do
+		config_get vifs "$device" vifs
+		for vif in $vifs; do
+			config_get ifname "$vif" ifname
+			config_get dev_name "$vif" device
+			_optype=`awk -v input_ifname=$ifname -v output_rule=optype -f /etc/search-wifi-interfaces.awk /tmp/wifi_topology`
+			_opmode=`awk -v input_ifname=$ifname -v output_rule=opmode -f /etc/search-wifi-interfaces.awk /tmp/wifi_topology`
+			_hwmode=`uci get wireless.$device.hwmode`
+
+			if [ $_hwmode = "11ng" ]; then
+				dniconfig set wl2g_${_optype}_${_opmode}=$ifname
+			else
+				if [ "$dev_name" = "$backhaul_5g_radio" -a ${_optype} != "BACKHAUL" ]; then
+					dniconfig set wl5g_2nd_${_optype}_${_opmode}=$ifname
+				else
+					dniconfig set wl5g_${_optype}_${_opmode}=$ifname
+				fi
+			fi
+		done
+	done
+	dniconfig commit
+}
+
+reset_detect_interface(){
+	#For 2.4G interface
+	dniconfig unset wl2g_NORMAL_AP
+	dniconfig unset wl2g_BACKHAUL_STA
+	dniconfig unset wl2g_BACKHAUL_AP
+	dniconfig unset wl2g_GUEST_AP
+	dniconfig unset wl2g_BYOD_AP
+	#For 5G interface
+	dniconfig unset wl5g_NORMAL_AP
+	dniconfig unset wl5g_BACKHAUL_STA
+	dniconfig unset wl5g_BACKHAUL_AP
+	dniconfig unset wl5g_GUEST_AP
+	dniconfig unset wl5g_BYOD_AP
+	#For second 5G interface
+	dniconfig unset wl5g_2nd_NORMAL_AP
+	dniconfig unset wl5g_2nd_GUEST_AP
+	dniconfig unset wl5g_2nd_BYOD_AP
+}
+
+create_country_code_table(){
+	countrycode_mapping_qcawifi
+}
+
+show_usage() {
+    cat <<EOF
+Usage: wlan <command> [<arguments>]
+
+Commands:
+    updateconf                       : update wireless configurations
+    up                               : bring up wireless interfaces
+    down                             : bring down wireless interfaces
+    wps <arguments>                  : wps actions.
+         --client_pin <pin number>   :: start WPS client PIN
+         --pbc_start                 :: start WPS PBC
+         --pbc_bh_start              :: start backhual AP WPS
+         --wps_stop                  :: stop WPS actions
+    toggle                           : toggle wireless radio (ON <-> OFF)
+         --no-update-hw-btn-state    :: do not update "hw_btn_state"
+    schedule <11g/11a> <on/off>      : do wireless schedule
+    stainfo                          : show all attached wireless stations.
+    radio <11g/11a> <arguments>      : actions related to radio
+         --status                    :: show radio status (ON or OFF)
+         --channel                   :: show current channel
+         --coext <on/off>            :: enable/disable coexistence function.
+    statistic                        :: show statistic info
+    mac                              :: show mac info
+    kickallclient                    :: kick all connecting client
+    lanrestrict <on[ip][netmask]/off>:: lan restrict rule (ON or OFF)
+    lanrestrict_vpn <on[ip][netmask]/off>:: vpn lan restrict rule (ON or OFF)
+    wlan connection allow/deny       :: allow or deny wileress client connect
+    retrycheck                       :: check if any retry request queued
+    unload                           :: unload wireless driver
+    help                             : show this
+EOF
+}
+
+DEVICES=
+DRIVERS=
+CONFIGS=
+include /lib/wifi
+scan_wifi
+
+CONF_FOLDER=/tmp/wifi_update
+[ -d $CONF_FOLDER ] || mkdir -p $CONF_FOLDER
+OLD_WIRELESS_CONF=$CONF_FOLDER/wireless.old
+NEW_WIRELESS_CONF=$CONF_FOLDER/wireless.new
+
+echo "[wlan]===time:`date`   command:wlan $@============== " >/dev/console
+case "$1" in
+	updateconf) wifi_updateconf "$2";;
+	down) wifi_updown "disable" "$2";;
+	detect) wifi_detect "$2";;
+	wps) wifi_wps "$@";;
+	toggle) wifi_toggle "$@";;
+	schedule) wifi_schedule "$@";;
+	stainfo) wifi_stainfo "$@";;
+	radio) wifi_radio "$@";;
+	up) wifi_updown "enable" "$2";;
+	statistic ) wifi_statistic ;;
+	mac ) wifi_mac ;;
+	kickallclient ) wifi_kickallclient ;;
+	lanrestrict)wifi_lanrestrict "$@";;
+	lanrestrict_vpn)wifi_lanrestrict_vpn "$@";;
+	connection) wifi_connection "$@" ;;
+	restart) wifi_restart "$2";;
+	retrycheck) wifi_retry_check ;;
+	unload) wifi_unload ;;
+        countrycode) create_country_code_table ;;
+	*) show_usage ;;
+esac

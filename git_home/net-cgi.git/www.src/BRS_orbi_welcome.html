@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+
+<body>
+<script>
+	//this assign value for waiting page cannot get top.bh_plz_wait_moment value.
+	top.bh_plz_wait_moment = bh_plz_wait_moment;
+</script>
+<div id="container">
+
+	<div class="dialog-content">
+
+	<!-- Welcome -->
+		<div id="card-welcome" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_welcome);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_welcome_msg1);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_welcome_msg2);</script></div>
+			<script>
+				var netgear_region="<% get_firmware_region() %>";
+				var browser_lang = "<% get_browser_language() %>";
+				if( browser_lang=="French"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eufr.html\';return true;">');
+				}else if( browser_lang=="German"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eude.html\';return true;">');
+				}else if( browser_lang =="Italian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euit.html\';return true;">');
+				}else if( browser_lang =="Chinese"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euscn.html\';return true;">');
+				}else if( browser_lang =="Spanish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eues.html\';return true;">');
+				}else if( browser_lang =="Turkish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eutr.html\';return true;">');
+				}else if( browser_lang =="Danish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eudk.html\';return true;">');
+				}else if( browser_lang =="Bulgarian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eubg.html\';return true;">');
+				}else if( browser_lang =="Croatian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euhr.html\';return true;">');
+				}else if( browser_lang =="Korean"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eukr.html\';return true;">');
+				}else if( browser_lang =="Romanian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euro.html\';return true;">');
+				}else if( browser_lang =="Czech"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eucz.html\';return true;">');
+				}else if( browser_lang =="Swedish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euse.html\';return true;">');
+				}else if( browser_lang =="Slovak"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eusk.html\';return true;">');
+				}else if( browser_lang =="Norwegian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euno.html\';return true;">');
+				}else if( browser_lang =="Dutch"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eunl.html\';return true;">');
+				}else if( browser_lang =="Hungarian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euhu.html\';return true;">');
+				}else if( browser_lang =="Greek"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eugr.html\';return true;">');
+				}else if( browser_lang =="Russian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_euru.html\';return true;">');
+				}else if( browser_lang =="Finnish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eufi.html\';return true;">');
+				}else if( browser_lang =="Polish"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eupl.html\';return true;">');
+				}else if( browser_lang =="Portuguese"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eupt.html\';return true;">');
+				}else if( browser_lang =="Slovenian"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eusi.html\';return true;">');
+				}else if( browser_lang =="Traditional-Chinese"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eutch.html\';return true;">');
+				}else if( browser_lang =="Japanese"){
+					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eujp.html\';return true;">');
+				}else{
+					if( netgear_region=="WW" || netgear_region=="PR" || netgear_region=="JP"){
+						document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos.html\';return true;">');
+					}else{
+						document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_usau.html\';return true;">');
+					}
+				}
+			</script>
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

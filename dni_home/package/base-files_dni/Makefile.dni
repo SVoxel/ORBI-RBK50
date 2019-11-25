@@ -1,0 +1,3 @@
+define Package/base-files_dni/prepare_dniext
+	$(CP) $(LOCAL_DNI_EXT_PATH)/files/* $(PKG_BUILD_DIR)/files/;
+endef

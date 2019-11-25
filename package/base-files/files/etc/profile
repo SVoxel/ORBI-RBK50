@@ -1,0 +1,33 @@
+#!/bin/sh
+[ -f /etc/banner ] && /bin/cat /etc/banner
+[ -e /tmp/.failsafe ] && /bin/cat /etc/banner.failsafe
+
+export PATH=/usr/sbin:/usr/bin:/sbin:/bin
+export HOME=$(grep -e "^${USER:-root}:" /etc/passwd | cut -d ":" -f 6)
+export HOME=${HOME:-/root}
+export PS1='\[\033[01;31m\]\u\[\033[01;33m\]@\[\033[01;36m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+
+alias ls='ls --color'
+alias la='/bin/ls -la'
+alias ll='/bin/ls -l'
+alias cp='cp -i'
+alias mv='mv -i'
+alias rm='rm -i'
+
+[ -f /tmp/BTHOST_BD_ADDR ] && export BTHOST_BD_ADDR=$(cat /tmp/BTHOST_BD_ADDR)
+[ -f /tmp/BTHOST_XCAL_TRIM ] && export BTHOST_XCAL_TRIM=$(cat /tmp/BTHOST_XCAL_TRIM)
+
+[ -x /bin/more ] || alias more=less
+[ -x /usr/bin/vim ] && alias vi=vim || alias vim=vi
+
+[ -z "$KSH_VERSION" -o \! -s /etc/mkshrc ] || . /etc/mkshrc
+
+[ -x /usr/bin/arp ] || arp() { cat /proc/net/arp; }
+[ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
+
+[ -n "$FAILSAFE" ] || {
+	for FILE in /etc/profile.d/*.sh; do
+		[ -e "$FILE" ] && . "$FILE"
+	done
+	unset FILE
+}

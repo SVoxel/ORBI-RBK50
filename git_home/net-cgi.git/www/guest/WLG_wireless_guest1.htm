@@ -1,0 +1,376 @@
+<% http_header("style/form.css", "/funcs.js", "/wlan.js", "/jquery-1.7.2.min.js") %>
+<% body_header("_wlan_guest_bgn", "WLG_wireless_guest1.htm", "guest") %>
+<style>
+#pwd_display,#pwd_an_display, #pwd_ad_display, #radius_display, #radius_an_display{width:21px;margin-left:-28px;cursor:pointer;position:relative;top:6px;z-index:1;padding-right:5px;}
+</style>
+<div class="page_title"><script>
+//if(parent.an_router_flag == 1)
+        //document.write('$wlan_guest_head b/g/n');
+//else
+        document.write('$wlan_guest_head');
+</script></div>
+<div class="fix_button">
+<TABLE cellspacing=2 cellPadding=0 width=100% border=0>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" onClick="location.href=\'WLG_wireless_guest1.htm\';">&nbsp;&nbsp;<input class="apply_bt" name="Apply" id="apply" type="button" value="$apply_mark" onclick="return check_wlan_guest(\'bgn\')"></TD></TR>');
+else
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="Apply" id="apply" type="button" value="$apply_mark" disabled></TD></TR>');
+	
+</script>
+</TABLE>
+</div>
+<div id="main" class="main_top_button"> 
+<TABLE width=100%% border=0 cellpadding=0 cellspacing=3>
+<TR><TD colSpan=2></TD></TR>
+<script>
+var bgn_mode1_value = top.bgn_mode1_value;
+var an_mode1_value = top.an_mode1_value;
+var have_enterprise = top.have_enterprise;
+
+var fbwifi_enable = "<% cfg_get("fbwifi_enable") %>";
+
+var wl_key1 = "<% cfg_sed("wlg1_key1") %>";
+var wl_key2 = "<% cfg_sed("wlg1_key2") %>";
+var wl_key3 = "<% cfg_sed("wlg1_key3") %>";
+var wl_key4 = "<% cfg_sed("wlg1_key4") %>";
+
+var wep_64_key1 = "<% cfg_sed("wlg1_wep_64_key1") %>";
+var wep_64_key2 = "<% cfg_sed("wlg1_wep_64_key2") %>";
+var wep_64_key3 = "<% cfg_sed("wlg1_wep_64_key3") %>";
+var wep_64_key4 = "<% cfg_sed("wlg1_wep_64_key4") %>";
+
+var wep_128_key1 = "<% cfg_sed("wlg1_wep_128_key1") %>";
+var wep_128_key2 = "<% cfg_sed("wlg1_wep_128_key2") %>";
+var wep_128_key3 = "<% cfg_sed("wlg1_wep_128_key3") %>";
+var wep_128_key4 = "<% cfg_sed("wlg1_wep_128_key4") %>";
+
+//var wl_simple_mode_an="<% cfg_get("wla_simple_mode") %>";
+var wl_key1_an = "<% cfg_sed("wla1_key1") %>";
+var wl_key2_an = "<% cfg_sed("wla1_key2") %>";
+var wl_key3_an = "<% cfg_sed("wla1_key3") %>";
+var wl_key4_an = "<% cfg_sed("wla1_key4") %>";
+
+var wep_64_key1_a = "<% cfg_sed("wla1_wep_64_key1") %>";
+var wep_64_key2_a = "<% cfg_sed("wla1_wep_64_key2") %>";
+var wep_64_key3_a = "<% cfg_sed("wla1_wep_64_key3") %>";
+var wep_64_key4_a = "<% cfg_sed("wla1_wep_64_key4") %>";
+
+var wep_128_key1_a = "<% cfg_sed("wla1_wep_128_key1") %>";
+var wep_128_key2_a = "<% cfg_sed("wla1_wep_128_key2") %>";
+var wep_128_key3_a = "<% cfg_sed("wla1_wep_128_key3") %>";
+var wep_128_key4_a = "<% cfg_sed("wla1_wep_128_key4") %>";
+
+var lanIP = "<% cfg_get("lan_ipaddr") %>";
+var lanSubnet = "<% cfg_get("lan_netmask") %>";
+var wanIP = "<% wan_ip() %>";
+var wanSubnet = "<% wan_netmask() %>";
+var str_have_an="";
+
+var str_none="";
+var str_wep="";
+var str_wpa="";
+var str_wpa2="";
+var str_wpas="";
+var str_wpae="";
+var str_none_an="";
+var str_wep_an="";
+var str_wpa_an="";
+var str_wpa2_an="";
+var str_wpas_an="";
+var str_wpae_an="";
+var wds_endis_fun="<% cfg_get("wds_endis_fun") %>";
+<% show_guest_wlan_variable()%>
+var StartChannel = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1); 
+var FinishChannel = new Array(11,13,13,13,11,13,13,13,13,11,13,13,11); 
+
+var enable_ap_flag="<% cfg_get("ap_mode") %>"; //for bug 30286 here is to grey comething
+var enable_extender_flag="<% cfg_get("extender_mode") %>";
+var wps_progress_status="<% wps_process_status() %>";
+var wps_alert="<% cfg_get("wps_alert") %>";
+<% cfg_set("wps_alert", "0") %>
+
+</script>
+<input type="hidden" name="old_length">
+<input type="hidden" name="generate_flag">
+<input type="hidden" name="sec_wpaphrase_len">
+<input type="hidden" name="hidden_wpa_psk">
+<input type="hidden" name="hidden_sec_type">
+<input type="hidden" name="wep_press_flag">
+<input type="hidden" name="wpa1_press_flag" value=0>
+<input type="hidden" name="wpa2_press_flag" value=0>
+<input type="hidden" name="wpas_press_flag" value=0>
+
+<input type="hidden" name="old_length_an">
+<input type="hidden" name="generate_flag_an">
+<input type="hidden" name="sec_wpaphrase_len_an">
+<input type="hidden" name="hidden_wpa_psk_an">
+<input type="hidden" name="hidden_sec_type_an">
+<input type="hidden" name="wep_press_flag_an">
+<input type="hidden" name="wla_wpa1_press_flag" value=0>
+<input type="hidden" name="wla_wpa2_press_flag" value=0>
+<input type="hidden" name="wla_wpas_press_flag" value=0>
+
+<input type="hidden" name="wps_change_flag" value="<% cfg_get("wps_status") %>">
+
+<input type="hidden" name="hidden_enable_guestNet">
+<input type="hidden" name="hidden_enable_ssidbro">
+<input type="hidden" name="hidden_allow_see_and_access">
+<input type="hidden" name="radiusServerIP">
+<input type="hidden" name="s_gssid">
+<input type="hidden" name="hidden_WpaeRadiusSecret">
+<input type="hidden" name="hidden_guest_network_mode_flag">
+<input type="hidden" name="wl_hidden_wlan_mode" value="">
+
+<input type="hidden" name="hidden_enable_guestNet_an">
+<input type="hidden" name="hidden_enable_ssidbro_an">
+<input type="hidden" name="hidden_enable_video_an" value="">
+<input type="hidden" name="hidden_allow_see_and_access_an">
+<input type="hidden" name="radiusServerIP_a">
+<input type="hidden" name="s_gssid_an">
+<input type="hidden" name="hidden_WpaeRadiusSecret_a">
+<input type="hidden" name="hidden_guest_network_mode_flag_an">
+<input type="hidden" name="wl_hidden_wlan_mode_an" value="">
+<input type="hidden" name="passphrase_an" />
+
+</TABLE>
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','wireless')"><B>$wlan_mark</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2><input type=checkbox name="enable_bssid" id="enable_bssid" value='1'>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','enable_guest')">$wlan_guest_enable</A>
+	</TD>
+</TR>
+<TR>	
+	<TD nowrap colspan=2><input type=checkbox name="enable_ssid_bc" id="enable_ssid_bc" value='1'>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','enable_ssid')">$adva_wlan_ssid_broadcast</A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2><input type=checkbox name="allow_access" id="allow_access" value='1'>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','allow_guest')">$wlan_guest_see_access</A>
+	</TD>
+</TR>
+<TR>	
+	<TD nowrap>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','guest_ssid')">$wlan_guest_ssidName :</A>
+	</TD>
+	<TD nowrap><input type="text" name="ssid" id="ssid" value="<% cfg_get_ssid_value("wlg1_ssid") %>" size="20" maxlength="32"></TD>
+</TR>
+<tr style="display:none">
+	<td><input type="text" name="wlssid" value="<% cfg_get_ssid_value("wl_ssid") %>" size="20" maxlength="32"></td>
+	<td><input type="text" name="wlassid" value="<% cfg_get_ssid_value("wla_ssid") %>" size="20" maxlength="32"></td>
+</tr>
+</table>
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</table>
+
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+<TR>
+	<TD nowrap colspan=2><A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','security')"><B>$sec_type</B></A></TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_disable" value="Disable" onClick=setSecurity(1)>$sec_off
+	<TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_wpa2" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_auto" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
+	</TD>
+</TR>
+</TABLE>
+
+<div id=view></div>
+
+<div align="center" ID="none" style="position:absolute;top:0;left:0;visibility:hidden">
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	<TR>
+		<TD nowrap colspan=2></TD>
+	</TR>
+	</TABLE>
+</div>   
+ 
+<div align="center" ID="wpa2" style="position:absolute;top:0;left:0;visibility:hidden">  
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	$bluebar
+	<TR>
+		<TD nowrap colspan=2>
+		<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','wpa2-psk')"><B>$sec_type (WPA2-PSK)</B></A>
+		</TD>
+	</TR>
+	<TR>
+		<TD nowrap>
+		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
+		</TD>
+		<TD nowrap>
+		<input type="password" id="passphrase" maxlength="64" autocomplete="off" size="20" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpa2_psk") %>" onFocus="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;" onKeyPress="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;">
+		<img id="pwd_display" src="image/pwd_close_eye.png" onclick="change_password_display(1)">
+		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
+		</TD>
+	</TR>
+	</TABLE>
+</div>
+
+<div align="center" ID="wpas" style="position:absolute;top:0;left:0;visibility:hidden">
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	$bluebar
+	<TR>
+		<TD nowrap colspan=2>
+		<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','wpa-psk+wpa2-psk')"><B>$sec_type (WPA-PSK + WPA2-PSK)</B></A>
+		</TD>
+	</TR>
+	<TR>
+		<TD nowrap>
+		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
+		</TD>
+		<TD nowrap>
+		<input type="password" id="passphrase" size="20" autocomplete="off" maxlength="64" name="passphrase" value="<% cfg_sed_passphrase("wlg1_wpas_psk") %>" onFocus="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;" onKeyPress="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;">
+		<img id="pwd_display" src="image/pwd_close_eye.png" onclick="change_password_display(2)">
+		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
+		</TD>	  
+	</TR>
+	</TABLE>
+</div>
+
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</table>
+</div>
+<% help_box("0","_wlan_guest_bgn") %>
+</FORM>
+<script>
+
+var endis_wl_radio="<% enable_ap_orNot("bgn") %>";
+var wl_get_keyno="<% cfg_get("wlg1_key") %>";
+var wl_get_keylength="<% cfg_get("wlg1_key_length") %>";
+
+var endis_wla_radio_an="<% enable_ap_orNot("an") %>";
+var wl_get_keyno_an="<% cfg_get("wla1_key") %>";
+var wl_get_keylength_an="<% cfg_get("wla1_key_length") %>";
+var wps_status="<% cfg_get("wps_status") %>";
+//var wireless_sectype="<% cfg_get("wl_sectype") %>";//if wireless_sectype==2 WEP security type
+
+function setSecurity(num)
+{
+	var form=document.forms[0];
+	form.wpa2_press_flag.value=0;
+	form.wpas_press_flag.value=0;
+
+	if(num==4)
+	{
+		getObj("view").innerHTML=str_wpa2;
+	}
+	else if(num==5)
+	{
+		getObj("view").innerHTML=str_wpas;
+	}
+	else
+		getObj("view").innerHTML=str_none;
+}
+
+function loadvalue()
+{
+	top.enabled_wds="<% wds_enable() %>";
+        if( top.location.href.indexOf("adv_index.htm") != -1 )
+                top.menu_color_change('guest');
+        else
+                top.basic_menu_color_change('guest');
+
+	var form=document.forms[0];
+
+	if( get_endis_guestNet == 1 && endis_wl_radio == 1)
+		form.enable_bssid.checked = true;
+	else
+		form.enable_bssid.checked = false;
+	if( get_endis_guestSSIDbro == 1 )
+		form.enable_ssid_bc.checked = true;
+	else
+		form.enable_ssid_bc.checked = false;
+
+	if( fbwifi_enable != '1' )
+	{
+	if(get_endis_allow_see_and_access=='1')
+		form.allow_access.checked = true;
+	else
+		form.allow_access.checked = false;
+	}
+
+	//if(enable_ap_flag == 1 ||  fbwifi_enable == '1' || enable_extender_flag == '1')
+	//	setDisabled(true, form.allow_access);
+	form.hidden_enable_video_an.value = get_enable_video_value_an;	
+
+	//Bug 38628
+	str_none=getObj("none").innerHTML;
+	str_none=str_none.replace(/\`/g, "&#96;");
+	str_wpa2=getObj("wpa2").innerHTML;
+	str_wpa2=str_wpa2.replace(/\`/g, "&#96;");
+	str_wpas=getObj("wpas").innerHTML;
+	str_wpas=str_wpas.replace(/\`/g, "&#96;");
+	getObj("none").innerHTML='';	
+	getObj("wpa2").innerHTML='';	
+	getObj("wpas").innerHTML='';
+	
+	setSecurity(wl_sectype);
+	var sectype=wl_sectype;
+	if ( wds_endis_fun == '0' || endis_wl_radio == '0' )
+		setDisabled(false,form.security_type[1],form.security_type[2]);	
+	else
+		setDisabled(true,form.security_type[1],form.security_type[2]);
+
+
+
+        //Bug 21810, when set wireless to 300/150. the wep and tkip in guest network should be removed.
+	var wireless_opmode="<% cfg_get("wl_simple_mode") %>";
+
+	if(sectype=="4")
+		form.security_type[1].checked=true;	
+	else if (sectype=="5")
+		form.security_type[2].checked=true;
+	else
+		form.security_type[0].checked=true;
+
+	showWps_alert();
+}
+function change_password_display(flag)
+{
+	var inp = document.getElementById("passphrase").name;
+	var e_value = document.getElementById("passphrase").value;
+	var pwd_input = document.getElementById("passphrase");
+
+	if(flag == 1){
+		if(pwd_input.type == "password"){
+			$$('#passphrase').replaceWith('<input type="text" id="passphrase" size="20" autocomplete="off" maxlength="64" name="'+inp+'" value="'+e_value+'" onFocus="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;" onKeyPress="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;">');
+			document.getElementById("pwd_display").src = "image/pwd_display_eye.png";
+		}
+		else{
+			$$('#passphrase').replaceWith('<input type="password" id="passphrase" size="20" autocomplete="off" maxlength="64" name="'+inp+'" value="'+e_value+'" onFocus="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;" onKeyPress="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;">');
+			document.getElementById("pwd_display").src = "image/pwd_close_eye.png";
+		}
+	}
+
+	if(flag == 2){
+		if(pwd_input.type == "password"){
+			$$('#passphrase').replaceWith('<input type="text" id="passphrase" autocomplete="off" maxlength="64" size="20" name="'+inp+'" value="'+e_value+'" onFocus="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;" onKeyPress="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;">');
+			document.getElementById("pwd_display").src = "image/pwd_display_eye.png";
+		}
+		else{
+			$$('#passphrase').replaceWith('<input type="password" id="passphrase" autocomplete="off" maxlength="64" size="20" name="'+inp+'" value="'+e_value+'" onFocus="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;" onKeyPress="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;">');
+			document.getElementById("pwd_display").src = "image/pwd_close_eye.png";
+		}
+	}
+}
+</script>
+</BODY>
+</HTML>

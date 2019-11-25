@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<script language="javascript" type="text/javascript" src="script/funcs.js"></script>
+<% hijack_language() %>
+</head>
+<% wizlog_problem_ck10("1") %>
+<body>
+<% form_submit("apply", "BRS_03A_E_IP_problem_staticIP_B_macClone_plzWait.html", "hijack_mac_clone") %>
+<script>
+function checkMacApply()
+{
+	var cf = document.forms[0];
+
+	//set input event action
+	var the_mac = cf.spoofmac.value;
+
+	if(the_mac.indexOf(":")==-1 && the_mac.length=="12")
+	{
+		var tmp_mac=the_mac.substr(0,2)+":"+the_mac.substr(2,2)+":"+the_mac.substr(4,2)+":"+the_mac.substr(6,2)+":"+the_mac.substr(8,2)+":"+the_mac.substr(10,2);
+		
+		cf.spoofmac.value = tmp_mac;
+	}
+	else if (the_mac.split("-").length == 6)
+	{
+		var tmp_mac = the_mac.replace(/-/g,":");
+		cf.spoofmac.value = tmp_mac;
+	}
+
+	if(maccheck_multicast(cf.spoofmac.value) == false)
+		return false;
+	
+	return true;
+}
+
+
+</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- MAC Address Problem-->
+		<div id="card-mac-address-problem" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_problem_conn_mac);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_problem_conn_mac_msg1);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_mac_in_product_label);</script></div>
+
+			<div class="input-wrapper input-text-box-one">
+				<div class="input-title"><script>document.write(bh_orbi_enter_mac_here);</script></div>
+				<input type="text" id="spoofmac" name="spoofmac">
+				<div class="input-instructions"><script>document.write(bh_mac_format);</script></div>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return checkMacApply();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+
+</form>
+</body>
+
+</html>

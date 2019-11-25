@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+FILE=/firmware_time
+
+start() {
+	DATE=`date +%Y%m%d`
+	if [ "$DATE" -lt "`date +%Y%m%d -r $FILE`" ]; then
+		date `date +%m%d%H%M%Y -r $FILE`
+	fi
+	ntpclient
+}
+
+stop() {
+	killall ntpclient
+}
+
+restart() {
+	stop
+	start
+}

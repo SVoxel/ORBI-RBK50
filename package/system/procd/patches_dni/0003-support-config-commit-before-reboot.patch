@@ -1,0 +1,14 @@
+--- procd-2015-10-29.1/signal.c-org	2017-06-28 20:31:35.578682697 +0800
++++ procd-2015-10-29.1/signal.c	2017-06-28 20:33:19.534679402 +0800
+@@ -49,6 +49,11 @@
+ 	}
+ 
+ 	DEBUG(1, "Triggering %s\n", msg);
++	if(!strcmp(msg, "reboot"))
++	{
++		system("/bin/config commit");
++		sleep(1);
++	}
+ 	if (event)
+ 		procd_shutdown(event);
+ }

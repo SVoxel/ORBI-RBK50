@@ -1,0 +1,21 @@
+<% http_header("/funcs.js") %>
+
+<script>
+
+var ipv6_type = "<% cfg_get("ipv6_type") %>";
+var enable_mapt = "<% cfg_get("mapt_enable") %>";
+var orange_ipv6 = "<% cfg_get("enable_orange_ipv6") %>";
+top.enable_mapt = enable_mapt;
+if(ipv6_type == "autoConfig")
+{
+	if(orange_ipv6 == "1") {
+		change_ipv6("orange");
+	} else {
+		change_ipv6(ipv6_type);	
+	}
+} else
+	change_ipv6(ipv6_type);
+
+</script>
+
+</HTML>

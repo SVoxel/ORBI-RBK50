@@ -1,0 +1,1423 @@
+<% http_header("css/styles.css", "style/form.css", "/funcs.js", "/jquery-1.7.2.min.js") %>
+<% body_header("_wlan3", "guest_portal.html", "guest_portal") %>
+<style>
+#preview{
+    position: absolute;
+    top: 10px;
+	right: 5px;
+    width: 520px;
+	height: 430px;
+	background-color:#ffffff;
+    z-index: 100;
+}
+#preview img{
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#preview .close_bar{
+	height:20px;
+	background-color:#F2F2F2;
+}
+.close_btn{
+	color:#702b86;
+	border:0px;
+    cursor: pointer;
+    float: right;
+    font-family: Arial;
+    font-size: 14px;
+    font-weight: bold;
+    height: 20px;
+	border-radius:0px;
+	padding: 1px 3px 1px 3px;
+	background-color:#F2F2F2;
+}
+.login-box{
+	margin-top:20px;
+	text-align:center;
+	font-weight:bold;
+}
+.login-tbl { 
+	word-wrap:break-word;
+	margin: 15px 5px; 
+	width: 100%;
+}
+.login-tbl td{ 
+	padding: 5px 0px 0px 0px; 
+	text-align: center;
+	color: #9a258f;
+	font-weight: bold;
+	font-size:0.9em;
+}
+
+.ipaddres {
+    height: 50%;
+    left: 20%;
+    position: absolute;
+    top: 320px;
+    width: 50%;
+    z-index: 3;
+}
+.iptable {
+    background: rgba(0, 0, 0, 0) url("../image/ap_map_700.gif") no-repeat scroll 0 0;
+}
+</style>
+<div class="page_title" id="page_title">$gp_setting</div>
+<div class="fix_button" id="fix_button">
+<TABLE cellspacing=2 cellPadding=0 width=100% border=0>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" onClick="location.href=\'guest_portal.html\';">&nbsp;&nbsp;<input class="apply_bt" name="Apply" id="apply" type="button" value="$apply_mark" onclick="click_apply(document.forms[0])"></TD></TR>');
+else
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="Apply" id="apply" type="button" value="$apply_mark" disabled></TD></TR>');
+	
+</script>
+</TABLE>
+</div>
+<% save_timestamp("guest_portal", "upload_temp_file", "upload_file", "reservation_editnum","reservation_del") %>
+<script>
+var ts = "<% cfg_get("guest_portal") %>";
+<% show_guest_wlan_variable() %>
+var cp_url = "<% cfg_get("cp_url") %>";
+<% access_gp_file() %>
+var user_img = "<% cfg_get("cp_user_img")%>";
+var user_txt = "<% cfg_get("cp_user_text") %>";
+var file_dir = "guest_portal_file/"
+
+var have_vlan_sb = top.vlan_sb_flag;
+var main_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_0") %>";
+var byod_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_1") %>";
+var guest_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_2") %>";
+
+var wl_type = "guest";
+var other_ipdata = [{"type":"", "ip": "", "mask":""}, {"type":"", "ip": "", "mask":""}];
+//lan ip config
+var router_mode = "<% cfg_get("rae_cur_mode") %>";
+var old_lanip="<% cfg_get("guest_lan_ipaddr") %>";
+var old_lanmask="<% cfg_get("guest_lan_netmask") %>";
+var wan_type="<% cfg_get("wan_proto") %>";
+var wan_ip="<% test_wan_ip() %>";
+var wan_mask="<% test_wan_netmask() %>";
+var bas_pptp_ip="<% bas_pptp_ip() %>";
+<% reservation_items_xss() %>
+var have_fb_wifi = top.have_fb_wifi;
+var gp_auth_mode = "<% cfg_get("gp_auth_mode") %>";
+var gw_id = "<% cfg_get("gw_id") %>";
+<% get_fbwifi_username("1") %>;
+
+//ap mode ip config
+var dyn_get_ip_flag="<% cfg_get("guest_ap_ether_ip_assign") %>";
+
+function loadvalue()
+{
+	var cf = document.forms[0];
+	if(get_endis_guestNet == "1")
+		cf.enable_guest_portal.checked = true;
+	else
+		cf.enable_guest_portal.checked = false;
+	if(get_endis_guestSSIDbro == "1")
+		cf.enable_ssid_broadcast.checked = true;
+	else
+		cf.enable_ssid_broadcast.checked = false;
+	if(cf.hid_guest_auth_type.value == "none")
+		cf.auth_type[0].checked = true;
+	else if(cf.hid_guest_auth_type.value == "auth")
+		cf.auth_type[1].checked = true;
+	endis_password_input(cf.hid_guest_auth_type.value);
+	
+	if(cf.hid_expire_time.value == "")
+		cf.expire_time.selectedIndex = 2;
+	else
+		cf.expire_time.value = parseInt(cf.hid_expire_time.value, 10)/3600;
+	
+	if(cp_url == "")
+	{
+		cf.use_url[0].checked = true;
+		endis_input_field(false, "user_url");
+	}
+	else
+	{
+		cf.use_url[1].checked = true;
+		cf.user_url.value = cp_url;
+		endis_input_field(true, "user_url");
+	}
+	
+	//change to display user file.
+	if(user_img != "" && have_user_img == 1)
+		document.getElementById("logo").src = file_dir + user_img;
+	if(user_txt != "" && have_user_txt == 1)
+	{
+		switch_item_display(["user_text"], ["netgear_text"]);
+	}
+	change_file_accept();
+	
+	if(have_fb_wifi == 1)
+	{
+		document.getElementById("wifi_options").style.display = "";
+		if(gp_auth_mode == "fbwifi")
+		{
+			cf.auth_mode[1].checked = true;
+			change_auth_mode("fbwifi");
+			if(gw_id == "" && get_endis_guestNet == "1")//try to get gw_id by background
+			{
+				setTimeout("get_gw_id()", 500);
+			}
+		}
+		else
+		{
+			cf.auth_mode[0].checked = true;
+			change_auth_mode("local");
+		}
+		if(get_endis_guestNet == "1")
+		{
+			if(gw_id != "" && get_status == "1")
+				show_fbwifi_sets("change", user_info["page"]["name"]);
+			else
+				show_fbwifi_sets("add", "");
+			if(get_status == "0")
+				setTimeout("get_fbwifi_username()", 1000);
+		}
+		else
+			show_fbwifi_sets("add", "");
+	}
+	else
+	{
+		document.getElementById("local_wifi_auth").style.display = "";
+		document.getElementById("customize_sets").style.display = "";
+	}
+	
+	if(have_vlan_sb == 1)
+	{
+		document.getElementById("vlan_sb_sets").style.display = "";
+		document.getElementById("guest_vlan_cfg").style.display = "";
+		var vlan_enable = guest_wireless_vlan_group.split(" ")[0];
+		var vlan_id = guest_wireless_vlan_group.split(" ")[2];
+		if(vlan_enable == "1")
+			cf.vlan_enable.value = "enable";
+		else
+			cf.vlan_enable.value = "disable";
+		cf.vlan_id.value = vlan_id;
+		
+		//lan ip config
+		if(router_mode == "router")
+		{
+			other_ipdata[0].type = "LAN Setup";
+			other_ipdata[0].ip = "<% cfg_get("lan_ipaddr") %>";
+			other_ipdata[0].mask = "<% cfg_get("lan_netmask") %>";
+			other_ipdata[1].type = "BYOD Network";
+			other_ipdata[1].ip = "<% cfg_get("byod_lan_ipaddr") %>";
+			other_ipdata[1].mask = "<% cfg_get("byod_lan_netmask") %>";
+			
+			document.getElementById("vlan_ip_conf").style.display = "";
+			var form=document.forms[0];
+			var dhcp_start='<% cfg_get("guest_dhcp_start") %>';
+			var dhcp_end='<% cfg_get("guest_dhcp_end") %>';
+			var lanip_array = old_lanip.split(".");
+			form.sysLANIPAddr1.value=lanip_array[0];
+			form.sysLANIPAddr2.value=lanip_array[1];
+			form.sysLANIPAddr3.value=lanip_array[2];
+			form.sysLANIPAddr4.value=lanip_array[3];
+			var mask_array = old_lanmask.split(".");
+			form.sysLANSubnetMask1.value=mask_array[0];
+			form.sysLANSubnetMask2.value=mask_array[1];
+			form.sysLANSubnetMask3.value=mask_array[2];
+			form.sysLANSubnetMask4.value=mask_array[3];
+			form.sysPoolStartingAddr1.value = form.sysPoolFinishAddr1.value=lanip_array[0];
+			form.sysPoolStartingAddr2.value = form.sysPoolFinishAddr2.value= lanip_array[1];
+			form.sysPoolStartingAddr3.value = form.sysPoolFinishAddr3.value=lanip_array[2];	
+			var start_array =dhcp_start.split('.');
+			var end_array = dhcp_end.split('.');
+			form.sysPoolStartingAddr4.value=start_array[3];
+			form.sysPoolFinishAddr4.value=end_array[3];
+			if( '<% cfg_get("guest_lan_dhcp") %>' == '1')
+				form.dhcp_server.checked = true;
+			else
+				form.dhcp_server.checked = false;
+			dhcponoff();
+			var sysRIPVersion="<% cfg_get("guest_rip_version") %>";
+			if(sysRIPVersion=="0")
+				form.sysRIPVersion.value="Disabled";
+			else if(sysRIPVersion=="1")
+				form.sysRIPVersion.value="RIP_1";
+			else if(sysRIPVersion=="2")
+				form.sysRIPVersion.value="RIP_2B";
+			else if(sysRIPVersion=="3")
+				form.sysRIPVersion.value="RIP_2M";
+			var rip_direction="<% cfg_get("guest_rip_direction") %>";
+			if(rip_direction=="0")
+				form.rip_direction.value="Both";
+			else if(rip_direction=="1")
+				form.rip_direction.value="In only";
+				else if(rip_direction=="2")
+				form.rip_direction.value="Out only";
+			else if(rip_direction=="3")
+				form.rip_direction.value="None";
+			enabled_input_elements("vlan_ip_hidden_conf");
+		}
+		else if(router_mode == "ap")
+		{
+			other_ipdata[0].type = "AP Mode";
+			other_ipdata[0].ip = "<% cfg_get("ap_ipaddr") %>";
+			other_ipdata[0].mask = "<% cfg_get("ap_netmask") %>";
+			other_ipdata[1].type = "BYOD Network";
+			other_ipdata[1].ip = "<% cfg_get("byod_ap_ipaddr") %>";
+			other_ipdata[1].mask = "<% cfg_get("byod_ap_netmask") %>";
+			
+			var form=document.forms[0];
+			document.getElementById("vlan_ap_ipconf").style.display = "";
+			if(dyn_get_ip_flag == '0')
+			{
+				form.dyn_get_ip[1].checked = true;
+				document.getElementById("iptab").style.display="";
+			}
+			else
+			{
+				form.dyn_get_ip[0].checked = true;
+				document.getElementById("iptab").style.display="none";				
+			}
+			var apmode_get_ip="<% cfg_get("guest_ap_ipaddr") %>";
+			if (apmode_get_ip!="")
+			{
+				if(apmode_get_ip=="0.0.0.0")
+					form.APaddr1.value="";
+				else
+				{
+					form.APaddr1.value=apmode_get_ip;
+				}
+			}
+			var apmode_get_subnet="<% cfg_get("guest_ap_netmask") %>";
+			if (apmode_get_subnet!="")
+			{
+				if(apmode_get_subnet=="0.0.0.0")
+					form.APmask1.value=""; 
+				else
+				{
+					form.APmask1.value=apmode_get_subnet;
+				}
+			}
+			var apmode_get_gateway="<% cfg_get("guest_ap_gateway") %>";
+			if (apmode_get_gateway!="")
+			{
+				if(apmode_get_gateway=="0.0.0.0")
+				{
+					form.APgateway1.value="";
+				}
+				else
+				{
+					form.APgateway1.value=apmode_get_gateway;
+				}
+			}
+			var apmode_get_dns1="<% cfg_get("guest_ap_ether_dns1") %>";
+			if (apmode_get_dns1!="" && apmode_get_dns1.indexOf(":")==-1)
+			{
+				if(apmode_get_dns1=="0.0.0.0")
+				form.APDAddr1.value="";
+				else
+				{
+					form.APDAddr1.value=apmode_get_dns1;
+				}
+			}
+			var apmode_get_dns2="<% cfg_get("guest_ap_ether_dns2") %>";
+			if (apmode_get_dns2!="" && apmode_get_dns2.indexOf(":")==-1)
+			{
+				if(apmode_get_dns2=="0.0.0.0")
+				form.APPDAddr1.value="";
+				else
+				{
+					form.APPDAddr1.value=apmode_get_dns2;
+				}
+			}
+			enabled_input_elements("vlan_ap_hidden_conf");
+		}
+				
+	}
+}
+</script>
+<div id="main" class="main_top_button"> 
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<tr><td>
+<input type="hidden" name="main_ssid" value="<% cfg_get_ssid_value("wl_ssid") %>" disabled >
+<input type="hidden" name="byod_ssid" value="<% cfg_get_ssid_value("wlg2_ssid") %>" disabled >
+<input type="hidden" name="hid_enable_guest_portal" value="">
+<input type="hidden" name="hid_enable_ssid_broadcast" value="">
+<input type="hidden" name="hid_guest_auth_type" value="<% cfg_get("cp_security") %>">
+<input type="hidden" name="hid_expire_time" value="<% cfg_get("cp_expiration") %>">
+<input type="hidden" name="hid_cp_url" value="" />
+</td></tr>
+</table>
+
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><A tabindex=-1 href="javascript:loadhelp('_wlan3','wl_setting')"><b>$wlan_mark</b></A></td></tr>
+<tr><td colspan=2><input type="checkbox" name="enable_guest_portal" value="">$gp_enable</td></tr>
+<tr><td colspan=2><input type="checkbox" name="enable_ssid_broadcast" value="">$adva_wlan_ssid_broadcast</td></tr>
+<tr><td>$gp_network_name :</td>
+	<td><input type="text" name="guest_ssid" value="<% cfg_get_ssid_value("wlg1_ssid") %>" size="20" maxlength="32"></td>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=3 id="wifi_options" style="display:none;">
+	$bluebar
+	<tr><td><A tabindex=-1 href="javascript:loadhelp('_wlan3','auth_mode')"><b>$gp_auth_mode</b></A></td></tr>
+	<tr><td><input type="radio" name="auth_mode" value="local" onclick="change_auth_mode(this.value)">$gp_local</td></tr>
+	<tr><td><input type="radio" name="auth_mode" value="fbwifi" onclick="change_auth_mode(this.value)">$gp_fb_wifi</td></tr>
+</table>
+$bluebar
+<table width=100% border=0 cellpadding=0 cellspacing=3 id="fb_sets" style="display:none;">
+	<tr id="fb_wifi_set1" style="display:none;"><td width=20%>$gp_fb_page</td><td><input type="button" class="upg_btn" name="add_page" value="$gp_fb_add" onclick="goto_facebook_site()"></td></tr>
+	<tr id="fb_wifi_set2" style="display:none">
+		<td width=20%>$gp_fb_page</td>
+		<td><input type="text" name="fb_username" value="" size="20" disabled><input type="button" class="upg_btn" name="change_page" value="$gp_fb_change" onclick="goto_facebook_site()"></td>
+	</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=3 id="local_wifi_auth" style="display:none;">
+	<tr><td colspan=2><A tabindex=-1 href="javascript:loadhelp('_wlan3','auth')"><b>$gp_auth_option</b></A></td></tr>
+<tr><td colspan=2><input type="radio" name="auth_type" value="none" onclick="endis_password_input(this.value)">$sec_off</td></tr>
+<tr><td><input type="radio" name="auth_type" value="auth" onclick="endis_password_input(this.value)">$gp_password_auth</td>
+	<td><input type="text" name="auth_password" value="<% cfg_sed_passphrase("cp_pwd") %>" maxlength="32"></td>
+</tr>
+<tr><td>$gp_expiration</td>
+	<td><select name="expire_time">
+		<option value="0">$never_mark</option>
+		<option value="1">1 $schedule_hour</option>
+		<option value="2" selected>2 $hours</option>
+		<option value="6">6 $hours</option>
+		<option value="12">12 $hours</option>
+		<option value="24">24 $hours</option>
+	</select></td>
+</tr>
+</table>
+<div id="customize_sets" style="display:none;">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</TABLE>
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<tr><td colspan=2><A tabindex=-1 href="javascript:loadhelp('_wlan3','portal_custom')"><b>$gp_customize</b></A></td></tr>
+<tr><td colspan=2 style="color:#9a258f">$gp_TandC <span style="color:#666; display:inline-block; padding-left:10px;">($gp_current_file: <% user_file_name("user_text_name") %>)</span></td></tr>
+<tr><td colspan=2>$gp_customize_desc1</td></tr>
+<tr><td width="400px">
+	<input type="file" accept=".txt" name="browse_txt" id="browse_txt" style="display:none;" onchange="if(validate_file('txt', '1', 'M', this.id) == true) show_file_name(this.value, 'txt_text');">
+	<input type="text" name="txt_text" id="txt_text" size="20" maxlength="1024" readonly>
+	<label for="browse_txt" class="upg_btn">$browse_mark</label>	
+	</td>
+	<!--<td><input type="button" name="upload_txt" id="upload_txt" value="$upg_mark" class="upg_btn" onclick="upload_file('browse_txt')"></td>-->
+</tr>
+</table>
+
+<table width="100%" cellspacing="3" cellpadding="0" border="0">
+<tr><td colspan=2 style="color:#9a258f">$gp_logo <span style="color:#666; display:inline-block; padding-left:10px;">($gp_current_file: <% user_file_name("user_img_name") %>)</span></td></tr>
+<tr><td colspan=2>$gp_customize_desc2</td></tr>
+<tr><td width="400px">
+	<input type="file" accept=".png,.jpg,.jpeg,.gif" name="browse_logo" id="browse_logo" style="display:none;" onchange="if(validate_file('image', '10', 'M', this.id) == true) show_file_name(this.value, 'logo_text');">
+	<input type="text" name="logo_text" id="logo_text" size="20" maxlength="1024" readonly>
+	<label for="browse_logo" class="upg_btn">$browse_mark</label>	
+	</td>
+	<!-- <td><input type="button" class="upg_btn" name="upload_logo" id="upload_logo" value="$upg_mark" onclick="upload_file('browse_logo')"></td> -->
+</tr>
+<tr><td colspan=2>
+	<input type="button" name="preview" class="upg_btn" value="$gp_preview" onclick="click_preview()" style="margin-left:0px; margin-top:10px; margin-bottom:10px; margin-right:20px;">
+	<input type="button" name="clear" class="upg_btn" value="$gp_clear" onclick="location.href='guest_portal_clear.html';">
+</td></tr>
+</tr>
+</table>
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+	<tr><td colspan=2 style="color:#9a258f">$gp_redirect_url</td></tr>
+	<tr>
+		<td colspan=2><input type="radio" name="use_url" value="0" onclick="endis_input_field(false, 'user_url')">$sec_off</td>
+	</tr>
+	<tr>
+		<td colspan=2><input type="radio" name="use_url" value="1" onclick="endis_input_field(true, 'user_url')"><input type="text" name="user_url" value="" size="60" maxlength=256></td>
+	</tr>
+</table>
+</div><!-- customize_sets -->
+
+<div id="preview" style="display:none;">
+	<div class="close_bar">
+		<input type="button" name="close_btn"  value="X" class="close_btn" onclick="close_preview()">
+	</div>
+	<!-- Welcome -->
+		<div id="card-tos" class="install-card clearfix" style="margin-bottom:10px;">
+			<div id="logo_div" style="overflow:hidden"><img id="logo" class="netgear-logo" src="images/netgear.png" style="max-width:200px; max-height:200px;" ></div>
+			<div class="desc-title">$gp_TandC</div>
+			<div id="user_text" class="tos-area" style="display:none;overflow-x:auto;">
+				<% cat_toc_file_message("/www/guest_portal_file/guest_portal_file.txt") %>
+			</div>
+			<div id="netgear_text" class="tos-area">
+				Terms of Use<br/>
+				<br/>
+				Welcome to the high -speed Internet access service (the "Service"). The Service is being provided by a third party service provider, and the hardware for providing the service has at least partially been provided to the store, hotel, business, or other establishment where you are using the Service (“Establishment”) by NETGEAR, Inc. (“NETGEAR”).  As a condition of accessing this Service, you must agree to the following terms and conditions of use ("Terms of Use"). If you do not agree to the Terms of Use you may not access or use the Service. Your use of the Service indicates your acceptance of these Terms of Use.<br/>
+				<br/>
+				No Editorial Control<br/>				
+				NETGEAR and Establishment do not review or exercise any editorial control over the content or materials made available over the Internet by third parties, including without limitation any electronic mail transmissions, newsgroups, or the like.  NETGEAR and Establishment may cooperate with legal authorities and/or third parties in the investigation of any suspected or alleged crime or civil wrong. Violation of these Terms of Use may result in the suspension or termination of access to the Service.<br/>
+				Security<br/>
+				<br/>
+				You expressly acknowledge and agree that there are significant security, privacy and confidentiality risks inherent in accessing or transmitting information through the Internet, whether the connection to the Internet is facilitated through wired or wireless technology. These security issues range from interception of transmissions, loss of data, or the introduction of viruses or other programs that can damage your computer or network.  ACCORDINGLY, YOU AGREE THAT NETGEAR AND ESTABLISHMENT SHALL NOT BE LIABLE FOR ANY INTERCEPTION OF TRANSMISSIONS, LOSS OF DATA, FILE CORRUPTION, HACKING OR DAMAGE TO YOUR COMPUTER OR NETWORK THAT RESULTS FROM THE TRANSMISSION OR DOWNLOAD OF INFORMATION OR MATERIALS THROUGH THE SERVICE.<br/>
+				Restrictions on Use<br/>
+				<br/>
+				You agree to not use the Service to:<br/>
+				(a) transmit any material that is unlawful, threatening, abusive, harassing, tortious, defamatory, obscene, libelous, invasive of another’s privacy, racially, ethnically or otherwise objectionable;<br/>
+				(b) harm, or attempt to harm, minors in any way;<br/>
+				(c) impersonate any person or entity or falsely state or otherwise misrepresent your affiliation with a person or entity; forge headers or otherwise manipulate identifiers in order to disguise the origin of any material transmitted through the Service;<br/>
+				(d) transmit any material that you do not have a right to make available under any law;<br/>
+				(e) transmit any material that infringes any patent, trademark, trade secret, copyright or other proprietary rights of any party;<br/>
+				(f) transmit any unsolicited or unauthorized advertising, promotional materials, "junk mail," "spam," "chain letters," "pyramid schemes" or any other form of solicitation;<br/>
+				(g) transmit any material that contains software viruses or any other computer code, files or programs designed to interrupt, destroy or limit the functionality of any computer software or hardware or telecommunications equipment; or<br/>
+				<br/>
+				Disclaimer of Warranties<br/>
+				THE MATERIALS AVAILABLE THROUGH THE SERVICE AND THROUGH ANY THIRD PARTY ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS AND WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND EITHER EXPRESS OR IMPLIED.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY OR REPRESENTATION AS TO THE ACCURACY, CURRENCY, COMPLETENESS, RELIABILITY OR USEFULNESS OF INFORMATION DISTRIBUTED THROUGH THE SERVICE. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, NETGEAR AND ESTABLISHMENT EXPRESSLY DISCLAIM ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY THAT THE SERVICE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR FREE, OR THAT SOFTWARE DEFECTS WILL BE CORRECTED OR THAT THIS SITE OR THE SERVER THAT MAKES IT AVAILABLE IS FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY REGARDING ANY GOODS OR SERVICES OR THE DELIVERY OF ANY GOODS OR SERVICES PURCHASED OR OBTAINED THROUGH OR FROM THE SERVICE OR ADVERTISED THROUGH THE SERVICE, OR REGARDING ANY TRANSACTIONS ENTERED INTO THROUGH THE SERVICE. NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED BY YOU VIA THE SERVICE SHALL CREATE ANY WARRANTY NOT EXPRESSLY STATED HEREIN.<br/>
+				Limitation of Liability<br/>
+				TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, UNDER NO CIRCUMSTANCES, INCLUDING, BUT NOT LIMITED TO, NEGLIGENCE, SHALL NETGEAR OR ESTABLISHMENT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES, INCLUDING BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, USE, DATA OR OTHER INTANGIBLES, EVEN IF NETGEAR OR ESTABLISHMENT HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, THAT RESULT FROM THE USE OR THE INABILITY TO USE THE SERVICE, FROM ANY CHANGES TO THE SERVICE, OR FROM UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA.  YOU SPECIFICALLY AGREE THAT NETGEAR OR ESTABLISHMENT ARE NOT RESPONSIBLE OR LIABLE TO YOU OR ANYONE ELSE FOR ANY THREATENING, DEFAMATORY, OBSCENE, OFFENSIVE, TORTIOUS, OR ILLEGAL CONDUCT OF YOURS OR OF ANY OTHER PARTY OR ANY INFRINGEMENT OF ANOTHER’S RIGHTS, INCLUDING INTELLECTUAL PROPERTY RIGHTS, ARISING ON, FROM, OR IN CONNECTION WITH THE SERVICE. YOU ARE SOLELY RESPONSIBLE FOR YOUR OWN CONDUCT IN USING THIS SERVICE, AND WILL INDEMNIFY AND HOLD HARMLESS NETGEAR AND ESTABLISHMENT FROM ANY CLAIMS, LIABILITY, DAMAGES OR COSTS THAT RESULT FROM YOUR CONDUCT IN USING THIS SERVICE.  IF YOU ARE DISSATISFIED WITH THE SERVICE, THE MATERIALS AVAILABLE ON OR THROUGH THE SERVICE, OR WITH ANY PROVISIONS IN THIS LEGAL NOTICE, YOUR SOLE AND EXCLUSIVE REMEDY IS TO DISCONTINUE USING THE SERVICE.<br/>
+			</div>
+			<div class="login-box" id="login_info">
+				<table class="login-tbl" id="login_tbl" style="display:none;">
+					<tr><td>$gp_password_require:</td></tr>
+					<tr><td><input id="cp_pwd" style="border:1px solid #ccc; border-radius:4px; width: 200px;height: 30px;" maxlength="64" size="20" name="cp_password"><td></tr>
+				</table>
+				<div style="padding-left:40px; padding-right:40px;">$gp_hit_agree</div>
+			</div>
+			<button id="ok_btn" type="submit" class="waves-effect waves-light btn button-nav" disabled onclick="return true;">
+				<span><script>document.write("$gp_agree");</script></span>
+			</button>
+		</div>
+</div><!--preview-->
+
+<div id="vlan_sb_sets" style="display:none">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</TABLE>
+<table id="guest_vlan_cfg" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+<tr style="display:none;"><input type="hidden" name="hid_vlan_enable" value="1" />
+	<td nowrap><b>VLAN</b></td>
+	<td nowrap align=right>
+		<select name="vlan_enable">
+			<option value="enable">$r_enable</option>
+			<option value="disable">$r_disable</option>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td nowrap><b>$vlan_id</b></td>
+	<td nowrap align=right>
+		<input type="text" name="vlan_id" value="" size=5>
+	</td>
+</tr>
+</table>
+<input type="hidden" name="hid_wireless_type" value="guest">
+<table id="vlan_ip_conf" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+$bluebar
+<tr id="vlan_ip_hidden_conf">
+<input type="hidden" name="dhcp_mode" disabled>
+<input type="hidden" name="dhcp_start" disabled>
+<input type="hidden" name="dhcp_end" disabled>
+<input type="hidden" name="change_ip_flag" disabled>
+<input type="hidden" name="lan_ipaddr" disabled>
+<input type="hidden" name="lan_subnet" disabled>
+<input type="hidden" name="network" disabled>
+<input type="hidden" name="change_network_flag" disabled>
+<input type="hidden" name="change_network2_flag" disabled>
+<input type="hidden" name="net_leng" disabled>
+<input type="hidden" name="select_edit" disabled>
+<input type="hidden" name="select_del" disabled>
+</tr>
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href="javascript:loadhelp('_lan','tcp')"><B>$lan_mark_ip_head</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="iptext">$lan_mark_ip</span></TD>
+	<TD nowrap align=right>
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr1" id="sys_lan_ipaddress1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr2" id="sys_lan_ipaddress2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr3" id="sys_lan_ipaddress3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr4" id="sys_lan_ipaddress4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="subtext">$lan_mark_subnet</span></TD>
+	<TD nowrap align=right>
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask1" id="sys_lan_netmask1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask2" id="sys_lan_netmask2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask3" id="sys_lan_netmask3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask4" id="sys_lan_netmask4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$rip_dir</TD>
+	<TD nowrap align=right>
+	<select name="rip_direction" id="rip_direction">
+		<option value="Both">$rip_both</option>
+		<option value="In only">$rip_in</option>
+		<option value="Out only">$rip_out</option>
+	</select>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$rip_ver</TD>
+	<TD nowrap align=right>
+	<select name="sysRIPVersion" id="sys_rip_version">
+		<option value="Disabled">$rip_disable</option>
+		<option value="RIP_1">$rip1</option>
+		<option value="RIP_2B">$rip2b</option>
+		<option value="RIP_2M">$rip2m</option>
+	</select>
+	</TD>
+</TR>
+$bluebar
+<TR>
+	<TD nowrap>
+	<input type="checkbox" name="dhcp_server" id="dhcp_server_enable" value='1' onClick="dhcponoff()">
+	<A tabindex=-1 href="javascript:loadhelp('_lan','dhcp')"><B>$lan_mark_dhcp</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="iptext">$lan_dhcp_start</span></TD>
+	<TD nowrap align=right>
+	<input type="text" name="sysPoolStartingAddr1" id="sys_pool_starting_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr2" id="sys_pool_starting_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr3" id="sys_pool_starting_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr4" id="sys_pool_starting_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="subtext">$lan_dhcp_end</span></TD>
+	<TD nowrap align=right>
+	<input type="text" name="sysPoolFinishAddr1" id="sys_pool_finish_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr2" id="sys_pool_finish_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr3" id="sys_pool_finish_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr4" id="sys_pool_finish_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	</TD>
+</TR>
+$bluebar
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href=\"javascript:loadhelp('_lan','reserved')\"><B>$reservation_head</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2><div align=center>
+	<TABLE id="address_reser_table" class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
+	<TR class=table_header>
+		<TD nowrap align=center>&nbsp;</TD>
+		<TD nowrap align=center><span class="subhead">#</span></TD>
+		<TD nowrap align=center><span class="subhead">$info_mark_ip</span></TD>
+		<TD nowrap align=center><span class="subhead">$lan_mark_name</span></TD>
+		<TD nowrap align=center><span class="subhead">$info_mark_mac</span></TD>
+	</TR>
+<script>
+if (have_vlan_sb == 1 && guest_array_num > 0)
+{
+	for(i=1;i<=guest_array_num;i++)
+	{
+		var dhcp_start='<% cfg_get("dhcp_start") %>';
+	        var dhcp_end='<% cfg_get("dhcp_end") %>';
+	        var start_array =dhcp_start.split('.');
+	        var end_array = dhcp_end.split('.');
+		
+		var str = eval ( 'guest_resevArray' + i );
+		var each_info=str.split(' ');
+		var each4=each_info[0].split('.');
+
+		if( i%2== 0 )
+			document.write("<TR class=\"even_line\">");
+		else
+			document.write("<TR class=\"odd_line\">");
+		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="address_select'+i+'" value="'+(i-1)+'"></TD>');
+		document.write('<TD nowrap align=center><span class="subhead">'+i+'</span></TD>');
+		if (each_info[0]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[0]+'</TD>');
+		if (each_info[2]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[2].replace(/</g, "&#60;").replace(/>/g, "&#62;")+'</TD>');
+		if (each_info[1]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD></TR>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[1]+'</TD></TR>');
+	}
+}		
+</script>
+	</TABLE>
+	</div>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2 align=center>
+	<input class="add_bt"  type="button" name="Add" id="add" value="$add_mark" onClick="valid_add('guest');return false;">
+	<input class="edit_bt" type="button" name="Edit" id="edit" value="$edit_mark" onClick="return check_reservation_editnum(document.forms[0], 'guest');">
+	<script>
+	if( master == "admin" )
+		document.write('<input class="delete_bt" type="button" name="Delete" id="delete" value="$delete_mark" onClick="return check_reservation_del( document.forms[0], \'guest\');">');
+	else
+		document.write('<input class="delete1_bt" type="button" name="Delete" id="delete" value="$delete_mark" disabled>');
+	</script>
+	</TD>
+</TR>
+$bluebar
+</TABLE>
+  <table id="vlan_ap_ipconf" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+	<tr id="vlan_ap_hidden_conf">
+	<input type="hidden" name="hid_dyn_get_ip" disabled>
+	<input type="hidden" name="hid_ap_ipaddr" disabled>
+	<input type="hidden" name="hid_ap_subnet" disabled>
+	<input type="hidden" name="hid_ap_gateway" disabled>
+	<input type="hidden" name="ap_dnsaddr1" disabled>
+	<input type="hidden" name="ap_dnsaddr2" disabled>
+	</tr>
+	<TR>
+		<td nowrap colspan=3>$ap_IP</td>
+	</TR>
+	<TR id=ap_radio_1>
+		<TD nowrap colspan=3>
+		<input type="radio" name="dyn_get_ip" checked value="1" onclick="ap_show(0)">$dyn_get_dns
+		</TD>
+	</TR>
+	<TR id=ap_radio_2>
+		<TD nowrap colspan=3>
+		<input type="radio" name="dyn_get_ip" value="0" onclick="ap_show(1)">$fix_dns
+		</TD>
+	</TR>
+	<tr><td>
+			<div class="ipaddres" id="iptab" style="font-size:14px; display: none;">
+		<table width=420px height=210px cellpadding=0 cellspacing=2  border=0 class="iptable">
+		<tr height="15px"></tr>
+		<TR id=ap_addr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$block_ser_setup_ip_jp</TD>
+			<TD nowrap align=right>
+				<input type="text" name="APaddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();"  onKeyPress="return getkey1(event);" >
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_mask>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$router_status_ip_sub</TD>		
+			<TD nowrap align=right>
+				<input type="text" name="APmask1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);" >
+			</TD> 
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_gateway>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$sta_routes_gtwip</TD>		
+			<TD nowrap align=right>
+				<input type="text" name="APgateway1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();"  onKeyPress="return getkey1(event);" >
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_daddr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$basic_int_primary_dns</TD>
+			<TD nowrap align=right>
+			<input type="text" name="APDAddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);">
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_pdaddr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$basic_int_second_dns</TD>
+			<TD nowrap align=right>
+			<input type="text" name="APPDAddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);">
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<tr height="15px"></tr>
+		</table>
+
+		</div>
+	</td></tr>
+	$bluebar
+  </table>
+  </div><!-- vlan_sb_sets -->
+</div><!-- main -->
+<% help_box("0", "_wlan3")%>
+</form>
+<script>
+function endis_password_input(value)
+{
+	if(value == "none")
+	{
+		document.getElementsByName("auth_password")[0].disabled = true;
+		document.getElementById("login_tbl").style.display = "none";
+	}
+	else if(value == "auth")
+	{
+		document.getElementsByName("auth_password")[0].disabled = false;
+		document.getElementById("login_tbl").style.display = "";
+	}
+}
+
+function endis_input_field(flag, name)
+{
+	if(flag == false)
+		document.getElementsByName(name)[0].disabled = true;
+	else
+		document.getElementsByName(name)[0].disabled = false;
+}
+
+function validate_file(type, msize, u, file_id)
+{
+	//check format
+	var name = document.getElementById(file_id).value;
+	var file_name = name;
+	if(name.indexOf("\\") > -1)
+		file_name = name.substring(name.lastIndexOf('\\') +1);
+		
+	var format = file_name.substring(file_name.lastIndexOf('.') +1);
+
+	if(type == "txt" && file_name != "")
+	{
+		if(format != "txt")
+		{	
+			alert("$file_invalid");
+			return false;
+		}
+	}
+	else if(type == "image" && file_name != "")
+	{	
+		if(!(format == "jpg" || format == "JPG" || format == "jpeg" || format == "JPEG" || format == "gif" || format == "GIF" || format == "png" || format == "PNG"))
+		{
+			alert("$file_invalid");
+			return false;
+		}
+	}
+	
+	//check size
+	if(check_size(msize, u, file_id) == false)
+	{
+		alert("$file_size_up "+ msize + u +".");
+		return false;
+	}
+	
+	return true;
+}
+
+function check_size(max_value, unit, id)
+{
+ var maxsize;
+  switch(unit){
+    case 'K':
+    case 'k':
+      maxsize = max_value*1024;
+      break;
+    case 'M':
+    case 'm':
+      maxsize = max_value*1024*1024;
+      break;
+    default:
+      maxsize = max_value;
+      break;
+  }
+
+  var  browserCfg = {};
+  var ua = window.navigator.userAgent;
+  if (ua.indexOf("MSIE")>=1){
+    browserCfg.ie = true;
+  }else if(ua.indexOf("Firefox")>=1){
+    browserCfg.firefox = true;
+  }else if(ua.indexOf("Chrome")>=1){
+    browserCfg.chrome = true;
+  }
+
+  var obj_file = document.getElementById(id);
+  if(obj_file.value==""){
+    return true;
+  }
+  var filesize = 0;
+  if(browserCfg.firefox || browserCfg.chrome ){
+    filesize = obj_file.files[0].size;
+  }else if(browserCfg.ie){
+    var fileSystem = new ActiveXObject("Scripting.FileSystemObject");
+    var file = fileSystem.GetFile(obj_file.value);
+    filesize = file.size;
+  }else{
+    filesize = obj_file.files[0].size;
+  }
+	
+  if(filesize==-1){
+    return true;
+  }else if(filesize>maxsize){
+	return false;
+  }
+  
+  return true;
+}
+
+
+//for IE not support, not use it now.
+function check_width_height(o, isIE)
+{
+	if(isIE == true)
+	{
+		o.select();
+		//确保IE9下，不会出现因为安全问题导致无法访问
+		o.blur();
+		var src = document.selection.createRange().text;
+		var img = $$('<img style="filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=image);"  />').appendTo('body').getDOMNode();
+		img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
+		var width = img.offsetWidth;
+		var height = img.offsetHeight;
+		$(img).remove();
+		alert("w="+width+" h="+height);
+	}
+	else
+	{
+		//读取图片数据
+		var fileData = o.files[0];
+		var reader = new FileReader();
+		reader.onload = function (e) {
+			var data = e.target.result;
+			//加载图片获取图片真实宽度和高度
+			var image = new Image();
+			image.onload=function(){
+				var width = image.width;
+				var height = image.height; 
+				alert("ff+ch w="+width+" h="+height);
+			};
+			image.src= data;
+		};
+		reader.readAsDataURL(fileData);
+	}
+}
+
+var minWidth = 200;
+var minHeight = 200;
+var isMinLogo = false;
+var logoErrorMsg = "$logo_dimension"
+var txtErrorMsg = "$tac_decode";
+
+function check_logo_width_and_height(s, btn)
+{
+	var img = new Image();	
+	img.onload = function(){
+		var w = img.width;
+		var h = img.height;
+
+		if(w < minWidth || h < minHeight)
+		{
+			isMinLogo = true;
+			alert(logoErrorMsg);
+		}
+		else
+		{
+			isMinLogo = false;
+			if(btn == "preview")
+				$$("#logo").attr("src", s);
+			else if( btn == "apply")
+			{//for cannot get the isMinLogo value right time, move the after code to here.
+				var display_items1 = ["page_title", "fix_button", "main"];
+				var display_items2 = ["formframe_wait_div"];
+				var tos = $$("#txt_text").val();
+
+				switch_item_display(display_items2, display_items1);
+				if(tos != "")
+					upload_file('browse_txt');
+				if(tos == "")
+					upload_file('browse_logo');
+				else
+					setTimeout("upload_file('browse_logo');", 2000);
+				setTimeout('document.forms[0].submit();', 7000);
+			}
+		}
+	};
+	img.src = s;
+}
+
+function show_file_name(value, dest_id)
+{
+	var file_name = value;
+	if(value.indexOf("\\") > -1)
+		file_name = value.substring(value.lastIndexOf('\\') +1);
+		
+	if(file_name)
+		document.getElementById(dest_id).value = file_name;
+}
+
+function validateURL(redUrl)
+{
+    /*only length check done for URL */
+    if ((redUrl.length == 0) || (redUrl.length > 256))
+    {
+        return false;
+    }
+	if((/^(http|https):\/\//).test(redUrl) == true)
+		return (/^(http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/).test(redUrl);
+	else
+		return (/^[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?/).test(redUrl);
+}
+
+function validate_ssid(ssid)
+{
+	var ssid_len = ssid.length;
+	var form = document.forms[0];
+	var mssid = form.main_ssid.value;
+	var bssid = form.byod_ssid.value;	
+	
+	if(ssid == mssid || ssid == bssid)
+	{
+		alert("$ssid_not_allowed_same");
+		return false;
+	}
+	
+	for(var i=0;i<ssid.length;i++)
+	{
+		if(ssid.charCodeAt(i)==32)//space
+			ssid_len--;
+	}
+	if(ssid == "" || ssid_len == 0)
+	{
+		alert("$ssid_null");
+		return false;
+	}
+	for(var i=0; i<ssid.length; i++)
+	{
+		if(isValidChar_space(ssid.charCodeAt(i))==false)
+		{
+			alert(ssid + "$ssid_not_allowed");
+			return false;
+		}
+	}
+	return true;
+}
+
+function check_toc_and_logo_both()
+{
+	var current_toc = "<% cfg_get("user_text_name") %>";
+	var current_logo = "<% cfg_get("user_img_name") %>";
+	var toc = $$("#txt_text").val();
+	var logo = $$("#logo_text").val();
+	
+	if(current_toc == "" && current_logo == "")
+	{
+		if((toc != "" && logo == "") || (toc == "" && logo !=""))
+		{
+			alert("$gp_tac_and_logo");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function click_apply(cf)
+{
+	if(validate_ssid(cf.guest_ssid.value) == false)
+		return false;
+	if(cf.auth_type.value == "auth")
+	{
+		var passwd = cf.auth_password.value;
+		if(passwd == "")
+		{
+			alert("$gp_password_no_blank");
+			return false;
+		}
+		for(i=0;i<passwd.length;i++)
+		{       
+			if(isValidChar_space(passwd.charCodeAt(i))==false)
+			{
+				alert("$password_error");
+				return false;
+			}
+		}
+	}
+
+	if(cf.use_url[0].checked == true)
+		cf.hid_cp_url.value = "";
+	else if(cf.use_url[1].checked == true)
+	{
+		var url = cf.user_url.value
+		if(validateURL(url) == false)
+		{
+			alert("$gp_invalid_url");
+			return false;
+		}
+		else
+		{
+			if((/^(http|https):\/\//).test(url) == true)
+				cf.hid_cp_url.value = url;
+			else
+				cf.hid_cp_url.value = "http://" + url;
+		}
+	}	
+
+	//save the setting
+	if(cf.enable_guest_portal.checked == true)
+		cf.hid_enable_guest_portal.value = "1";
+	else
+		cf.hid_enable_guest_portal.value = "0";
+	if(cf.enable_ssid_broadcast.checked == true)
+		cf.hid_enable_ssid_broadcast.value = "1";
+	else
+		cf.hid_enable_ssid_broadcast.value = "0";
+	if(cf.auth_type[0].checked == true)
+		cf.hid_guest_auth_type.value = "none";
+	else if(cf.auth_type[1].checked == true)
+		cf.hid_guest_auth_type.value = "auth";
+	cf.hid_expire_time.value = cf.expire_time.value;
+	
+	if(have_vlan_sb == 1){
+		var vid = cf.vlan_id.value;
+		if(check_vlan_id(vid) == false)
+			return false;
+		if(cf.vlan_enable.value == "disabled")
+			cf.hid_vlan_enable.value = "0";
+		else
+			cf.hid_vlan_enable.value = "1";
+		//current page user cannot set vlan_enable, so not post hid_vlan_enable data.
+		cf.hid_vlan_enable.disabled = true;
+		
+		//check vlan_ip_conf and set to hidden input
+		if(router_mode == "router" && check_lan("byod", cf) == false)
+			return false;
+			
+		//check vlan_ap_ipconf
+		if(router_mode == "ap" && check_ap("byod", cf) == false)
+			return false;
+	}
+	
+	//if user have select file, post the file first
+	var tos = $$("#txt_text").val();
+	var logo = $$("#logo_text").val();
+	
+	if(check_toc_and_logo_both() == false)
+		return false;
+		
+	if(tos !="")
+	{
+		upload_temp_file('browse_txt', 'apply');
+	}
+	else if(tos == "" && logo != "")
+	{
+		upload_temp_file('browse_logo', 'apply');
+	}
+	else if(tos == "" && logo == "")
+		cf.submit();
+}
+
+function check_vlan_id(id)
+{
+	var main_vlanid = main_wireless_vlan_group.split(" ")[2];
+	var byod_vlanid = byod_wireless_vlan_group.split(" ")[2];
+	
+	if(id.length == 0)
+	{
+		alert("$vlan_error1");
+		return false;
+	}
+	if(!_isNumeric(id) || (parseInt(id,10) <1 || parseInt(id,10) >4094))
+	{
+		alert("$vlan_error3");
+		return false;
+	}
+	if(id == main_vlanid || id == byod_vlanid)
+	{
+		alert("$vlanid_duplicate")
+		return false;
+	}
+	
+	return true;
+}
+
+function switch_item_display(sids, hids)
+{
+	for(var i=0; i<sids.length; i++)
+	{
+		document.getElementById(sids[i]).style.display = "";
+	}
+	for(var i=0; i<hids.length; i++)
+	{
+		document.getElementById(hids[i]).style.display = "none";
+	}
+}
+
+function pop_preview_div()
+{
+	var cf = document.forms[0];
+
+	document.getElementById("preview").style.display = "";
+	if(cf.auth_type[0].checked == true)
+		document.getElementById("login_tbl").style.display = "none";
+	else
+		document.getElementById("login_tbl").style.display = "";	
+}
+
+function click_preview()
+{
+	//if user have select file upload first before show preview div
+	var display_items1 = ["page_title", "fix_button", "main"];
+	var display_items2 = ["formframe_wait_div"];
+	var tos = $$("#txt_text").val();
+	var logo = $$("#logo_text").val();
+	
+	if(check_toc_and_logo_both() == false)
+		return false;
+		
+	if(tos != "")
+	{
+		upload_temp_file('browse_txt', 'preview');		
+	}
+	if(logo != "")
+	{
+		if(tos == "")
+			upload_temp_file('browse_logo', 'preview');
+		else
+			setTimeout("upload_temp_file('browse_logo', 'preview');", 2000)
+	}
+
+	if(tos !="" || logo != "")
+	{
+		document.getElementsByName("preview")[0].disabled = true;
+	}
+	else
+		pop_preview_div();
+	
+}
+
+function close_preview()
+{
+	document.getElementById("preview").style.display = "none";
+}
+
+function display_user_file(id, btn)
+{
+	var time =  new Date().getTime();
+	var logo = $$("#logo_text").val();
+	if(id == "browse_txt")
+	{
+		$$.ajax({
+			url: "/guest_portal_text.txt?ts=" + time,
+			type:"GET",
+			success: function(data){
+				if(data.indexOf("#") > -1)
+				{
+					var check_result = data.substr(0, data.indexOf("#"));
+					var txt_content = data.substr(data.indexOf("#")+1);
+				}else
+					return;
+				if(check_result== 0)//if file is not utf8, would not exist.
+					alert(txtErrorMsg);
+				else
+				{
+					$$("#user_text").html(txt_content);
+					switch_item_display(["user_text"], ["netgear_text"]);
+					/*apply with txt and log flow is upload_temp_file('txt') to check txt if is utf8 encoded.
+					  if is utf8 upload_temp_file('logo') to check logo width and height.
+					  if ok, upload the file txt and logo and submit.							
+					*/
+					if(btn == "apply")
+					{
+						var display_items1 = ["page_title", "fix_button", "main"];
+						var display_items2 = ["formframe_wait_div"];
+						if(logo != "")//if have logo file, should check if logo width and height first.
+							upload_temp_file('browse_logo', 'apply');
+						else
+						{
+							switch_item_display(display_items2, display_items1);
+							upload_file('browse_txt');
+							setTimeout('document.forms[0].submit();', 5000);
+						}
+					}
+				}
+				if(document.getElementById("user_text").style.display != "none")
+					switch_item_display(["user_text"], ["netgear_text"]);
+				if(logo == "" && btn == "preview")
+				{
+					pop_preview_div();
+					document.getElementsByName("preview")[0].disabled = false;
+				}			
+			}
+		});
+	}
+	else if(id == "browse_logo")
+	{		
+		$$.ajax({
+			url: "/guest_portal_image.txt?ts=" +time,
+			type:"GET",
+			success: function(data){
+				var img_src = data;
+				check_logo_width_and_height(img_src, btn);
+				if(btn == "preview")
+					pop_preview_div();
+				document.getElementsByName("preview")[0].disabled = false;
+				
+			}
+		});
+	}
+}
+
+function upload_file(id)
+{
+	/*var file_obj = document.getElementById(id);
+	var file_name = file_obj.value;
+
+	if(file_name == "")
+	{
+		alert("Please select a file!");
+		return false;
+	}*/
+	var name = document.getElementById(id).value;
+	var file_name = name;	
+	var format = file_name.substring(file_name.lastIndexOf('.') +1);
+
+	var form_data = new FormData();
+	form_data.append(format, $$("#"+id)[0].files[0]);
+	$$.ajax({
+		url: "/upload_file.cgi?/guest_portal.html timestamp=" + ts,
+		type: "POST",
+		data: form_data,
+		processData: false,
+		contentType: false,
+		success: function(data){
+			//display_user_file(id);
+		}
+	});
+	
+}
+
+function upload_temp_file(id, btn)
+{
+	var name = document.getElementById(id).value;
+	var file_name = name;	
+	var format = file_name.substring(file_name.lastIndexOf('.') +1);
+	var form_data = new FormData();
+	form_data.append(format, $$("#"+id)[0].files[0]);
+	$$.ajax({
+		url: "/upload_temp_file.cgi?/guest_portal.html timestamp=" + ts,
+		type: "POST",
+		data: form_data,
+		processData: false,
+		contentType: false,
+		success: function(data){
+			display_user_file(id, btn);
+		}
+	});
+	
+}
+
+function check_browser()
+{
+  var  browserCfg = {};
+  var ua = window.navigator.userAgent;
+  if (ua.indexOf("MSIE")>=1){
+    browserCfg.ie = true;
+  }else if(ua.indexOf("Firefox")>=1){
+    browserCfg.firefox = true;
+  }else if(ua.indexOf("Chrome")>=1){
+    browserCfg.chrome = true;
+  }
+  return browserCfg;
+}
+//because chrome cannot show fileType in select file window, if accept have many type paralleing.
+function change_file_accept()
+{
+	var B = check_browser();
+	if(B.chrome == true)
+		$$("#browse_logo").attr("accept", "image/*");
+}
+
+function show_fbwifi_sets(btn, val)
+{
+	var add_btn = ["fb_wifi_set1"];
+	var change_btn = ["fb_wifi_set2"];
+	var form = document.forms[0];
+	if(btn == "add")
+	{
+		switch_item_display(add_btn, change_btn);
+	}
+	else if(btn == "change")
+	{
+		switch_item_display(change_btn, add_btn);
+		form.fb_username.value = val;
+	}
+	if(gw_id == "" || get_endis_guestNet != "1")
+	{
+		form.add_page.disabled = true;
+		form.change_page.disabled = true;
+	}
+	else
+	{
+		form.add_page.disabled = false;
+		form.change_page.disabled = false;
+	}
+}
+
+var get_count = 0;
+function get_gw_id()
+{
+	$$.ajax({
+		url: "/fb_username.html?ts=" + new Date().getTime(),
+		type: "GET",
+		success: function(data){
+			eval(data);
+			gw_id = gw_id_val;
+			if(gw_id_val != "")
+			{
+				show_fbwifi_sets("add", "");
+			}
+			else if(gw_id_val == "" && get_count < 8)
+			{
+				get_count++;
+				setTimeout("get_gw_id()", 500);
+			}
+		}
+	});	
+}
+
+function get_fbwifi_username()
+{
+	$$.ajax({
+		url: "/fb_username.html?ts=" + new Date().getTime(),
+		type: "GET",
+		success: function(data){
+			eval(data);
+			var status = get_status;
+			if(status == "1")
+			{
+				var fb_username = user_info;
+				show_fbwifi_sets("change", fb_username["page"]["name"]);
+			}
+			else if(status == "0")
+				setTimeout("get_fbwifi_username()", 1000);
+		}
+	});
+}
+
+function change_auth_mode(mode)
+{
+	var local_items = ["local_wifi_auth", "customize_sets"];
+	var fb_items = ["fb_sets"];
+	
+	if(mode == "local")
+	{
+		switch_item_display(local_items, fb_items);
+	}
+	else if(mode == "fbwifi")
+	{
+		switch_item_display(fb_items, local_items);
+		document.getElementById("fb_sets").style.display = "";
+	}
+}
+
+function goto_facebook_site()
+{
+	cf = document.forms[0];
+	if(gw_id != "" && cf.auth_mode[1].checked == true)
+	{
+		var config_site = "https://www.facebook.com/wifiauth/config?gw_id=" + gw_id;
+		window.open(config_site);
+	}
+}
+</script>
+<div id="formframe_wait_div" style="background-color:#fff; width:100%; height:100%;overflow:hidden;font-size:10pt;font-family: Arial; display:none;">
+			<div align="center"><br /><br /><b>$wizard_pls_wait</b><br /><br /></div>
+			<div align="center"><img src="image/wait30.gif" /></div>
+</div>
+</body>
+</html>
+

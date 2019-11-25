@@ -1,0 +1,50 @@
+<% http_head("EXT_STR0666", "js/connectDevices.js") %>
+<body class="connectDevices postSetup twoColumns <% status_icon("0") %>">
+<div id="fixedtop"></div>
+<% top_bar() %>
+<% save_timestamp("select_language","change_language") %>
+<% lang_change_status_finish() %>
+<script>
+var ts = "<% cfg_get("wifi_devices") %>";
+var wps_progress_status="<% wps_process_status() %>";
+var accessCtrlOn = "<% cfg_get("wl_acl_enable") %>";
+var link_status = "<% cat_file("/tmp/link_status") %>";
+</script>
+
+<div class="container sliderWrap" id="wifiSettingsDiv">
+<% cur_menus("connectedDevice") %>
+<div id="slider">
+	<div class="main clearfix">
+
+	<h1>$EXT_STR0666</h1>
+
+	<div class="clearfix" id="connectedDevices">
+		<div class="sectionDetails connectedDevices">
+
+			<div class="tableControl">
+				<h3>$orbi_satellite_device</h3>
+				<a id="refreshBt" class="btn roundCorners refreshBtn" onClick="$$.refreshAttachedDevices();"><i class="dnintg-refresh"></i><span id="refreshBt2">$refresh_mark</span></a>
+			</div>
+			<table class="devicesList wiredDevices roundCorners" id="tableSort1">
+				<thead>
+					<tr>
+						<th>$lan_mark_ip</th>
+						<th>$lan_mark_name</th>
+						<th>$qos_mac</th>
+						<th>$trigger_contype</th>
+					</tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
+
+		</div>
+	</div><!-- end connected devices -->
+
+</div> <!-- end main -->
+</div>
+<% page_footer() %>
+</div> <!-- end container -->
+
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+
+</head>
+
+<body onLoad="loadvalue();">
+<% tos_form_submit() %>
+<script>
+	function loadvalue(){
+		setTimeout("document.forms[0].submit()", 6000);
+	}
+</script>
+<input type="hidden" name="hid_save_time" value="1">
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_check_conn);</script></div>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+#!/bin/sh /etc/rc.common
+
+CONFIG="/bin/config"
+flash_type="$($CONFIG get dgc_flash_type)"
+
+#EMMC flash data
+devtable_mtd_dev=$(part_dev device_table 2>/dev/null)
+
+#nond flash data
+ubidev=$(ubinfo -a | grep -B5 vol_devtable | sed -nr 's/Volume ID:.*\(on (ubi.*)\)/\1/p')
+LOCAL_DEVICE_TABLE=/tmp/device_tables/local_device_table
+
+copy_devicetables_files()
+{
+	[ ! -e /tmp/device_tables/oui.csv ] && cp /etc/oui.csv /tmp/device_tables/
+	[ ! -e /tmp/device_tables/mam.csv ] && cp /etc/mam.csv /tmp/device_tables/
+	[ ! -e /tmp/device_tables/oui36.csv ] && cp /etc/oui36.csv /tmp/device_tables/
+	[ ! -e /tmp/device_tables/UA_String_Match_Table.txt ] && cp /etc/UA_String_Match_Table.txt /tmp/device_tables/
+	[ ! -e /tmp/device_tables/device_type_table.json ] && cp /etc/device_type_table.json /tmp/device_tables/
+	[ ! -e /tmp/device_tables/local_device_table ] && touch /tmp/device_tables/local_device_table
+}
+
+start()
+{
+	mkdir -p /tmp/netscan
+	touch /tmp/device_user_defined
+	local flag=0
+	if [ "x$flash_type" == "xEMMC" ];then
+		if [ "x$(df |grep $devtable_mtd_dev)" = "x" ]; then
+			[ ! -d /tmp/device_tables ] && mkdir -p /tmp/device_tables
+			mount $devtable_mtd_dev /tmp/device_tables -t ext4
+			if [ $? -ne 0 ]; then
+				mkfs.ext4 $devtable_mtd_dev
+				mount $devtable_mtd_dev /tmp/device_tables -t ext4
+				[ $? -eq 0 ] && flag=1 || flag=0
+			else
+				flag=1
+			fi
+		fi
+	else
+		if [ "x$(ubinfo -a|grep vol_ntgrdata)" != "x" ]; then
+			ln -s /tmp/ntgrdata/devtable /tmp/device_tables
+		elif [ "x$(df |grep $ubidev:vol_devtable)" = "x" ]; then
+			[ ! -d /tmp/device_tables ] && mkdir -p /tmp/device_tables
+			mount $ubidev:vol_devtable /tmp/device_tables -t ubifs
+			if [ $? -ne 0 ]; then
+				mount $ubidev:vol_devtable /tmp/device_tables -t ubifs
+				[ $? -eq 0 ] && flag=1 || flag=0
+			else
+				flag=1
+			fi
+
+			check_file_format
+
+		fi
+	fi
+
+    #get interface info and save in /tmp/netscan_if_conf
+    /etc/init.d/netscan_if.init
+
+	copy_devicetables_files 
+
+	PS=`ps |grep net-scan | grep -v grep`
+	if [ "x$PS" = "x" ]; then
+		/usr/sbin/net-scan
+	else
+		killall -9 net-scan
+		/usr/sbin/net-scan
+	fi
+	PS=`ps |grep satellite_ctype | grep -v grep`
+	if [ "x$PS" = "x" ]; then
+		/etc/init.d/satellite_ctype start &
+	fi
+}
+
+stop()
+{
+	killall -9 net-scan
+	if [ "x$flash_type" == "xEMMC" ];then
+		umount $devtable_mtd_dev
+	else
+		umount /tmp/device_tables
+	fi
+}
+
+reload()
+{
+	cp /tmp/netscan_if_conf /tmp/netscan_if_conf.old
+	cp /tmp/netscan_if_typechar_name /tmp/netscan_if_typechar_name.old
+	/etc/init.d/netscan_if.init
+	conf_change=`diff -ruN /tmp/netscan_if_conf.old /tmp/netscan_if_conf`
+	name_change=`diff -ruN /tmp/netscan_if_typechar_name.old /tmp/netscan_if_typechar_name`
+	if [ "$conf_change" != "" ] || [ "$name_change" != "" ]; then
+		stop
+		start
+	fi
+	rm -rf /tmp/netscan_if_conf.old /tmp/netscan_if_typechar_name.old 
+}
+
+boot()
+{
+	if [ "x$flash_type" == "xEMMC" ];then
+		local flag
+		if [ "x$(df |grep $devtable_mtd_dev)" = "x" ]; then
+			[ ! -d /tmp/device_tables ] && mkdir -p /tmp/device_tables
+			mount $devtable_mtd_dev /tmp/device_tables -t ext4
+			if [ $? -ne 0 ]; then
+				mkfs.ext4 $devtable_mtd_dev
+				mount $devtable_mtd_dev /tmp/device_tables -t ext4
+				[ $? -eq 0 ] && flag=1 || flag=0
+			else
+				flag=1
+			fi
+			copy_devicetables_files 
+		fi
+	fi
+
+	maintain_acl_conf
+	check_file_format
+	start
+}
+
+check_file_format()
+{
+	while read line
+	do
+		var=`echo $line | awk -F "," '{printf $2}'`
+		var1=`echo $line | awk -F "," '{printf $8}'`
+		if [ "$(echo $var | bc 2>/dev/null)" != "$var" -o "x$var1" = "x" ]; then
+			rm -f $LOCAL_DEVICE_TABLE
+			touch /tmp/device_tables/local_device_table
+			break
+		fi
+	done < $LOCAL_DEVICE_TABLE
+
+}
+
+maintain_acl_conf()
+{
+	flag=false
+	num=1
+	var=access_control_value
+
+	while [ "x$var" != "x" ]
+	do
+		var=`$CONFIG get access_control$num`
+		echo $var >> /tmp/acl_file1
+		num=$(($num + 1))
+	done
+
+	awk '!x[$2]++' /tmp/acl_file1 >> /tmp/acl_file2
+
+	num=1
+	count_1=`cat /tmp/acl_file1 | wc -l`
+	count_2=`cat /tmp/acl_file2 | wc -l`
+	if [ $count_1 -ne $count_2 ]; then
+		flag=true
+		while [ $num -ne $count_2 ]
+		do
+			$CONFIG unset access_control$num
+			num=$(($num +1 ))
+		done
+	fi
+
+	if [ $flag ]; then
+		num=1
+		while read line
+		do
+			if [ ${#line} -gt 32 ]; then
+				$CONFIG set access_control$num="$line"
+				num=$(($num + 1))
+			fi
+			if [ $num -eq 128 ]; then
+				break;
+			fi
+		done < /tmp/acl_file2
+	fi
+
+	num_t=129
+	num=0
+	while [ $num_t -lt 3000 ]
+	do
+		var=`$CONFIG get access_control$num_t`
+		if [ "x$var" != "x" ]; then
+			while [ $num -lt $num_t ]
+			do
+				$CONFIG unset access_control$num
+				num=$(($num + 1))
+			done
+		fi
+		num_t=$(($num_t + 100))
+	done
+	rm -f /tmp/acl_file1 /tmp/acl_file2
+}

@@ -1,0 +1,14 @@
+--- procd-2015-10-29.1/rcS.c-org	2017-06-26 19:48:40.056240028 +0800
++++ procd-2015-10-29.1/rcS.c	2017-06-26 19:49:17.148238853 +0800
+@@ -55,9 +55,9 @@
+ 		*newline = 0;
+ 		len = newline + 1 - str;
+ 		syslog(0, "%s", str);
+-#ifdef SHOW_BOOT_ON_CONSOLE
++//#ifdef SHOW_BOOT_ON_CONSOLE
+ 		fprintf(stderr, "%s\n", str);
+-#endif
++//#endif
+ 		ustream_consume(s, len);
+ 	} while (1);
+ }

@@ -1,0 +1,240 @@
+comment "Product's information"
+
+config DGC_MODULE_NAME
+	string "Module name"
+	default DGC_PRODUCT_NAME
+	help
+	  Specify product's module name, it's same as DGC_PRODUCT_NAME in generally.
+	  in target/linux/*/image/Makefile may use this config to generate image.
+
+config DGC_MODULE_NAME_CC
+	string "Sub-module name"
+	default DGC_PRODUCT_NAME_CC
+	help
+	  Specify product's sub-module name, it's same as DGC_PRODUCT_NAME_CC in generally, only used for some products such as Orbi-mini.
+	  in target/linux/*/image/Makefile may use this config to generate image.
+
+config DGC_HW_VERSION
+	string "Hardware version"
+	default DGC_PRODUCT_NAME
+	help
+	  Specify product's hardware name, it's same as DGC_PRODUCT_NAME in generally.
+	  in target/linux/*/image/Makefile may use this config to generate image.
+
+config DGC_HW_ID
+	string "Hardware id"
+	default ""
+	help
+	  specify product's hardware id, the value should be provided by hardware designed RD.
+	  HW_ID will be used in u-boot and firmware to check image.
+
+config DGC_HW_ID_CC
+	string "Hardware id"
+	default ""
+	help
+	  specify product's hardware id, the value should be provided by hardware designed RD.
+	  HW_ID_CC will be used in u-boot and firmware to check image.
+
+config DGC_DEVICE_NAME
+	string "Device Name"
+	default ""
+	help
+	  Specify the Produce Device Name for the Device Type define.
+
+config DGC_PRDL
+	string "Product line"
+	default ""
+	help
+	  the PRDL value at the firmware header
+
+comment "Firmware's information"
+
+config DGC_FW_VERSION
+	string "Firmware version"
+	default ""
+	help
+	  Specify firmware version string.
+	  e.g. "V1.0.1.20".
+
+config DGC_LG_VERSION
+	string "Language version"
+	default ""
+	help
+	  Specify language version string.
+	  e.g. "V1.0.0.244".
+
+config DGC_FW_REGION
+	string "Firmware region"
+	default ""
+	help
+	  Specify firmware region string.
+	  e.g. "WW", "NA" etc.
+
+config DGC_CLOUD_VERSION
+	string "ReadyGenieCloud binary version"
+	default ""
+	help
+	  Specify ReadyGenieCloud binary version.
+
+config DGC_FW_KERNEL_SIZE
+	string "Specify firmware kernel size"
+	default ""
+	help
+	  Specify firmware kernel size.
+
+config DGC_FW_ROOTFS_SIZE
+	string "Specify firmware rootfs size"
+	default ""
+	help
+	  Specify firmware rootfs size
+
+config DGC_FW_KERNEL_SIZE_CC
+	string "Specify firmware kernel size CC"
+	default ""
+	help
+	  Specify firmware kernel size.
+
+config DGC_FW_ROOTFS_SIZE_CC
+	string "Specify firmware rootfs size CC"
+	default ""
+	help
+	  Specify firmware rootfs size
+
+config TARGET_LINUX_GIT_TREEISH
+	string
+	prompt "treeish of linux git repository"
+	default ""
+	help
+	  Input the treeish of linux git repository which you want to build
+
+config TARGET_LINUX_GIT_REPOSITORY
+	string
+	prompt "name of linux git repository"
+	default ""
+	help
+	  Input the name of linux git repository which you want to build
+
+config TARGET_NETFILTER_GIT_TREEISH
+	string
+	prompt "treeish of netfilter git repository"
+	default ""
+	help
+	  Input the treeish of netfilter git repository which you want to build
+
+config TARGET_NETFILTER_GIT_REPOSITORY
+	string
+	prompt "name of netfilter git repository"
+	default ""
+	help
+	  Input the name of netfilter git repository which you want to build
+
+comment "DTS position's information"
+
+config DGC_DTS_BASE1
+	string "BASE stores the DTS file name of position 1"
+	default ""
+	help
+	  BASE stores the DTS file name of position 1
+
+config DGC_DTS_BASE2
+	string "BASE stores the DTS file name of position 2"
+	default ""
+	help
+	  BASE stores the DTS file name of position 2
+
+config DGC_DTS_BASE3
+	string "BASE stores the DTS file name of position 3"
+	default ""
+	help
+	  BASE stores the DTS file name of position 3
+
+config DGC_DTS_BASE4
+	string "BASE stores the DTS file name of position 4"
+	default ""
+	help
+	  BASE stores the DTS file name of position 4
+
+config DGC_DTS_BASE5
+	string "BASE stores the DTS file name of position 5"
+	default ""
+	help
+	  BASE stores the DTS file name of position 5
+
+config DGC_DTS_BASE6
+	string "BASE stores the DTS file name of position 6"
+	default ""
+	help
+	  BASE stores the DTS file name of position 6
+
+config DGC_DTS_BASE7
+	string "BASE stores the DTS file name of position 7"
+	default ""
+	help
+	  BASE stores the DTS file name of position 7
+
+config DGC_DTS_BASE8
+	string "BASE stores the DTS file name of position 8"
+	default ""
+	help
+	  BASE stores the DTS file name of position 8
+
+config DGC_DTS_BASE9
+	string "BASE stores the DTS file name of position 9"
+	default ""
+	help
+	  BASE stores the DTS file name of position 9
+
+config DGC_DTS_SATELLITE1
+	string "SATELLITE stores the DTS file name of position 1"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 1
+
+config DGC_DTS_SATELLITE2
+	string "SATELLITE stores the DTS file name of position 2"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 2
+
+config DGC_DTS_SATELLITE3
+	string "SATELLITE stores the DTS file name of position 3"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 3
+
+config DGC_DTS_SATELLITE4
+	string "SATELLITE stores the DTS file name of position 4"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 4
+
+config DGC_DTS_SATELLITE5
+	string "SATELLITE stores the DTS file name of position 5"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 5
+
+config DGC_DTS_SATELLITE6
+	string "SATELLITE stores the DTS file name of position 6"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 6
+
+config DGC_DTS_SATELLITE7
+	string "SATELLITE stores the DTS file name of position 7"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 7
+
+config DGC_DTS_SATELLITE8
+	string "SATELLITE stores the DTS file name of position 8"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 8
+
+config DGC_DTS_SATELLITE9
+	string "SATELLITE stores the DTS file name of position 9"
+	default ""
+	help
+	  SATELLITE stores the DTS file name of position 9
+

@@ -1,0 +1,24 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org 
+
+START=99
+start() {
+	tt3_support=`/bin/config get dgc_func_have_tt3`
+	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		if [ "x$tt3_support" = "x1" ];then
+			#in factory-tt3 mode, keep solid red
+			[ "x$(/bin/config get factory_tt3)" = "x1" ] || /sbin/ledcontrol -n all -c green -s off > /dev/null 2>&1
+		else
+			/sbin/ledcontrol -n all -c green -s off > /dev/null 2>&1
+		fi
+		/bin/rm /sbin/ping-netgear
+		echo "in factory mode"
+	else
+		/sbin/ping-netgear &
+	fi
+	[ -f /etc/sysctl.conf ] && sysctl -p >&-
+	[ -d /etc/sysctl.d ] && \
+		for i in /etc/sysctl.d/*.conf; do
+			sysctl -p $i >&-
+		done
+}

@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+
+[ $(/bin/config get factory_mode) -eq 1 ] && return
+
+start() {
+	/sbin/cmd_ddns start
+}
+
+stop() {
+	/sbin/cmd_ddns stop
+}
+
+restart() {
+	/sbin/cmd_ddns restart
+}
+

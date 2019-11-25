@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<% cfg_set("from_nowan_retry", "0") %>
+</head>
+
+<body>
+<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+<% save_timestamp("wizard_detwan", "hijack_to_manual")%>
+<script>
+var hijack_process="<% cfg_get("hijack_process") %>";
+var ts="<% cfg_get("wizard_detwan") %>";
+function genienowanChecking()
+{
+	var cf = document.forms[0];
+	if($$('#nic-config-yes').is(":checked"))
+	{
+		if(parent.business_ap_detect == 1)
+			this.location.href = "BRS_00_01_check_ap_wait.html";
+		else
+			this.location.href = "BRS_01_checkNet_ping.html";
+		return false;
+	}
+	else
+	{
+		cf.action = "/apply.cgi?/BRS_orbi_satellite_start.html timestamp=" + ts;
+		cf.submit_flag.value = "hijack_to_manual";
+		return true;
+	}
+}
+</script>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- No Internet Cable is Plugged -->
+		<div id="card-no-internet-cable" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<div class="desc-title"><script>document.write(bh_orbi_nowan);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_nowan_msg);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_tryagain_msg);</script></div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="help_choice" type="radio" id="nic-config-yes" value="0" checked="">
+						<label for="nic-config-yes"></label>
+					</p>
+
+					<div class="bullet"><script>document.write(bh_yes_mark);</script></div>
+				</div>
+            </div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="help_choice" type="radio" id="nic-config-no" value="1">
+						<label for="nic-config-no"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_no_mark);</script>, </div>
+					<span class="desc-title-bullet"><script>document.write(bh_orbi_manual_config);</script></span>
+				</div>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return genienowanChecking();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

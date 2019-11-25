@@ -1,0 +1,785 @@
+<% http_header("style/form.css", "/funcs.js", "/wlan.js", "lan.js", "/reservation.js") %>
+<% body_header("_wlan2", "WLG_byod_network.html", "byod_network") %>
+<style>
+.ipaddres {
+    height: 50%;
+    left: 22%;
+    position: absolute;
+    top: 200px;
+    width: 50%;
+    z-index: 3;
+}
+.iptable {
+    background: rgba(0, 0, 0, 0) url("../image/ap_map_700.gif") no-repeat scroll 0 0;
+}
+</style>
+
+<div class="tab_contain" style="display:none;">
+<table style="margin-top:20px;">
+	<tr><td>
+		<div class="label_unclick" id="tab1" onclick="click_tab('1')">
+		<div class="label_left"></div>
+		<div class="label_middle"><b><span>$wireless 1</span></b></div>
+		<div class="label_right"></div>
+	</div>
+	<div class="label_click" id="tab2" onclick="click_tab('2')">
+		<div class="label_left"></div>
+		<div class="label_middle"><b><span>$wireless 2</span></b></div>
+		<div class="label_right"></div>
+	</div>
+	</td></tr>
+</table>
+$bluebar
+</div>
+<div class="fix_button">
+<TABLE cellspacing=2 cellPadding=0 width=100% border=0>
+<TR><td width="40%"><b>$network_employee</b></td>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TD nowrap align=left><input class="cancel_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" onClick="location.href=\'WLG_byod_network.html\';">&nbsp;&nbsp;<input class="apply_bt" name="Apply" id="apply" type="button" value="$apply_mark" onclick="click_apply()"></TD>');
+else
+	document.write('<TD nowrap align=left><input class="cancel1_bt" name="Cancel" id="cancel" type="button" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" name="Apply" id="apply" type="button" value="$apply_mark" disabled></TD>');
+</script>
+</tr>
+</TABLE>
+</div>
+<% save_timestamp("byod_network","reservation_editnum","reservation_del") %>
+<script>
+var ts = "<% cfg_get("byod_network") %>";
+var have_vlan_sb = top.vlan_sb_flag;
+var main_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_0") %>";
+var byod_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_1") %>";
+var guest_wireless_vlan_group = "<% cfg_get("vlan_sb_base_group_2") %>";
+<% show_byod_wlan_config() %>
+
+var str_none="";
+var str_wep="";
+var str_wpa="";
+var str_wpa2="";
+var str_wpas="";
+var str_wpae="";
+
+var wl_type = "byod";
+var other_ipdata = [{"type":"", "ip": "", "mask":""}, {"type":"", "ip": "", "mask":""}];
+//lan ip config
+var router_mode = "<% cfg_get("rae_cur_mode") %>";
+var old_lanip="<% cfg_get("byod_lan_ipaddr") %>";
+var old_lanmask="<% cfg_get("byod_lan_netmask") %>";
+var wan_type="<% cfg_get("wan_proto") %>";
+var wan_ip="<% test_wan_ip() %>";
+var wan_mask="<% test_wan_netmask() %>";
+var bas_pptp_ip="<% bas_pptp_ip() %>";
+<% reservation_items_xss() %>
+
+//ap mode ip config
+var dyn_get_ip_flag="<% cfg_get("byod_ap_ether_ip_assign") %>";
+
+function setSecurity(num)
+{
+	var form=document.forms[0];
+	form.wpa2_press_flag.value=0;
+	form.wpas_press_flag.value=0;
+	form.wla_wpa2_press_flag.value=0;
+	form.wla_wpas_press_flag.value=0;
+	if(num==4)
+	{
+		getObj("view").innerHTML=str_wpa2;
+	}
+	else if(num==5)
+	{
+		getObj("view").innerHTML=str_wpas;
+	}
+	else
+		getObj("view").innerHTML=str_none;
+}
+
+function loadvalue()
+{
+	var form = document.forms[0];
+	if(byod_enable == "1")
+		form.enable_byod.checked = true;
+	else
+		form.enable_byod.checked = false;
+	if(enable_ssid_broadcast == "1")
+		form.enable_ssid_broadcast.checked = true;
+	else
+		form.enable_ssid_broadcast.checked = false;
+	if(enable_allow_see_access == "1")
+		form.enable_allow_see_access.checked = true;
+	else
+		form.enable_allow_see_access.checked = false;
+
+	if(secType=="4")
+		form.security_type[1].checked=true;	
+	else if (secType=="5")
+		form.security_type[2].checked=true;
+	else
+		form.security_type[0].checked=true;
+	str_none=getObj("none").innerHTML;
+	str_none=str_none.replace(/\`/g, "&#96;");
+	str_wpa2=getObj("wpa2").innerHTML;
+	str_wpa2=str_wpa2.replace(/\`/g, "&#96;");
+	str_wpas=getObj("wpas").innerHTML;
+	str_wpas=str_wpas.replace(/\`/g, "&#96;");
+	getObj("none").innerHTML='';	
+	getObj("wpa2").innerHTML='';	
+	getObj("wpas").innerHTML=''
+	
+	setSecurity(secType);
+	
+	if(have_vlan_sb == 1)
+	{
+		document.getElementById("byod_vlan_cfg").style.display = "";
+		var vlan_enable = byod_wireless_vlan_group.split(" ")[0];
+		var vlan_id = byod_wireless_vlan_group.split(" ")[2];
+		if(vlan_enable == "1")
+			form.vlan_enable.value = "enable";
+		else
+			form.vlan_enable.value = "disable";
+		form.vlan_id.value = vlan_id;
+	
+		//about lan config
+		if(router_mode == "router")
+		{
+			other_ipdata[0].type = "LAN Setup";
+			other_ipdata[0].ip = "<% cfg_get("lan_ipaddr") %>";
+			other_ipdata[0].mask = "<% cfg_get("lan_netmask") %>";
+			other_ipdata[1].type = "Guest Portal";
+			other_ipdata[1].ip = "<% cfg_get("geust_lan_ipaddr") %>";
+			other_ipdata[1].mask = "<% cfg_get("guest_lan_netmask") %>";
+
+			document.getElementById("vlan_ip_conf").style.display = "";
+			var form=document.forms[0];
+			var dhcp_start='<% cfg_get("byod_dhcp_start") %>';
+			var dhcp_end='<% cfg_get("byod_dhcp_end") %>';
+			var lanip_array = old_lanip.split(".");
+			form.sysLANIPAddr1.value=lanip_array[0];
+			form.sysLANIPAddr2.value=lanip_array[1];
+			form.sysLANIPAddr3.value=lanip_array[2];
+			form.sysLANIPAddr4.value=lanip_array[3];
+			var mask_array = old_lanmask.split(".");
+			form.sysLANSubnetMask1.value=mask_array[0];
+			form.sysLANSubnetMask2.value=mask_array[1];
+			form.sysLANSubnetMask3.value=mask_array[2];
+			form.sysLANSubnetMask4.value=mask_array[3];
+			form.sysPoolStartingAddr1.value = form.sysPoolFinishAddr1.value=lanip_array[0];
+			form.sysPoolStartingAddr2.value = form.sysPoolFinishAddr2.value= lanip_array[1];
+			form.sysPoolStartingAddr3.value = form.sysPoolFinishAddr3.value=lanip_array[2];	
+			var start_array =dhcp_start.split('.');
+			var end_array = dhcp_end.split('.');
+			form.sysPoolStartingAddr4.value=start_array[3];
+			form.sysPoolFinishAddr4.value=end_array[3];
+			if( '<% cfg_get("byod_lan_dhcp") %>' == '1')
+				form.dhcp_server.checked = true;
+			else
+				form.dhcp_server.checked = false;
+			dhcponoff();
+			var sysRIPVersion="<% cfg_get("byod_rip_version") %>";
+			if(sysRIPVersion=="0")
+				form.sysRIPVersion.value="Disabled";
+			else if(sysRIPVersion=="1")
+				form.sysRIPVersion.value="RIP_1";
+			else if(sysRIPVersion=="2")
+				form.sysRIPVersion.value="RIP_2B";
+			else if(sysRIPVersion=="3")
+				form.sysRIPVersion.value="RIP_2M";
+			var rip_direction="<% cfg_get("byod_rip_direction") %>";
+			if(rip_direction=="0")
+				form.rip_direction.value="Both";
+			else if(rip_direction=="1")
+				form.rip_direction.value="In only";
+				else if(rip_direction=="2")
+				form.rip_direction.value="Out only";
+			else if(rip_direction=="3")
+				form.rip_direction.value="None";
+			enabled_input_elements("vlan_ip_hidden_conf");
+		}
+		else if(router_mode == "ap")
+		{	
+			other_ipdata[0].type = "AP Mode";
+			other_ipdata[0].ip = "<% cfg_get("ap_ipaddr") %>";
+			other_ipdata[0].mask = "<% cfg_get("ap_netmask") %>";
+			other_ipdata[1].type = "Guest Portal";
+			other_ipdata[1].ip = "<% cfg_get("guest_ap_ipaddr") %>";
+			other_ipdata[1].mask = "<% cfg_get("guest_ap_netmask") %>";
+			
+			var form=document.forms[0];
+			document.getElementById("vlan_ap_ipconf").style.display = "";
+			if(dyn_get_ip_flag == '0')
+			{
+				form.dyn_get_ip[1].checked = true;
+				document.getElementById("iptab").style.display="";
+			}
+			else
+			{
+				form.dyn_get_ip[0].checked = true;
+				document.getElementById("iptab").style.display="none";				
+			}
+			var apmode_get_ip="<% cfg_get("byod_ap_ipaddr") %>";
+			if (apmode_get_ip!="")
+			{
+				if(apmode_get_ip=="0.0.0.0")
+					form.APaddr1.value="";
+				else
+				{
+					form.APaddr1.value=apmode_get_ip;
+				}
+			}
+			var apmode_get_subnet="<% cfg_get("byod_ap_netmask") %>";
+			if (apmode_get_subnet!="")
+			{
+				if(apmode_get_subnet=="0.0.0.0")
+					form.APmask1.value=""; 
+				else
+				{
+					form.APmask1.value=apmode_get_subnet;
+				}
+			}
+			var apmode_get_gateway="<% cfg_get("byod_ap_gateway") %>";
+			if (apmode_get_gateway!="")
+			{
+				if(apmode_get_gateway=="0.0.0.0")
+				{
+					form.APgateway1.value="";
+				}
+				else
+				{
+					form.APgateway1.value=apmode_get_gateway;
+				}
+			}
+			var apmode_get_dns1="<% cfg_get("byod_ap_ether_dns1") %>";
+			if (apmode_get_dns1!="" && apmode_get_dns1.indexOf(":")==-1)
+			{
+				if(apmode_get_dns1=="0.0.0.0")
+				form.APDAddr1.value="";
+				else
+				{
+					form.APDAddr1.value=apmode_get_dns1;
+				}
+			}
+			var apmode_get_dns2="<% cfg_get("byod_ap_ether_dns2") %>";
+			if (apmode_get_dns2!="" && apmode_get_dns2.indexOf(":")==-1)
+			{
+				if(apmode_get_dns2=="0.0.0.0")
+				form.APPDAddr1.value="";
+				else
+				{
+					form.APPDAddr1.value=apmode_get_dns2;
+				}
+			}
+			enabled_input_elements("vlan_ap_hidden_conf");
+		}
+	}
+}
+
+
+</script>
+
+<div id="main" class="main_top_button">
+<input type="hidden" name="sec_wpaphrase_len">
+<input type="hidden" name="wpa2_press_flag" value=0>
+<input type="hidden" name="wpas_press_flag" value=0>
+<input type="hidden" name="wla_wpa2_press_flag" value=0>
+<input type="hidden" name="wla_wpas_press_flag" value=0>
+<input type="hidden" name="hid_enable_byod" value="" />
+<input type="hidden" name="hid_enable_ssid_broadcast" value=""/>
+<input type="hidden" name="hid_enable_allow_see_access" value=""/>
+<input type="hidden" name="hid_secType" value="" />
+<input type="hidden" name="byod_hidden_wpa_psk" value="" />
+
+<TABLE width=100%% border=0 cellpadding=0 cellspacing=3>
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href="javascript:loadhelp('_wlan2','wl_setting')"><B>$wlan_mark</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type=checkbox name="enable_byod" id="enable_byod" value='1'>$enable_wireless2
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type=checkbox name="enable_ssid_broadcast" id="enable_ssid_broadcast" value='1'>$adva_wlan_ssid_broadcast
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type=checkbox name="enable_allow_see_access" id="enable_allow_see_access" value='1'>$wlan_byod_see_access
+	</TD>
+</TR>
+<tr style="display:none">
+	<td><input type="text" name="wlssid" value="<% cfg_get_ssid_value("wl_ssid") %>" size="20" maxlength="32"></td>
+	<td><input type="text" name="wlassid" value="<% cfg_get_ssid_value("wla_ssid") %>" size="20" maxlength="32"></td>
+	<td><input type="text" name="wlg1ssid" value="<% cfg_get_ssid_value("wlg1_ssid") %>" size="20" maxlength="32"></td>
+	<td><input type="text" name="wla1ssid" value="<% cfg_get_ssid_value("wla1_ssid") %>" size="20" maxlength="32"></td>
+</tr>
+<TR>	
+	<TD nowrap>$wireless2_network :
+	</TD>
+	<TD nowrap><input type="text" name="ssid" id="ssid" value="<% cfg_get_ssid_value("wlg2_ssid") %>" size="20" maxlength="32"></TD>
+</TR>
+</TABLE>
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</TABLE>
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+<TR>
+	<TD nowrap colspan=2><A tabindex=-1 href="javascript:loadhelp('_wlan2','security')"><B>$sec_type</B></TD></A>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_disable" value="Disable" onClick=setSecurity(1)>$sec_off
+	<TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_wpa2" value="WPA2-PSK" onClick=setSecurity(4)>$sec_wpa2
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>
+	<input type="radio" name="security_type" id="security_auto" value="AUTO-PSK" onClick=setSecurity(5)>$sec_wpas
+	</TD>
+</TR>
+</TABLE>
+<div id=view></div>
+<div align="center" ID="none" style="position:absolute;top:0;left:0;visibility:hidden">
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	<TR>
+		<TD nowrap colspan=2></TD>
+	</TR>
+	</TABLE>
+</div>   
+ 
+<div align="center" ID="wpa2" style="position:absolute;top:0;left:0;visibility:hidden">  
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	$bluebar
+	<TR>
+		<TD nowrap colspan=2>
+		<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','wpa2-psk')"><B>$sec_type (WPA2-PSK)</B></A>
+		</TD>
+	</TR>
+	<TR>
+		<TD nowrap>
+		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
+		</TD>
+		<TD nowrap>
+		<input type="text" id="wpa2_passphrase" maxlength="64" autocomplete="off" size="20" name="wpa2_passphrase" value="<% cfg_sed_passphrase("wlg2_wpa2_psk") %>"
+		onFocus="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;" 
+		onKeyPress="document.forms[0].wpa2_press_flag.value=1;document.forms[0].wla_wpa2_press_flag.value=1;">
+		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
+		</TD>
+	</TR>
+	</TABLE>
+</div>
+
+<div align="center" ID="wpas" style="position:absolute;top:0;left:0;visibility:hidden">
+	<TABLE cellspacing=5 cellPadding=0 width=100% border=0>
+	$bluebar
+	<TR>
+		<TD nowrap colspan=2>
+		<A tabindex=-1 href="javascript:loadhelp('_wlan_guest_bgn','wpa-psk+wpa2-psk')"><B>$sec_type (WPA-PSK + WPA2-PSK)</B></A>
+		</TD>
+	</TR>
+	<TR>
+		<TD nowrap>
+		<span class="optiondesc" id="wpaPwdPhraseText">$sec_phr :</span>
+		</TD>
+		<TD nowrap>
+		<input type="text" id="wpas_passphrase" size="20" autocomplete="off" maxlength="64" name="wpas_passphrase" value="<% cfg_sed_passphrase("wlg2_wpas_psk") %>"
+		onFocus="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;" 
+		onKeyPress="document.forms[0].wpas_press_flag.value=1;document.forms[0].wla_wpas_press_flag.value=1;">
+		<span class="optiondesc" id="wpaPwdPhrExtText">$sec_863_or_64h</span>
+		</TD>	  
+	</TR>
+	</TABLE>
+</div>
+
+<TABLE width=100% border=0 cellpadding=0 cellspacing=3>
+$bluebar
+</table>
+<table id="byod_vlan_cfg" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+<tr style="display:none;"><input type="hidden" name="hid_vlan_enable" value="1" />
+	<td nowrap><b>VLAN</b></td>
+	<td nowrap align=right>
+		<select name="vlan_enable">
+			<option value="enable">$r_enable</option>
+			<option value="disable">$r_disable</option>
+		</select>
+	</td>
+</tr>
+<tr>
+	<td nowrap><b>$vlan_id</b></td>
+	<td nowrap align=right>
+		<input type="text" name="vlan_id" value="" size=5>
+	</td>
+</tr>
+</table>
+<input type="hidden" name="hid_wireless_type" value="byod">
+<table id="vlan_ip_conf" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+$bluebar
+<tr id="vlan_ip_hidden_conf">
+<input type="hidden" name="dhcp_mode" disabled>
+<input type="hidden" name="dhcp_start" disabled>
+<input type="hidden" name="dhcp_end" disabled>
+<input type="hidden" name="change_ip_flag" disabled>
+<input type="hidden" name="lan_ipaddr" disabled>
+<input type="hidden" name="lan_subnet" disabled>
+<input type="hidden" name="network" disabled>
+<input type="hidden" name="change_network_flag" disabled>
+<input type="hidden" name="change_network2_flag" disabled>
+<input type="hidden" name="net_leng" disabled>
+<input type="hidden" name="select_edit" disabled>
+<input type="hidden" name="select_del" disabled>
+</tr>
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href="javascript:loadhelp('_lan','tcp')"><B>$lan_mark_ip_head</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="iptext">$lan_mark_ip</span></TD>
+	<TD nowrap align=right>
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr1" id="sys_lan_ipaddress1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr2" id="sys_lan_ipaddress2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr3" id="sys_lan_ipaddress3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANIPAddr4" id="sys_lan_ipaddress4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="subtext">$lan_mark_subnet</span></TD>
+	<TD nowrap align=right>
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask1" id="sys_lan_netmask1" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask2" id="sys_lan_netmask2" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask3" id="sys_lan_netmask3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">.
+	<input type="text" size="3" autocomplete="off" maxlength="3" name="sysLANSubnetMask4" id="sys_lan_netmask4" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);" onblur="lanip_change(document.forms[0])">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$rip_dir</TD>
+	<TD nowrap align=right>
+	<select name="rip_direction" id="rip_direction">
+		<option value="Both">$rip_both</option>
+		<option value="In only">$rip_in</option>
+		<option value="Out only">$rip_out</option>
+	</select>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$rip_ver</TD>
+	<TD nowrap align=right>
+	<select name="sysRIPVersion" id="sys_rip_version">
+		<option value="Disabled">$rip_disable</option>
+		<option value="RIP_1">$rip1</option>
+		<option value="RIP_2B">$rip2b</option>
+		<option value="RIP_2M">$rip2m</option>
+	</select>
+	</TD>
+</TR>
+$bluebar
+<TR>
+	<TD nowrap>
+	<input type="checkbox" name="dhcp_server" id="dhcp_server_enable" value='1' onClick="dhcponoff()">
+	<A tabindex=-1 href="javascript:loadhelp('_lan','dhcp')"><B>$lan_mark_dhcp</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="iptext">$lan_dhcp_start</span></TD>
+	<TD nowrap align=right>
+	<input type="text" name="sysPoolStartingAddr1" id="sys_pool_starting_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr2" id="sys_pool_starting_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr3" id="sys_pool_starting_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolStartingAddr4" id="sys_pool_starting_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap><span id="subtext">$lan_dhcp_end</span></TD>
+	<TD nowrap align=right>
+	<input type="text" name="sysPoolFinishAddr1" id="sys_pool_finish_address1" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr2" id="sys_pool_finish_address2" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr3" id="sys_pool_finish_address3" size="3" autocomplete="off" maxlength="3" disabled>.
+	<input type="text" name="sysPoolFinishAddr4" id="sys_pool_finish_address4" size="3" autocomplete="off" maxlength="3" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	</TD>
+</TR>
+$bluebar
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href=\"javascript:loadhelp('_lan','reserved')\"><B>$reservation_head</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2><div align=center>
+	<TABLE id="address_reser_table" class=tables border=0 cellpadding=2 cellspacing=0 width=100%>
+	<TR class=table_header>
+		<TD nowrap align=center>&nbsp;</TD>
+		<TD nowrap align=center><span class="subhead">#</span></TD>
+		<TD nowrap align=center><span class="subhead">$info_mark_ip</span></TD>
+		<TD nowrap align=center><span class="subhead">$lan_mark_name</span></TD>
+		<TD nowrap align=center><span class="subhead">$info_mark_mac</span></TD>
+	</TR>
+<script>
+if (have_vlan_sb == 1 && byod_array_num > 0)
+{
+	for(i=1;i<=byod_array_num;i++)
+	{
+		var dhcp_start='<% cfg_get("dhcp_start") %>';
+	        var dhcp_end='<% cfg_get("dhcp_end") %>';
+	        var start_array =dhcp_start.split('.');
+	        var end_array = dhcp_end.split('.');
+		
+		var str = eval ( 'byod_resevArray' + i );
+		var each_info=str.split(' ');
+		var each4=each_info[0].split('.');
+
+		if( i%2== 0 )
+			document.write("<TR class=\"even_line\">");
+		else
+			document.write("<TR class=\"odd_line\">");
+		document.write('<TD nowrap align=center><input type="radio" name="ruleSelect" id="address_select'+i+'" value="'+(i-1)+'"></TD>');
+		document.write('<TD nowrap align=center><span class="subhead">'+i+'</span></TD>');
+		if (each_info[0]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[0]+'</TD>');
+		if (each_info[2]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[2].replace(/</g, "&#60;").replace(/>/g, "&#62;")+'</TD>');
+		if (each_info[1]=="<unknown>")
+			document.write('<TD nowrap align=center> &lt;$unknown_mark&gt;</TD></TR>');
+		else
+			document.write('<TD nowrap align=center>'+each_info[1]+'</TD></TR>');
+	}
+}		
+</script>
+	</TABLE>
+	</div>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2 align=center>
+	<input class="add_bt"  type="button" name="Add" id="add" value="$add_mark" onClick="valid_add('byod');return false;">
+	<input class="edit_bt" type="button" name="Edit" id="edit" value="$edit_mark" onClick="return check_reservation_editnum(document.forms[0], 'byod');">
+	<script>
+	if( master == "admin" )
+		document.write('<input class="delete_bt" type="button" name="Delete" id="delete" value="$delete_mark" onClick="return check_reservation_del( document.forms[0], \'byod\');">');
+	else
+		document.write('<input class="delete1_bt" type="button" name="Delete" id="delete" value="$delete_mark" disabled>');
+	</script>
+	</TD>
+</TR>
+$bluebar
+</TABLE>
+<table id="vlan_ap_ipconf" width=100% border=0 cellpadding=0 cellspacing=3 style="display:none">
+	<tr id="vlan_ap_hidden_conf">
+	<input type="hidden" name="hid_dyn_get_ip" disabled>
+	<input type="hidden" name="hid_ap_ipaddr" disabled>
+	<input type="hidden" name="hid_ap_subnet" disabled>
+	<input type="hidden" name="hid_ap_gateway" disabled>
+	<input type="hidden" name="ap_dnsaddr1" disabled>
+	<input type="hidden" name="ap_dnsaddr2" disabled>
+	</tr>
+	<TR>
+		<td nowrap colspan=3>$ap_IP</td>
+	</TR>
+	<TR id=ap_radio_1>
+		<TD nowrap colspan=3>
+		<input type="radio" name="dyn_get_ip" checked value="1" onclick="ap_show(0)">$dyn_get_dns
+		</TD>
+	</TR>
+	<TR id=ap_radio_2>
+		<TD nowrap colspan=3>
+		<input type="radio" name="dyn_get_ip" value="0" onclick="ap_show(1)">$fix_dns
+		</TD>
+	</TR>
+	<tr><td>
+			<div class="ipaddres" id="iptab" style="font-size:14px; display: none;">
+		<table width=420px height=210px cellpadding=0 cellspacing=2  border=0 class="iptable">
+		<tr height="15px"></tr>
+		<TR id=ap_addr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$block_ser_setup_ip_jp</TD>
+			<TD nowrap align=right>
+				<input type="text" name="APaddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();"  onKeyPress="return getkey1(event);" >
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_mask>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$router_status_ip_sub</TD>		
+			<TD nowrap align=right>
+				<input type="text" name="APmask1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);" >
+			</TD> 
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_gateway>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$sta_routes_gtwip</TD>		
+			<TD nowrap align=right>
+				<input type="text" name="APgateway1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();"  onKeyPress="return getkey1(event);" >
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_daddr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$basic_int_primary_dns</TD>
+			<TD nowrap align=right>
+			<input type="text" name="APDAddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);">
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<TR id=ap_pdaddr>
+		<TD width="10px"></TD>
+			<TD>&nbsp;</TD>
+			<TD nowrap>$basic_int_second_dns</TD>
+			<TD nowrap align=right>
+			<input type="text" name="APPDAddr1"  size="20" autocomplete="off" maxlength="20" onFocus="this.select();" onKeyPress="return getkey1(event);">
+			</TD>
+			<td width="20px"></td>
+		</TR>
+		<tr height="15px"></tr>
+		</table>
+
+		</div>
+	</td></tr>
+	$bluebar
+  </table>
+ </div><!-- main_setting -->
+</form>
+<script>
+function click_apply()
+{
+	var cf = document.forms[0];
+	
+	//check ssid
+	var ssid = cf.ssid.value;
+	var wl_ssid = cf.wlssid.value;
+	var guest_ssid = cf.wlg1ssid.value;
+	if(ssid == "")
+	{
+		alert("$ssid_null");
+		return false;
+	}
+
+     if(ssid == wl_ssid || ssid == guest_ssid)
+     {
+		alert("$ssid_not_allowed_same");
+        return false;
+     }
+	for(i=0;i<ssid.length;i++)
+	{
+		if(isValidChar_space(ssid.charCodeAt(i))==false)
+		{
+			alert(ssid + "$ssid_not_allowed");
+			return false;
+		}
+	}
+	
+	//check password
+	if(cf.security_type[1].checked == true)
+	{
+		var passphrase = cf.wpa2_passphrase;
+		if(checkpsk(passphrase, cf.sec_wpaphrase_len) == false)
+			return false;
+	}
+	else if(cf.security_type[2].checked == true)
+	{
+		var passphrase = cf.wpas_passphrase;
+		if(checkpsk(passphrase, cf.sec_wpaphrase_len) == false)
+			return false;
+	}
+	
+	//save the setting
+	cf.hid_enable_byod.value = (cf.enable_byod.checked == true)? "1": "0";
+	cf.hid_enable_ssid_broadcast.value = (cf.enable_ssid_broadcast.checked == true)? "1": "0";
+	cf.hid_enable_allow_see_access.value = (cf.enable_allow_see_access.checked == true)? "1": "0";
+	if(cf.security_type[1].checked == true)
+	{
+		cf.hid_secType.value = "4";
+		cf.byod_hidden_wpa_psk.value = cf.wpa2_passphrase.value;
+	}
+	else if(cf.security_type[2].checked == true)
+	{
+		cf.hid_secType.value = "5";
+		cf.byod_hidden_wpa_psk.value = cf.wpas_passphrase.value;
+	}
+	else
+		cf.hid_secType.value = "1";
+		
+	if(have_vlan_sb == 1){
+		var vid = cf.vlan_id.value;
+		if(check_vlan_id(vid) == false)
+			return false;
+		if(cf.vlan_enable.value == "disabled")
+			cf.hid_vlan_enable.value = "0";
+		else
+			cf.hid_vlan_enable.value = "1";
+		//current page use cannot set vlan_enable, so not post hid_vlan_enable value.
+		cf.hid_vlan_enable.disabled = true;
+	
+		//check vlan_ip_conf and set to hidden input
+		if(router_mode == "router" && check_lan("byod", cf) == false)
+			return false;
+			
+		//check vlan_ap_ipconf
+		if(router_mode == "ap" && check_ap("byod", cf) == false)
+			return false;
+	}
+	
+	cf.submit();
+}
+
+function check_vlan_id(id)
+{
+	var main_vlanid = main_wireless_vlan_group.split(" ")[2];
+	var guest_vlanid = guest_wireless_vlan_group.split(" ")[2];
+
+	if(id.length == 0)
+	{
+		alert("$vlan_error1");
+		return false;
+	}
+	if(!_isNumeric(id) || (parseInt(id,10) <1 || parseInt(id,10) >4094))
+	{
+		alert("$vlan_error3");
+		return false;
+	}
+
+	if(id == main_vlanid || id == guest_vlanid)
+	{
+		alert("$vlanid_duplicate");
+		return false;
+	}
+	
+	return true;
+}
+
+function click_tab(tab)
+{
+	if(tab == "1")
+	{
+		document.getElementById("tab1").className = "label_click";
+		document.getElementById("tab2").className = "label_unclick";
+		location.href = "WLG_wireless.htm"
+	}
+	else
+	{
+		document.getElementById("tab1").className = "label_unclick";
+		document.getElementById("tab2").className = "label_click";
+	}
+}
+
+
+	document.getElementsByClassName("tab_contain")[0].style.display = "";
+	document.getElementsByClassName("fix_button")[0].style.top = "100px";
+	document.getElementsByClassName("main_top_button")[0].style.top = "162px";
+</script>
+<% help_box("0", "_wlan2") %>
+</body>
+</html>

@@ -1,0 +1,52 @@
+#!/bin/sh
+#local wan_proto=`config get wan_proto`
+local enable_iptv=`config get enable_vlan`
+local vlan_type=`config get vlan_type`
+local vlan_pri="0"
+VCONFIG_CMD="/sbin/vconfig"
+ORG_FLAG=0
+status=$1
+local WAN_IF=$2
+
+if [ "$WAN_IF" = "brwan" ]; then
+	WAN_IF="eth0.832"
+else
+	exit 0
+fi
+
+if [ $vlan_type -eq 1 -a $enable_iptv -eq 1 ]; then
+	for i in 0 1 2 3 4 5 6 7 8 9 10; do
+		tv=`config get vlan_tag_$i`
+		[ -n "$tv" ] || continue
+		set - $(echo $tv)
+		# $1: enable, $2: name, $3: vid, $4: pri, $5:wports, $6:wlports
+		[ "$1" = "1" ] || continue
+		vlan_id=$3
+		if [ "$vlan_id" = "832" -o "$vlan_id" = "835" ]; then
+			ORG_FLAG=1
+			vlan_pri=$4
+			break
+		fi
+	done
+fi
+
+if [ "$ORG_FLAG" = "1" ]; then
+	if [ "$status" = "0" ]; then
+		# status 0: wan is connecting.
+		$VCONFIG_CMD set_egress_map $WAN_IF 0 $vlan_pri
+		echo "set vlan priority $vlan_pri for Orange wan dhcp($WAN_IF)."
+	else
+		# status 1: wan is up.
+		$VCONFIG_CMD set_egress_map $WAN_IF 0 0
+		$VCONFIG_CMD set_egress_map $WAN_IF 1 1
+		$VCONFIG_CMD set_egress_map $WAN_IF 2 2
+		$VCONFIG_CMD set_egress_map $WAN_IF 3 3
+		$VCONFIG_CMD set_egress_map $WAN_IF 4 4
+		$VCONFIG_CMD set_egress_map $WAN_IF 5 5
+		$VCONFIG_CMD set_egress_map $WAN_IF 6 6
+		$VCONFIG_CMD set_egress_map $WAN_IF 7 7
+		echo "set egress priority mapping 0:0 1:1 2:2 3:3 4:4 5:5 6:6 7:7 for Orange wan traffic."
+	fi
+fi
+
+exit 0

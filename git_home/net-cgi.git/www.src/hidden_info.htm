@@ -1,0 +1,161 @@
+<% http_header("style/form.css") %>
+
+<script>
+</script>
+
+<BODY bgcolor=#FFFFFF>
+<table>
+<TR>
+	<TD nowrap><B>FW Version : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/firmware_version") %><% get_firmware_region("single_blank", "ww_blank") %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>Series number : </B></TD>
+	<TD nowrap> &nbsp;<% get_sn() %> &nbsp;</TD>
+</TR>
+<tbody id=wireless_info>
+<TR>
+	<TD nowrap><B>Wireless Region : </B></TD>
+	<TD nowrap> &nbsp;<% wireless_region_Eng() %>&nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>2.4G SSID : </B></TD>
+	<TD nowrap> &nbsp;<% cfg_get_ssid_html("wl_ssid") %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>2.4G PassPhrase :</B></TD>
+	<TD nowrap> &nbsp;<% passphrase_bg_msg() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>2.4G Data rate : </B></TD>
+	<TD nowrap> &nbsp;<% wl_mode("wl_") %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>2.4G Channel : </B></TD>
+	<TD nowrap> &nbsp;<% wl_channel() %> &nbsp;</TD>
+</TR>
+<TR id=bgcoext>
+<TD nowrap><B>2.4G Coexist :</B></TD>
+<TD nowrap> &nbsp;<% cfg_get_inverse_value("wl_disablecoext") %> &nbsp;</TD>
+</TR>
+<TR id=anssid>
+<TD nowrap><B>5G SSID : </B></TD>
+<TD nowrap> &nbsp;<% cfg_get_ssid_html("wla_ssid") %> &nbsp;</TD>
+</TR>
+<TR id=anpass>
+<TD nowrap><B>5G PassPhrase :</B></TD>
+<TD nowrap> &nbsp;<% passphrase_ag_msg() %> &nbsp;</TD>
+</TR>
+<TR id=an_wlamode>
+<TD nowrap><B>5G Data rate : </B></TD>
+<TD nowrap> &nbsp;<% wl_mode("wla_") %> &nbsp;</TD>
+</TR>
+<TR id=an_wlachannel>
+<TD nowrap><B>5G Channel : </B></TD>
+<TD nowrap> &nbsp;<% wla_channel() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>Backhaul SSID : </B></TD>
+	<TD nowrap> &nbsp;<% get_backhaul_ssid() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>Backhaul Passphrase : </B></TD>
+	<TD nowrap> &nbsp;<% get_backhaul_passphrase() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>2G WLAN MAC : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/mac_addr_2g") %> &nbsp;</TD>
+</TR>
+<TR>
+<TR id=an_wdsmac>
+<TD nowrap><B>5G WLAN MAC : </B></TD>
+<TD nowrap> &nbsp;<% cat_file_xss("/tmp/mac_addr_5g") %>  &nbsp;</TD>
+</TR>
+<TR>
+<TD nowrap><B>2nd5G WLAN MAC : </B></TD>
+<TD nowrap> &nbsp;<% cat_file_xss("/tmp/mac_addr_2nd5g") %>  &nbsp;</TD>
+</TR>
+</tbody>
+<TR>
+	<TD nowrap><B>LAN MAC : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/lan_mac") %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>WAN MAC : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/wan_mac") %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>Bluetooth MAC : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/mac_addr_bt") %> &nbsp;</TD>
+</TR>
+<TR id=pin_code>
+	<TD nowrap><B>PIN Code : </B></TD>
+	<TD nowrap> &nbsp;<% pin_num() %> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>Region : </B></TD>
+        <TD nowrap> &nbsp;<% get_firmware_region() %> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>Language : </B></TD>
+        <TD nowrap> &nbsp;<% language_list() %> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>Board HW ID : </B></TD>
+        <TD nowrap> &nbsp;<% get_board_hw_id() %> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>Board Model ID : </B></TD>
+        <TD nowrap> &nbsp;<% get_board_model_id() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>Board Data : </B></TD>
+	<TD nowrap> &nbsp;<% get_board_data() %> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>start page : </B></TD>
+        <TD nowrap> &nbsp;<% endis_setup_wizard() %> &nbsp;</TD>
+</TR>
+<TR id=ethernet_wan_speed>
+        <TD nowrap><B>WAN speed : </B></TD>
+        <TD nowrap> &nbsp;<% cat_file_xss("/tmp/WAN_status")%> &nbsp;</TD>
+</TR>
+<TR id=check_lang>
+        <TD nowrap><B>language version : </B></TD>
+        <TD nowrap> &nbsp;<% cat_file("/firmware_language_version")%> &nbsp;</TD>
+</TR>
+<TR id=check_lang_version>
+	<TD nowrap><B>language check : </B></TD>
+	<TD nowrap> &nbsp;<% show_lang_check_result() %> &nbsp;</TD>
+</TR>
+<TR>
+	<TD nowrap><B>HW revision : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/hw_revision")%> &nbsp;</TD>
+</TR>
+<tbody id=vpn_info>
+<TR>
+        <TD nowrap><B>VPN Cert : </B></TD>
+        <TD nowrap> &nbsp;<% cat_file_xss("/tmp/openvpn/cert.info")%> &nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>VPN Cert begin time : </B></TD>
+        <TD nowrap> &nbsp;<% show_vpn_expire_time("1")%>&nbsp;</TD>
+</TR>
+<TR>
+        <TD nowrap><B>VPN Cert end time : </B></TD>
+        <TD nowrap> &nbsp;<% show_vpn_expire_time("2")%> &nbsp;</TD>
+</TR>
+</tbody>
+<% show_bitflip_count() %>
+<script>
+<% vpn_show_flag() %>
+if(vpn_show_flag == 0)
+        document.getElementById("vpn_info").style.display="none";
+else
+        document.getElementById("vpn_info").style.display="";
+</script>
+<% list_satellite_ip() %>
+</table>
+</BODY>
+</HTML>
+

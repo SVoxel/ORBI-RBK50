@@ -1,0 +1,126 @@
+comment "Router Feature Information"
+
+config DGC_FUNC_HAVE_USB
+	bool "USB Feature Support"
+	help
+	  Specify if USB Feature Support
+
+config DGC_FUNC_HAVE_VPN
+	bool "VPN Feature Support"
+	help
+	  Specify if VPN Feature Support
+
+config DGC_FUNC_HAVE_GUEST_PORTAL
+	bool "Guest Portal Feature Support"
+	help
+	  Specify if Guest Porttal Feature Support
+
+config DGC_FUNC_HAVE_DUAL_IMAGE
+	bool "Dual Image Feature Support"
+	help
+	  Specify if Dual Image Feature Support
+
+config DGC_FUNC_HAVE_READYSHARE_PRINTER
+	bool "Orbi ReadyShare Printer Feature Support"
+	help
+	  Specify if Orbi ReadyShare Printer Feature Support
+
+config DGC_FUNC_HAVE_GUEST_NETWORK
+	bool "Guest Network Feature Support"
+	help
+	  Specify if Guest Network Feature Support
+
+config DGC_FUNC_HAVE_BYOD_NETWORK
+	bool "Byod Network Feature Support"
+	help
+	  Specify if Byod Network Feature Support
+
+config DGC_FUNC_HAVE_DNI_PARENTAL_CTL
+	bool "Dni Parental Control Feature Support"
+	help
+	  Specify if Dni Parental Control Feature Support
+
+config DGC_FUNC_HAVE_VLAN
+	bool "VLAN Feature Support"
+	help
+	  Specify if VLAN Feature Support
+
+config DGC_FUNC_HAVE_VLAN_SB
+	bool "VLAN SB Feature Support"
+	help
+	  Specify if VLAN SB Feature Support
+
+config DGC_FUNC_HAVE_BUSINESS_AP_DETECT
+	bool "Business AP Detect Feature Support"
+	help
+	  Specify if Business AP Detect Feature Support
+
+config DGC_FUNC_HAVE_WIRELESS_COMBINE
+	bool "Wireless Combine Feature Support"
+	help
+	  Specify if Wireless Combine Feature Support
+
+config DGC_FUNC_HAVE_SPEEDTEST_MENU
+	bool "SpeedTest Menu Feature Support"
+	help
+	  Specify if SpeedTest Menu Feature Support
+
+config DGC_FUNC_HAVE_ORBI_MINI
+	bool "Orbi Mini Feature Support"
+	help
+	  Specify if Orbi Mini Feature Support
+
+config DGC_FUNC_HAVE_FORCESHIELD
+	bool "ForceShield Feature Support"
+	help
+	  Specify if ForceShield Feature Support
+
+config DGC_FUNC_HAVE_TT3
+	bool "Factory TT3 Feature Support"
+	help
+	  Specify if Factory TT3 Feature Support
+
+config DGC_FUNC_HAVE_QOS
+	bool "QOS Feature Support"
+	help
+	  Specify if QOS Feature Support
+
+config DGC_FUNC_HAVE_CIRCLE
+	bool "CIRCLE Feature Support"
+	help
+	  Specify if CIRCLE Feature Support
+
+config DGC_FUNC_HAVE_ARMOR
+	bool "ARMOR Feature Support"
+	help
+	  Specify if ARMOR Feature Support
+
+config DGC_FUNC_HAVE_AUTOTIMEZONE
+	bool "AUTOTIMEZONE Feature Support"
+	help
+	  Specify if AUTOTIMEZONE Feature Support
+
+config DGC_FUNC_HAVE_CONTROL_FIRMWARE
+	bool "Controlled FW  Feature Support"
+	help
+	  Specify if Controlled FW Feature Support
+
+config DGC_FUNC_HAVE_VPNCHECK
+	bool "openvpn chcek Feature Support"
+	help
+	  Specify if openvpn chcek Feature Support
+
+config DGC_FUNC_HAVE_LACPD_DNI
+	bool "LACP Support"
+	help
+	  Specify if LACP Feature Support
+
+config DGC_FUNC_BASE_HAVE_TRI_BAND
+	bool "TRI_BAND Base Support"
+	help
+	  Specify if Base TRI_BAND Feature Support
+
+config DGC_FUNC_SATE_HAVE_TRI_BAND
+	bool "TRI_BAND Satellite Support"
+	help
+	  Specify if Satellite TRI_BAND Feature Support

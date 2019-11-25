@@ -1,0 +1,15 @@
+#!/bin/sh /etc/rc.common
+
+start() {
+    [ $(/bin/config get factory_mode) -eq 1 ] && return
+	/sbin/cmdupnp start
+}
+
+stop() {
+	/sbin/cmdupnp stop
+}
+
+restart() {
+	/sbin/cmdupnp restart
+}
+

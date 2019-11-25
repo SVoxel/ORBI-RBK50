@@ -1,0 +1,46 @@
+diff -Nur procd-2015-10-29.1-old/procd.h procd-2015-10-29.1/procd.h
+--- procd-2015-10-29.1-old/procd.h	2018-04-24 21:42:40.280281838 +0800
++++ procd-2015-10-29.1/procd.h	2018-04-24 21:44:02.330281827 +0800
+@@ -24,6 +24,11 @@
+ 
+ #include "log.h"
+ 
++#define DNI_SNED_EMAIL_ALERT   1
++#if DNI_SNED_EMAIL_ALERT
++#define SIG_EMAIL_ALERT 30
++#endif
++
+ #define __init __attribute__((constructor))
+ 
+ extern char *ubus_socket;
+diff -Nur procd-2015-10-29.1-old/signal.c procd-2015-10-29.1/signal.c
+--- procd-2015-10-29.1-old/signal.c	2018-04-24 21:42:40.290281838 +0800
++++ procd-2015-10-29.1/signal.c	2018-04-24 21:44:02.370281827 +0800
+@@ -84,6 +84,18 @@
+ 	.sa_flags = SA_SIGINFO
+ };
+ 
++#if DNI_SNED_EMAIL_ALERT
++static void sig_email_alert(int signal, siginfo_t *siginfo, void *data)
++{
++	system("/etc/email/send_email_alert");
++}
++
++struct sigaction sa_sig_eamil_alert = {
++	.sa_sigaction = sig_email_alert, 
++	.sa_flags = SA_SIGINFO
++};
++#endif
++
+ void procd_signal(void)
+ {
+ 	signal(SIGPIPE, SIG_IGN);
+@@ -98,5 +110,8 @@
+ 	sigaction(SIGHUP, &sa_dummy, NULL);
+ 	sigaction(SIGKILL, &sa_dummy, NULL);
+ 	sigaction(SIGSTOP, &sa_dummy, NULL);
++#if DNI_SNED_EMAIL_ALERT
++	sigaction(SIG_EMAIL_ALERT, &sa_sig_eamil_alert, NULL);
++#endif
+ 	reboot(RB_DISABLE_CAD);
+ }

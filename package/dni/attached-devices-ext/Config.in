@@ -1,0 +1,6 @@
+config NETSCANEXT_EXTRA_FLAGS
+	string
+	prompt "Specify net-scan-ext extra function for different project"
+	default ""
+	help
+	  open marco to enable net-scan-ext extra function

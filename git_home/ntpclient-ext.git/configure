@@ -1,0 +1,12 @@
+#! /bin/sh
+bin=${0##*/}
+
+gen_makefile()
+{
+	cat <<EOF
+all %:
+	\$(MAKE) -C src \$@
+EOF
+}
+
+gen_makefile > Makefile

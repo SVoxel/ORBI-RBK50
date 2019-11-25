@@ -1,0 +1,208 @@
+/* You can add global styles to this file, and also import other style files */
+ @import "../fonts/avenir-font.css";
+ -------------------------------------------------- */ body {
+ -webkit-font-smoothing: antialiased;
+ font-family: "muliregular";
+ font-size: 14px;
+ color: #000000;
+}
+@font-face {
+	font-family: 'avenir-next-medium';
+	src: url('../fonts/avenir-next-medium/AvenirNext-Medium.eot');
+	src: url('../fonts/avenir-next-medium/AvenirNext-Medium.eot?#iefix') format('embedded-opentype'), url('../fonts/avenir-next-medium/AvenirNext-Medium.woff2') format('woff2'), url('../fonts/avenir-next-medium/AvenirNext-Medium.woff') format('woff'), url('../fonts/avenir-next-medium/AvenirNext-Medium.ttf') format('truetype'), url('../fonts/avenir-next-medium/AvenirNext-Medium.svg#AvenirNextMedium') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'avenir-next-regular';
+	src: url('../fonts/avenir-next-regular/Avenir-Next-Regular.eot');
+	src: url('../fonts/avenir-next-regular/Avenir-Next-Regular.eot?#iefix') format('embedded-opentype'), url('../fonts/avenir-next-regular/Avenir-Next-Regular.woff2') format('woff2'), url('../fonts/avenir-next-regular/Avenir-Next-Regular.woff') format('woff'), url('../fonts/avenir-next-regular/Avenir-Next-Regular.ttf') format('truetype'), url('../fonts/avenir-next-regular/Avenir-Next-Regular.svg#AvenirNextRegular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+a:hover, a:focus, a:active {
+	transition: all 0.3s ease-in-out 0s;
+	-webkit-transition: all 0.3s ease-in-out 0s;
+	-ms-transition: all 0.3s ease-in-out 0s;
+}
+ul, ol {
+	margin: 0;
+	padding: 0;
+}
+a, a:focus, a:hover {
+	outline: none;
+	text-decoration: none;
+	transition: all 0.3s ease-in-out 0s;
+	-webkit-transition: all 0.3s ease-in-out 0s;
+	-moz-transition: all 0.3s ease-in-out 0s;
+	-ms-transition: all 0.3s ease-in-out 0s;
+}
+body {
+	font-family: 'avenir-next-regular';
+	font-weight: normal;
+	color: #000;
+}
+
+
+
+
+.heading2 {
+font-family: 'avenir-next-medium';
+  font-size: 26px;
+
+  font-weight: 500;
+
+  font-style: normal;
+
+  font-stretch: normal;
+
+  line-height: 1.08;
+
+  letter-spacing: normal;
+
+  text-align: center;
+
+  color: #000000;
+	margin-bottom: 9px;
+}
+.sub-heading {
+ max-width:430px; margin:auto; margin-bottom:30px;
+
+	  font-size: 18px;
+
+  font-weight: normal;
+
+  font-style: normal;
+
+  font-stretch: normal;
+
+  line-height: 1.39;
+
+  letter-spacing: 0.2px;
+
+  text-align: center;
+
+  color: #848484;
+
+}
+.installation {
+	float: right;
+	color: #fff;
+	margin-right: 15px;
+	margin-bottom: 15px;
+	position: absolute;
+	bottom: 20px;
+	right: 20px;
+}
+.installation:hover {
+	opacity: .7;
+	color: #fff;
+}
+.qr-code {
+	margin-top: 14px;
+
+margin-bottom: 6px;
+	display: block;
+}
+.logo-main{ margin-top:59px; margin-bottom:60px;}
+.cmn-body{ margin-top:-20px;}
+.scan {
+font-size: 14px;
+
+  font-weight: normal;
+
+  font-style: normal;
+
+  font-stretch: normal;
+
+  line-height: 1.79;
+
+  letter-spacing: 0.2px;
+
+  text-align: center;
+
+  color: #848484;
+	margin-bottom: 20px;
+}
+.download-btns a:first-child {
+	 margin-bottom:15px;
+}
+.mobile { max-width:400px;}
+.download-btns{ margin-bottom:60px;}
+footer{ padding:29px 25px;   background-color: #f7f7f7; }
+footer a{  font-size: 16px; text-decoration:underline;
+
+  font-weight: 500;
+
+  font-style: normal;
+
+  font-stretch: normal;
+
+  line-height: normal;
+
+  letter-spacing: -0.5px;
+
+  color: #848484;}
+  footer a:hover,  footer a:focus,  footer a:active{ color: #848484; text-decoration:none;}
+ .cmn-description { height:100%;}
+
+html, body {
+    height: 100%;
+}
+
+
+@media(min-width: 1440px) {
+.container {
+	max-width: 1300px;
+}
+}
+
+@media(max-width: 1439px) {
+.container {
+	max-width: 1140px;
+}
+.sub-heading.mb-xl-0{ margin-bottom:20px}
+}
+
+@media(max-width: 768px) {
+
+
+.container {
+	padding-left: 50px;
+	padding-right: 50px;
+}
+.installation {
+	float: left;
+	line-height: 20px;
+	margin-top: 30px;
+	position: inherit;
+	margin-right: 0px;
+}
+
+
+}
+
+@media(max-width: 767px) {
+	footer{ padding:30px 25px;   background-color: #f7f7f7; }
+	.logo-main {
+    margin-top: 50px;
+    margin-bottom: 50px;
+}
+.cmn-description{ height:auto;}
+
+.heading2 {
+	font-size: 22px;
+	line-height: 28px;
+}
+.sub-heading {
+	font-size: 18px;
+	margin-top: 10px;
+}
+
+.mobile {
+    max-width: 100%;
+}
+.scan {
+	font-size: 14px;
+}
+}

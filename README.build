@@ -1,0 +1,27 @@
+===============================
+ Orbi Build Instructions
+===============================
+
+Note:
+	* This package has been built successfully on Ubuntu 16.04.5 LTS (Server) with gcc 5.2.0.
+	* Compiling this package on platforms other than Ubuntu 16.04.5 LTS (Server) may have unexpected results.
+
+
+============
+ Build code
+============
+
+1. uncompress source code file.
+
+	unzip orbi-desktop-V2.5.0.38_gpl_src.tar.bz2.zip
+	tar -jxvf orbi-desktop-V2.5.0.38_gpl_src.tar.bz2
+
+2. run following commands to build.
+
+	cd orbi-desktop-V2.5.0.38_gpl_src
+	cp config/defconfig-orbi-desktop .config
+	make V=99
+
+3. the final image is "bin/ipq806x/RBS50-V2.5.0.38.img and RBR50-V2.5.0.38.img".
+
+User may upgrade to this image using the Orbi GUI "Router Upgrade" page.

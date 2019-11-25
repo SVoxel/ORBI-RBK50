@@ -1,0 +1,63 @@
+<% logout() %>
+<% http_head("logout_goodbye", "js/login.js") %>
+<% use_browser_language() %>
+<script>
+var need_change_lang=0;
+function loadvalue()
+{
+        try {
+                var agent = navigator.userAgent.toLowerCase();
+                if ( agent.indexOf("msie") > -1 || agent.indexOf("trident") > -1 ) {
+                        document.execCommand("ClearAuthenticationCache");
+                }
+                else
+                {
+                        var xmlHttp = createXMLHttpRequest();
+                        var url = "logout.html?ts=" + new Date().getTime();
+                        xmlHttp.open("GET",url,false,"admin","");
+                        xmlHttp.send(null);
+                        xmlHttp.abort();
+                }
+        } catch(e) {
+        }
+}
+
+function createXMLHttpRequest()
+{
+        if(typeof XMLHttpRequest == "undefined")
+                XMLHttpRequest = function(){
+                        try{return new ActiveXObject("Msxml2.XMLHTTP.6.0");}
+                        catch(e){}
+                        try{return new ActiveXObject("Msxml2.XMLHTTP.3.0");}
+                        catch(e){}
+                        try{return new ActiveXObject("Msxml2.XMLHTTP");}
+                        catch(e){}
+                        return false;
+                }
+        return new XMLHttpRequest();
+}
+</script>
+<body class="logout setup" onLoad="loadvalue();">
+<form id="logoutForm" action="#" autocomplete="off">
+<div id="fixedHeader">
+	<div class="mask">
+		<div class="container">
+			<header>
+				<img id="logo" src="image/logos/genie.png" alt="Netgear genie logo" />
+				<p id="byline">$Orbi_satellite_title</p>
+			</header>
+		</div>
+	</div>
+</div><!-- end fixed header -->
+<div id="content">
+	<div class="container">
+		<div class="middleMsg">
+			<h1>$logout_info<br />$logout_goodbye</h1>
+		</div>
+
+	</div>
+</div>
+</form>
+<% page_footer() %>
+</body>
+</html>

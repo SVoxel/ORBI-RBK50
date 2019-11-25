@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<script>
+var check_result="<% cfg_get("satellite_online_num") %>";
+function loadvalue()
+{
+	if(check_result == "0")
+	{
+		document.getElementById("card-no-orbi-satellite").style.display = "";
+		document.getElementById("card-satellite-detected").style.display = "none";
+	}
+	else
+	{
+		document.getElementById("card-no-orbi-satellite").style.display = "none";
+		document.getElementById("card-satellite-detected").style.display = "";
+	}
+}
+</script>
+<body onload="loadvalue();">
+<% form_submit("apply", "BRS_orbi_setup_satellite.html", "hijack_save_time") %>
+<input type="hidden" name="hid_save_time" value="4">
+<div id="container">
+	<div class="dialog-content">
+			<!-- Orbi No Satellite Connection Detected-->
+			<div id="card-no-orbi-satellite" class="install-card clearfix" style="display:none">
+				<img class="netgear-logo" src="images/netgear.png">
+				<img class="no-orbi-satellite-logo" src="images/no_orbi_satellite.png">
+
+				<div class="desc-title"><script>document.write(bh_orbi_no_satellite);</script></div>
+				<div class="desc-text"><script>document.write(bh_orbi_move_closer);</script></div>
+				<div class="desc-text"><script>document.write(bh_orbi_sync);</script></div>
+
+				<button class="waves-effect waves-light btn button-nav" onclick='location.href="BRS_orbi_check_satellite_wait.html";return false;'>
+					<span><script>document.write(bh_orbi_next_mark);</script></span>
+				</button>
+
+				<button class="waves-effect btn-flat button-nav-skip" onclick='location.href="BRS_security.html";return false;'>
+					<span><script>document.write(bh_orbi_skip_mark);</script></span>
+				</button>
+			</div>
+			
+			<!-- Orbi Satellite Detected -->
+			<div id="card-satellite-detected" class="install-card clearfix" style="display:none">
+				<img class="netgear-logo" src="images/netgear.png">
+				<img class="orbi-success-logo" src="images/orbi_success.png">
+
+				<div class="desc-title">
+				<script>
+				if(check_result == "1")
+					document.write(bh_orbi_1_satellite);
+				else if(check_result == "2")
+					document.write(bh_orbi_2_satellite);
+				else if(check_result == "3")
+					document.write(bh_orbi_3_satellite);
+				else if(check_result == "4")
+					document.write(bh_orbi_4_satellite);
+				</script>
+				</div>
+
+				<button  class="waves-effect waves-light btn button-nav" onclick='return true;'>
+					<span><script>document.write(bh_orbi_setup_mark);</script></span>
+				</button>
+				<button class="waves-effect btn-flat button-nav-skip" onclick='location.href="BRS_orbi_check_satellite_wait.html"; return false;'>
+					<span><script>document.write(bh_orbi_tryagain_mark);</script></span>
+				</button>
+          </div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

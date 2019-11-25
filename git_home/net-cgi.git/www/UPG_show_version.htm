@@ -1,0 +1,118 @@
+<% http_header("style/form.css", "/funcs.js") %>
+<% nohelp_header("UPG_show_version.htm?id=satellite", "orbi_see_detail") %>
+<div id="main" class="main">
+<input type="hidden" name="hid_upgrade_num">
+<script>
+<% check_version()%>
+var ext_check_info = <% get_satellite_check_result() %>;
+function clickOK()
+{
+	window.opener = null;
+	window.close();
+}
+
+function loadvalue()
+{
+	var num = 0;
+	var pos = location.href.indexOf("num=");
+	if(pos > -1)
+		num = location.href.substring(pos+4);
+
+	if(num == 0){
+		document.getElementById("base").style.display="";
+		document.getElementById("satellite").style.display="none";
+		var base_rn=document.getElementById("base_releasenote");
+		var base_text = base_rn.innerHTML.replace(/\n/g, "<br/>");
+		if(base_text.indexOf("<br/>") == 0)
+			base_text = base_text.substring(5);
+		base_rn.innerHTML = base_text;
+		/*if( updateLanguage == 1 ){
+			document.getElementById("cur_lang").style.display="";
+			document.getElementById("new_lang").style.display="";
+		}
+		else{
+			document.getElementById("cur_lang").style.display="none";
+			document.getElementById("new_lang").style.display="none";
+		}*/
+	}else{
+		get_info(num-1);
+		document.getElementById("base").style.display="none";
+		document.getElementById("satellite").style.display="";
+		var msg = '<table width=100% border=0 cellpadding=0 cellspacing=2>'
+			+'<TR id=ext_cur_firm><TD nowrap><B>$current_firmware:</B></TD><TD>'+old_ver+'</TD></TR>'
+			+'<TR id=ext_new_firm><TD nowrap><B>$new_firmware:</B></TD><TD>'+new_ver+'</TD></TR>'
+			+'<TR><TD>&nbsp;</TD><TD></TD></TR>';
+		if(release_note != "")
+			msg += '<TR><TD colspan=2><b>Release Notes:</b><br/>'+release_note+'</TD></TR>'
+				+'<TR><TD>&nbsp;</TD><TD></TD></TR>';
+		msg += '</table>';
+		document.getElementById("satellite").innerHTML = msg;
+	}
+}
+
+var old_ver, new_ver, release_note;
+
+function get_info(i)
+{
+	old_ver = ext_check_info[i]['current version'];
+	new_ver = ext_check_info[i]['new version'];
+	release_note = ext_check_info[i]['release note'].replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\n/g, "<br/>").replace(/\\\\/g, "@#_.._#@");
+	release_note = release_note.replace(/\\/g, "<br/>").replace(/@#_.._#@/g, "\\");
+}
+</script>
+<div id="base">
+<table width=100% border=0 cellpadding=0 cellspacing=2>
+<TR id=cur_firm>
+	<TD nowrap><B>$current_firmware:</B></TD>
+	<TD><% cat_file_xss("/firmware_version") %><% get_firmware_region("single_blank", "ww_blank") %></TD>
+</TR>
+<TR id=new_firm>
+	<TD nowrap><b>$new_firmware:</B></TD>
+	<TD><% cat_file_xss("/tmp/auto_version") %></TD>
+</TR>
+<TR><TD>&nbsp;</TD><TD></TD></TR>
+<!--TR id=cur_lang>
+	<TD nowrap><b>$current_language:</B></TD>
+	<TD><% get_language_version() %></TD>
+</TR>
+<TR id=new_lang>
+	<TD nowrap><B>$new_language:</B></TD><TD><% cat_file_xss("/tmp/lang_version") %></TD>
+</TR-->
+
+<TR><TD colspan=2 id="base_releasenote">
+<% get_upgrade_info() %>
+</TD>
+</TR>
+</table>
+</div>
+<div id="satellite" style="display:none">
+</div>
+<div id="pls_wait_div" style="display:none">
+	<div align="center"><br /><br /><b>$wizard_pls_wait</b><br /><br /></div>
+	<div class="waiting_img_div" align="center"><img src="image/wait30.gif" /></div>
+</div>
+<table id="online_content" width=100% border=0 cellpadding=0 cellspacing=2 >
+$bluebar
+<TR>
+	<TD nowrap colspan=2 align=center>
+	<script>
+		var ok_mark = "$ok_mark";
+		var master="<% cfg_get("http_loginname") %>";
+
+		if(master=="admin" ){
+			document.write('<input class="short_common_bt" type="button" name="OK" value="'+ok_mark+'" onclick="clickOK();">&nbsp;');
+		}
+		else
+		{
+			document.write('<input class="short_common1_bt" type="button" name="OK" value="'+ok_mark+'" disabled>&nbsp;');
+		}
+	</script>
+	</TD>
+</TR>
+</TABLE>
+
+</div>
+
+</FORM>
+</BODY>
+</HTML>

@@ -1,0 +1,36 @@
+#!/bin/sh
+# 2017.11.17
+
+status=$1
+
+if [ "x$status" = "xstop" ]; then
+	if [ -e /tmp/sync_button_led_running ]; then
+		/sbin/led_ring stop
+		echo "Sync_button change to enable . So Stop ring the magenta led" >/dev/console
+		rm /tmp/sync_button_led_running
+	fi
+	exit 99
+fi
+
+if [ -e /tmp/sync_button_led_running ]; then
+	exit 99
+else
+	touch /tmp/sync_button_led_running
+fi
+
+color=$1
+time=$2
+
+if [ "x$time" = "x" ]; then
+	/sbin/led_ring start $color
+	sleep 30
+	/sbin/led_ring stop
+	rm /tmp/sync_button_led_running
+else
+	/sbin/led_ring start $color
+	sleep $time
+	/sbin/led_ring stop
+	rm /tmp/sync_button_led_running
+fi
+	
+exit 0

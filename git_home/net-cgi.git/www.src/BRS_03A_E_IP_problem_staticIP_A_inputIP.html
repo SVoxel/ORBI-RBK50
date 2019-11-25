@@ -1,0 +1,199 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<script language="javascript" type="text/javascript" src="script/funcs.js"></script>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var lan_ip="<% cfg_get("lan_ipaddr") %>";
+var lan_subnet="<% cfg_get("lan_netmask") %>";
+var dns_third_flag=top.dns_third_flag;
+
+function loadvalue()
+{
+	if( dns_third_flag == 1 )
+		document.getElementById("third_dns").style.display="";
+}
+
+function checkStaticIP()
+{
+	var cf = document.forms[0];
+
+	cf.ip_address.value = cf.WPethr1.value+'.'+cf.WPethr2.value+'.'+cf.WPethr3.value+'.'+cf.WPethr4.value;
+	cf.subnet_mask.value = cf.WMask1.value+'.'+cf.Wmask2.value+'.'+cf.Wmask3.value+'.'+cf.Wmask4.value;
+	cf.gateway.value = cf.WGateway1.value+'.'+cf.Wgateway2.value+'.'+cf.Wgateway3.value+'.'+cf.Wgateway4.value;
+
+	if(check_static_ip_mask_gtw()==false)
+		return false;
+	if(check_static_dns(true)==false)
+		return false;
+	if(check_ether_samesubnet()==false)
+		return false;
+
+	return true;
+}
+
+function check_static_ip_mask_gtw()
+{
+	var cf = document.forms[0];
+
+	if(checkipaddr(cf.ip_address.value)==false || is_sub_or_broad(cf.ip_address.value, cf.ip_address.value, cf.subnet_mask.value) == false)
+	{
+		alert(bh_invalid_ip);
+		return false;
+	}
+	if(checksubnet(cf.subnet_mask.value)==false)
+	{
+		alert(bh_invalid_mask);
+		return false;
+	}
+	if(checkgateway(cf.gateway.value)==false)
+	{
+		alert(bh_invalid_gateway);
+		return false;
+	}
+	if(isSameIp(cf.ip_address.value, cf.gateway.value) == true)
+	{
+		alert(bh_invalid_gateway);
+		return false;
+	}
+
+	return true;
+}
+
+function check_ether_samesubnet()
+{
+	var cf = document.forms[0];
+	if(isSameSubNet(cf.ip_address.value,cf.subnet_mask.value,lan_ip,lan_subnet) == true)
+	{
+		alert(bh_same_lan_wan_subnet);
+		return false;
+	}
+	if(isSameSubNet(cf.ip_address.value,lan_subnet,lan_ip,lan_subnet) == true)
+	{
+		alert(bh_same_lan_wan_subnet);
+		return false;
+	}
+	if(isSameSubNet(cf.ip_address.value,cf.subnet_mask.value,lan_ip,cf.subnet_mask.value) == true)
+	{
+		alert(bh_same_lan_wan_subnet);
+		return false;
+	}
+	if(isSameIp(cf.ip_address.value,lan_ip) == true)
+	{
+		alert(bh_same_lan_wan_subnet);
+		return false;
+	}
+	
+	return true;
+}
+
+function check_static_dns(wan_assign)
+{
+	var cf = document.forms[0];
+	cf.preferred_dns.value = cf.DAddr1.value+'.'+cf.DAddr2.value+'.'+cf.DAddr3.value+'.'+cf.DAddr4.value;
+	cf.alternate_dns.value = cf.PDAddr1.value+'.'+cf.PDAddr2.value+'.'+cf.PDAddr3.value+'.'+cf.PDAddr4.value;
+	if( dns_third_flag == 1 )
+		cf.third_dns.value = cf.TDAddr1.value+'.'+cf.TDAddr2.value+'.'+cf.TDAddr3.value+'.'+cf.TDAddr4.value;
+
+	if( dns_third_flag == 1 )
+	{
+		if(check_three_DNS(cf.preferred_dns.value, cf.alternate_dns.value, cf.third_dns.value, wan_assign,cf.ip_address.value)==false)
+			return false;
+	}
+	else
+	{
+	 	if(check_DNS(cf.preferred_dns.value,cf.alternate_dns.value,wan_assign,cf.ip_address.value)==false)
+			return false;
+	}
+	if(cf.preferred_dns.value == "...")
+		cf.preferred_dns.value ="";
+	if(cf.alternate_dns.value == "...")
+		cf.alternate_dns.value ="";
+	if(dns_third_flag == 1 && cf.third_dns.value == "...")
+		cf.third_dns.value = "";
+	return true;
+}
+</script>
+<% wizlog_problem_ck10("0") %>
+</head>
+
+<body onload="loadvalue();">
+<% form_submit("apply", "BRS_04_applySettings.html", "hijack_static") %>
+
+<input type="hidden" name="ip_address" value=""/>
+<input type="hidden" name="subnet_mask" value=""/>
+<input type="hidden" name="gateway" value=""/>
+<input type="hidden" name="preferred_dns" value=""/>
+<input type="hidden" name="alternate_dns" value=""/>
+<input type="hidden" name="third_dns" value=""/>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Fixed IP Connection-->
+		<div id="card-fixed-internet-IP" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_fix_ip_setting);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_enter_ip_setting);</script></div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper">
+				<div class="input-title"><script>document.write(bh_info_mark_ip);</script></div>
+				<input class="ip-box" name="WPethr1" id="wpethr1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="WPethr2" id="wpethr2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="WPethr3" id="wpethr3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="WPethr4" id="wpethr4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper">
+				<div class="input-title"><script>document.write(bh_info_mark_mask);</script></div>
+				<input class="ip-box" name="WMask1" id="wmask1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wmask2" id="wmask2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wmask3" id="wmask3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wmask4" id="wmask4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper">
+				<div class="input-title"><script>document.write(bh_constatus_defgtw);</script></div>
+				<input class="ip-box" name="WGateway1" id="wgateway1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wgateway2" id="wgateway2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wgateway3" id="wgateway3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="Wgateway4" id="wgateway4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper">
+				<div class="input-title"><script>document.write(bh_preferred_dns);</script></div>
+				<input class="ip-box" name="DAddr1" id="daddr1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="DAddr2" id="daddr2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="DAddr3" id="daddr3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="DAddr4" id="daddr4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper">
+				<div class="input-title"><script>document.write(bh_alternate_dns);</script></div>
+				<input class="ip-box" name="PDAddr1" id="pdaddr1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="PDAddr2" id="pdaddr2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="PDAddr3" id="pdaddr3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="PDAddr4" id="pdaddr4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+			
+			<div class="col-lg-12 col-md-12 col-sm-12 ip-wrapper" id="third_dns" style="display:none">
+				<div class="input-title"><script>document.write(bh_basic_int_third_dns);</script></div>
+				<input class="ip-box" name="TDAddr1" id="tdaddr1" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="TDAddr2" id="tdaddr2" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="TDAddr3" id="tdaddr3" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text"><div>.</div>
+				<input class="ip-box" name="TDAddr4" id="tdaddr4" autocomplete="off" maxlength="3" onfocus="this.select();" onkeydown="keydown(event,this);" onkeypress="return getkey('num',event);" onkeyup="keyup(event,this);" type="text">
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return checkStaticIP();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>	
+
+</form>
+</body>
+
+</html>

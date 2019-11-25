@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var restore_status="<% restore_status() %>";
+
+function check_satellite_status()
+{
+	var forms = document.getElementsByTagName("form");
+	var cf = forms[0];
+
+	var xmlhttp;
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	xmlhttp.onreadystatechange = function()
+	{
+		if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 )
+		{
+			if(xmlhttp.responseText == 0)
+				cf.submit();
+			else
+				setTimeout("check_satellite_status()",3000);
+		}
+	};
+	xmlhttp.open("GET", "restore_info.html?ts=" + new Date().getTime(), true);
+	xmlhttp.send();
+}
+
+function statusChecking()
+{
+	if(restore_status == "0" || restore_status == "1")
+	{
+		setTimeout("pageRedirect(1)", 1000);
+	}
+	else if(restore_status == "2")
+	{
+		setTimeout("pageRedirect(2)", 3000);
+	}
+	else if(restore_status == "3")
+	{
+		var forms = document.getElementsByTagName("form");
+		var cf = forms[0];
+		cf.submit();
+	}
+}
+
+function pageRedirect(stat)
+{
+	if(stat == 1)
+		this.location.href = "BRS_03B_haveBackupFile_fileRestore.html";
+	else if(stat == 2)
+		this.location.href = "BRS_03B_haveBackupFile.html";
+}
+</script>
+</head>
+
+<body onload="statusChecking();">
+<% form_submit("apply", "BRS_03B_haveBackupFile_waitReboot.html", "reboot") %>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Restoring Router Settings -->
+		<div id="card-restoring-router-settings" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-title">
+				<script>
+					if(restore_status != "2")
+						document.write(bh_orbi_restore);
+					else
+						document.write(bh_failure_head);
+				</script>
+			</div>
+			<div class="desc-text">
+				<script>
+					if(restore_status != "2")
+						document.write(bh_orbi_restore_wait);
+					else
+						document.write(bh_few_second);
+				</script>
+			</div>
+
+			<div class="spinner"></div>
+			<div class="desc-text wait"><script>document.write(bh_orbi_pls_wait);</script></div>
+      </div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>
+
+

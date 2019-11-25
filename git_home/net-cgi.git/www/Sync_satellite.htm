@@ -1,0 +1,129 @@
+<% http_header("style/form.css", "/funcs.js", "/passwd.js") %>
+<body bgcolor=#ffffff>
+<form>
+<div class="page_title" id="page_title">$sync_your_satellite</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TD nowrap colspan=2 align=right><input class="apply_bt" type="button" name="Back" id="back" value="$back_mark" onClick="location.href=\'Place_satellite.htm\';"></TD>');
+else
+	document.write(' <TD nowrap colspan=2 align=right><input class="cancel_bt" type="button" name="Back" id="back" value="$back_mark" disabled></TD>');
+</script>
+       
+</TR>
+</TABLE>
+
+</div>
+<div id="main" class="main_top_button"> 
+<table width="80%" border="0" cellpadding="0" cellspacing="20" align="center">
+<TR>
+	<TD colspan=2>$satellite_wait</TD>
+</TR>
+<TR><TD align="center">
+	<img class="" src="images/sync_here.png">
+</TD></TR>
+</table>
+<table width="40%" border="0" cellpadding="0" cellspacing="8" style="margin-left:130px;">
+<TR>
+	<TD nowrap="">$press_sync</TD>
+	<TD id="sync_button"><input class="apply_bt" type="button" name="Sync" id="sync" value="$sync" onClick="click_sync();"></TD>
+	<TD id="wait_img" style="display: none;"><img src="images/spinner.gif" width="25px" style="vertical-align:bottom;"></TD>
+	<TD id="sync_wait" style="display: none;" nowrap="">$sync_wait</TD>
+	<TD id="sync_success" style="display: none;" nowrap="">$satellite_setup_success</TD>
+	<TD id="sync_fail" style="display: none;" nowrap="">$satellite_setup_fail</TD>
+</TR>
+</table>
+<TABLE width="80%" border="0" cellpadding="0" cellspacing="8" align="center" style="margin-left:130px;">
+<TBODY id="led_color" style="display: none;">
+<TR>
+	<TD colspan=2>$satellite_lights
+	</TD>
+</TR>
+<TR>
+	<TD><img class="" src="images/led_blue.png" style="vertical-align:middle;"><b style="padding:15px;">$blue</b></TD>
+</TR>
+<TR>
+	<TD colspan=2>$sync_success</TD>
+	</TR>
+<TR>
+	<TD><img class="" src="images/led_amber.png" style="vertical-align:middle;"><b style="padding:15px;">$amber</b></TD>
+</TR>
+<TR>
+	<TD colspan=2>$sync_success_amber</TD>
+	</TR>
+<TR>
+	<TD><img class="" src="images/led_magenta.png" style="vertical-align:middle;"><b style="padding:15px;">$magenta</b></TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2>$sync_fail</TD>
+</TR>
+</TBODY>
+</TABLE>
+</div>
+<script>
+function click_sync()
+{
+	cf = document.forms[0];
+	document.getElementById("sync_button").style.display="none";
+	document.getElementById("sync_wait").style.display="";
+	document.getElementById("wait_img").style.display="";
+	document.getElementById("led_color").style.display="";
+	wps_process();
+	setTimeout("check_sync()",5*1000);
+}
+
+function wps_process()
+{
+	var file="/wps_process.txt";
+	var xmlHttp = createXMLHttpRequest();
+	xmlHttp.open("GET", file, true);
+	xmlHttp.send();
+}
+
+var count = 0;
+var maxCount = (360*1000)/(3*1000);
+function check_sync()
+{
+	var file="/check_sync.txt";
+	var xmlHttp = createXMLHttpRequest();
+	var result;
+
+	xmlHttp.onreadystatechange=function()
+	{
+		var cf=document.forms[0];
+		if( xmlHttp.readyState==4 && xmlHttp.status==200 )
+		{
+			result=xmlHttp.responseText;
+			if(result == 1){
+				document.getElementById("sync_wait").style.display="none";
+				document.getElementById("wait_img").style.display="none";
+				document.getElementById("sync_success").style.display="";
+			}else if(result == 0 || result == 6){
+				document.getElementById("sync_wait").style.display="none";
+				document.getElementById("wait_img").style.display="none";
+				document.getElementById("sync_fail").style.display="";
+			}else{
+				if(count < (maxCount+1))
+					setTimeout("check_sync()",3*1000);
+			}
+		}
+	}
+	xmlHttp.open("GET", file, true);
+	xmlHttp.send();
+	count++;
+	//console.log("count time %d", count);
+	//if the wait time >6min, show sync fail.
+	if(count > maxCount)
+	{
+		document.getElementById("sync_fail").style.display="";
+		document.getElementById("sync_wait").style.display="none";
+		document.getElementById("wait_img").style.display="none";
+	}
+}
+</script>
+</form>
+</body>
+</HTML>

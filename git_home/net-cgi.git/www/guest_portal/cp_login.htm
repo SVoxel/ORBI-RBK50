@@ -1,0 +1,253 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+	<meta name="title" content="NETGEAR">
+	<link type="image/vnd.microsoft.icon" rel="icon" href="images/favicon.ico" />
+	<link type="image/x-icon" rel="shortcut icon" href="images/favicon.ico" />
+	<link href="css/orbidesktop.min.css" rel="stylesheet">
+	<script src="components/orbidesktop.min.js"></script>
+	<script src="components/common.js"></script>
+	<link href="css/styles.css" rel="stylesheet">
+	<title>NETGEAR Router Orbi </title>
+<style>
+.login-box{
+	margin-top:20px;
+	text-align:center;
+	font-weight:bold;
+}
+.login-tbl { 
+	word-wrap:break-word;
+	margin: 15px 5px; 
+	width: 100%;
+}
+.login-tbl td{ 
+	padding: 5px 0px 0px 0px; 
+	text-align: center;
+	color: #9a258f;
+	font-weight: bold;
+	font-size:0.9em;
+}
+#success_info{
+	margin-top: 30px;
+	text-align: center;
+}
+#success_info table td{
+	padding: 8px 0px; 
+	text-align: center;
+}
+#logo {
+   max-width: 200px;
+   max-height: 200px;
+}
+</style>
+<script>
+var user_img = "<% cfg_get("cp_user_img")%>";
+var user_text = "<% cfg_get("cp_user_text") %>";
+<% access_gp_file() %>
+var file_dir = "guest_portal_file/"
+
+function is_read()
+{
+	//alert(document.getElementById("have_read").checked);
+	if(document.getElementById("have_read").checked == true)
+		document.getElementById("ok_btn").disabled = false;
+	else
+		document.getElementById("ok_btn").disabled = true;
+}
+
+function loadvalue()
+{		
+
+}
+
+function switch_item_display(sid, hid)
+{
+	document.getElementById(sid).style.display = "";
+	document.getElementById(hid).style.display = "none";
+}
+
+function do_search()
+{
+	var key = top.document.getElementsByTagName("input")[0].value;
+        var winoptions = "width=960,height=800,menubar=yes,scrollbars=yes,toolbar=yes,status=yes,location=yes,resizable=yes";
+        var url="";
+	if(key == "" || key == "$ent_srh_item") {
+		url = "http://support.netgear.com/product/"+host_name;
+	} else {
+		key = key.replace(/ /g,"%20")
+		url = "http://kb.netgear.com/app/answers/list/kw/"+key;
+	}
+
+        window.open(url,'_blank',winoptions);
+}
+
+function setFooterClass()
+{
+        var footer_div = top.document.getElementById("footer");
+	var width = top.document.getElementById("support").clientWidth + top.document.getElementById("search").clientWidth;
+        var screen_width = top.document.documentElement.clientWidth;
+
+        if( width < screen_width - 60 )
+                footer_div.className = "footer";
+        else
+                footer_div.className = "footer_double";
+
+
+        var go_btn = top.document.getElementById("search_button");
+        var content_len = go_btn.value.length;
+
+        if(content_len >= 7)
+                go_btn.className = go_btn.className + "_long";
+        else if(content_len >= 4)
+                go_btn.className = go_btn.className + "_middle";
+        else
+                go_btn.className = go_btn.className;
+}
+
+function detectEnter(type, e) //bug35984
+{
+	var keycode, event;
+	if (window.event)
+	{
+		event = window.event;
+		keycode = window.event.keyCode;
+	}
+	else if (e)
+	{
+		event = e;
+		keycode = e.which;
+	}
+	else
+		return true;
+	if(type == "num")
+	{
+		if(keycode==13)
+			do_search();
+	}
+	else
+		return false;
+}
+</script>
+</HEAD>
+<BODY onLoad="loadvalue();" bgcolor=#ffffff>
+<form method="post">
+<div id="container">
+	<div class="dialog-content">
+
+	<!-- Welcome -->
+		<div id="card-tos" class="install-card clearfix">
+			<div style="overflow:hidden"><img id="logo" class="netgear-logo" src="images/netgear.png"></div>
+			<div class="desc-title">$gp_TandC</div>
+			<div id="user_text" class="tos-area" style="display:none;overflow-x:auto;">
+				<% cat_toc_file_message("/www/guest_portal_file/guest_portal_file.txt") %>
+			</div>
+			<div id="netgear_text" class="tos-area">
+				Terms of Use<br/>
+				<br/>
+				Welcome to the high -speed Internet access service (the "Service"). The Service is being provided by a third party service provider, and the hardware for providing the service has at least partially been provided to the store, hotel, business, or other establishment where you are using the Service (“Establishment”) by NETGEAR, Inc. (“NETGEAR”).  As a condition of accessing this Service, you must agree to the following terms and conditions of use ("Terms of Use"). If you do not agree to the Terms of Use you may not access or use the Service. Your use of the Service indicates your acceptance of these Terms of Use.<br/>
+				<br/>
+				No Editorial Control<br/>				
+				NETGEAR and Establishment do not review or exercise any editorial control over the content or materials made available over the Internet by third parties, including without limitation any electronic mail transmissions, newsgroups, or the like.  NETGEAR and Establishment may cooperate with legal authorities and/or third parties in the investigation of any suspected or alleged crime or civil wrong. Violation of these Terms of Use may result in the suspension or termination of access to the Service.<br/>
+				Security<br/>
+				<br/>
+				You expressly acknowledge and agree that there are significant security, privacy and confidentiality risks inherent in accessing or transmitting information through the Internet, whether the connection to the Internet is facilitated through wired or wireless technology. These security issues range from interception of transmissions, loss of data, or the introduction of viruses or other programs that can damage your computer or network.  ACCORDINGLY, YOU AGREE THAT NETGEAR AND ESTABLISHMENT SHALL NOT BE LIABLE FOR ANY INTERCEPTION OF TRANSMISSIONS, LOSS OF DATA, FILE CORRUPTION, HACKING OR DAMAGE TO YOUR COMPUTER OR NETWORK THAT RESULTS FROM THE TRANSMISSION OR DOWNLOAD OF INFORMATION OR MATERIALS THROUGH THE SERVICE.<br/>
+				Restrictions on Use<br/>
+				<br/>
+				You agree to not use the Service to:<br/>
+				(a) transmit any material that is unlawful, threatening, abusive, harassing, tortious, defamatory, obscene, libelous, invasive of another’s privacy, racially, ethnically or otherwise objectionable;<br/>
+				(b) harm, or attempt to harm, minors in any way;<br/>
+				(c) impersonate any person or entity or falsely state or otherwise misrepresent your affiliation with a person or entity; forge headers or otherwise manipulate identifiers in order to disguise the origin of any material transmitted through the Service;<br/>
+				(d) transmit any material that you do not have a right to make available under any law;<br/>
+				(e) transmit any material that infringes any patent, trademark, trade secret, copyright or other proprietary rights of any party;<br/>
+				(f) transmit any unsolicited or unauthorized advertising, promotional materials, "junk mail," "spam," "chain letters," "pyramid schemes" or any other form of solicitation;<br/>
+				(g) transmit any material that contains software viruses or any other computer code, files or programs designed to interrupt, destroy or limit the functionality of any computer software or hardware or telecommunications equipment; or<br/>
+				<br/>
+				Disclaimer of Warranties<br/>
+				THE MATERIALS AVAILABLE THROUGH THE SERVICE AND THROUGH ANY THIRD PARTY ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS AND WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND EITHER EXPRESS OR IMPLIED.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY OR REPRESENTATION AS TO THE ACCURACY, CURRENCY, COMPLETENESS, RELIABILITY OR USEFULNESS OF INFORMATION DISTRIBUTED THROUGH THE SERVICE. TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, NETGEAR AND ESTABLISHMENT EXPRESSLY DISCLAIM ALL WARRANTIES AND CONDITIONS OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY THAT THE SERVICE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR FREE, OR THAT SOFTWARE DEFECTS WILL BE CORRECTED OR THAT THIS SITE OR THE SERVER THAT MAKES IT AVAILABLE IS FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.  NETGEAR AND ESTABLISHMENT MAKE NO WARRANTY REGARDING ANY GOODS OR SERVICES OR THE DELIVERY OF ANY GOODS OR SERVICES PURCHASED OR OBTAINED THROUGH OR FROM THE SERVICE OR ADVERTISED THROUGH THE SERVICE, OR REGARDING ANY TRANSACTIONS ENTERED INTO THROUGH THE SERVICE. NO ADVICE OR INFORMATION, WHETHER ORAL OR WRITTEN, OBTAINED BY YOU VIA THE SERVICE SHALL CREATE ANY WARRANTY NOT EXPRESSLY STATED HEREIN.<br/>
+				Limitation of Liability<br/>
+				TO THE FULLEST EXTENT PERMITTED BY APPLICABLE LAW, UNDER NO CIRCUMSTANCES, INCLUDING, BUT NOT LIMITED TO, NEGLIGENCE, SHALL NETGEAR OR ESTABLISHMENT BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL OR CONSEQUENTIAL DAMAGES, INCLUDING BUT NOT LIMITED TO, DAMAGES FOR LOSS OF PROFITS, USE, DATA OR OTHER INTANGIBLES, EVEN IF NETGEAR OR ESTABLISHMENT HAVE BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES, THAT RESULT FROM THE USE OR THE INABILITY TO USE THE SERVICE, FROM ANY CHANGES TO THE SERVICE, OR FROM UNAUTHORIZED ACCESS TO OR ALTERATION OF YOUR TRANSMISSIONS OR DATA.  YOU SPECIFICALLY AGREE THAT NETGEAR OR ESTABLISHMENT ARE NOT RESPONSIBLE OR LIABLE TO YOU OR ANYONE ELSE FOR ANY THREATENING, DEFAMATORY, OBSCENE, OFFENSIVE, TORTIOUS, OR ILLEGAL CONDUCT OF YOURS OR OF ANY OTHER PARTY OR ANY INFRINGEMENT OF ANOTHER’S RIGHTS, INCLUDING INTELLECTUAL PROPERTY RIGHTS, ARISING ON, FROM, OR IN CONNECTION WITH THE SERVICE. YOU ARE SOLELY RESPONSIBLE FOR YOUR OWN CONDUCT IN USING THIS SERVICE, AND WILL INDEMNIFY AND HOLD HARMLESS NETGEAR AND ESTABLISHMENT FROM ANY CLAIMS, LIABILITY, DAMAGES OR COSTS THAT RESULT FROM YOUR CONDUCT IN USING THIS SERVICE.  IF YOU ARE DISSATISFIED WITH THE SERVICE, THE MATERIALS AVAILABLE ON OR THROUGH THE SERVICE, OR WITH ANY PROVISIONS IN THIS LEGAL NOTICE, YOUR SOLE AND EXCLUSIVE REMEDY IS TO DISCONTINUE USING THE SERVICE.<br/>
+			</div>
+
+			<div class="login-box" id="login_info">
+				<table class="login-tbl" id="login_tbl" style="display:none;">
+					<tr><td>$gp_password_require:</td></tr>
+					<tr><td><input id="cp_pwd" style="border:1px solid #ccc; border-radius:4px; width: 200px;height: 30px;" maxlength="64" size="20" name="cp_password"><td></tr>
+				</table>
+				<div style="padding-left:40px; padding-right:40px;">$gp_hit_agree</div>
+			</div>
+			<button id="ok_btn" type="submit" class="waves-effect waves-light btn button-nav" onclick="return true;">
+				<span><script>document.write("$gp_agree");</script></span>
+			</button>
+			<div id="success_info" style="display:none;">
+				<table id="success_tbl">
+					<tr><td>$gp_now_connect <b>[<% cfg_get_ssid_value("wlg1_ssid") %>].</b></td></tr>
+					<tr><td>$gp_redirect <b>[<% cfg_get("cp_url") %>]</b>... $gp_leave_window</td></tr>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+<script>
+function init_page_display()
+{
+	var login_result = "<% cfg_get("cp_login_status") %>";
+	var cp_secType = "<% cfg_get("cp_security") %>";
+
+	//show password message
+	if(cp_secType != "none")
+	{
+		var lg_tbl = document.getElementById("login_tbl");
+		lg_tbl.style.display = "";
+	}		
+	
+	
+	//display user upload file
+	if(user_img != "" && have_user_img == 1)
+		document.getElementById("logo").src = file_dir + user_img;
+	if(user_text != "" && have_user_txt == 1)
+	{
+		switch_item_display("user_text", "netgear_text");
+	}
+	
+	check_login_result(login_result);
+}
+
+function check_login_result(status)
+{
+	var lg_tbl = document.getElementById("login_tbl");
+	var stbl = document.getElementById("success_tbl");
+	var url = "<% cfg_get("cp_url") %>";
+	
+	if(status == "fail")
+	{
+		lg_tbl.rows[0].cells[0].innerHTML = "$gp_incorrect_password";
+		lg_tbl.rows[0].cells[0].style.color = "#CB333B";
+	}
+	else if(status == "success")
+	{
+		document.getElementById("card-tos").style.minHeight = "300px";
+		document.getElementsByClassName("desc-title")[0].innerHTML = "$gp_login_success";
+		document.getElementsByClassName("desc-title")[0].style.fontWeight = "bold";
+		document.getElementById("success_info").style.display = "";
+		if(url == "")
+		{
+			stbl.rows[1].cells[0].innerHTML = "$gp_close_window"
+		}
+		
+		document.getElementById("user_text").style.display = "none";
+		document.getElementById("netgear_text").style.display = "none";
+		document.getElementById("login_info").style.display = "none";
+		document.getElementById("ok_btn").style.display = "none";			
+	}
+}
+
+
+ init_page_display();
+</script>
+<% cfg_set("cp_login_status", "") %>
+</html>

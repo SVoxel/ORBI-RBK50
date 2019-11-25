@@ -1,0 +1,8 @@
+# datalib configuration
+
+config DATALIB_MAGIC
+	string "Datalib Magic Number"
+
+config DATALIB_RAND_MAGIC
+	string "Datalib Rand Number"
+

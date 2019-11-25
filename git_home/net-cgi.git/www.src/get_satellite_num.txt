@@ -1,0 +1,1 @@
+<% get_online_satellite_num() %>

@@ -1,0 +1,68 @@
+#!/bin/sh
+bd_get_cmd="/usr/share/armor/bdbroker-client-cmd"
+
+#bd_enabled=`$bd_get_cmd is_enabled|grep 'Services status:' |awk -F 'Services status: ' '{print $2}'`
+bd_enabled=`d2 -s armorstatus[0].protectionStatus`
+bd_subscription_status=`d2 -s armorstatus[0].activateState`
+bd_subscription=`d2 -s armorstatus[0].subscriptionStatus`
+bd_expire=`d2 -s armorstatus[0].expiryDate`
+bd_version=`d2 -s armorstatus[0].bdaVersion`
+
+get_armor_GUI_status()
+{
+	if [ "x$bd_subscription_status" != "xtrue" ]; then
+		echo "1"
+		exit 0
+	fi
+
+	#bd_subscription_status=`$bd_get_cmd get_subscription_status |grep 'valid'`
+
+	if [ "x$bd_enabled" != "xtrue" ]; then
+		echo "0"
+		exit 0
+	else
+		echo "2"
+		exit 0
+	fi
+}
+
+case $1 in
+	"GUI")
+		get_armor_GUI_status
+		;;
+	"activate")
+		echo "$bd_subscription_status"
+		;;
+	"enable")
+		if [ "$(config get i_opmode)" = "apmode" ]; then
+			echo "false"
+		else
+			echo "$bd_enabled"
+		fi
+		;;
+	"subscription")
+		if [ "$bd_subscription" = "none" ]; then
+			echo "off"
+		else
+			echo "$bd_subscription"
+		fi
+		;;
+	"expire")
+		if [ "x$bd_subscription_status" != "xtrue" ]; then
+			echo "NA"
+		else
+			real_time=`date -d @$bd_expire +"%Y-%m-%d %H:%M:%S" |awk -F ' ' '{print $1}' | sed 's/-/\//g'`
+			echo "$real_time"
+		fi
+		;;
+	"bd_version")
+		if [ "x$bd_version" = "x" -o "x$bd_version" = "xUnknown" ]; then
+			echo "NA"
+		else
+			echo "$bd_version" | sed -n 's/\(.*\)[^0-9]\([0-9]*$\)/\1-\2/p'
+		fi
+		;;
+esac
+
+
+

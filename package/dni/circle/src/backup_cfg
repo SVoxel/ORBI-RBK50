@@ -1,0 +1,48 @@
+#!/bin/sh
+circle_conf="/mnt/circle/shares/usr/bin/configure.xml"
+circle_photo="/mnt/circle/shares/usr/bin/photos"
+circle_path="/mnt/circle/shares/usr/bin"
+
+#[ ! -f "$circle_conf" ] || [ ! -d "$circle_photo" ] && exit
+format_file ()
+{
+	#[ -d "$circle_path" ] && cd "$circle_path"
+	cp -rf "$circle_conf" "$circle_photo" .
+	tar -cvf "photos.tar" "photos"
+	tar -cvf "circle_files.tar" "configure.xml" "photos.tar"
+	rm -rf "photos" "configure.xml" "photos.tar"
+	cp "/tmp/configs-backup.lrp" .
+	dd if="circle_files.tar" of="orbi_config.cfg" bs=65536 count=10 skip=0 seek=0
+	dd if="configs-backup.lrp" of="orbi_config.cfg" bs=65536 count=1 skip=0 seek=10
+	cp -rf "orbi_config.cfg" "/tmp/configs-backup.lrp"
+	rm -rf "configs-backup.lrp" "circle_files.tar" "orbi_config.cfg"
+}
+
+parse_file ()
+{
+	[ ! -f "/tmp/configs-restore.lrp" ] && echo "restore file no exist!" && exit
+	cp -rf "/tmp/configs-restore.lrp" .
+	local file_size="`ls -l "configs-restore.lrp" | awk -F " " '{print $5}'`"
+	if [ $file_size -lt 65536 ];then
+		rm -rf "configs-restore.lrp"
+		exit
+	else
+	dd if="configs-restore.lrp" of="circle_files.tar" bs=65536 count=10 skip=0 seek=0
+	dd if="configs-restore.lrp" of="orbi_config.cfg" bs=65536 count=1 skip=10 seek=0
+	cp -rf "orbi_config.cfg" "/tmp/configs-restore.lrp" && rm -rf "orbi_config.cfg"
+	tar -xvf "circle_files.tar"
+	tar -xvf "photos.tar"
+	rm -rf "photos.tar" "circle_files.tar"
+	cp -rf "configure.xml" "photos" "$circle_path"
+	rm -rf "configure.xml" "photos"
+	fi
+}
+clean ()
+{
+	rm -rf "1.cfg" "circle_files.tar"
+}
+
+case "$1" in
+	format)format_file;;
+	parse)parse_file;;
+esac

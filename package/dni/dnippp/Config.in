@@ -1,0 +1,5 @@
+config DNI_3G_DONGLE_SUPPORT
+	bool "support DNI 3G dongle"
+	default n
+	help
+	  If unsure, say N.

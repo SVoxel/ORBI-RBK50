@@ -1,0 +1,23 @@
+<% http_header("style/form.css") %>
+<% body_header("", "guest_portal.html", "clear_gp_file") %>
+<div class="page_title">$gp_clear_customize</div>
+<div class="main_top_button" style="top:50px;">
+<table width=100% border=0 cellpadding=0 cellspacing=3>
+<tr><td>$gp_sure_clear</td></tr>
+$bluebar
+<tr><td align=center>
+	<input class="common_bt" name="yes" value="$yes_mark" onclick="apply_clear()" type="button">
+	<input class="common_bt" name="no" value="$no_mark" onclick="location.href='guest_portal.html';" type="button">
+</td></tr>
+</table>
+</div>
+</form>
+<script>
+function apply_clear()
+{
+	cf = document.forms[0];
+	cf.submit();
+}
+</script>
+<body>
+</html>

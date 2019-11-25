@@ -1,0 +1,26 @@
+#!/bin/sh
+account_file="/mnt/circle/shares/usr/bin/app_list"
+my_pid=$$
+ps w|grep circle_check_account|grep -v grep |awk -F " " '{print $1}' |grep -v $my_pid |xargs kill
+if [ -f $account_file ]; then
+	echo "circle account already created" > /dev/console
+	exit
+else
+	for i in $(seq 1 +1 60);
+	do
+		if [ ! -f $account_file ]; then
+			sleep 10
+			continue
+		else 
+			exit
+		fi
+	done
+fi
+if [ "$i" -eq "60" ]; then
+	echo 1 > /sys/kernel/debug/circle_pcc/unregister
+	rmmod circle_pcc
+	/mnt/circle/shares/usr/bin/stopcircle &
+	/bin/config set "enable_circle_plc=0"
+	echo "account create overtime...stop circle!" > /dev/console
+fi
+

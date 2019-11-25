@@ -1,0 +1,54 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+</head>
+<body bgcolor="#ffffff">
+<script>
+parent.port_status = "<% cat_file("/tmp/port_status") %>";
+parent.checking_result = "<% detwan_status() %>";
+
+	if(parent.port_status == "0")
+	{
+		parent.location.href = "BRS_03A_A_noWan.html";
+	}
+	if(parent.checking_result > 10000)
+	{
+		pageRedirect();
+	}else
+	{
+		setTimeout('location.href="BRS_03A_hid_checking.html";', 1000);
+	}
+
+  function pageRedirect()
+  {
+	switch(parent.checking_result)
+	{
+		case "10002":
+			parent.location.href = "BRS_03A_B_pppoe.html";
+			break;
+		case "10007":
+			parent.location.href = "BRS_03A_C_pptp.html";
+			break;
+                case "10010":
+                        parent.location.href = "BRS_03A_F_l2tp.html";
+			break;
+		case "10006":
+			parent.location.href = "BRS_03A_E_IP_problem.html";
+			break;
+		case "10003":
+			parent.location.href = "BRS_03A_E_IP_problem.html";
+			break;
+		case "10004":
+                        parent.location.href = "BRS_03A_E_IP_problem.html";
+                        break;
+		case "10001":
+			parent.location.href = "BRS_04_B_checkNet_ping.html";
+			break;
+		default:
+			parent.location.href = "BRS_03A_A_noWan.html";
+			break;
+	}
+  }
+</script>
+</body>
+</html>

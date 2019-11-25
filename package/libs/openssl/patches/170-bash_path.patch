@@ -1,0 +1,8 @@
+--- a/util/domd	2019-09-10 16:24:10.000000000 +0300
++++ b/util/domd	2019-10-03 11:38:14.666003800 +0300
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/usr/bin/env bash
+ # Do a makedepend, only leave out the standard headers
+ # Written by Ben Laurie <ben@algroup.co.uk> 19 Jan 1999
+ 

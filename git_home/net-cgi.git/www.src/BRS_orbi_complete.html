@@ -1,0 +1,92 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<style>
+	.word_wrap{ word-wrap:break-word; word-break:break-all;}
+	td{padding:0; width:50%}
+</style>
+<body>
+<% form_submit("apply", "BRS_orbi_check_ap.html", "hijack_check_ap") %>
+<script language="javascript" type="text/javascript">
+<% cfg_set("hijack_config_status", "4") %>
+var manual_setting = "<% cfg_get("manual_set_wan") %>";
+<% save_timestamp("hijack_check_ap", "hijack_save_time")%>
+var ts = "<% cfg_get("hijack_check_ap") %>";
+
+function printSucessPage()
+{
+	if (window.print)
+		window.print();
+	else
+	{
+		alert(bh_not_support_print);
+		return false;
+	}
+	return false;
+}
+function go_upgrade_fw()
+{
+	document.location.href = "BRS_orbi_check_fw.html";
+}
+function to_next()
+{
+	var cf = document.forms[0];
+	if(manual_setting == "1" && parent.business_ap_detect != 1){
+		cf.target = "_self";
+		return true;
+	}else{
+		if(parent.business_ap_detect == 1){
+			cf.target="_self";
+			cf.action="/apply.cgi?/BRS_orbi_check_fw.html timestamp="+ts;
+			cf.submit_flag.value = "hijack_save_time";
+		}
+		return true;
+	}
+	return false;
+}
+</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Orbi Configuration complete -->
+		<div id="card-orbi-config-complete" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<div class="desc-title"><script>document.write(bh_orbi_complete);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_complete_msg1);</script></div>
+
+			<div class="master-pin-wrapper" style="width:80%;">
+			  <table style="table-layout:fixed"><tr><td>
+				<div class="pin-wrapper pin-wrapper-admin" style="width:49%;height:auto;overflow:visible;">
+					<img class="pin-admin" src="images/pin_admin.png">
+					<div class="pin-title word_wrap"><% cfg_get("http_username") %></div>
+					<div class="pin-desc word_wrap"><% cfg_sed_xss("http_passwd") %></div>
+				</div>
+				<div class="pin-wrapper pin-wrapper-WiFi" style="width:49%;height:auto;overflow:visible;">
+					<img class="pin-WiFi" src="images/pin_WiFi.png">
+					<div class="pin-title word_wrap"><% cfg_get_ssid_html("wl_ssid") %></div>
+					<div class="pin-desc word_wrap"><% passphrase_bg_msg() %></div>
+				</div>
+			  </td></tr></table>
+			</div>
+			<input type="hidden" name="hid_save_time" value="7">
+				<button class="waves-effect waves-light btn button-nav" onclick="return to_next();">
+					<span><script>document.write(bh_orbi_next_mark);</script></span>
+				</button>
+				<script>
+				if(LG_region =="French")
+					document.write('<button class="waves-effect btn-flat button-nav-skip-long" onclick="return printSucessPage();">');
+				else
+					document.write('<button class="waves-effect btn-flat button-nav-skip" onclick="return printSucessPage();">');
+				</script>
+					<span><script>document.write(bh_orbi_print);</script></span>
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+START=75
+
+start() {
+	# Start detbutton
+	/sbin/button_detect &
+}
+
+stop() {
+	killall button_detect
+}
+
+restart() {
+	stop
+	start
+}

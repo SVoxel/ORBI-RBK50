@@ -1,0 +1,10 @@
+{
+	"wan_status": "<% wan_valid()() %>",
+	"status": "<% autoup_status() %>",
+	"upg_status": "<% image_status() %>",
+	"new_language": "<% cat_file("/tmp/lang_version") %>",
+	"new_version": "<% cat_file("/tmp/auto_version") %>",
+	"upg_info":"<% cat_file("/tmp/upd_firm_info") %>",
+	"msg": "<% checking_msg() %>",
+	"popped_up": "<% cfg_get("popped_up") %>"
+}

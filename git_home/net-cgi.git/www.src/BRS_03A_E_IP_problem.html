@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<% cat_rm_file("tmp/ping_result") %>
+</head>
+
+<body>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Problem with Router -->
+		<div id="card-problem-with-router" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_no_internet_ip);</script></div>
+			<div class="desc-text"><script>document.write(bh_genie_cannot_find_ip);</script></div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<div class="bullet">1.</div>
+					<div class="desc-title-bullet"><script>document.write(bh_orbi_cannot_find_ip_msg1);</script></div>
+				</div>
+				<div class="desc-text"><script>document.write(bh_orbi_cannot_find_ip_msg2);</script></div>
+			</div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<div class="bullet">2.</div>
+					<div class="desc-title-bullet long-bullet"><script>document.write(bh_orbi_cannot_find_ip_msg3);</script></div>
+				</div>
+				<div class="desc-text"><script>document.write(bh_orbi_cannot_find_ip_msg4);</script></div>
+			</div>
+			<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+			<button class="waves-effect waves-light btn button-nav" onclick="return true;">
+				<span><script>document.write(bh_orbi_tryagain_mark);</script></span>
+			</button>
+			</form>
+			<button class="waves-effect btn-flat button-nav-skip" onclick='location.href = "BRS_03A_E_IP_problem_staticIP.html";return false;'>
+				<span><script>document.write(bh_orbi_problem_no_solve);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

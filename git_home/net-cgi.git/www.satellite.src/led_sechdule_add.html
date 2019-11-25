@@ -1,0 +1,152 @@
+<% http_header_no_doc("css/main.css", "css/form.css","funcs.js", "js/led_sechdule.js","js/jquery.min.js","js/lang.js","js/init.js") %>
+<style>
+.fix_buttons {
+    width: 100%;
+    height: 64px;
+    top: 39px;
+	position: static;
+    left: 0px;
+    border-bottom: 2px solid #9d98ff;
+}
+.postSetup h1 {
+    position: relative;
+    z-index: 2;
+    margin-top: 0;
+}
+table {
+     border-collapse: separate; 
+	 border-spacing	:px; 
+}
+
+table td {
+	padding:2px;
+}
+input[type="checkbox"] {
+    display: inline;
+}
+
+input, select option {
+    border: 0;
+    border-radius: 0;
+    color: #7d706c;
+    padding: 3px;
+}
+</style>
+<script>
+
+
+var gui_region="<% cfg_get("GUI_Region") %>";
+var netgear_region=(top.netgear_region == "") ? "WW" : top.netgear_region;
+
+<% led_schedule_items() %>
+var edit_num = "<% cfg_get("wless_schedule_edit_num") %>";
+function loadvalue()
+{
+	var cf = document.forms["led_addfrom"];
+	//initSelect();
+	cf.selday[0].checked = true;
+	schedule_check_pattern();
+}
+</script>
+
+<body onLoad="loadvalue(); please_wait(false);" class="connectDevices postSetup twoColumns <% status_icon("0") %>">
+
+<div id="fixedtop"></div>
+
+<% top_bar() %>
+<% save_timestamp("select_language","change_language","led_schedule_add","led_schedule_delete") %>
+<div class="container sliderWrap" id="wifiSettingsDiv">
+<% cur_menus("ledcontorls") %>
+<form method="POST" action="/apply.cgi?/led_controls.htm" name="led_addfrom">
+<input type=hidden name=submit_flag value="led_schedule_add">
+<div id="slider">
+<div class="main clearfix">
+<h1>$light_onoff</h1>
+<div class="fix_buttons"><!-- fix bug 28245 -->
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+<script>
+var ts="<% cfg_get("select_language") %>";
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'led_controls.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="led_schedule_add(\'add\');"></TD>');
+else
+	document.write(' <TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
+</script>       
+</TR>
+</TABLE>
+</div>
+<input type="hidden" name="schedule_info" value="">
+
+<TABLE width="100%" border="0" cellpadding="2" cellspacing="3">
+<TR><TD colspan="2"><b>$led_onoff</b></TD></TR>
+<TR>
+	<TD width="10%" align="left">$adva_start :</td>
+	<TD align="left">
+		<select class="divselect" name="start_time" id="start_time">
+		<script>
+		var i=0;
+		for(i=0; i<48; i++)
+		{
+			if((gui_region=="German" && netgear_region=="WW") || netgear_region=="GR")
+				document.write('<option value="'+i+'">'+hour_schedule_24[i]+'</option>');
+			else
+				document.write('<option value="'+i+'">'+hour_schedule_12[i]+'</option>');
+		}
+		</script>
+		</select>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap width="10%" align="left">$adva_end :</td>
+	<TD align="left">
+		<select class="divselect" name="end_time" id="end_time">
+		<script>
+                var i=0;
+                for(i=0; i<48; i++)
+                {
+                        if((gui_region=="German" && netgear_region=="WW") || netgear_region=="GR")
+                                document.write('<option value="'+i+'">'+hour_schedule_24[i]+'</option>');
+                        else
+                                document.write('<option value="'+i+'">'+hour_schedule_12[i]+'</option>');
+                }
+                </script>
+		</select>
+	</TD>
+</TR>
+<TR><TD nowrap width="10%" align="left">$light_brightness :</td>
+	<TD align="left"><select class="divselect" name="lightbright" id="lightbright">
+			<option value="100">100%</option>
+			<option value="75">75%</option>
+			<option value="50">50%</option>
+			<option value="25">25%</option>
+	</select></TD>
+</TR>
+<TR><TD colspan="2"><b>$adva_recur_pattern</b></TD></TR>
+<TR><TD colspan="2"><input type="radio" name="selday" id="schedule_daily" value="0" onClick="schedule_check_pattern();"><b>$email_daily</b></TD></TR>
+<TR><TD colspan="2"><input type="radio" name="selday" id="schedule_select" value="1" onClick="schedule_check_pattern();"><b>$adva_select_days</b></TD></TR>
+<TR><TD colspan="2">
+	<TABLE width="90%" align="center" cellpadding="2" cellspacing="3" border="0">
+	<TR><!-- bug 23395:all select by default -->
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="sun" id="cbox_sunday" value="0" checked>$schedule_sun</TD>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="mon" id="cbox_monday" value="1" checked>$schedule_mon</TD>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="tue" id="cbox_tuesday" value="2" checked>$schedule_tue</TD>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="wed" id="cbox_wednesday" value="3" checked>$schedule_wed</TD>
+	</TR>
+	<TR>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="thu" id="cbox_thursday" value="4" checked>$schedule_thu</TD>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="fri" id="cbox_friday" value="5" checked>$schedule_fri</TD>
+		<TD nowrap width="25%" align="left"><input type="checkbox" name="sat" id="cbox_saturday" value="6" checked>$schedule_sat</TD>
+	</TR>
+	</TABLE>
+</td></tr>
+</TABLE>
+</div>
+</div>
+</form>
+<% page_footer() %>
+</div>
+<!--<% help_box("0","_wladv") %>-->
+
+</BODY>
+</HTML>

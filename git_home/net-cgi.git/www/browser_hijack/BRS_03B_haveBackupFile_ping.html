@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+
+</head>
+
+<body onload="loadValue()">
+<script>
+var ping_result = "<% hijack_apply_result("/tmp/ping_result") %>";
+function loadValue()
+{
+	if(ping_result == "failed")     //failed
+		this.location.href = "BRS_05_networkIssue.html";
+	else if(ping_result == "success") //success
+		this.location.href = "BRS_success.html";
+	setTimeout("loadValue();", 1000);
+}
+</script>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_pls_wait);</script></div>
+         </div>
+	</div>
+</div>
+<iframe name="ping_result_frame" src="BRS_ping_result.html" allowtransparency="true" scrolling="no" frameborder="0" style="display:none"></iframe>
+</body>
+
+</html>

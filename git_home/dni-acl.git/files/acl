@@ -1,0 +1,112 @@
+#!/bin/sh /etc/rc.common
+START=30
+STOP=30
+
+start() {
+	num=1
+	while [ 1 ];do
+		ORBI_DEV_NAME=$($CONFIG get orbi_dev_name$num)
+		if [ "x$ORBI_DEV_NAME" = "x" ]; then
+			break
+		fi
+		LINE_COUNT=`$CONFIG get orbi_dev_name$num | wc -l`
+
+		if [ "x$LINE_COUNT" != "x1" ]; then
+			$CONFIG set orbi_dev_name$num="00:00:00:00:00:00 INVALIDNAME"
+		fi
+		num=$(($num + 1))
+	done
+
+	# Sync old acl status usage with /etc/init.d/opmode
+	# Reason of we need old_enable_acl_status: restore when switch among diff modes(normal/ap/bridge/iptv/vlan)
+	# Not a good idea
+	[ "$($CONFIG get i_opmode)" != "apmode" -a "$($CONFIG get i_opmode)" != "brmode" ] && $CONFIG set old_enable_acl_status=$($CONFIG get enable_block_device)
+
+	if [ "x$($CONFIG get enable_block_device)" = "x" ]; then
+		echo "No valid configuration for NETGEAR blocking function, please reset to factory default!"
+		exit 0
+	fi
+
+	if [ "x$($CONFIG get enable_block_device)" = "x0" ]; then
+		aclctl status off
+		exit 0
+	fi
+
+	num=1
+	while [ 1 ]; do
+		ACCESS_CONTROL=$($CONFIG get access_control$num)
+		type_value=`echo $ACCESS_CONTROL | cut -f 1 -d ' '`
+		mac=`echo $ACCESS_CONTROL | cut -f 2 -d ' '`
+		res=`echo $mac | grep ":"`
+		if [ "x$res" = "x" ];then
+			$CONFIG unset access_control$num
+		fi
+		if [ "x$mac" = "x" ]; then
+			break
+		fi
+		num=$(($num + 1))
+		if [ $num == 256 ];then
+			break
+		fi
+	done
+
+	if [ "x$($CONFIG get new_device_statue_by_default)" = "xAllow" ]; then
+		aclctl type allow
+		num=1
+		while [ 1 ]; do
+			ACCESS_CONTROL=$($CONFIG get access_control$num)
+			type_value=`echo $ACCESS_CONTROL | cut -f 1 -d ' '`
+			mac=`echo $ACCESS_CONTROL | cut -f 2 -d ' '`
+			if [ "x$mac" = "x" ]; then
+				break
+			fi
+			if [ "$type_value" = "1" ]; then
+				aclctl add $mac
+			fi
+			num=$(($num + 1))
+		done
+	else
+		aclctl type block
+		num=1
+		while [ 1 ]; do
+			ACCESS_CONTROL=$($CONFIG get access_control$num)
+			type_value=`echo $ACCESS_CONTROL | cut -f 1 -d ' '`
+			mac=`echo $ACCESS_CONTROL | cut -f 2 -d ' '`
+			if [ "x$mac" = "x" ]; then
+				break
+			fi
+			if [ "$type_value" = "0" ]; then
+				aclctl add $mac
+			fi
+			num=$(($num + 1))
+		done
+	fi
+	aclctl status on
+}
+
+boot() {
+	acld
+	aclhijackdns &
+	[ "x$(cat /tmp/orbi_type)" = "xBase" ] && /usr/sbin/acl_group
+	start
+}
+
+stop() {
+	aclctl status off
+	aclctl clean
+}
+
+restart() {
+	killall -SIGUSR1 acld
+	stop
+	start
+}
+
+shutdown() {
+	echo .
+	echo "### acld stop ####"
+	killall acld
+	# signal could pending at most 2s
+	sleep 2
+	echo .
+}

@@ -1,0 +1,384 @@
+<% refresh_netscan() %>
+<% http_header("style/basic_home.css", "funcs.js", "basic.js", "jquery-1.7.2.min.js") %>
+
+<% func_header("_Wizard_setup", "BRS_03A_detcInetType.html", "wizard_detwan") %>
+<style>
+#pwd_div {width:176px; margin:0 auto; white-space: nowrap; overflow:hidden;}
+#passwd {width:auto; margin:0 auto; white-space: nowrap; overflow:hidden;}
+#pwd_div #pwd_begin, #pwd_div #pwd_end {display: inline;}
+#pwd_label {float:left; padding-right:3px;}
+#byod{ background:rgba(0, 0, 0, 0) url("../image/basic_homes.gif") no-repeat scroll -192px 0; position: relative }
+#guest_portal { background: rgba(0, 0, 0, 0) url("../image/guest.png") no-repeat scroll 0 0; position: relative; }
+.icon_img
+{
+    overflow: hidden;
+    position: absolute;
+    text-align: center;
+    top: 20px;
+    width: 192px;
+}
+</style>
+<script language="javascript" type="text/javascript">
+var portstatus = "<% cat_file("/tmp/port_status")  %>";
+var enable_action=1;
+var enabled_wds="<% wds_enable() %>";
+var enabled_wps="<% wps_menu() %>";
+var enable_ap_flag="<% cfg_get("ap_mode") %>";
+var enable_bridge_flag="<% cfg_get("bridge_mode") %>";
+var gui_region="<% cfg_get("GUI_Region") %>";
+var parental_ctrl_flag = parent.parental_ctrl_flag;
+parent.ParentalControl = "<% cfg_get("ParentalControl") %>";
+ParentalControl = parent.ParentalControl;
+var support_arlo = parent.support_arlo;
+
+var select_basic="<% cfg_get("internet_type") %>";
+var select_type="<% cfg_get("internet_ppp_type") %>";
+var endis_wl_radio='<% enable_ap_orNot("bgn") %>';
+var endis_wla_radio='<% enable_ap_orNot("an") %>';
+var enable_qos="<% cfg_get("streamboost_enable") %>";
+var gui_region="<% cfg_get("GUI_Region") %>";
+var basic_dynamic_page = "<% cfg_get("basic_dynamic_page") %>";
+var enable_arlo="<% cfg_get("wlg_arlo_endis_arloNet") %>";
+
+var SH=[
+	["\\", "&#92;"],
+	["\"", "&#34;"],
+	["(",  "&#40;"],
+	[")",  "&#41;"],
+	["#",  "&#35;"],
+	["&",  "&#38;"],
+	["&",  "&amp;"],
+	["<",  "&lt;" ],
+	[">",  "&gt;" ],
+	["'",  "&#39;"],
+	[" ",  "&nbsp;"]
+	];
+
+function StoH(s)
+{
+	var val="";
+	var changed=0;
+	for(var i=0; i<s.length; i++)
+	{
+		changed=0;
+		for(var j=0; j<SH.length; j++)
+		{
+			if(s.charAt(i) == SH[j][0])
+			{
+				changed=1;
+				break;
+			}
+		}
+		if(changed == 1 )
+			val = val + SH[j][1];
+		else
+			val = val + s.charAt(i);
+	}
+	return val;
+}
+
+function HtoS(s)
+{
+	var val="";
+	var changed=0;
+	for(var i=0; i<s.length;)
+	{
+		changed=0;
+		for(var j=0; j<SH.length; j++)
+		{
+			if(s.substr(i, Math.min(SH[j][1].length, s.length-i+1)) == SH[j][1])
+			{
+				changed=1;
+				break;
+			}
+		}
+		if(changed == 1 )
+		{
+			val = val + SH[j][0];
+			i=i+SH[j][1].length;
+		}
+		else
+		{
+			val = val + s.charAt(i);
+			i++;
+		}
+	}
+	return val;
+}
+
+var isSynchronous=0;
+
+$$(document).ready(function(){
+	please_wait(false);
+	if(parental_ctrl_flag == 1)
+		document.getElementById("parental").style.display = "";
+	if((endis_wl_radio == 1 || endis_wla_radio == 1) && document.getElementById("pwd_div"))
+		scrollPassword();
+	get_ping_and_devices();
+	setIconClass("internet_stat","wlan_stat","parant_control_stat","readyshare_stat","guestNetwork_stat","byodNetwork_stat","guestPortal_stat");
+
+	//$$(".scroll").css("font-family", "Courier, MonoSpace");
+	bs = $$("div.scroll");
+	seq=[];
+	originner=[];
+	max=18;
+	maxlen=0;
+	interval=700;
+
+	for(var i=0; i<bs.length; i++)
+	{
+		originner[i]=splitHtml(bs[i].innerHTML);
+		seq[i]=0;
+
+		var sum = originner[i][0].length + originner[i][2].length;
+		//alert("["+originner[i][0]+"]["+originner[i][2]+"]");
+		if(maxlen < sum)// get the max string's length
+			maxlen = sum;
+		}
+		if(enable_ap_flag == "1" || enable_bridge_flag == "1")
+			scroll();
+	}
+);
+
+function get_ping_and_devices()
+{
+	$$.ajax({
+		url: "basic_home_result.txt",
+		type: "GET",
+		dataType: "text",
+		success: function(data){
+			if(data != "") {
+			var each = data.split(";");
+			if(each[0] == "failed") {
+			  if(model_name == "SRR60")
+				var errIcon = "<div id=\"internet\" class=\"basic_icon_error\" style=\"background-image:none;\" onclick=\"click_action(\'no_internet\');\">";
+			  else
+				var errIcon = "<div id=\"internet\" class=\"basic_icon_error\" onclick=\"click_action(\'no_internet\');\">";
+				errIcon += "<div id=\"icon_error\"></div>"
+			//srr60 use world_wide_web.svg
+			 if(model_name == "SRR60")
+				errIcon += '<div class="icon_img"><img src="'+ icons_dir + use_images["internet"] +'" height="60px"></div>';
+
+				errIcon += "<div class=\"icon_name\">$internet</div>"
+				errIcon += "<div id=\"internet_stat\" class=\"icon_status\"><span><b>$error_mark</b> <a>$not_connected</a></span></div>"
+				errIcon += "</div>";
+				if($$("#wait_ping").length > 0) {
+					$$("#form_content>div").eq(0).remove();
+					$$("#form_content").prepend(errIcon);
+				}
+			}
+			else if(each[0] == "success"){
+				if($$("#wait_ping").length > 0) {
+					$$("#wait_ping").html("$good_mark");
+				}
+			}
+			else
+				$$('#wait_ping').html('Detecting...');
+			$$("#satellite_num").html(each[1]);
+			$$("#dev_num").html(each[2]);
+			if(support_arlo == 1) {
+				if(enable_arlo == "1"){
+					if(each[6] == "1") {
+						if(each[5] == "1") {
+							$$("#arlo_statc").html("ON(Registered)");
+						} else {
+							$$("#arlo_statc").html("ON(Unregistered)");
+						}
+						$$("#arlo_num").html(each[4]+"/"+each[3]);
+					} else {
+						$$("#arlo_statc").html("OFF(Disconnect)");
+						$$("#arlo_num").html("0/0");
+					}
+				} else {
+					$$("#arlo_statc").html("OFF(Disabled)");
+					$$("#arlo_num").html("0/0");
+				}
+			}
+			setTimeout("get_ping_and_devices();", 5000);
+			}
+		}
+	});
+}
+
+
+
+function splitHtml(str)
+{
+	//str = "111: <b> 333 </b>"
+	//result = ["111", "<b>", "333", "</b>"]
+	var result=[];
+	var a = str.split('<');
+	var b = a[1].split('>');
+	result[0] = a[0];
+	result[1] = '<'+b[0]+'>';
+	result[2] = HtoS(b[1]);
+	result[3] = '<'+a[2];
+
+	return result;
+}
+
+function scroll()
+{
+	for( var i=0; i<bs.length; i++)
+	{
+		var len1 = originner[i][0].length;
+		var len2 = originner[i][2].length;
+		var sum = len1 + len2;
+		var msg1=originner[i][0];
+		var tag1=originner[i][1];
+		var msg2=originner[i][2];
+		var tag2=originner[i][3];
+		var s = seq[i];
+		var m = max;
+		var result="";
+
+		if(sum <= m )//short strings not need to scroll
+			continue;
+
+		if(isSynchronous == 1)
+		{
+			for(var t=0; t<maxlen-sum+1; t++)//add spaces, to make all strings have the same length, then scroll synchronous
+				msg2=msg2+" ";
+		}
+		else
+			msg2=msg2+" ";
+
+		len2 = msg2.length;
+		sum = len1+len2;
+		//alert(s+"/"+sum);
+
+		if( (sum-s) >= m)
+		{
+			if( s < len1 )
+				result = StoH(msg1.substring(s, len1)) + tag1 + StoH(msg2.substr(0, m-len1+s)) + tag2;
+			else
+				result = tag1 + StoH(msg2.substr(s-len1, m)) + tag2;
+		}
+		else
+		{
+			var backnum = m-(sum-s);
+			if( s < len1)
+				result = StoH(msg1.substring(s, len1)) + tag1 + StoH(msg2) + tag2 + StoH(msg1.substr(0, backnum));
+			else if( backnum < len1)
+				result = tag1 + StoH(msg2.substring(s-len1, len2)) + tag2 + StoH(msg1.substr(0, backnum));
+			else
+				result = tag1 + StoH(msg2.substring(s-len1, len2)) + tag2 + StoH(msg1) + tag1 + StoH(msg2.substr(0, backnum - len1))+ tag2;
+
+		}
+
+		bs[i].innerHTML=result;
+		seq[i]++;
+
+		if(seq[i] >= sum)
+			seq[i] = 0;
+	}
+
+	setTimeout("scroll();", interval);
+}
+
+function scrollPassword() {
+	var speed = 40;
+	var scroll_begin = document.getElementById("pwd_begin");
+	var scroll_end = document.getElementById("pwd_end");
+	var scroll_div = document.getElementById("passwd");
+	var content_div = document.getElementById("pwd_div");
+	var label = document.getElementById("pwd_label");
+	if(!scroll_begin || !scroll_end || !scroll_div || !content_div || !label)
+		return;
+
+	var len = label.offsetWidth + scroll_begin.offsetWidth;
+	if(len < 176)
+	{
+		label.style.marginLeft = (175-len)/2 + "px";
+		scroll_div.style.float = "left";
+		return;
+	}
+	scroll_begin.style.marginRight = "15px";
+	scroll_end.style.marginRight = "15px";
+	scroll_end.innerHTML = scroll_begin.innerHTML;
+
+	function marquee(){
+		if(scroll_end.offsetWidth - scroll_div.scrollLeft <= -13)
+			scroll_div.scrollLeft = scroll_div.scrollLeft - scroll_begin.offsetWidth -13;
+		else
+			scroll_div.scrollLeft++;
+	}
+	var myScroll = setInterval(marquee, speed);
+	scroll_div.onmouseover = function(){ clearInterval(myScroll); };
+	scroll_div.onmouseout = function(){ myScroll = setInterval(marquee, speed); }
+}
+</script>
+
+<div id="form" style="max-height:560px;overflow-y:auto;min-width:650px;">
+<div id="form_content">
+	<% basic_internet() %>
+	<% basic_wireless() %>
+	<% basic_byod() %>
+	<% basic_guest_portal() %>
+	<div id="attached" class="basic_icon">
+		<div class="icon_click" onclick="click_action('attached');"></div>
+		<div class="icon_name" onclick="click_action('attached');">$attach_device</div>
+		<div id="attached_stat" class="icon_long_status">
+		<span>
+			<div onclick="click_action('attached');" style="white-space:nowrap;" >$ORT_018
+				<b id="satellite_num"></b>
+			</div>
+			<div onclick="click_action('attached');" style="white-space:nowrap;">$num_devs:
+				<b id="dev_num"></b>
+			</div>
+		</span>
+		</div>
+	</div>
+	<div id="parental" class="basic_icon" onclick="click_action('parental');" style="display:none;">
+		<div class="icon_name">$parental_control</div>
+		<div id="parant_control_stat" class="icon_status"><span>$status_mark <b><% basic_parental_state() %></b></span></div>
+	</div>
+	<% basic_readyshare() %>
+	<% basic_guest() %>
+	<% basic_arlo() %>
+	<% basic_armor() %>
+</div><!-- form_content -->
+</div><!-- form -->
+</form>
+<script>
+var model_name = "<% get_base_model_name() %>";
+var use_images = {//mean id and its icon
+	"internet": "world_wide_web.svg", "wireless": "wifi1.svg", "byod": "wifi2.svg", "guest_portal": "wifi3.svg",
+	"attached": "devices.svg"
+};
+var icons_dir = "images/svg/";
+
+function change_icon_image()
+{	
+	for(var k in use_images)
+	{
+		var obj = document.getElementById(k);
+		if(obj)
+		{
+			obj.style.backgroundImage = "none";
+			var img_div = '<div class="icon_img"><img src="'+ icons_dir + use_images[k] +'" height="60px"></div>';
+			$$(obj).prepend(img_div);
+		}
+	}
+}
+function ajust_icons_position()
+{
+	var blank_icon = '<div class="basic_icon" style="visibility:hidden;"></div>';
+	var attach_icon = document.getElementById("attached");
+	$$("#internet").after($(attach_icon));
+	$$("#attached").after(blank_icon);
+}
+
+if(model_name == "SRR60")
+{
+	change_icon_image();
+	ajust_icons_position();
+}
+
+if(gui_region == "French" || gui_region == "Russian" || gui_region == "Spanish")
+{
+	$$("#attached  #attached_stat").css("font-size","13px");;
+}
+</script>
+</body>
+</html>

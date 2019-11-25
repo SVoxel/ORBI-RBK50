@@ -1,0 +1,13 @@
+--- procd-2015-10-29.1/rcS.c-org	2018-01-24 09:48:48.706776947 +0800
++++ procd-2015-10-29.1/rcS.c	2018-01-24 09:53:58.966766950 +0800
+@@ -87,8 +87,10 @@
+ 		return;
+ 	}
+ 	close(pipefd[0]);
++#ifdef  DISABLE_DAEMON_STDOUT_STDERR
+ 	dup2(pipefd[1], STDOUT_FILENO);
+ 	dup2(pipefd[1], STDERR_FILENO);
++#endif
+ 
+ 	execlp(s->file, s->file, s->param, NULL);
+ 	exit(1);

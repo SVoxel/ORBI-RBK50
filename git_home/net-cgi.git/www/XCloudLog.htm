@@ -1,0 +1,11 @@
+<% http_header("style/form.css") %>
+
+<body>
+<% refresh_timestamp("debug_cloud") %>
+<form action="/debug_cloud.cgi? timestamp=<% cfg_get("debug_cloud") %>" method="post" enctype="multipart/form-data">
+<br/><br/><input type="submit" name="Save" class="long_common_bt" value="Collect XCloud Logs" />
+</form>
+
+</body>
+</html>
+

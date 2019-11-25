@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<script language="javascript" type="text/javascript" src="script/funcs.js"></script>
+<% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
+<% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
+</head>
+
+<body>
+<% form_submit("apply", "BRS_04_applySettings.html", "hijack_pppoe") %>
+
+<script>
+function checkPPPoE()
+{
+	var forms = document.getElementsByTagName("form");
+        var cf = forms[0];
+	
+	var pppoe_name = document.getElementById("pppoe_name");
+	var pppoe_passwd = document.getElementById("pppoe_password");
+
+	if(pppoe_name.value == "")
+	{
+		alert(bh_login_name_null);
+		return false;
+	}
+
+	var i;
+	for(i=0;i<pppoe_passwd.value.length;i++)
+	{
+		if(isValidChar(pppoe_passwd.value.charCodeAt(i))==false)
+		{
+			alert(bh_password_error);
+			return false;
+		}
+	}
+
+	return true;
+}
+
+</script>
+<input type="hidden" name="WANAssign" value="0" />
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Orbi Setup WiFi-->
+		<div id="card-orbi-setup-wifi" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_pppoe_conn);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_enter_info_below);</script></div>
+
+			<div class="input-wrapper input-text-box-one">
+				<div class="input-title"><script>document.write(bh_pppoe_login_name);</script></div>
+				<input type="text" id="pppoe_name" maxlength="64" align="right" name="pppoe_name" autocomplete="off"/>
+			</div>
+
+			<div class="input-wrapper input-text-box-two">
+				<div class="input-title"><script>document.write(bh_ddns_passwd);</script></div>
+				<input type="text" id="pppoe_password" maxlength="16" align="right" name="pppoe_passwd" autocomplete="off" />
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return checkPPPoE();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+
+          </div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+#!/bin/sh
+. /lib/cfgmgr/cfgmgr.sh
+
+oc /etc/init.d/opmode restart
+if [ "x$(config get have_forceshield)" = "x1" ];then
+	/media/nand/check_dap.sh
+fi

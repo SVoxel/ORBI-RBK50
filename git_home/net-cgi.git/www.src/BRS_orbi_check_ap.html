@@ -1,0 +1,72 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var internet_type="";
+var delay_time=1000;
+var n=0;
+var port_status = "<% cat_file("/tmp/port_status") %>";
+function loadvalue()
+{
+	setTimeout("check_internet_type()",delay_time);
+}
+
+function check_internet_type()
+{
+	if(port_status == "0")
+	{	
+		if(parent.business_ap_detect == 1)
+			this.location.href = "BRS_00_01_noWan.html";
+		else
+			this.location.href = "BRS_orbi_check_fw.html";
+	}
+	else if( n < 60)
+	{
+		if( internet_type == "0" )
+		{
+			location.href= ((parent.business_ap_detect == 1) ? "BRS_orbi_ap_sel2.html" : "BRS_orbi_ap_sel.html");
+			return;
+		}
+		else if(internet_type == "1")
+		{
+			if(parent.business_ap_detect == 1)
+				this.location.href = "BRS_01_checkNet_ping.html";
+			else
+				this.location.href = "BRS_orbi_check_fw.html";
+			return;
+		}
+		n++;
+		setTimeout("check_internet_type()",delay_time);
+	}
+	else
+	{
+		if(parent.business_ap_detect == 1)
+			this.location.href = "BRS_01_checkNet_ping.html";
+		else
+			this.location.href = "BRS_orbi_check_fw.html";
+	}
+}
+</script>
+
+</head>
+
+<body onLoad="loadvalue()">
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_check_conn);</script></div>
+		</div>
+	</div>
+</div>
+<iframe style="display:none" name="check_frame" src="BRS_00_01_hid_checking.html" allowtransparency="true" scrolling="no" frameborder="0" ></iframe>
+</body>
+
+</html>

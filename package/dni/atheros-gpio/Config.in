@@ -1,0 +1,85 @@
+menu "Configuration"
+	depends on PACKAGE_kmod-atheros-gpio
+
+config GPIO_POWER_R
+	int "power red led gpio"
+	default 64
+
+config GPIO_POWER_G
+	int "power green led gpio"
+	default 63
+
+config GPIO_LED_R
+	int "bottom red led gpio"
+	default 54
+
+config GPIO_LED_G
+	int "bottom green led gpio"
+	default 53
+
+config GPIO_LED_B
+	int "bottom blue led gpio"
+	default 57
+
+config GPIO_LED_W
+	int "bottom white led gpio"
+	default 60
+
+config GPIO_I2C_EN
+	int "i2c enable gpio"
+	default 58
+
+config GPIO_I2C_RST
+	int "i2c reset gpio"
+	default 59
+
+config GPIO_BTN_RST
+	int "button reset gpio"
+	default 18
+
+config GPIO_WPS_BTN
+	int "WPS gpio"
+	default 49
+
+config GPIO_HAVE_USB
+	bool "Use DNI git reporitory"
+	default n
+
+config GPIO_HAVE_SENSOR
+	bool "Use client bridge feature"
+	default n
+
+config GPIO_HAVE_TOP_LED
+	bool "Display scan result in proc system"
+	default n
+
+config GPIO_HAVE_HEATER
+	bool "Display scan result in proc system"
+	default n
+
+config GPIO_USB_EN
+	int "USB gpio"
+	default 46
+	depends on GPIO_HAVE_USB
+
+config GPIO_TOP_LED_EN
+	int "top led gpio"
+	default 23
+	depends on GPIO_HAVE_TOP_LED
+
+config GPIO_TOP_LED_RST
+	int "top led reset gpio"
+	default 22
+	depends on GPIO_HAVE_TOP_LED
+
+config GPIO_HW_LED_BTN
+	int "hw led button gpio"
+	default 35
+	depends on GPIO_HAVE_TOP_LED
+
+config GPIO_HEATER_EN
+	int "heater gpio"
+	default 44
+	depends on GPIO_HAVE_HEATER
+
+endmenu

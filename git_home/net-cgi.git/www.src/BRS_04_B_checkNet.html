@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var ping_result = "<% hijack_apply_result("/tmp/ping_result") %>";
+
+function loadValue()
+{
+	var forms = document.getElementsByTagName("form");
+	var cf = forms[0];
+
+	if(ping_result == "failed")	//failed
+	{
+ 		this.location.href = "BRS_05_networkIssue.html"
+	}
+	else if(ping_result == "success") //success
+		this.location.href = "BRS_success.html";
+	setTimeout("loadValue();", 1000);
+}
+</script>
+
+</head>
+
+<body onLoad="loadValue();">
+<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_check_conn);</script></div>
+		</div>
+	</div>
+</div>
+
+</form>
+<iframe name="ping_result_frame" src="BRS_ping_result.html" allowtransparency="true" scrolling="no" frameborder="0" style="display:none"></iframe>
+</body>
+
+</html>
+
+

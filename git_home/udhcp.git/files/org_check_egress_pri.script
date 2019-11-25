@@ -1,0 +1,22 @@
+#!/bin/sh
+local enable_orange=`config get enable_orange`
+local enable_orange_ipv6=`config get enable_orange_ipv6`
+local egress_pri=`cat /proc/net/vlan/ethwan | grep EGRESS | awk '{print $4}'`
+local ipv4_wanip=`ifconfig brwan | grep 'inet addr'`
+local ipv6_scope=`cat /proc/net/if_inet6 | grep br0 | awk '{print $4}'`
+local WAN_IF=$1
+org_ipv4_wan_up=0
+org_ipv6_wan_up=0
+egress_pri_changed=0
+
+[ $enable_orange -eq 1 -a "x$ipv4_wanip" != "x" ] && org_ipv4_wan_up=1
+[ $enable_orange_ipv6 -eq 1 -a $ipv6_scope = "00" ] && 	org_ipv6_wan_up=1
+[ $egress_pri != "0:0" ] && egress_pri_changed=1
+
+if [ "$egress_pri_changed" = "1" ]; then
+	if [ "$org_ipv4_wan_up" = "1" -a "$org_ipv6_wan_up" = "0" ]; then
+		/usr/share/udhcpc/org_dhcp_pri_config.script 1 $WAN_IF
+	fi
+fi
+
+exit 0

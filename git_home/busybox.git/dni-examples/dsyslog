@@ -1,0 +1,66 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+START=49
+
+LOG_CATEGORY_FILE=/tmp/logcategory
+CONFIG=/bin/config
+
+# save the log category information
+g_total=0
+
+update_check_log ()
+{
+	local val
+
+	val=$($CONFIG get log_allow_sites)
+	local LAS=$((${val:-0} << 0))
+	val=$($CONFIG get log_block_sites_services)
+	local LBSS=$((${val:-0} << 1))
+	val=$($CONFIG get log_conn_web_interface)
+	local LCWI=$((${val:-0} << 2))
+	val=$($CONFIG get log_router_operation)
+	local LRO=$((${val:-0} << 3))
+	val=$($CONFIG get log_dos_attacks_port_scans)
+	local LDAPS=$((${val:-0} << 4))
+	val=$($CONFIG get log_port_firwarding_trigering)
+	local LPFT=$((${val:-0} << 5))
+	val=$($CONFIG get log_wire_access)
+	local LWA=$((${val:-0} << 6))
+	val=$($CONFIG get log_internet_conn_reset)
+	local LACR=$((${val:-0} << 7))
+	val=$($CONFIG get log_readyshare)
+	local LRDS=$((${val:-0} << 8))
+	val=$($CONFIG get log_readyshare_mobile_connect)
+	local LRMC=$((${val:-0} << 9))
+	val=$($CONFIG get log_vpn_head)
+	local LVPN=$((${val:-0} << 10))
+	val=$($CONFIG get log_wire_signal_sched)
+	local LWLSCHED=$((${val:-0} << 11))
+
+	g_total=$(($LAS + $LBSS + $LCWI + $LRO + $LDAPS + $LPFT + $LWA + $LACR + $LRDS +$LRMC + $LVPN + $LWLSCHED))
+}
+
+start ()
+{
+	[ -f "/tmp/orbi_type" ] && [ "x`cat /tmp/orbi_type`" = "xSatellite" ] && return
+	update_check_log
+	syslogd -m 0 -T "$($CONFIG get time_zone)" -c "$g_total"
+
+	# the fisrt log
+	local sys_first=`$CONFIG get syslog_up_first`
+	if [ "x$sys_first" = "x0" ]; then
+		logger "[Initialized, firmware version: $(cat /firmware_version)$(cat /firmware_region)]"
+		$CONFIG set syslog_up_first=1
+	fi
+}
+
+stop ()
+{
+	killall syslogd
+}
+
+restart ()
+{
+	stop
+	start
+}

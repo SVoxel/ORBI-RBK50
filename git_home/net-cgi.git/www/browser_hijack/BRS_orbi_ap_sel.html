@@ -1,0 +1,30 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+
+<body>
+<% form_submit("apply", "BRS_orbi_check_fw.html", "hijack_save_time") %>
+<input type="hidden" name="hid_save_time" value="2">
+<div id="container">
+	<div class="dialog-content">
+		<!-- Existing Router Detected -->
+		<div id="card-existing-router" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="search-router-logo" src="images/router_search.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_ap_title);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_ap_tips);</script></div>
+			<button class="waves-effect waves-light btn button-nav" onclick="return true;">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

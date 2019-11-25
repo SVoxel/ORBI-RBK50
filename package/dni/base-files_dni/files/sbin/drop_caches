@@ -1,0 +1,9 @@
+#!/bin/sh
+#workaround to fix 14 day endurance test memory link
+#while dni reproduce by repeating down/up the traffic once
+
+while [ true ];
+do
+	sleep 86400;
+	echo 3 > /proc/sys/vm/drop_caches
+done

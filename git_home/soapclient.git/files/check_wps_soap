@@ -1,0 +1,29 @@
+#!/bin/sh 
+
+WPS_STATUS_FILE="/tmp/wps_process_state"
+
+/bin/config set wps_check_satellite=1
+
+wait_time=24
+while [ $wait_time -gt 0 ]; do
+	sleep 5
+	wps_status=`cat $WPS_STATUS_FILE`
+	if [ "$wps_status" = "1" ]; then 
+		break
+	fi
+	if [ "$wps_status" != "start" ] && [ "$wps_status" != "2" ] && [ "$wps_status" != "3" ]; then
+		echo "wps status is $wps_status.." > /dev/console
+		break	
+	fi
+	wait_time=$(( $wait_time - 1 ))
+done
+
+if [ "$wps_status" = "1" ]; then
+	echo "wait soap .." > /dev/console
+	sleep 35
+fi
+/bin/config set wps_check_satellite=0
+
+
+
+

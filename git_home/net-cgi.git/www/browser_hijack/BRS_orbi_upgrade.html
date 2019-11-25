@@ -1,0 +1,134 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="x-ua-compatible" content="IE=EDGE" />
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="title" content="NETGEAR">
+<link rel="stylesheet" href="/style/form2.css">
+<link rel="stylesheet" href="/css/localstyle.css">
+<script language=javascript type="text/javascript" src="/funcs.js"></script>
+<script language=javascript type="text/javascript" src="/orbi_upgrade.js"></script>
+<% hijack_language() %>
+<title>NETGEAR Router Orbi </title>
+</head>
+
+<body onLoad="loadvalue();">
+<style>
+.skip_btn{color:#00b4f5; cursor:pointer; text-decoration:none; font-size:13px;}
+.wizard_body_container { max-width:960px; margin:25px auto 0 auto; background:#FFFFFF; }
+#page_title {font: bold 17px arial; color: #9d98ff;}
+#header{width:960px; height:80px;  margin:0 auto;}
+.top_name{ height:77px; width:730px; float:left; margin:0; overflow:hidden; }
+.title_div{ height:56px; width:267px; margin: 6px 0; overflow:hidden; background: url(../image/logo.png) no-repeat 0px 0px;background-size: contain; }
+#fw_check_table table{width:80%;}
+#fw_check_table table tr {text-align:center;}
+@media (max-width:780px){
+	.wizard_body_container { width:100%;}
+	#header{width:100%;}
+	.top_name{ height:77px; width:100%;}
+	.title_div{ height:43px; width:100%;}
+	#fw_check_table table{width:100%;}
+}
+</style>
+<div id="header" style="display:none">
+	<div class="top_name">
+		<div class="title_div"></div>
+	</div>
+</div>
+
+<% form_submit("func", "BRS_orbi_upgrade.html", "download_orbi_confile") %>
+
+<script>
+<% cfg_set("set_auto_agreement", "0") %>
+<% save_timestamp("download_orbi_confile","upgrade_orbi_image", "upgrade_base_image", "upgrade_satellite_image", "hijack_save_time")%>
+var ts = "<% cfg_get("download_orbi_confile") %>";
+var orbi_count=0;
+var wan_status=<% detwan_valid() %>;
+<% wait_satellite_dev_info() %>
+var device_names = <% get_device_name() %>;
+var base_dev_info = <% get_base_dev_info() %>;
+var ext_dev_info = <% get_satellite_dev_info() %>;
+<% cfg_set("orbi_sel_num", "0") %>
+var satellite_num="<% cfg_get("satellite_online_num") %>";
+var url = "BRS_orbi_upgrade.html";
+var cf=document.forms[0];
+var no_new_version = bh_no_new_version;
+var plz_wait_moment = bh_plz_wait_moment;
+var ORT_005=bh_ORT_005;
+var ORT_013=bh_ORT_013;
+var router_status_router=bh_router_status_router;
+var stalist_Status=bh_stalist_Status;
+var orbi_model_name=bh_orbi_model_name;
+var edit_devname=bh_edit_devname;
+var old_ver=bh_current_firmware;
+var wait_for_conn=bh_wait_for_conn;
+var no_internet=bh_no_internet;
+var serv_unreachable=bh_serv_unreachable;
+var down_in_back=bh_down_in_back;
+var unknown_error=bh_unknown_error;
+var upg_failed=bh_upg_failed;
+var next_mark=bh_orbi_next_mark;
+var base_model_name = "<% get_base_model_name() %>";
+var sate_default_name = "<% get_sate_model_name() %>";
+var control_firmware_support="<% control_firmware_support() %>";
+
+function loadvalue()
+{
+	document.getElementById("refresh").value = bh_check_mark;
+	document.getElementById("upgrade_all").value = bh_update_all;
+
+	update_devname();
+	init_check_table();
+	if(top.location.href.indexOf("adv_index") == -1)
+		document.getElementById("header").style.display = "";
+	else
+		document.getElementById("header").style.display = "none";
+	wait_count=0;
+	if(document.location.href.indexOf("type=upgrade") != -1){
+		refresh_content("upgrade");
+	}else{
+		refresh_content("check");
+	}
+}
+
+function toInternet()
+{
+	var cf = document.forms[0];
+	cf.action="/apply.cgi?/to_internet_no_auth.htm timestamp="+ts;
+	cf.submit_flag.value = "hijack_save_time";
+	cf.target = "_top";
+	cf.submit();
+}
+</script>
+<input type="hidden" name="hid_save_time" value="8">
+<div class="wizard_body_container">
+<table id="online_content" width=100% border=0 cellpadding=0 cellspacing=2>
+<tr>
+	<td><div id="page_title"><script>document.write(bh_firm_upgrade);</script></div></td>
+	<td align="right"><a class="skip_btn" id="skip" onclick="toInternet();"><script>document.write(bh_orbi_skip_mark);</script> &gt;&gt;<a></td>
+</tr>
+$bluebar
+<tr><td colspan=2>&nbsp;<td><tr>
+<tr>
+	<td><script>document.write(bh_upgrade_new_version);</script></td>
+	<td align="right"><input type="button" class="upg_btn" name="Refresh" id="refresh" value="" onclick="do_check(document.forms[0], url);"></td>
+</tr>
+$bluebar
+<tr><td colspan=2>&nbsp;<td><tr>
+<tr>
+	<td colspan=2 id="fw_check_table">
+	</td>
+</tr>
+<tr><td colspan=2>&nbsp;<td><tr>
+<tr>
+	<td>&nbsp;</td>
+	<td align="right"><input type="button" class="upg_btn" name="upgrade_all" id="upgrade_all" onclick="do_upgrade(document.forms[0], url);" value=""></td>
+</tr>
+$bluebar
+
+</table>
+</div>
+</form>
+</body>
+</html>

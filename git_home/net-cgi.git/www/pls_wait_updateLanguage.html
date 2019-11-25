@@ -1,0 +1,138 @@
+<html>
+<head>
+<title></title>
+<meta http-equiv="content-type" content="text/html; charset=<% lang_charset() %>" />
+<% hijack_language() %>
+<style type="text/css">
+BODY {
+	FONT-SIZE: 12px; FONT-FAMILY: Arial, Helvetica, Geneva, Swiss, SunSans-Regular, sans-serif; background-color: #ffffff; WIDTH: 100%; margin-left: 0; margin-right: 0;
+}
+.main{ width: 100%; overflow: auto; position: absolute; top: 20px; left: 0px; bottom: 30px;}
+.prgbar1 { font-family:Arial; padding:0px; height: 20px; width: 280px; font-weight: bolder; font-size: 10pt; border: 1px solid; border-color: #09c; color: #0000FF}  
+.blueBar{border:none; border-top:2px solid #9d98ff;}
+</style>
+<script language="javascript" type="text/javascript">
+/* qutoe the script file funcs.js will increase the page loading time, and the page will show blank, so copy the 
+   function isCDLESS() isWIZARD() getText() here */
+function isCDLESS()
+{
+        var flag = top.location.href.indexOf("BRS_index.htm") > -1 ;
+        return flag;
+}
+
+function isWIZARD()
+{
+        var flag = top.location.href.indexOf("adv_index.htm") != -1&& top.setup_wizard_flag == 1;
+        return flag;
+}
+function getText(str1, str2)
+{
+        if ( typeof(str1) != "undefined" && (isCDLESS() || isWIZARD()))
+                return str1;
+        else
+                return str2;
+}
+function printText(str1, str2)
+{
+        document.write(getText(str1, str2));
+}
+function makeStr(strSize, fillChar)
+{
+	var temp = "";
+	for (i=0; i < strSize ; i ++)
+		temp = temp + fillChar;
+	return temp;
+}
+
+var pchar = "||"; // progress char
+var maxchars = 46; 
+var delay_time = 1000; // msecs
+var charcount = 0;
+var jp_multiPPPoE = "<% cfg_get("jp_multiPPPoE") %>";
+var change_to_German = "<% cfg_get("change_to_German") %>";
+var netgear_region="<% get_firmware_region() %>";
+var gr_flag = (netgear_region.toUpperCase() == "GR" || ( (netgear_region.toUpperCase() == "" || netgear_region.toUpperCase()=="WW")&& change_to_German == "1"))? 1:0;
+var language_change_status="<% lang_change_status() %>";
+var language_download_status="<% lang_download_status() %>";
+
+function updateProgress()
+{
+		var cf = document.forms[0];
+		charcount ++;
+		cf.progress.value = makeStr(charcount,pchar);
+}
+
+function finishProgress()
+{
+		charcount = maxchars-1;
+		updateProgress();
+		goto_home_page();
+}
+
+function loadvalue()
+{
+		checkStatus();
+}
+function checkStatus()
+{
+	//console.log("language_change_status:"+language_change_status+"language_download_status:"+language_download_status);
+	if(language_change_status == "1") // 1:No Internet Connection
+	{
+		if(gr_flag)
+			alert(getText(bh_ml_noInternet, "$ml_noInternet"));
+		else if(jp_multiPPPoE!="1")
+			alert(getText(bh_auto_upg_nowan_head, "$auto_upg_nowan_head"));
+		finishProgress();			
+	}
+	else if(language_change_status == "-1"){
+		alert(getText(bh_serv_unreachable, "$serv_unreachable"));
+		finishProgress();
+	}
+	else if(language_change_status == "2" || (language_download_status !="1100" && language_download_status !="1000") || language_change_status == "3" || charcount >= maxchars) // 2:download failed
+	{
+		alert(getText(bh_ml_failDownload, "$ml_failDownload"));
+		finishProgress();
+	}else if((language_change_status == "0" && language_download_status == "1100")||(language_change_status == "5" && language_download_status == "1000")){//finish downloading language from internet or use language in flash
+		finishProgress();
+	}else{
+		updateProgress();
+		if(charcount > 5)
+			delay_time=4000;
+		setTimeout("checkStatus();", delay_time)
+	}
+
+}
+
+function goto_home_page()
+{
+        if( top.location.href.indexOf("adv_index.htm") != -1 ){
+                top.location.href="adv_index.htm";
+        }
+        else if ( top.location.href.indexOf("BRS_index.htm") > -1 ){
+                toInternet();
+        }
+        else{
+                top.location.href="index.htm";
+        }
+}
+function toInternet()
+{
+        top.location.href = "to_internet_no_auth.htm";
+}
+</script>
+</head>
+<body bgcolor="#ffffff" onload="loadvalue()">
+<div id="main" class="main">
+<form>
+	<div id="downloading_div">
+		<div><hr class=blueBar /></div><br />
+		<div align="left"><script>printText(bh_wait_update_lang, "$wait_update_lang");</script></div><br />
+		<div align="center"><input type="text" name="progress" class="prgbar1" value="" /></div><br />
+		<div><hr class=blueBar /></div>
+	</div>
+</form>
+</div>
+<iframe name="check_frame" src="change_language_result.htm" allowtransparency="true" scrolling="no" frameborder="0" style="display:none"></iframe>
+
+</body>
+</html>

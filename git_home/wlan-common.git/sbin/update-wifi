@@ -1,0 +1,2197 @@
+#!/bin/sh
+
+update_conf=wifi
+while getopts ":t:" opt;do
+    case $opt in
+        t)
+            if [ "${OPTARG}" = "all" ]; then
+                update_conf="all"
+            elif [ "${OPTARG}" = "wigig" ]; then
+                update_conf="wigig"
+            else
+                update_conf="wifi"
+            fi
+            ;;
+    esac
+done
+
+if [ "$update_conf" = "all" ]; then
+    echo "" > /etc/config/wigig
+    echo "" > /etc/config/wireless
+elif [ "$update_conf" = "wigig" ]; then
+    echo "" > /etc/config/wigig
+else
+    echo "" > /etc/config/wireless
+fi
+. /etc/dni-wifi-config
+
+wifi_topology_file=${WIFI_TOPOLOGY_FILE:-/tmp/wifi_topology}
+get_intf_onoff()
+{
+    parent_radio=`echo $2 | awk -F _ '{print $1}'`
+    second_type=`echo $2 | awk -F _ '{print $NF}'`
+    eval wl_parent_exist=\$`echo $parent_radio`_exist
+    eval wl_config="\$FORCE_CREATE_$2_VAP"
+    eval wl_onoff=\$`echo $2`_if_onoff
+
+    if [ "$wl_parent_exist" = "on" ] && [ "$wl_config" = "on" ]; then
+        eval export -- "${1}=on"
+    else
+        if [ "$second_type" = "guest" -o "$second_type" = "arlo" ]; then
+            eval export -- "${1}=off"
+        elif [ "$second_type" = "byod" ]; then
+            eval export -- "${1}=off"
+        elif [ "$second_type" = "setup" ]; then
+            if [ "$wl_onoff" = "on" ]; then
+	        eval export -- "${1}=on"
+            else
+                eval export -- "${1}=off"
+            fi
+        else
+            # if not guest or arlo, $2 should be the name of this VAP
+            eval wl_op_type=\$`echo $2`_operation_type
+            if [ -z "$wl_op_type" -o "$wl_op_type" = "none" ]; then
+                eval export -- "${1}=off"
+            else
+                eval export -- "${1}=on"
+            fi
+        fi
+    fi
+}
+
+# This function is to get the prefix of environment variables.
+# If environment variables are all named according to same rule, then
+# this function will provide help on getting environment variables.
+get_wl_prefix()
+{
+    case "$1" in
+        wlg)
+            wl_prefix=wl
+            ;;
+        wla)
+            wl_prefix=wla
+                ;;
+        wlg_guest)
+            wl_prefix=wlg1
+            ;;
+        wlg_arlo)
+            wl_prefix=wlg_arlo
+            ;;
+        wla_guest)
+            wl_prefix=wla1
+            ;;
+        wlg_byod)
+            wl_prefix=wlg2
+            ;;
+        wla_byod)
+            wl_prefix=wla2
+            ;;
+        wlg_setup)
+            wl_prefix=wlg_setup
+            ;;
+        wla_setup)
+            wl_prefix=wla_setup
+            ;;
+        wla2_setup)
+           wl_prefix=wla2_setup
+            ;;
+        wig)
+            wl_prefix=wig
+            ;;
+        wlg_ap_bh|wlg_sta|wla_ap_bh|wla_sta)
+            wl_prefix=$1
+            ;;
+        wla2_guest)
+            wl_prefix=wla1_2nd
+            ;;	    
+        wla2*)
+            wl_prefix=$(echo wla_2nd${1#wla2})
+            ;;
+    esac
+
+    if [ "$g_sameSSID" = "True" -a "$2" != "topology_file" ]; then
+            case "$1" in
+                wla|wla2)
+                    wl_prefix=wl
+                ;;
+                *guest)
+                    wl_prefix=wlg1
+                ;;
+                *byod)
+                    wl_prefix=wlg2
+                ;;
+            esac
+    fi
+
+}
+
+wl_section=
+get_wl_section()
+{
+    if [ "$1" != "wig" -a "$USE_QCA_SECTION_RULE" = "1" ]; then
+        eval wl_section=\$`echo $1`_section
+    else
+        eval wl_section=$1
+    fi
+
+    [ -z "$wl_section" ] && wl_section=$1
+}
+
+assign_vap_option()
+{
+    eval wl_onoff=\$`echo $1`_if_onoff
+    eval wl_create_vap=\$FORCE_CREATE_$1_VAP
+
+    if [ "$wl_onoff" = "off" -a "$wl_create_vap" = "on" ] || [ "$wl_onoff" = "on" -a "$wl_hw_btn_state" = "off" ]; then
+        uci set wireless.${wl_section}.vap_only=1
+    fi
+}
+
+generate_mac()
+{
+    case "$1" in
+        wlg)
+            [ -f /tmp/mac_addr_2g ] && wl_value=`cat /tmp/mac_addr_2g`
+            [ -n "$wl_value" -a "$wl_value" != "00:00:00:00:00:00" ] || {
+                wl_value=$mac_2g
+            }
+            uci set wireless.${g_device}.macaddr=${wl_value:-"4C:60:DE:CE:61:AE"}
+        ;;
+        wla)
+            [ -f /tmp/mac_addr_5g ] && wl_value=`cat /tmp/mac_addr_5g`
+            [ -n "$wl_value" -a "$wl_value" != "00:00:00:00:00:00" ] || {
+                wl_value=$mac_5g
+            }
+            uci set wireless.${a_device}.macaddr=${wl_value:-"4C:60:DE:CE:61:AF"}
+        ;;
+        wla2)
+            [ -f /tmp/mac_addr_2nd5g ] && wl_value=`cat /tmp/mac_addr_2nd5g`
+            [ -n "$wl_value" -a "$wl_value" != "00:00:00:00:00:00" ] || {
+                wl_value=$mac_2nd_5g
+            }
+            uci set wireless.${a2_device}.macaddr=${wl_value:-"4C:60:DE:CE:61:B0"}
+        ;;
+    esac
+}
+
+generate_channel()
+{
+    eval wl_value=\$`echo $1`_channel
+
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.channel=${wl_value}
+    elif [ "$1" = "wla" ]; then
+        uci set wireless.${a_device}.channel=${wl_value}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.channel=${wl_value}
+    elif [ "$1" = "wig" ]; then
+        uci set wigig.${wig_device}.channel=${wl_value:-2}
+    fi
+}
+
+generate_hwmode()
+{
+    eval wl_value=\$`echo $1`_hwmode
+
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.hwmode=${wl_value:-11g}
+    elif [ "$1" = "wla" ]; then
+        uci set wireless.${a_device}.hwmode=${wl_value:-11a}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.hwmode=${wl_value:-11a}
+    elif [ "$1" = "wig" ]; then
+        uci set wigig.${wig_device}.hwmode=${wl_value:-11ad}
+    fi
+}
+
+generate_htmode()
+{
+    eval wl_value=\$`echo $1`_htmode
+
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.htmode=${wl_value:-auto}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.htmode=${wl_value:-auto}
+    else
+        uci set wireless.${a_device}.htmode=${wl_value:-auto}
+    fi
+}
+
+
+generate_ul_hyst()
+{
+    eval wl_value=\$`echo $1`_ul_hyst
+
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.ul_hyst=${wl_value:-0}
+    elif [ "$1" = "wla" ]; then
+        uci set wireless.${a_device}.ul_hyst=${wl_value:-0}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.ul_hyst=${wl_value:-3}
+    fi
+}
+
+
+generate_keepalive()
+{
+    eval wl_value=\$`echo $1`_keepalive
+
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.keepalive=${wl_value:-0}
+    elif [ "$1" = "wla" ]; then
+        uci set wireless.${a_device}.keepalive=${wl_value:-0}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.keepalive=${wl_value:-0}
+    elif [ "$1" = "wig" ]; then
+        uci set wigig.${wig_device}.keepalive=${wl_value:-0}
+    fi
+}
+
+generate_sta_dfs()
+{
+    eval wl_value=\$`echo $1`_sta_dfs_en
+
+    if [ -n "$wl_value" ]; then
+        if [ "$1" = "wlg" ]; then
+            uci set wireless.${g_device}.staDFSEn=${wl_value}
+        elif [ "$1" = "wla" ]; then
+            uci set wireless.${a_device}.staDFSEn=${wl_value}
+        elif [ "$1" = "wla2" ]; then
+            uci set wireless.${a2_device}.staDFSEn=${wl_value}
+        elif [ "$1" = "wig" ]; then
+            uci set wigig.${wig_device}.staDFSEn=${wl_value}
+        fi
+    fi
+}
+
+generate_enhance_dfs(){
+    eval wl_value=\$`echo $1`_enhance_dfs
+    if [ "$1" = "wla" ]; then
+        uci set wireless.${a_device}.CSwOpts=${wl_value}
+    elif [ "$1" = "wla2" ]; then
+        uci set wireless.${a2_device}.CSwOpts=${wl_value}
+    fi
+}
+
+#
+# Generate "wireless.<DEVICE>.disabled" in /etc/config/wireless or
+# "wigig.<DEVICE>.disabled" in /etc/config/wigig
+#
+# Used variables in /etc/dni-wifi-config:
+#     wlg_if_onoff  # 2.4 GHz
+#     wla_if_onoff  # 5 GHz
+#     wig_if_onoff  # 11ad
+#
+# $1: "wlg" when device is of 2.4 GHz
+#     "wla" when device is of 5 GHz
+#     "wig" when device is of 60 GHz
+#
+generate_disabled()
+{
+    local cfgfile
+    local device
+    local wl_value
+
+    case "$1" in
+        wlg)
+            cfgfile=wireless
+            device=$g_device
+            ;;
+        wla)
+            cfgfile=wireless
+            device=$a_device
+            ;;
+        wla2)
+            cfgfile=wireless
+            device=$a2_device
+            ;;
+        wig)
+            cfgfile=wigig
+            device=$wig_device
+            ;;
+        *)
+            ;;
+    esac
+
+    eval wl_value=\$`echo $1`_if_onoff
+
+    if [ "$wl_value" = "off" ]; then
+        uci set ${cfgfile}.${device}.disabled=1
+    fi
+}
+
+generate_cfreq2()
+{
+    eval wl_value=\$`echo $1`_cfreq2
+
+    if [ "$1" = "wla" ]; then
+        [ -n "$wl_value" ] && uci set wireless.${wl_section}.cfreq2=${wl_value}
+    fi
+}
+
+generate_tpscale()
+{
+    eval wl_value=\$`echo $1`_tpscale
+
+    case "$1" in
+        wlg)
+            uci set wireless.${g_device}.tpscale=${wl_value:-0}
+        ;;
+        wla)
+            uci set wireless.${a_device}.tpscale=${wl_value:-0}
+        ;;
+        wla2)
+            uci set wireless.${a2_device}.tpscale=${wl_value:-0}
+        ;;
+    esac
+
+}
+
+generate_wifi_hw_button_state()
+{
+    if [ "$wlg_exist" = "on" -a "$wla_exist" = "on" ]; then
+        hw_btn_state=$wl_hw_btn_state
+    else
+        if [ "$1" = "$g_device" ]; then
+            hw_btn_state=$wlg_if_onoff
+        else
+            hw_btn_state=$wla_if_onoff
+        fi
+    fi
+
+    if [ "$wl_cb_if_onoff" = "on" ]; then
+        hw_btn_state="on"
+    fi
+
+    uci set wireless.${1}.hw_btn_state=${hw_btn_state}
+}
+
+generate_mode()
+{
+#    eval wl_wds_onoff=\$`echo $1`_wds_onoff
+#    eval wl_wds_role=\$`echo $1`_wds_role
+#    if [ "$wl_wds_onoff" = "on" -a "$wl_wds_role" = "repeater" ]; then
+#        cat <<EOF >> $wifi_config
+#        option mode     wds
+#EOF
+#    else
+#        cat <<EOF >> $wifi_config
+#        option mode     ap
+#EOF
+#    fi
+
+    #the origin design maybe have some error,for ap mode,it less ap at operation_type,so for 
+    #ap we should use eval operation_type=\$`echo $1`_ap_operation_type,if neccessary,
+    #i think we maybe need modify the origin desin,now i follows the origin design first
+    if [ "$1" = "wlg" -o "$1" = "wla" -o "$1" = "wla2" ]; then
+        eval operation_type=\$`echo $1`_ap_operation_type
+    else
+        eval operation_type=\$`echo $1`_operation_type
+    fi
+    [ -z "$operation_type" ] && operation_type="normal_ap"
+    if [ "$1" = "wig" ]; then
+        # TODO: support station mode
+        uci set wigig.${wl_section}.mode=ap
+        return
+    fi
+    if [ "$wl_cb_if_onoff" = "on" -o "$operation_type" = "ex_sta" ]; then
+        uci set wireless.${wl_section}.mode=sta
+        uci set wireless.${wl_section}.extap=1
+        uci set wireless.${wl_section}.athnewind=1
+        uci set wireless.${wl_section}.vap_ind=0
+    elif [ "$operation_type" = "qwrap_sta" ]; then
+        uci set wireless.${wl_section}.mode=sta
+        uci set wireless.${wl_section}.scanband=1
+        uci set wireless.${wl_section}.periodicScan=180000
+        uci set wireless.${wl_section}.athnewind=1
+    elif [ "$operation_type" = "backhaul_sta" ]; then
+        uci set wireless.${wl_section}.mode=sta
+        uci set wireless.${wl_section}.wds=1
+        uci set wireless.${wl_section}.athnewind=1
+        uci set wireless.${wl_section}.vap_ind=0
+        uci set wireless.${wl_section}.backhaul=1
+        uci set wireless.${wl_section}.wsplcd_unmanaged=1
+        uci set wireless.${wl_section}.repacd_security_unmanaged=1
+        uci set wireless.${wl_section}.dropmdns=0
+        role=`uci get repacd.repacd.Role`
+        if [ "x$role" = "xCAP" ]; then
+            uci set wireless.${wl_section}.disabled=1
+        fi
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then # enable arlo vlan feature
+        get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+        [ "$_tmp_wlg_arlo_onoff" = "on" ] && {
+            # set bh vlan ID
+            eval wl_vids=\$`echo $1`_vids
+            vid_len=`/bin/echo $wl_vids | wc -w`
+            if [ $vid_len -gt 0 ]; then
+                uci set wireless.${wl_section}.vid_LENGTH=${vid_len}
+                local c=1
+                for vid in $wl_vids; do
+                    uci set wireless.${wl_section}.vid_ITEM$c=${vid}
+                    c=$(($c+1))
+                done
+            fi
+            # set bh vlan bridge
+            eval wl_brs=\$`echo $1`_brs
+            br_len=`/bin/echo $wl_brs | wc -w`
+            if [ $br_len -gt 0 ]; then
+                #uci delete wireless.${wl_section}.bridge
+                uci set wireless.${wl_section}.vid_br_LENGTH=${br_len}
+                local c=1
+                for br in $wl_brs; do
+                    uci set wireless.${wl_section}.vid_br_ITEM$c=${br}
+                    c=$(($c+1))
+                done
+            fi
+            uci set wireless.${wl_section}.rept_spl=0
+            # reset network, will be read by hyd
+            #uci set wireless.${wl_section}.network=backhaul
+        };fi
+    elif [ "$operation_type" = "backhaul_ap" ]; then
+        uci set wireless.${wl_section}.mode=ap
+        uci set wireless.${wl_section}.athnewind=1
+        uci set wireless.${wl_section}.vap_ind=0
+        uci set wireless.${wl_section}.wds=1
+        uci set wireless.${wl_section}.backhaul=1
+        uci set wireless.${wl_section}.backhaul_ap=1
+        uci set wireless.${wl_section}.wsplcd_unmanaged=1
+        uci set wireless.${wl_section}.repacd_security_unmanaged=1
+        uci set wireless.${wl_section}.dropmdns=0
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then  # enable arlo vlan feature
+        get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+        [ "$_tmp_wlg_arlo_onoff" = "on" ] && {
+            # set bh vlan ID
+            eval wl_vids=\$`echo $1`_vids
+            vid_len=`/bin/echo $wl_vids | wc -w`
+            if [ $vid_len -gt 0 ]; then
+                uci set wireless.${wl_section}.vid_LENGTH=${vid_len}
+                local c=1
+                for vid in $wl_vids; do
+                    uci set wireless.${wl_section}.vid_ITEM$c=${vid}
+                    c=$(($c+1))
+                done
+            fi
+            # set bh vlan bridge
+            eval wl_brs=\$`echo $1`_brs
+            br_len=`/bin/echo $wl_brs | wc -w`
+            if [ $br_len -gt 0 ]; then
+                #uci delete wireless.${wl_section}.bridge
+                uci set wireless.${wl_section}.vid_br_LENGTH=${br_len}
+                local c=1
+                for br in $wl_brs; do
+                    uci set wireless.${wl_section}.vid_br_ITEM$c=${br}
+                    c=$(($c+1))
+                done
+            fi
+            uci set wireless.${wl_section}.rept_spl=0
+            # reset network, will be read by hyd
+            #uci set wireless.${wl_section}.network=backhaul
+        };fi
+    elif [ "$operation_type" = "qwrap_ap" ];then
+        uci set wireless.${wl_section}.mode=wrap
+        uci set wireless.${wl_section}.qwrap=wrap
+        uci set wireless.${wl_section}.scanband=1
+        uci set wireless.${wl_section}.periodicScan=180000
+        uci set wireless.${wl_section}.athnewind=1
+        uci set wireless.${wl_section}.maxsta=18	
+    else
+        uci set wireless.${wl_section}.mode=ap
+        local radio=`echo $1 | awk -F_ '{print $1}'`
+        eval sta_operation_type=\$`echo $radio`_sta_operation_type
+        if [ "x$sta_operation_type" != "xnone" ]; then
+            uci set wireless.${wl_section}.athnewind=1
+        fi
+        case "$1" in
+            wlg_guest | wla_guest | wla2_guest )
+                uci set wireless.${wl_section}.wsplcd_unmanaged=1
+                uci set wireless.${wl_section}.repacd_security_unmanaged=1
+            ;;
+            wlg_arlo )
+                uci set wireless.${wl_section}.mode=ap_lp_iot
+                uci set wireless.${wl_section}.inact=65535
+                uci set wireless.${wl_section}.ap_isolation_enabled=1
+                uci set wireless.${wl_section}.wsplcd_unmanaged=1
+                uci set wireless.${wl_section}.repacd_security_unmanaged=1
+                uci set wireless.${wl_section}.hyd_unmanaged=1
+                uci set wireless.${wl_section}.arlo=1
+            ;;
+            wlg_byod | wla_byod | wla2_byod)
+                uci set wireless.${wl_section}.wsplcd_unmanaged=1
+                uci set wireless.${wl_section}.repacd_security_unmanaged=1
+            ;;
+            wlg_setup | wla_setup | wla2_setup)
+                uci set wireless.${wl_section}.wsplcd_unmanaged=1
+                uci set wireless.${wl_section}.repacd_security_unmanaged=1
+                uci set wireless.${wl_section}.hyd_unmanaged=1
+            ;;
+        esac
+    fi
+}
+
+generate_vhtng()
+{
+    #
+    # Enable "wireless.<IFACE>.vht_11ng" only when 2.4 GHz device is set to
+    # either HT20 or HT40.
+    #
+    # This can be simply implemented by checking whether "wlg_htmode" is empty
+    # or not because, according to /etc/dni-wifi-config , "wlg_htmode"
+    # contains value only when "wlg_hwmode" is "11ng".
+    #
+    eval wl_vht11ng_value=\$`echo $1`_vht_11ng
+    uci set wireless.${wl_section}.vht_11ng=${wl_vht11ng_value:-1}
+}
+
+generate_wps()
+{
+    eval wps_onoff=\$`echo $1`_wps_onoff
+
+    if [ "$wps_onoff" = "off" ]; then
+        return;
+    fi
+    
+    if [ "$wsc_lock_down" = "1" ]; then
+        wl_wps_ap_setup_locked=1
+    else
+        eval wl_wps_ap_setup_locked=\$`echo $1`_wps_ap_setup_locked
+    fi
+
+    eval wl_wps_configured=\$`echo $1`_wps_configured
+    if [ "$wl_wps_configured" = "configured" ]; then
+        wl_wps_enable_onoff=2
+    else
+        wl_wps_enable_onoff=1
+    fi
+
+    wl_value=$wps_config_method
+    [ -n "$wl_value" ] || {
+        #default config method
+        wl_value="virtual_push_button physical_push_button"
+    }
+
+    if [ "$1" = "wlg" -o "$1" = "wla" -o "$1" = "wla2" ]; then
+        eval operation_type=\$`echo $1`_ap_operation_type
+    else
+        eval operation_type=\$`echo $1`_operation_type
+    fi
+
+    if [ "$operation_type" = "normal_ap" -o "$operation_type" = "backhaul_ap" -o "$operation_type" = "qwrap_ap" ]; then
+        uci set wireless.${wl_section}.ap_setup_locked=${wl_wps_ap_setup_locked}
+        uci set wireless.${wl_section}.wps_state=${wl_wps_enable_onoff}
+    fi
+    if [ "$1" = "wlg_arlo" ]; then
+        uci set wireless.${wl_section}.ap_setup_locked=${wl_wps_ap_setup_locked}
+        uci set wireless.${wl_section}.wps_state=${wl_wps_enable_onoff}
+    fi
+    uci set wireless.${wl_section}.wps_config="$wl_value"
+    uci set wireless.${wl_section}.wps_pbc=1
+}
+
+generate_wps_device_name()
+{
+    eval wps_onoff=\$`echo $1`_wps_onoff
+    
+    if [ "$wps_onoff" = "off" ]; then
+        return;
+    fi
+
+    wl_device_name="`echo ${wps_device_name:0:19}`(Wireless AP)"
+
+    uci set wireless.${wl_section}.wps_device_name="${wl_device_name}"
+}
+
+generate_ssid()
+{
+    eval wl_value=\$`echo $1`_ssid
+
+    # handle special characters
+    wl_value=$(echo "$wl_value" | sed  -e 's/\\"/\"/g')
+    wl_value=$(echo "$wl_value" | sed  -e 's/\\\\\\\\/\\/g')
+    wl_value=$(echo "$wl_value" | sed  -e 's/\\\\\\`/\`/g')
+
+    if [ "$1" = "wig" ]; then
+        uci set wigig.${wl_section}.ssid="${wl_value:-DNIWIFI}"
+    else
+        uci set wireless.${wl_section}.ssid="${wl_value:-DNIWIFI}"
+    fi
+}
+
+generate_hide_ssid()
+{
+    eval wl_value=\$`echo $1`_hide_ssid_onoff
+
+    if [ "$1" = "wig" ]; then
+        cfgfile=wigig
+    else
+        cfgfile=wireless
+    fi
+
+    if [ "$wl_value" = "on" ]; then
+        uci set ${cfgfile}.${wl_section}.hidden=1
+    else
+        uci set ${cfgfile}.${wl_section}.hidden=0
+    fi
+}
+
+generate_puren()
+{
+    eval wl_value=\$`echo $1`_puren_onoff
+    if [ "$wl_value" = "on" ]; then
+        uci set wireless.${wl_section}.puren=1
+    fi
+}
+
+generate_doth()
+{
+    eval wl_value=\$`echo $1`_doth
+    uci set wireless.${wl_section}.doth=${wl_value:-1}
+}
+
+generate_root_distance()
+{
+    eval wl_root_distance=\$`echo $1`_root_distance
+    if [ -n "$wl_root_distance" ]; then
+        uci set wireless.${wl_section}.root_distance=${wl_root_distance}
+    fi
+}
+
+generate_no_wradar()
+{
+    wl_value=`echo $1 |cut -c1-3`
+    [ "wla" = "$wl_value" ] && uci set wireless.${wl_section}.no_wradar=${wla_no_wradar:-0}
+}
+
+generate_disablecoext()
+{
+    eval wl_value=\$`echo $1`_disablecoext
+    uci set wireless.${wl_section}.disablecoext=${wl_value:-0}
+}
+
+generate_rrm()
+{
+    eval wl_value=\$`echo $1`_rrm
+    uci set wireless.${wl_section}.rrm=${wl_value:-1}
+}
+
+
+generate_caprssi()
+{
+    eval wl_value=\$`echo $1`_caprssi
+    uci set wireless.${wl_section}.caprssi=${wl_value:-20}
+}
+
+
+generate_mcastenhance()
+{
+    eval wl_value=\$`echo $1`_mcastenhance
+    uci set wireless.${wl_section}.mcastenhance=${wl_value:-2}
+}
+
+generate_security()
+{
+    eval wl_sectype=\$`echo $1`_sectype
+
+    if [ "$1" = "wig" ]; then
+        cfgfile=wigig
+    else
+        cfgfile=wireless
+    fi
+
+    case "$wl_sectype" in
+        off)
+            eval uci set ${cfgfile}.${wl_section}.encryption=none
+            ;;
+        *wep*)
+            get_wl_prefix "$1"
+            load_wep_config "$wl_prefix" "$1"
+            eval wl_wep_auth_type=\$wep_auth_type_`echo $((${1}_auth))`
+            case "$wl_wep_auth_type" in
+                open)
+                    auth_type="open"
+                    ;;
+                shared)
+                    auth_type="shared"
+                    ;;
+                *)
+                    auth_type="mixed"
+                    ;;
+            esac
+            eval wl_wep_keyix=\$`echo $1`_key
+            eval wl_key_length=\$`echo $1`_key_length
+            uci set wireless.${wl_section}.encryption=${wl_sectype}-${auth_type}
+            uci set wireless.${wl_section}.key=${wl_wep_keyix}
+            for idx in 1 2 3 4; do
+                eval wl_wep_key=\$`echo $1`_key${idx}
+                [ -n "$wl_wep_key" ] && {
+                    tmp_key_length=`expr length $wl_wep_key`
+                    if [ "$wl_key_length" = "5" ]; then
+                        if [ "$tmp_key_length" = "10" ]; then
+                            uci set wireless.${wl_section}.key${idx}_format=HEX
+                        elif [ "$tmp_key_length" = "5" ]; then
+                            uci set wireless.${wl_section}.key${idx}_format=ASCII
+                        fi
+                    else
+                        if [ "$tmp_key_length" = "26" ]; then
+                            uci set wireless.${wl_section}.key${idx}_format=HEX
+                        elif [ "$tmp_key_length" = "13" ]; then
+                            uci set wireless.${wl_section}.key${idx}_format=ASCII
+                        fi
+                    fi
+                }
+                uci set wireless.${wl_section}.key${idx}=${wl_wep_key}
+            done
+            ;;
+        *psk*)
+            get_wl_prefix "$1"
+            dni_config_get_psk_phrase wl_psk_phrase wl_encryption "$wl_prefix" "$wl_sectype"
+            if [ "$1" = "wig" ]; then
+                uci set wigig.${wl_section}.encryption="${wl_sectype}+gcmp"
+            else
+                uci set wireless.${wl_section}.encryption=${wl_encryption}
+            fi
+
+            # handle special characters
+            wl_psk_phrase=$(echo "$wl_psk_phrase" | sed  -e 's/\\"/\"/g')
+            wl_psk_phrase=$(echo "$wl_psk_phrase" | sed  -e 's/\\\\/\\/g')
+            wl_psk_phrase=$(echo "$wl_psk_phrase" | sed  -e 's/\\`/\`/g')
+
+            uci set ${cfgfile}.${wl_section}.key="$wl_psk_phrase"
+            ;;
+        *wpa*)
+            get_wl_prefix "$1"
+            load_wpa_config "$wl_prefix"
+            uci set wireless.${wl_section}.encryption=${_tmp_wpa}
+            uci set wireless.${wl_section}.key=${wl_auth_sv_secret}
+            uci set wireless.${wl_section}.server=${wl_auth_sv_ip}
+            uci set wireless.${wl_section}.port=${wl_auth_sv_port}
+            ;;
+    esac
+            
+}
+
+generate_rts()
+{
+    eval wl_rts_value=\$`echo $1`_rts
+    if [ -n "$wl_rts_value" ]; then
+        uci set wireless.${wl_section}.rts=${wl_rts_value}
+    fi
+}
+
+generate_protocol_setting()
+{
+    parent_radio=`echo $1 | awk -F _ '{print $1}'`
+    eval wl_frag_value=\$`echo $parent_radio`_frag
+    eval wl_wmm_value=\$`echo $parent_radio`_wmm_onoff
+    eval wl_preamble_value=\$`echo $parent_radio`_preamble
+    eval wl_country_ie_value=\$`echo $parent_radio`_country_ie_onoff
+
+    uci set wireless.${wl_section}.frag=${wl_frag_value}
+    if [ "$wl_wmm_value" = "on" ]; then
+        uci set wireless.${wl_section}.wmm=1
+    else
+        uci set wireless.${wl_section}.wmm=0
+    fi
+    if [ "$wl_country_ie_value" = "on" ]; then
+        uci set wireless.${wl_section}.countryie=1
+    else
+        uci set wireless.${wl_section}.countryie=0
+    fi
+    case "$wl_preamble_value" in
+        *long*)
+            uci set wireless.${wl_section}.short_preamble=0
+            ;;
+        *)
+            uci set wireless.${wl_section}.short_preamble=1
+            ;;
+    esac
+}
+
+generate_acl()
+{
+    parent_radio=`echo $1 | awk -F _ '{print $1}'`
+
+    eval wl_acl_onoff=\$`echo $parent_radio`_acl_onoff
+    if [ "$wl_acl_onoff" != "on" ]; then
+        return;
+    fi
+
+    uci set wireless.${wl_section}.macfilter=allow
+    dni_config_get acl_sta_num wl_acl_num
+    acl_sta_num=${acl_sta_num:-0}
+    num=1
+    while [ $num -le $acl_sta_num ]; do
+        dni_config_get mac "wlacl${num}"
+        addr=$(echo "$mac" | while read name value; do echo "$value"; done)
+        uci add_list wireless.${wl_section}.maclist=${addr}
+        num=$(($num + 1))
+    done
+}
+
+generate_wds()
+{
+    eval wl_wds_onoff=\$`echo $1`_wds_onoff
+    if [ "$wl_wds_onoff" = "off" ]; then
+        return
+    fi
+
+    eval wl_wds_role=\$`echo $1`_wds_role
+
+    # The variable naming of wds is different with others.
+    # Use another way for it.
+    case "$1" in
+        wlg)
+            wl_wds_postfix=
+            radio_device="${g_device}"
+            ;;
+        wla)
+            wl_wds_postfix="_a"
+            radio_device="${a_device}"
+            ;;
+    esac
+
+    # ROOTAP (Base station) section
+    if [ "$wl_wds_role" = "rootap" ]; then
+        for idx in 1 2 3 4; do
+            dni_config_get wl_repeater_mac repeater_mac${idx}${wl_wds_postfix}
+            if [ "x$wl_repeater_mac" != "x" ]; then
+                uci add_list wireless.${wl_section}.maclist=${wl_repeater_mac}
+                uci add_list wireless.${wl_section}.nawds_add_repeater=${wl_repeater_mac}
+            fi
+        done
+
+        dni_config_get wds_client_assoc_onoff wds_endis_mac_client${wl_wds_postfix}
+        if [ "$wds_client_assoc_onoff" = "off" ]; then
+            uci set wireless.${wl_section}.macfilter=allow
+        fi
+        uci set wireless.${wl_section}.mode=ap
+        uci set wireless.${wl_section}.wds=1
+        uci set wireless.${wl_section}.nawds_mode=1
+    fi
+
+    if [ "$wl_wds_role" = "repeater" ]; then
+        eval wl_wds_repeater_assoc_onoff=\$`echo $1`_wds_repeater_assoc_onoff
+        dni_config_get wl_wds_rootap_mac basic_station_mac${wl_wds_postfix}
+
+        # Does not allow wireless client association.
+        if [ "$wl_wds_repeater_assoc_onoff" = "off" ]; then
+            uci set wireless.${wl_section}.mode=sta
+            uci set wireless.${wl_section}.wds=1
+            uci set wireless.${wl_section}.bssid=${wl_wds_rootap_mac}
+            # sta mode doesn't need set ssid
+            uci delete wireless.${wl_section}.ssid
+        else
+            # allow wireless client association, so there will be two
+            # interfaces created.
+
+            # set wds ap vap
+            uci set wireless.${wl_section}.mode=ap
+            uci set wireless.${wl_section}.wds=1
+            uci set wireless.${wl_section}.vap_ind=1
+
+            # set wds sta vap
+            uci set wireless."${1}_wds_sta"=wifi-iface
+            uci set wireless."${1}_wds_sta".network=${lan_ifname#"br"}
+            uci set wireless."${1}_wds_sta".device=${radio_device}
+            uci set wireless."${1}_wds_sta".bridge=${lan_ifname}
+            uci set wireless."${1}_wds_sta".mode=sta
+            uci set wireless."${1}_wds_sta".wds=1
+            uci set wireless."${1}_wds_sta".bssid=${wl_wds_rootap_mac}
+            uci set wireless."${1}_wds_sta".vap_ind=1
+        fi
+    fi
+
+}
+
+generate_bintval()
+{
+    case "$1" in
+        wlg)
+            uci set wireless.${wl_section}.bintval=100
+            ;;
+        wla)
+            uci set wireless.${wl_section}.bintval=100
+            ;;
+        wla2)
+            uci set wireless.${wl_section}.bintval=100
+            ;;
+        wlg_guest)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wla_guest | wla2_guest)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wlg_byod)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wla_byod | wla2_byod)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wlg_setup)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wla_setup | wla2_setup)
+            uci set wireless.${wl_section}.bintval=200
+            ;;
+        wlg_arlo)
+            uci set wireless.${wl_section}.bintval=25
+            ;;
+    esac
+}
+
+generate_dtim()
+{
+    case "$1" in
+        wlg | wla | wla2)
+            eval guest_if_onoff=\$`echo $1`_guest_if_onoff
+            # guest network is disabled
+            if [ "$guest_if_onoff" = "off" ]; then
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_guest}
+            else
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_guest}
+            fi
+
+            eval byod_if_onoff=\$`echo $1`_byod_if_onoff
+            # byod network is disabled
+            if [ "$byod_if_onoff" = "off" ]; then
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_byod}
+            else
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_byod}
+            fi
+            ;;
+        wlg_guest | wla_guest | wla2_guest)
+            uci set wireless.${wl_section}.dtim_period=${wl_guest_dtim}
+            ;;
+        wlg_byod | wla_byod | wla2_byod)
+            uci set wireless.${wl_section}.dtim_period=${wl_byod_dtim}
+            ;;
+        wlg_setup | wla_setup | wla2_setup)
+            uci set wireless.${wl_section}.dtim_period=${wl_setup_dtim}
+            ;;
+        wlg_arlo)
+            uci set wireless.${wl_section}.dtim_period=${wl_arlo_dtim}
+            ;;
+        wlg_ap_bh | wla_ap_bh | wla2_ap_bh)
+            eval guest_if_onoff=\$`echo $1`_guest_if_onoff
+            # guest network is disabled
+            if [ "$guest_if_onoff" = "off" ]; then
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_guest}
+            else
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_guest}
+            fi
+
+            eval byod_if_onoff=\$`echo $1`_byod_if_onoff
+            # byod network is disabled
+            if [ "$byod_if_onoff" = "off" ]; then
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_byod}
+            else
+                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_byod}
+            fi
+            ;;
+    esac
+}
+
+generate_chainmask()
+{
+    eval wl_txchainmask=\$`echo $1`_txchainmask
+    eval wl_rxchainmask=\$`echo $1`_rxchainmask
+    if [ "$1" = "wlg" ]; then
+        uci set wireless.${g_device}.txchainmask=${wl_txchainmask}
+        uci set wireless.${g_device}.rxchainmask=${wl_rxchainmask}
+    elif [ "$1" = "wla" ];then
+        uci set wireless.${a_device}.txchainmask=${wl_txchainmask}
+        uci set wireless.${a_device}.rxchainmask=${wl_rxchainmask}
+    else
+        uci set wireless.${a2_device}.txchainmask=${wl_txchainmask}
+	uci set wireless.${a2_device}.rxchainmask=${wl_rxchainmask}
+    fi
+}
+
+generate_model()
+{
+    uci set wireless.${wl_section}.model_name=${model_name}
+    uci set wireless.${wl_section}.model_number=${model_number}
+    uci set wireless.${wl_section}.serial_number=${serial_number}
+}
+
+generate_PIN()
+{
+    # Orbi does not need WPS AP PIN.
+    if [ -f /tmp/orbi_type ]; then
+        return
+    fi
+
+    [ -f /sbin/fetchPIN ] && /sbin/fetchPIN
+
+    if [ -f /tmp/wpspin-setted ]; then
+        pin_num=`cat /tmp/wpspin-setted`
+    else
+        pin_num=`cat /tmp/wpspin`
+    fi
+    uci set wireless.${wl_section}.wps_pin=${pin_num-:12345670}
+}
+
+generate_lan_restricted_access()
+{
+    eval wl_lan_restricted_access_onoff=\$`echo $1`_lan_restricted_access_onoff
+    # if lan restricted access is off, it means every one can access the network, so
+    # we don't need to generate ebtables rules.
+    if [ "$wl_lan_restricted_access_onoff" = "off" ]; then
+        return;
+    fi
+
+    wl_guest_iptv_on=`config get wan_brig_guest_ssid1`
+    wla_guest_iptv_on=`config get wan_brig_guest_ssid2`
+	# TODO -Too long condition check. Give me a fix.
+    if [ "$1" = "wlg_guest" -a "${wl_guest_iptv_on}" = "1" ] || [ "$1" = "wla_guest" -a "${wla_guest_iptv_on}" = "1" ] || [ "$1" = "wla2_guest" -a "x${wla_guest_iptv_on}" = "x1" ]; then
+        gui_region=`config get GUI_Region`
+        [ -f /tmp/firmware_region ] && firmware_region=`cat /tmp/firmware_region | awk '{print $1}'`
+        if [ "$firmware_region" = "" ] || [ "$firmware_region" = "WW" ]; then
+            if [ "$gui_region" = "Russian" ] || [ "$gui_region" = "Chinese" ]; then
+                return;
+            fi
+        elif [ "$firmware_region" = "RU" ] || [ "$firmware_region" = "PR" ]; then
+                return;
+        fi
+    fi
+
+    uci set wireless.${wl_section}.lan_restricted=1
+    uci set wireless.${wl_section}.lan_ipaddr=${lan_ipaddr}
+}
+
+generate_wireless_isolation()
+{
+    eval wl_wireless_isolation_onoff=\$`echo $1`_wireless_isolation_onoff
+    if [ "$wl_wireless_isolation_onoff" = "off" ]; then
+        return;
+    fi
+
+    uci set wireless.${wl_section}.isolate=1
+}
+
+generate_bf()
+{
+    local wl_value=
+
+    eval wl_bf_onoff=\$`echo $1`_bf_onoff
+    if [ "$wl_bf_onoff" = "on" ]; then
+        wl_value=1
+    elif [ "$wl_bf_onoff" = "off" ]; then
+        wl_value=0
+    fi
+    case "$1" in
+        wlg)
+            uci set wireless.${g_device}.bf=${wl_value:-0}
+            ;;
+        wla)
+            uci set wireless.${a_device}.bf=${wl_value:-0}
+            ;;
+        wla2)
+            uci set wireless.${a2_device}.bf=${wl_value:-0}
+            ;;
+    esac
+}
+
+#
+# Generate "wireless.<DEVICE>.implicitbf" in /etc/config/wireless
+#
+# Used variable in etc/dni-wifi-config: wla_implicit_bf_onoff
+#
+# $1: "wla" when device is 5 GHz
+#
+generate_implicitbf()
+{
+    eval wl_implicit_bf_onoff=\$`echo $1`_implicit_bf_onoff
+
+    if [ "$wl_implicit_bf_onoff" = "on" ]; then
+        wl_value=1
+    else
+        wl_value=0
+    fi
+
+    case "$1" in
+        wlg)
+            uci set wireless.${g_device}.implicitbf=${wl_value:-0}
+        ;;
+        wla)
+            uci set wireless.${a_device}.implicitbf=${wl_value:-0}
+        ;;
+        wla2)
+            uci set wireless.${a2_device}.implicitbf=${wl_value:-0}
+        ;;
+    esac
+}
+
+#
+# Generate "wireless.<DEVICE>.mu_mimo" in /etc/config/wireless
+#
+# Used variable in etc/dni-wifi-config: wla_mu_mimo_onoff
+#
+# $1: "wla" when device is 5 GHz
+#
+generate_mu_mimo()
+{
+    local wl_mu_mimo_value=
+
+    eval wl_mu_mimo_onoff=\$`echo $1`_mu_mimo_onoff
+
+    if [ "$wl_mu_mimo_onoff" = "on" ]; then
+        wl_mu_mimo_value=1
+    elif [ "$wl_mu_mimo_onoff" = "off" ]; then
+        wl_mu_mimo_value=0
+    fi
+
+    case "$1" in
+        wlg)
+            uci set wireless.${g_device}.mu_mimo=${wl_mu_mimo_value:-0}
+        ;;
+        wla)
+            uci set wireless.${a_device}.mu_mimo=${wl_mu_mimo_value:-0}
+        ;;
+        wla2)
+            uci set wireless.${a2_device}.mu_mimo=${wl_mu_mimo_value:-0}
+        ;;
+    esac
+}
+
+generate_wifi_topology_file()
+{
+    if [ "$1" = "wlg" -o "$1" = "wla" -o "$1" = "wla2" ]; then
+        eval operation_type=\$`echo $1`_ap_operation_type
+    else
+        eval operation_type=\$`echo $1`_operation_type
+    fi
+    case "$operation_type" in
+        normal_ap|qwrap_ap)
+            if_type="NORMAL"
+            if_mode="AP"
+            ;;
+        ext_sta)
+            if_type="EXT"
+            if_mode="STA"
+            ;;
+        backhaul_ap)
+            if_type="BACKHAUL"
+            if_mode="AP"
+            ;;
+        backhaul_sta)
+            if_type="BACKHAUL"
+            if_mode="STA"
+            ;;
+        *)
+            case "$1" in
+                wlg_arlo )
+                    if_type="ARLO"
+                    if_mode="AP"
+                    ;;
+                wlg_guest|wla_guest|wla2_guest)
+                    if_type="GUEST"
+                    if_mode="AP"
+                    ;;
+                wlg_byod|wla_byod|wla2_byod)
+                    if_type="BYOD"
+                    if_mode="AP"
+                    ;;
+                wlg_setup|wla_setup|wla2_setup)
+                    if_type="SETUP"
+                    if_mode="AP"
+                    ;;
+             esac
+             ;;
+    esac
+    parent_radio=`echo $1 | awk -F _ '{print $1}'`
+    case "$parent_radio" in
+        wlg) wifi_device=$g_device ;;
+        wla) wifi_device=$a_device ;;
+        wla2) wifi_device=$a2_device ;;
+    esac
+    get_wl_prefix "$1" "topology_file"
+    echo "$if_type:$if_mode:$wifi_device:$wl_ifname:${wl_section}:$wl_prefix" >> $wifi_topology_file
+}
+
+generate_ifname()
+{
+    eval wl_ifname=\$${1}_ifname
+
+    cfgfile=wireless
+    [ -n "$wl_ifname" ] && {
+        uci set ${cfgfile}.${wl_section}.ifname=${wl_ifname}
+        generate_wifi_topology_file $1
+    }
+}
+
+generate_cca_threshold()
+{
+    eval wl_cca_threshold=\$${1}_cca_threshold
+
+    if [ "$wl_cca_threshold" -lt -10 -a "$wl_cca_threshold" -gt -95 ]; then
+        if [ "$1" = "wlg" ]; then
+            uci set wireless.${g_device}.cca_threshold=${wl_cca_threshold}
+        elif [ "$1" = "wla" ]; then
+            uci set wireless.${a_device}.cca_threshold=${wl_cca_threshold}
+        elif [ "$1" = "wla2" ]; then
+            uci set wireless.${a2_device}.cca_threshold=${wl_cca_threshold}
+        elif [ "$1" = "wig" ]; then
+            uci set wigig.${wig_device}.cca_threshold=${wl_cca_threshold}
+        fi
+    fi
+}
+
+generate_dyn_bw_rts()
+{
+    eval wl_value=\$`echo $1`_dyn_bw_rts
+    uci set wireless.${wl_section}.dyn_bw_rts=${wl_value:-0}
+}
+
+generate_rps()
+{
+    eval wl_value=\$`echo $1`_rps
+    if [ -n "$wl_value" ]; then
+        uci set wireless.${wl_section}.rps=${wl_value}
+    fi
+}
+
+generate_ul_bssid()
+{
+    eval wl_value=\$`echo $1`_ul_bssid
+    if [ -n "$wl_value" ]; then
+        uci set wireless.${wl_section}.bssid=${wl_value}
+    fi
+}
+
+generate_atf()
+{
+    if [ $atf_mode -eq 1 ]; then
+        uci set wireless.qcawifi.atf_mode=1
+    else
+        uci set wireless.qcawifi.atf_mode=0
+    fi
+}
+
+generate_thermal_analytics()
+{
+    if [ $thermal_analytics -eq 1 ]; then
+        uci set wireless.qcawifi.thermal_analytics=1
+    else
+        uci set wireless.qcawifi.thermal_analytics=0
+    fi
+}
+
+generate_hyd_unmanaged()
+{
+    eval wl_value=\$`echo $1`_hyd_unmanaged
+    if [ -n "$wl_value" ]; then
+            uci set wireless.${wl_section}.hyd_unmanaged=${wl_value}
+    fi
+}
+
+create_new_iface()
+{
+    [ "$USE_QCA_SECTION_RULE" = "1" ] && {
+        uci add wireless wifi-iface > /dev/null
+    } || {
+        uci set wireless.${wl_section}=wifi-iface
+    }
+}
+
+if [ "$update_conf" = "wifi" -o "$update_conf" = "all" ]; then
+    rm -rf $wifi_topology_file
+    # config driver parameters
+    uci set wireless.qcawifi=qcawifi
+
+    [ -n "$WIFI_CONF_nss_wifi_olcfg" ] && uci set wireless.qcawifi.nss_wifi_olcfg=$WIFI_CONF_nss_wifi_olcfg
+    [ -n "$WIFI_CONF_nss_wifi_olnum" ] && uci set wireless.qcawifi.nss_wifi_olnum=$WIFI_CONF_nss_wifi_olnum
+
+    [ -n "$wlg_power_limit" ] && uci set wireless.qcawifi.wl_power_limit=${wlg_power_limit}
+    [ -n "$wla_power_limit" ] && uci set wireless.qcawifi.wla_power_limit=${wla_power_limit}
+    [ -n "$atf_mode" ] && generate_atf
+    [ -n "$thermal_analytics" ] && generate_thermal_analytics
+    [ -n "$hostapd_debug_level" ] && uci set \
+            wireless.qcawifi.hostapd_debug_level=${hostapd_debug_level}
+    [ -n "$wpa_supplicant_debug_level" ] && uci set \
+            wireless.qcawifi.wpa_supplicant_debug_level=${wpa_supplicant_debug_level}
+
+    if [ "$wlg_ap_operation_type" != "none" -o "$wlg_sta_operation_type" != "none" -o "$wlg_ap_bh_operation_type" != "none" ]; then
+        uci set wireless.${g_device}=wifi-device
+        uci set wireless.${g_device}.type=qcawifi
+        uci set wireless.${g_device}.country=${country_code}
+        uci set wireless.${g_device}.ODM=dni
+        uci set wireless.${g_device}.sys_bridge=${lan_ifname}
+        uci set wireless.${g_device}.repacd_auto_create_vaps=0
+        uci set wireless.${g_device}.dbdc_enable=${DBDC_ENABLE:-0}
+        uci set wireless.${g_device}.nf_baseline=$g_nf_baseline
+        if [ "$wlg_ap_operation_type" != "none" -o "$wlg_ap_bh_operation_type" != "none" ]; then
+            uci set wireless.${g_device}.obss_rssi_th=${wlg_obss_rssi_th}
+            uci set wireless.${g_device}.obss_rx_rssi_th=${wlg_obss_rx_rssi_th}
+        fi
+
+	if [ "$DEVICE_TYPE" = "extender" ];then
+            uci set wireless.${g_device}.burst=1
+            uci set wireless.${g_device}.burst_mode=1
+            uci set wireless.${g_device}.aggr_burst_LENGTH=4
+            uci set wireless.${g_device}.aggr_burst_ITEM1="0 20000"
+            uci set wireless.${g_device}.aggr_burst_ITEM2="1 20000"
+            uci set wireless.${g_device}.aggr_burst_ITEM3="2 20000"
+            uci set wireless.${g_device}.aggr_burst_ITEM4="3 20000"
+            if [ "$wlg_ap_operation_type" = "qwrap_ap"  ];then
+                uci set wireless.${g_device}.client_mcast=0
+                uci set wireless.${g_device}.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_oui_enable=1
+                uci set wireless.qcawifi.pref_uplink_time=30
+                uci set wireless.qcawifi.alwaysprimary=1
+                uci set wireless.qcawifi.qwrap_eth_sta_del_en=0
+                [ "x$primaryradio" = "x5G"  ] && uci set wireless.${g_device}.primaryradio=0
+            fi
+        fi
+	 
+        generate_wifi_hw_button_state "$g_device"
+        generate_mac "wlg"
+        generate_channel "wlg"
+        generate_hwmode "wlg"
+        generate_htmode "wlg"
+        generate_tpscale "wlg"
+        generate_bf "wlg"
+        generate_chainmask "wlg"
+        generate_implicitbf "wlg"
+        generate_mu_mimo "wlg"
+        generate_keepalive "wlg"
+        generate_cca_threshold "wlg"
+        generate_sta_dfs "wlg"
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then   # enable arlo vlan feature
+        get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+        [ "$_tmp_wlg_arlo_onoff" = "on" ] && {
+            uci set wireless.${g_device}.no_vlan=1
+        };fi
+    fi
+
+    if [ "$wla_exist" = "on" ] &&
+           [ "$wla_ap_operation_type" != "none" -o "$wla_sta_operation_type" != "none" -o "$wla_ap_bh_operation_type" != "none" ]; then
+        uci set wireless.${a_device}=wifi-device
+        uci set wireless.${a_device}.type=qcawifi
+        uci set wireless.${a_device}.country=${country_code}
+        uci set wireless.${a_device}.ODM=dni
+        uci set wireless.${a_device}.sys_bridge=${lan_ifname}
+        uci set wireless.${a_device}.repacd_auto_create_vaps=0
+        uci set wireless.${a_device}.dbdc_enable=${DBDC_ENABLE:-0}
+        uci set wireless.${a_device}.nf_baseline=$a_nf_baseline
+        if [ "$DEVICE_TYPE" = "extender" ];then
+            uci set wireless.${a_device}.burst=1
+            uci set wireless.${a_device}.burst_mode=1
+            uci set wireless.${a_device}.aggr_burst_LENGTH=4
+            uci set wireless.${a_device}.aggr_burst_ITEM1="0 20000"
+            uci set wireless.${a_device}.aggr_burst_ITEM2="1 20000"
+            uci set wireless.${a_device}.aggr_burst_ITEM3="2 20000"
+            uci set wireless.${a_device}.aggr_burst_ITEM4="3 20000"
+            if [ "$wla_ap_operation_type" = "qwrap_ap"  ];then
+                uci set wireless.${a_device}.client_mcast=0
+                uci set wireless.${a_device}.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_oui_enable=1
+                uci set wireless.qcawifi.pref_uplink_time=30
+                uci set wireless.qcawifi.alwaysprimary=1
+                uci set wireless.${a_device}.primaryradio=1
+                uci set wireless.${a_device}.fast_lane=1
+                uci set wireless.qcawifi.qwrap_eth_sta_del_en=0
+            fi
+
+        fi
+
+        generate_wifi_hw_button_state "$a_device"
+        generate_mac "wla"
+        generate_channel "wla"
+        generate_hwmode "wla"
+        generate_htmode "wla"
+        generate_tpscale "wla"
+        generate_bf "wla"
+        generate_chainmask "wla"
+        generate_implicitbf "wla"
+        generate_mu_mimo "wla"
+        generate_keepalive "wla"
+        generate_cca_threshold "wla"
+        generate_sta_dfs "wla"
+        generate_enhance_dfs "wla"
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then  # enable arlo vlan feature
+        get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+        [ "$_tmp_wlg_arlo_onoff" = "on" ] && {
+            uci set wireless.${a_device}.no_vlan=1
+        };fi
+    fi
+
+    if [ "$wla2_exist" = "on" ] &&
+           [ "$wla2_ap_operation_type" != "none" -o "$wla2_sta_operation_type" != "none" -o "$wla2_ap_bh_operation_type" != "none" ]; then
+        uci set wireless.${a2_device}=wifi-device
+        uci set wireless.${a2_device}.type=qcawifi
+        uci set wireless.${a2_device}.country=${country_code}
+        uci set wireless.${a2_device}.ODM=dni
+        uci set wireless.${a2_device}.sys_bridge=${lan_ifname}
+        uci set wireless.${a2_device}.repacd_auto_create_vaps=0
+        uci set wireless.${a2_device}.dbdc_enable=${DBDC_ENABLE:-0}
+        uci set wireless.${a2_device}.nf_baseline=$a2_nf_baseline
+        if [ "$DEVICE_TYPE" = "extender" ];then
+            uci set wireless.${a2_device}.burst=1
+            uci set wireless.${a2_device}.burst_mode=1
+            uci set wireless.${a2_device}.aggr_burst_LENGTH=4
+            uci set wireless.${a2_device}.aggr_burst_ITEM1="0 20000"
+            uci set wireless.${a2_device}.aggr_burst_ITEM2="1 20000"
+            uci set wireless.${a2_device}.aggr_burst_ITEM3="2 20000"
+            uci set wireless.${a2_device}.aggr_burst_ITEM4="3 20000"
+            if [ "$wla2_ap_operation_type" = "qwrap_ap"  ];then
+                uci set wireless.${a2_device}.client_mcast=0
+                uci set wireless.${a2_device}.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_enable=1
+                uci set wireless.qcawifi.qwrap_oui_enable=1
+                uci set wireless.qcawifi.pref_uplink_time=30
+                uci set wireless.qcawifi.alwaysprimary=1
+                uci set wireless.${a2_device}.primaryradio=1
+                uci set wireless.${a2_device}.fast_lane=1
+                uci set wireless.${a2_device}.pref_uplink=1
+                uci set wireless.qcawifi.qwrap_eth_sta_del_en=0
+            fi
+
+        fi        
+
+        generate_mac "wla2"
+        generate_channel "wla2"
+        generate_hwmode "wla2"
+        generate_htmode "wla2"
+        generate_tpscale "wla2"
+        generate_bf "wla2"
+        generate_chainmask "wla2"
+        generate_implicitbf "wla2"
+        generate_mu_mimo "wla2"
+        generate_ul_hyst "wla2"
+        generate_keepalive "wla2"
+        generate_cca_threshold "wla2"
+        generate_sta_dfs "wla2"
+        generate_enhance_dfs "wla2"
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then  # enable arlo vlan feature
+        get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+        [ "$_tmp_wlg_arlo_onoff" = "on" ] && {
+            uci set wireless.${a2_device}.no_vlan=1
+        };fi
+    fi
+
+    get_intf_onoff _tmp_wlg_onoff "wlg"
+    if [ "$_tmp_wlg_onoff" = "on" -a "$wlg_ap_operation_type" = "normal_ap" ]; then
+        wl_vap="wlg"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=${wlg_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wlg_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wlg_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_vhtng $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rrm $wl_vap
+        generate_mcastenhance $wl_vap
+        generate_security $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_ifname $wl_vap
+        uci set wireless.${wl_section}.acsmindwell=$acs_mindwell
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    if [ "$_tmp_wlg_onoff" = "on" -a "$wlg_ap_operation_type" = "qwrap_ap" ]; then
+        wl_vap="wlg"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network="lan"
+        uci set wireless.${wl_section}.bridge=${wlg_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_vhtng $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        #generate_rrm $wl_vap
+        #generate_mcastenhance $wl_vap
+        generate_security $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_model $wl_vap
+        #generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_ifname $wl_vap
+    fi
+
+    if [ "$wlg_ap_bh_operation_type" != "none" ]; then
+        wl_vap="wlg_ap_bh"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=${wlg_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wlg_2nd_bridge}
+        # assign_vap_option "$wl_vap"
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_wps $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rts $wl_vap
+        # generate_protocol_setting $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        # generate_PIN $wl_vap
+        generate_ifname $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_root_distance $wl_vap
+    fi
+
+    if [ "$wlg_sta_operation_type" != "none" ]; then
+        wl_vap="wlg_sta"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=${wlg_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wlg_2nd_bridge}
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_ifname $wl_vap
+        generate_wps $wl_vap
+        generate_rts $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_ul_bssid $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wla_onoff "wla"
+    if [ "$_tmp_wla_onoff" = "on" -a "$wla_ap_operation_type" = "normal_ap" ]; then
+        wl_vap="wla"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=${wla_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wla_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wla_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_cfreq2 $wl_vap
+        generate_mode $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rrm $wl_vap
+        generate_mcastenhance $wl_vap
+        generate_security $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_ifname $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    if [ "$_tmp_wla_onoff" = "on" -a "$wla_ap_operation_type" = "qwrap_ap" ]; then
+        wl_vap="wla"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=lan
+        uci set wireless.${wl_section}.bridge=${wla_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla_priority}
+        assign_vap_option $wl_vap
+        generate_cfreq2 $wl_vap
+        generate_mode $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        generate_security $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_model $wl_vap
+        generate_ifname $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+    fi
+
+    if [ "$wla_ap_bh_operation_type" != "none" ]; then
+        wl_vap="wla_ap_bh"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=${wla_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wla_bridge}
+        # assign_vap_option "$wl_vap"
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_wps $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rts $wl_vap
+        # generate_protocol_setting $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        # generate_PIN $wl_vap
+        generate_ifname $wl_vap
+        generate_doth $wl_vap
+        generate_root_distance $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+    fi
+
+    if [ "$wla_sta_operation_type" != "none" ]; then
+        wl_vap="wla_sta"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=${wla_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wla_bridge}
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_ifname $wl_vap
+        generate_caprssi $wl_vap
+	generate_doth $wl_vap	
+        generate_wps $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rts $wl_vap
+        generate_rps $wl_vap
+        generate_ul_bssid $wl_vap
+        generate_no_wradar $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wlg_guest_onoff "wlg_guest"
+    if [ "$_tmp_wlg_guest_onoff" = "on" ]; then
+        local local_network=${wlg_guest_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wlg_guest"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wlg_guest_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_guest_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wlg_guest_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_disablecoext $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wlg_arlo_onoff "wlg_arlo"
+    if [ "$_tmp_wlg_arlo_onoff" = "on" ]; then
+        wl_vap="wlg_arlo"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        # enable arlo vlan feature
+        if [ "x`/bin/config get enable_arlo_function`" = "x1" ];then uci set wireless.${wl_section}.network=${wlg_arlo_bridge#"br"};else uci set wireless.${wl_section}.network=0;fi
+        uci set wireless.${wl_section}.bridge=${wlg_arlo_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_arlo_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wla_guest_onoff "wla_guest"
+    if [ "$_tmp_wla_guest_onoff" = "on" ]; then
+        local local_network=${wla_guest_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wla_guest"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla_guest_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla_guest_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wla_guest_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wlg_byod_onoff "wlg_byod"
+    if [ "$_tmp_wlg_byod_onoff" = "on" ]; then
+        wl_vap="wlg_byod"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=${wlg_byod_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wlg_byod_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_byod_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wlg_byod_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wla_byod_onoff "wla_byod"
+    if [ "$_tmp_wla_byod_onoff" = "on" ]; then
+        wl_vap="wla_byod"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=${wla_byod_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wla_byod_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla_byod_priority}
+        if [ $atf_mode -eq 1 ]; then
+              uci set wireless.${wl_section}.atf_percentage=${wla_byod_atf_percentage}
+        fi
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+
+    get_intf_onoff _tmp_wlg_setup_onoff "wlg_setup"
+    if [ "$_tmp_wlg_setup_onoff" = "on" ]; then
+        wl_vap="wlg_setup"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${g_device}
+        uci set wireless.${wl_section}.network=0
+        uci set wireless.${wl_section}.bridge=${wlg_setup_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wlg_setup_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+    fi
+
+
+    get_intf_onoff _tmp_wla_setup_onoff "wla_setup"
+    if [ "$_tmp_wla_setup_onoff" = "on" ]; then
+        wl_vap="wla_setup"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a_device}
+        uci set wireless.${wl_section}.network=0
+        uci set wireless.${wl_section}.bridge=${wla_setup_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla_setup_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+    fi
+
+
+    if [ "$wla2_ap_operation_type" = "normal_ap" ]; then
+        local local_network=${wla2_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wla2"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla2_bridge:-${lan_ifname}}
+        uci set wireless.${wl_section}.vlan_pri=${wla2_priority}
+        assign_vap_option $wl_vap
+        generate_cfreq2 $wl_vap
+        generate_mode $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rrm $wl_vap
+        generate_mcastenhance $wl_vap
+        generate_security $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_ifname $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    if [ "$wla2_ap_operation_type" = "qwrap_ap" ]; then
+        wl_vap="wla2"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla2_bridge:-${lan_ifname}}
+        uci set wireless.${wl_section}.vlan_pri=${wla2_priority}
+        assign_vap_option $wl_vap
+        generate_cfreq2 $wl_vap
+        generate_mode $wl_vap
+        generate_vhtng $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_puren $wl_vap
+        generate_doth $wl_vap
+        generate_disablecoext $wl_vap
+        generate_security $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_wds $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_PIN $wl_vap
+        generate_model $wl_vap
+        generate_ifname $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+
+    fi
+
+    if [ "$wla2_ap_bh_operation_type" != "none" ]; then
+        local local_network=${wla2_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wla2_ap_bh"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla2_bridge:-${lan_ifname}}
+        # assign_vap_option "$wl_vap"
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_wps $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_disablecoext $wl_vap
+        generate_rts $wl_vap
+        # generate_protocol_setting $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        # generate_PIN $wl_vap
+        generate_ifname $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_doth $wl_vap
+        generate_root_distance $wl_vap
+        generate_no_wradar $wl_vap
+    fi
+
+    if [ "$wla2_sta_operation_type" != "none" ]; then
+        local local_network=${wla2_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wla2_sta"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla2_bridge:-${lan_ifname}}
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_ifname $wl_vap
+        generate_wps $wl_vap
+        generate_rts $wl_vap
+        generate_rrm $wl_vap
+        generate_caprssi $wl_vap
+        generate_doth $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_ul_bssid $wl_vap
+        generate_no_wradar $wl_vap
+    fi
+    
+    get_intf_onoff _tmp2_wla_guest_onoff "wla2_guest"
+    if [ "$_tmp2_wla_guest_onoff" = "on" ]; then
+        local local_network=${wla2_guest_bridge:-${lan_ifname}}
+        local_network=${local_network#"br"}
+        wl_vap="wla2_guest"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${local_network}
+        uci set wireless.${wl_section}.bridge=${wla2_guest_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla2_guest_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    get_intf_onoff _tmp2_wla_byod_onoff "wla2_byod"
+    if [ "$_tmp2_wla_byod_onoff" = "on" ]; then
+        wl_vap="wla2_byod"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=${wla2_byod_bridge#"br"}
+        uci set wireless.${wl_section}.bridge=${wla2_byod_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla2_byod_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_no_wradar $wl_vap
+        generate_hyd_unmanaged $wl_vap
+    fi
+
+    get_intf_onoff _tmp_wla_setup_onoff "wla2_setup"
+    if [ "$_tmp_wla2_setup_onoff" = "on" ]; then
+        wl_vap="wla2_setup"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wireless.${wl_section}.device=${a2_device}
+        uci set wireless.${wl_section}.network=0
+        uci set wireless.${wl_section}.bridge=${wla2_setup_bridge}
+        uci set wireless.${wl_section}.vlan_pri=${wla2_setup_priority}
+        assign_vap_option $wl_vap
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_security $wl_vap
+        generate_vhtng $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_rts $wl_vap
+        generate_protocol_setting $wl_vap
+        generate_acl $wl_vap
+        generate_lan_restricted_access $wl_vap
+        generate_wireless_isolation $wl_vap
+        generate_bintval $wl_vap
+        generate_dtim $wl_vap
+        generate_doth $wl_vap
+        generate_ifname $wl_vap
+        generate_rrm $wl_vap
+        generate_dyn_bw_rts $wl_vap
+        generate_rps $wl_vap
+        generate_wps $wl_vap
+        generate_wps_device_name $wl_vap
+    fi
+
+
+    uci commit wireless
+    sync
+
+    if [ "x$role" = "xCAP" ]; then
+        sed -i '/STA/d'  $wifi_topology_file
+    fi
+fi
+
+if [ "$update_conf" = "wigig" -o "$update_conf" = "all" ]; then
+    if [ "x$wig_exist" = "xon" -a -d /sys/class/ieee80211/phy0 ]; then
+        uci set wireless.mac80211=mac80211
+
+        [ -n "$wig_hostapd_debug_level" ] && uci set \
+                wireless.mac80211.hostapd_debug_level=${wig_hostapd_debug_level}
+        [ -n "$wig_wpa_supplicant_debug_level" ] && uci set \
+                wireless.mac80211.wpa_supplicant_debug_level=${wig_wpa_supplicant_debug_level}
+
+        wl_vap="wig"
+        get_wl_section $wl_vap
+        create_new_iface
+        uci set wigig.${wig_device}.type=mac80211
+        generate_channel $wl_vap
+        generate_hwmode $wl_vap
+        generate_disabled $wl_vap
+        uci set wigig.${wl_section}=wigig-iface
+        uci set wigig.${wl_section}.device=${wig_device}
+        uci set wigig.${wl_section}.bridge=${lan_ifname}
+        generate_mode $wl_vap
+        generate_ssid $wl_vap
+        generate_hide_ssid $wl_vap
+        generate_security $wl_vap
+        if [ -x /usr/bin/readlink ]; then
+            path="$(readlink -f /sys/class/ieee80211/phy0/device)"
+            path="${path##/sys/devices/}"
+            uci set wigig.${wig_device}.path=$path
+            uci set wigig.${wig_device}.phy=phy0
+        else
+            macaddr=`cat /sys/class/ieee80211/${dev}/macaddress`
+            uci set wigig.${wig_device}.macaddr='$macaddr'
+        fi
+        uci commit wigig
+        sync
+    fi
+fi
+
+

@@ -1,0 +1,29 @@
+#!/bin/sh
+
+color=$2
+
+ring_stop ()
+{
+    killall led_ring_action 2> /dev/null 
+    ring_status=`cat /proc/simple_config/ring_led_state` 2> /dev/null
+    while [ "$ring_status" = "0" ]
+    do
+        ring_status=`cat /proc/simple_config/ring_led_state` 2> /dev/null
+    done
+    ledcontrol -n allcolor -c red -s off
+}	
+
+ring_start ()
+{
+    ring_stop
+    /sbin/led_ring_action ${color} &
+}	
+
+case "$1" in
+    start)
+    ring_start
+    ;;
+    stop)
+    ring_stop
+    ;;
+esac

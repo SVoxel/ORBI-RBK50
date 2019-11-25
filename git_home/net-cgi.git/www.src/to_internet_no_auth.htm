@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+</head>
+<body onload="loadvalue()">
+<script>
+var have_click_take_me_to_internet = "<% cfg_get("have_click_take_me_to_internet") %>";
+var dns_hijack_v = "<% cfg_get("dns_hijack") %>";
+var hijack_process_v = "<% cfg_get("hijack_process") %>";
+var ts = "<% hijack_get_timestamp("hijack_success") %>";
+var manual_set = "<% cfg_get("manual_set_wan") %>";
+function loadvalue()
+{
+var cf=document.forms[0];
+
+if(manual_set == "1")
+	cf.action="/apply.cgi?/index.htm timestamp=" + ts;
+else
+	cf.action="/apply.cgi?/BRS_netgear_success.html timestamp=" + ts;
+cf.submit_flag.value = "hijack_success";
+		
+if(have_click_take_me_to_internet != "1" )
+{
+	cf.no_dns_hijack.disabled = true;
+}
+else if(dns_hijack_v == "1" && hijack_process_v == "2")
+{
+	cf.no_dns_hijack.disabled = true;
+}
+else
+	cf.no_dns_hijack.disabled = false;
+//submit this page anyway
+cf.submit();
+}
+</script>
+<form method="POST">
+<input type="hidden" name="submit_flag">
+<input type="hidden" name="no_dns_hijack" value="1">
+</form>
+</body>
+
+</html>

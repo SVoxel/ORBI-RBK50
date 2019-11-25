@@ -1,0 +1,102 @@
+#!/bin/sh /etc/rc.common
+
+CONFIG="/bin/config"
+
+start()
+{
+	PS=`ps |grep net-scan | grep -v grep`
+	if [ "x$PS" = "x" ]; then
+		/usr/sbin/net-scan
+	else
+		killall net-scan
+		/usr/sbin/net-scan
+	fi
+}
+
+stop()
+{
+	killall net-scan
+}
+
+boot()
+{
+    #get interface info and save in /tmp/netscan_if_conf
+    /etc/init.d/netscan_if.init
+
+	maintain_acl_conf
+	mkdir -p /tmp/netscan
+	start
+}
+
+check_file_format()
+{
+	while read line
+	do
+		var=`echo $line | awk -F "," '{printf $2}'`
+		var1=`echo $line | awk -F "," '{printf $8}'`
+		if [ "$(echo $var | bc 2>/dev/null)" != "$var" -o "x$var1" = "x" ]; then
+			rm -f $LOCAL_DEVICE_TABLE
+			touch /tmp/device_tables/local_device_table
+			break
+		fi
+	done < $LOCAL_DEVICE_TABLE
+
+}
+
+maintain_acl_conf()
+{
+	flag=false
+	num=1
+	var=access_control_value
+
+	while [ "x$var" != "x" ]
+	do
+		var=`$CONFIG get access_control$num`
+		echo $var >> /tmp/acl_file1
+		num=$(($num + 1))
+	done
+
+	awk '!x[$2]++' /tmp/acl_file1 >> /tmp/acl_file2
+
+	num=1
+	count_1=`cat /tmp/acl_file1 | wc -l`
+	count_2=`cat /tmp/acl_file2 | wc -l`
+	if [ $count_1 -ne $count_2 ]; then
+		flag=true
+		while [ $num -ne $count_2 ]
+		do
+			$CONFIG unset access_control$num
+			num=$(($num +1 ))
+		done
+	fi
+
+	if [ $flag ]; then
+		num=1
+		while read line
+		do
+			if [ ${#line} -gt 32 ]; then
+				$CONFIG set access_control$num="$line"
+				num=$(($num + 1))
+			fi
+			if [ $num -eq 128 ]; then
+				break;
+			fi
+		done < /tmp/acl_file2
+	fi
+
+	num_t=129
+	num=0
+	while [ $num_t -lt 3000 ]
+	do
+		var=`$CONFIG get access_control$num_t`
+		if [ "x$var" != "x" ]; then
+			while [ $num -lt $num_t ]
+			do
+				$CONFIG unset access_control$num
+				num=$(($num + 1))
+			done
+		fi
+		num_t=$(($num_t + 100))
+	done
+	rm -f /tmp/acl_file1 /tmp/acl_file2
+}

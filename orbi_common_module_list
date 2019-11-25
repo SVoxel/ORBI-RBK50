@@ -1,0 +1,75 @@
+Firmware Version#/dni_home/config/defconfig-orbi#CONFIG_DGC_FW_VERSION
+Module Name#/dni_home/config/defconfig-orbi#CONFIG_DGC_MODULE_NAME=
+ap-mode-script#NA
+minidlna#NA
+ppp-nas#/package/dni/ppp-nas/Makefile#CONFIG_PPP_NAS_GIT_TREEISH=
+miniupnpd#/package/dni/dniminiupnpd/Makefile#CONFIG_DNIMINIUPNPD_GIT_TREEISH=
+ppp#/package/dni/dnippp/Makefile#CONFIG_DNIPPP_GIT_TREEISH=
+proftpd#/package/dni/proftpd/Makefile#CONFIG_PROFTPD_GIT_TREEISH=
+busybox#/package/dni/dnibusybox/Makefile#CONFIG_DNIBUSYBOX_GIT_TREEISH=
+qsdk-wifi-script#/package/qca/qca-module.mk#CONFIG_QSDK_WIFI_SCRIPT_GIT_TREEISH=
+datalib#/package/dni/datalib/Makefile#CONFIG_DNI_DATALIB_GIT_TREEISH=
+net-cgi#/package/dni/net-cgi/Makefile#PKG_GIT_TREEISH:=
+radvd#/package/dni/radvd_dni/Makefile#CONFIG_RADVD_GIT_TREEISH=
+acl#/package/dni/dniacl/Makefile#CONFIG_DNIACL_GIT_TREEISH=
+net-scan#/package/dni/net-scan/Makefile#CONFIG_NETSCAN_GIT_TREEISH=
+samba#/package/dni/samba_dni/Makefile#CONFIG_SAMBA_GIT_TREEISH=
+dni-ripd#/package/dni/dni-ripd/Makefile#CONFIG_DNI_RIPD_GIT_TREEISH=
+net-util#/package/dni/net-util/Makefile#CONFIG_NETUTIL_GIT_TREEISH=
+dnimobile#NA
+net-wall#/package/dni/net-wall/Makefile#CONFIG_NETWALL_GIT_TREEISH=
+ssmtp#No use common module
+phddns#No use common module
+net-web-language-table#/dni_home/config/defconfig-orbi#CONFIG_DGC_LG_VERSION
+dnsmasq#/package/dni/dnidnsmasq/Makefile#CONFIG_DNIDNSMASQ_GIT_TREEISH=
+net-web#NA
+telnetenable#/package/dni/telnetenable/Makefile#CONFIG_TELNETENABLE_GIT_TREEISH=
+ez-ipupdate#/package/dni/ez-ipupdate/Makefile#CONFIG_EZ_IPUPDATE_GIT_TREEISH=
+net6conf#/package/dni/net6conf/Makefile#CONFIG_NET6CONF_GIT_TREEISH=
+trafficmeter#/package/dni/trafficmeter/Makefile#CONFIG_TRAFFICMETER_GIT_TREEISH=
+greendownload#NA
+udhcp#/package/dni/udhcp/Makefile#CONFIG_UDHCP_GIT_TREEISH=
+qca-hostap#/package/qca/qca-hostap_dni/Makefile#QCA_HOSTAP_GIT_TREEISH=
+noip#No use common module
+uhttpd#NA
+iptables#No use common module
+ntgrddns#/package/dni/ntgrddns/Makefile#CONFIG_NTGRDDNS_GIT_TREEISH=
+wan-detection#NA
+iptv-scripts#NA
+ntpclient#/package/dni/dni-ntpclient/Makefile#CONFIG_NTPCLIENT_GIT_TREEISH=
+wide-dhcpv6#/package/dni/wide-dhcpv6_dni/Makefile#CONFIG_WIDE_DHCPV6_GIT_TREEISH=
+lltd#/package/dni/lltd/Makefile#CONFIG_LLTD_GIT_TREEISH=
+cwmp#NA
+madwifi-11n-scripts#NA
+pot#/package/dni/pot/Makefile#CONFIG_POT_GIT_TREEISH=
+forked-daapd#NA
+libplist#NA
+ffmpeg#NA#
+openvpn#No use common module
+openssl#No use common module
+soapclient#/package/dni/soapclient/Makefile#CONFIG_SOAPCLIENT_GIT_TREEISH=
+aws-iot#/package/dni/aws-iot/Makefile#CONFIG_AWS_IOT_GIT_TREEISH:=
+wlan-common#/package/dni/wlan-common/Makefile#CONFIG_WLAN_COMMON_GIT_TREEISH=
+qsdk-hyfi#/package/qca/qca-module.mk#CONFIG_WIFISON_HIFY_GIT_TREEISH=
+qsdk-ieee1905-security#/package/qca/qca-module.mk#CONFIG_WIFISON_IEEE1905_GIT_TREEISH=
+qsdk-whc#/package/qca/qca-module.mk#CONFIG_WIFISON_WHC_GIT_TREEISH=
+linux#/config/defconfig-orbi#CONFIG_TARGET_LINUX_GIT_TREEISH=
+netfilter#No use common module
+kmod-conenat#/package/dni/kmod-conenat/Makefile#CONFIG_CONENAT_GIT_TREEISH=
+kmod-l2tp#/package/dni/kmod-l2tp/Makefile#CONFIG_L2TP_GIT_TREEISH=
+kmod-pptp#/package/dni/kmod-pptp/Makefile#CONFIG_PPTP_GIT_TREEISH=
+kmod-dni-qos#/package/dni/kmod-dni-qos/Makefile#CONFIG_DNI_QOS_GIT_TREEISH=
+kmod-spiadvdos#/package/dni/kmod-spiadvdos/Makefile#CONFIG_SPIADVDOS_GIT_TREEISH=
+kmod-dnih323#NA
+kmod-ftp#NA
+kmod-spidos#/package/dni/kmod-spidos/Makefile#CONFIG_SPIDOS_GIT_TREEISH=
+kmod-dnirtsp#NA
+kmod-ipsec-alg#NA
+kmod-starcraft#NA
+kmod-dnisip#/package/dni/kmod-dnisip/Makefile#CONFIG_DNISIP_GIT_TREEISH=
+kmod-ipv6-cone#/package/dni/kmod-ipv6-cone/Makefile#CONFIG_IPV6_CONE_GIT_TREEISH=
+kmod-trigger#/package/dni/kmod-trigger/Makefile#CONFIG_TRIGGER_GIT_TREEISH=
+kmod-dnshijack#/package/dni/kmod-dnshijack/Makefile#CONFIG_DNSHIJACK_GIT_TREEISH=
+kmod-netgear-reject#/package/dni/kmod-netgear-reject/Makefile#CONFIG_NETGEAR_REJECT_GIT_TREEISH=
+kmod-urlblock#/package/dni/kmod-urlblock/Makefile#CONFIG_URLBLOCK_GIT_TREEISH=
+kmod-dni-enet#No use common module

@@ -1,0 +1,389 @@
+#!/bin/sh
+
+if_init_file="/tmp/netscan_if_conf"
+if_init_typechar_file="/tmp/netscan_if_typechar_name"
+CONFIG=/bin/config
+
+write_interface_name()
+{
+				echo -n "$2-" >> $if_init_typechar_file
+}
+
+write_interface_info()
+{
+	case $1 in
+		dgc_netif_lan_phyif)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname wired 1" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_2g_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 2G 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_2g_bh_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname satellite 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_5g_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 5G 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_5g_bh_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname satellite 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_2g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 2G-GUEST 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_base_5g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 5G-GUEST 0" >> $if_init_file
+			fi
+			;;
+		dgc_netif_wan_phyif)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname wired 2" >> $if_init_file
+			fi
+			;;
+		BYOD_GUESTPORTAL)
+			echo "ath03 2G-WIRELESS2 0" >> $if_init_file
+			echo "ath02 2G-GUEST 0" >> $if_init_file
+			echo "ath12 5G-WIRELESS2 0" >> $if_init_file
+			echo "ath11 5G-GUEST 0" >> $if_init_file
+			;;
+
+		#For Satellite
+		dgc_wlan_sate_2g_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 2G 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_ds_2g_bh_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_5g_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 5G 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_ds_5g_bh_ap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_ds_2g_bh_sta_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_ds_5g_bh_sta_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		DS_BYOD_GUEST_PORTAL)
+			echo "ath03 2G-GUEST 0" >> $if_init_file
+			echo "ath04 2G-WIRELESS2 0" >> $if_init_file
+			echo "ath11 5G-GUEST 0" >> $if_init_file
+			echo "ath12 5G-WIRELESS2 0" >> $if_init_file
+			;;
+		dgc_wlan_sate_ds_2g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 2G-GUEST 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_5g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 5G-GUEST 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_2g_bh_sta_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_5g_bh_sta_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname backhaul_if 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_ds_5g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 5G-GUEST 0" >> $if_init_file
+			fi
+			;;
+		dgc_wlan_sate_2g_guestap_if)
+			local ifname=`$CONFIG get $1`
+			if [ "x$ifname" = "x" ];then
+				break
+			else
+				echo "$ifname 2G-GUEST 0" >> $if_init_file
+			fi
+			;;
+
+	esac
+}
+
+project=`cat /tmp/orbi_project`
+module_type=`cat /tmp/orbi_type`
+echo -n > $if_init_file
+echo -n > $if_init_typechar_file
+case $project in
+	Orbipro)
+		module_type=`cat /tmp/orbi_type`
+		case $module_type in 
+			Base)
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_base_2g_ap_if
+				write_interface_info dgc_wlan_base_2g_bh_ap_if
+				write_interface_info dgc_wlan_base_5g_ap_if
+				write_interface_info dgc_wlan_base_5g_bh_ap_if
+				write_interface_info BYOD_GUESTPORTAL
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G Wireless1"
+				write_interface_name main_5g_name "5G Wireless1"
+				write_interface_name guest_2g_name "2.4G Guest Portal"
+				write_interface_name guest_5g_name "5G Guest Portal"
+				write_interface_name byod_2g_name "2.4G Wireless2"
+				write_interface_name byod_5g_name "5G Wireless2"
+				;;
+			Satellite)
+				repacd_mode=`$CONFIG get repacd_Daisy_Chain_Enable`
+				if [ "$repacd_mode" = "1" ];then
+					write_interface_info dgc_netif_lan_phyif
+					write_interface_info dgc_wlan_sate_2g_ap_if
+					write_interface_info dgc_wlan_sate_ds_2g_bh_ap_if
+					write_interface_info dgc_wlan_sate_5g_ap_if
+					write_interface_info dgc_wlan_sate_ds_5g_bh_ap_if
+					write_interface_info dgc_wlan_sate_ds_2g_bh_sta_if
+					write_interface_info dgc_wlan_sate_ds_5g_bh_sta_if
+					write_interface_info DS_BYOD_GUEST_PORTAL
+					write_interface_info dgc_netif_wan_phyif
+					write_interface_name wired_name "wired"
+					write_interface_name main_2g_name "2.4G Wireless1"
+					write_interface_name main_5g_name "5G Wireless1"
+					write_interface_name guest_2g_name "2.4G Guest Portal"
+					write_interface_name guest_5g_name "5G Guest Portal"
+					write_interface_name byod_2g_name "2.4G Wireless2"
+					write_interface_name byod_5g_name "5G Wireless2"
+				else
+					write_interface_info dgc_netif_lan_phyif
+					write_interface_info dgc_wlan_sate_2g_ap_if
+					write_interface_info dgc_wlan_sate_2g_bh_sta_if
+					write_interface_info dgc_wlan_sate_5g_ap_if
+					write_interface_info dgc_wlan_sate_5g_bh_sta_if
+					write_interface_info BYOD_GUESTPORTAL
+					write_interface_info dgc_netif_wan_phyif
+					write_interface_name wired_name "wired"
+					write_interface_name main_2g_name "2.4G Wireless1"
+					write_interface_name main_5g_name "5G Wireless1"
+					write_interface_name guest_2g_name "2.4G Guest Portal"
+					write_interface_name guest_5g_name "5G Guest Portal"
+					write_interface_name byod_2g_name "2.4G Wireless2"
+					write_interface_name byod_5g_name "5G Wireless2"
+				fi
+				;;
+		esac
+		;;
+
+	Desktop|Orbimini)
+		module_type=`cat /tmp/orbi_type`
+		case $module_type in
+		Base)
+			write_interface_info dgc_netif_lan_phyif
+			write_interface_info dgc_wlan_base_2g_ap_if
+			write_interface_info dgc_wlan_base_2g_bh_ap_if
+			write_interface_info dgc_wlan_base_5g_ap_if
+			write_interface_info dgc_wlan_base_5g_bh_ap_if
+			write_interface_info dgc_wlan_base_2g_guestap_if
+			write_interface_info dgc_wlan_base_5g_guestap_if
+			write_interface_info dgc_netif_wan_phyif
+			write_interface_name wired_name "wired"
+			write_interface_name main_2g_name "2.4G"
+			write_interface_name main_5g_name "5G"
+			write_interface_name guest_2g_name "2.4G Guest"
+			write_interface_name guest_5g_name "5G Guest"
+			;;
+		Satellite)
+			repacd_mode=`$CONFIG get repacd_Daisy_Chain_Enable`
+			if [ "$repacd_mode" = "1" ];then
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_ap_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_sta_if
+				write_interface_info dgc_wlan_sate_ds_2g_guestap_if
+				write_interface_info dgc_wlan_sate_ds_5g_guestap_if
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G"
+				write_interface_name main_5g_name "5G"
+				write_interface_name guest_2g_name "2.4G Guest"
+				write_interface_name guest_5g_name "5G Guest"
+			else
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_5g_bh_sta_if
+				write_interface_info dgc_wlan_sate_2g_guestap_if
+				write_interface_info dgc_wlan_sate_5g_guestap_if
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G"
+				write_interface_name main_5g_name "5G"
+				write_interface_name guest_2g_name "2.4G Guest"
+				write_interface_name guest_5g_name "5G Guest"
+			fi
+			;;
+		esac
+		;;
+	OrbiOutdoor)
+
+		Parent=`$CONFIG get wlg_ap_bh_vie` # 0408xxxxx : Pro  0407xxxxxx : DT
+		Parent_project=`echo $Parent | cut -b 4`
+		if [ "$Parent_project" = "8" ];then
+			repacd_mode=`$CONFIG get repacd_Daisy_Chain_Enable`
+			if [ "$repacd_mode" = "1" ];then
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_ap_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_sta_if
+				write_interface_info DS_BYOD_GUEST_PORTAL
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G Wireless1"
+				write_interface_name main_5g_name "5G Wireless1"
+				write_interface_name guest_2g_name "2.4G Guest Portal"
+				write_interface_name guest_5g_name "5G Guest Portal"
+				write_interface_name byod_2g_name "2.4G Wireless2"
+				write_interface_name byod_5g_name "5G Wireless2"
+				else
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_5g_bh_sta_if
+				write_interface_info BYOD_GUESTPORTAL
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G Wireless1"
+				write_interface_name main_5g_name "5G Wireless1"
+				write_interface_name guest_2g_name "2.4G Guest Portal"
+				write_interface_name guest_5g_name "5G Guest Portal"
+				write_interface_name byod_2g_name "2.4G Wireless2"
+				write_interface_name byod_5g_name "5G Wireless2"
+				fi
+		else
+			repacd_mode=`$CONFIG get repacd_Daisy_Chain_Enable`
+			if [ "$repacd_mode" = "1" ];then
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_ap_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_ap_if
+				write_interface_info dgc_wlan_sate_ds_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_ds_5g_bh_sta_if
+				write_interface_info dgc_wlan_sate_ds_2g_guestap_if
+				write_interface_info dgc_wlan_sate_ds_5g_guestap_if
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G"
+				write_interface_name main_5g_name "5G"
+				write_interface_name guest_2g_name "2.4G Guest"
+				write_interface_name guest_5g_name "5G Guest"
+				write_interface_name byod_2g_name "none"
+				write_interface_name byod_5g_name "none"
+			else
+				write_interface_info dgc_netif_lan_phyif
+				write_interface_info dgc_wlan_sate_2g_ap_if
+				write_interface_info dgc_wlan_sate_2g_bh_sta_if
+				write_interface_info dgc_wlan_sate_5g_ap_if
+				write_interface_info dgc_wlan_sate_5g_bh_sta_if
+				write_interface_info dgc_wlan_sate_2g_guestap_if
+				write_interface_info dgc_wlan_sate_5g_guestap_if
+				write_interface_info dgc_netif_wan_phyif
+				write_interface_name wired_name "wired"
+				write_interface_name main_2g_name "2.4G"
+				write_interface_name main_5g_name "5G"
+				write_interface_name guest_2g_name "2.4G Guest"
+				write_interface_name guest_5g_name "5G Guest"
+				write_interface_name byod_2g_name "none"
+				write_interface_name byod_5g_name "none"
+			fi
+		fi
+		;;	
+esac
+

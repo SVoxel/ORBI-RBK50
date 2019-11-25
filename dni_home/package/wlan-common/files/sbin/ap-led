@@ -1,0 +1,401 @@
+#!/bin/sh
+
+last_link=0
+check_n=0
+CLIENT_LINK_LED_GREEN=' echo 3 > /tmp/client_link_color'
+CLIENT_LINK_LED_AMBER=' echo 2 > /tmp/client_link_color'
+CLIENT_LINK_LED_RED=' echo 1 > /tmp/client_link_color'
+CLIENT_LINK_LED_OFF=' echo 0 > /tmp/client_link_color'
+
+ROUTER_LINK_LED_GREEN=' echo 3 > /tmp/router_link_color'
+ROUTER_LINK_LED_AMBER=' echo 2 > /tmp/router_link_color'
+ROUTER_LINK_LED_RED=' echo 1 > /tmp/router_link_color'
+ROUTER_LINK_LED_OFF=' echo 0 > /tmp/router_link_color'
+
+
+ARROW_LEFT_LED_AMBER=' echo 2 > /tmp/arrow_left_color'
+ARROW_RIGHT_LED_AMBER=' echo 2 > /tmp/arrow_right_color'
+ARROW_LEFT_LED_OFF=' echo 0 > /tmp/arrow_left_color'
+ARROW_RIGHT_LED_OFF=' echo 0 > /tmp/arrow_right_color'
+
+
+CLIENT_LINK_5G_LED_GREEN='echo 3 > /tmp/client_color_5g'
+CLIENT_LINK_5G_LED_OFF='echo 0 > /tmp/client_color_5g'
+
+
+update_arrow_led_state()
+{
+    router_color=`cat /tmp/router_link_color` 
+    client_color=`cat /tmp/client_link_color`
+
+    client_avg_rate_24g=`cat /tmp/client_avg_rate`
+    client_avg_rate_5g=`cat /tmp/client_avg_rate_5g`
+
+    [ "$client_avg_rate_24g" = "" -a "$client_avg_rate_5g" = "" ] && return
+    client_avg_rate=$client_avg_rate_24g
+    if [ "$client_avg_rate_24g" != "" ]; then
+        if [ "$client_avg_rate_5g" != ""  -a $client_avg_rate_24g -lt $client_avg_rate_5g ]; then
+            client_avg_rate=$client_avg_rate_5g
+        fi
+    else
+        client_avg_rate=$client_avg_rate_5g
+    fi
+
+    router_avg_rate_24g=`cat /tmp/router_avg_rate_24g`
+    router_avg_rate_5g=`cat /tmp/router_avg_rate_5g`
+    [ "$router_avg_rate_24g" = "" -a "$router_avg_rate_5g" = "" ] && return
+    router_avg_rate=$router_avg_rate_24g
+    if [ "$router_avg_rate_24g" != "" ]; then
+        if [ "$router_avg_rate_5g" != ""  -a $router_avg_rate_24g -lt $router_avg_rate_5g ]; then
+            router_avg_rate=$router_avg_rate_5g
+        fi
+    else
+        router_avg_rate=$client_avg_rate_5g
+    fi
+    
+
+    for i in 1 2 3 4 5
+    do
+        if [ $router_avg_rate -gt $client_avg_rate ]; then
+            #let diff=($router_avg_rate-$client_avg_rate)*1.0/$router_avg_rate
+            let diff=$router_avg_rate-2*$client_avg_rate
+            # diff > 0: ($router_avg_rate-$client_avg_rate)*1.0/$router_avg_rate > 0.5
+            # diff <=0: ($router_avg_rate-$client_avg_rate)*1.0/$router_avg_rate <= 0.5
+            if [ $client_color -lt 2 -a $diff -gt 0 ]; then
+                eval ${ARROW_RIGHT_LED_AMBER}   
+                usleep 500000
+                eval ${ARROW_RIGHT_LED_OFF}   
+                usleep 500000
+            fi
+        elif [ $router_avg_rate -lt $client_avg_rate  ]; then
+            let diff=$client_avg_rate-2*$router_avg_rate
+            #diff > 0: ($client_avg_rate-$router_avg_rate)*1.0/$router_avg_rate > 0.5
+            #diff <=  0: ($client_avg_rate-$router_avg_rate)*1.0/$router_avg_rate <= 0.5
+            if [ $router_color -lt 2 -a $diff -gt 0 ]; then
+                eval ${ARROW_LEFT_LED_AMBER}
+                usleep 500000
+                eval ${ARROW_LEFT_LED_OFF}
+                usleep 500000
+            fi
+        else 
+            eval ${ARROW_LEFT_LED_OFF}
+            eval ${ARROW_RIGHT_LED_OFF}
+        fi
+    done
+
+    
+}
+
+
+sum_rate=0
+avg_rate=0
+current_rate=0
+
+update_led_state()
+{
+#    current_rate=`iwpriv ath0 get_txrate | cut -f2 -d':' | sed 's/[ \t ]*$//g'`
+    wlanconfig ath0 list sta | awk '{print $4}' | grep -Eo '[0-9]+' > /tmp/my_all_client_rate
+    if [ "$(/bin/config get wlg1_endis_guestNet)" = "1" ]; then
+	if [ "$(/bin/config get repacd_Daisy_Chain_Enable)" = "1" ]; then
+		wlanconfig ath03 list sta | awk '{print $4}' | grep -Eo '[0-9]+' >> /tmp/my_all_client_rate
+	else
+		wlanconfig ath02 list sta | awk '{print $4}' | grep -Eo '[0-9]+' >> /tmp/my_all_client_rate
+	fi
+    fi
+    while read onerate
+    do
+        if [ "$current_rate" = "" -o "$onerate" > "$current_rate" ]; then
+            current_rate=$onerate
+        fi
+    done < /tmp/my_all_client_rate
+
+
+    echo $current_rate > /tmp/my_client_rate
+    let sum_rate=$sum_rate+$current_rate
+
+    if [ $check_n -eq 5 ]; then
+        let avg_rate=sum_rate/5
+        echo $avg_rate > /tmp/client_avg_rate       
+        mode=`config get wl_simple_mode`
+        if [ $mode -eq 1 ]; then         # rate upto 54M
+            if [ $avg_rate -gt 24 ];then
+                eval `echo 3 > /tmp/client_color`
+            elif [ $avg_rate -gt 9 ]; then
+                eval `echo 2 > /tmp/client_color`
+            elif [ $avg_rate -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color`
+            else
+                eval `echo 0 > /tmp/client_color`
+            fi
+        elif [ $mode -eq 2 ]; then      # rate up to 216M
+            if [ $avg_rate -gt 80 ];then
+                eval `echo 3 > /tmp/client_color`
+            elif [ $avg_rate -gt 40 ]; then
+                eval `echo 2 > /tmp/client_color`
+            elif [ $avg_rate -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color`
+            else
+                eval `echo 0 > /tmp/client_color`
+            fi
+        elif [ $mode -eq 3 -o $mode -eq 5 -o $mode -eq 6 ]; then  # rate upto 450M
+            if [ $avg_rate -gt 200 ];then
+                eval `echo 3 > /tmp/client_color`
+            elif [ $avg_rate -gt 100 ]; then
+                eval `echo 2 > /tmp/client_color`
+            elif [ $avg_rate -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color`
+            else
+                eval `echo 0 > /tmp/client_color`
+            fi
+        else
+            if [ $avg_rate -gt 108 ];then     # others
+                eval `echo 3 > /tmp/client_color`
+            elif [ $avg_rate -gt 50 ]; then
+                eval `echo 2 > /tmp/client_color`
+            elif [ $avg_rate -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color`
+            else
+                eval `echo 0 > /tmp/client_color`
+            fi
+        fi
+
+        sum_rate=0
+    fi
+
+}
+
+sum_rate_5g=0
+avg_rate_5g=0
+current_rate_5g=0
+
+update_led_state_5g()
+{
+#    current_rate_5g=`iwpriv ath1 get_txrate | cut -f2 -d':' | sed 's/[ \t ]*$//g'`
+    wlanconfig ath1 list sta | awk '{print $4}' | grep -Eo '[0-9]+' > /tmp/my_all_client_rate_5g
+    [ "$(config get wla1_endis_guestNet)" = "1" ] && wlanconfig ath11 list sta | awk '{print $4}' | grep -Eo '[0-9]+' >> /tmp/my_all_client_rate_5g
+    while read onerate
+    do
+        if [ "$current_rate_5g" = "" -o "$onerate" > "$current_rate_5g" ]; then
+            current_rate_5g=$onerate
+        fi
+    done < /tmp/my_all_client_rate_5g
+
+
+    echo $current_rate_5g > /tmp/my_client_rate_5g
+    let sum_rate_5g=$sum_rate_5g+$current_rate_5g
+
+    if [ $check_n -eq 5 ];then
+
+        let avg_rate_5g=sum_rate_5g/5
+        echo $avg_rate_5g > /tmp/client_avg_rate_5g       
+
+        mode=`config get wla_simple_mode`
+        if [ $mode -eq 7 ]; then         # rate upto 347M
+            if [ $avg_rate_5g -gt 173 ];then
+                eval `echo 3 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 68 ]; then
+                eval `echo 2 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color_5g`
+            else
+                eval `echo 0 > /tmp/client_color_5g`
+            fi
+        elif [ $mode -eq 8 ]; then      # rate up to 800M
+            if [ $avg_rate_5g -gt 320 ];then
+                eval `echo 3 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 160 ]; then
+                eval `echo 2 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color_5g`
+            else
+                eval `echo 0 > /tmp/client_color_5g`
+            fi
+        elif [ $mode -eq 9 ]; then  # rate upto 1733M
+            if [ $avg_rate_5g -gt 680 ];then
+                eval `echo 3 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 390 ]; then
+                eval `echo 2 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color_5g`
+            else
+                eval `echo 0 > /tmp/client_color_5g`
+            fi
+        else
+            if [ $avg_rate_5g -gt 108 ];then     # others
+                eval `echo 3 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 50 ]; then
+                eval `echo 2 > /tmp/client_color_5g`
+            elif [ $avg_rate_5g -gt 0 ]; then
+                eval `echo 1 > /tmp/client_color_5g`
+            else
+                eval `echo 0 > /tmp/client_color_5g`
+            fi
+        fi
+
+        sum_rate_5g=0
+    fi
+
+
+}
+
+
+
+link_led_action()
+{
+    client_color_24g=`cat /tmp/client_color`
+    client_color_5g=`cat /tmp/client_color_5g`
+    client_color=0
+    if [ "$1" != "0" ]; then
+        if [ $client_color -lt $client_color_24g ];then
+            client_color=$client_color_24g
+        fi
+    fi
+    if [ "$2" != "0" ]; then
+        if [ $client_color -lt $client_color_5g  ]; then
+            client_color=$client_color_5g
+        fi
+    fi
+    [ "$client_color" = "3" ] && eval ${CLIENT_LINK_LED_GREEN}
+    [ "$client_color" = "2" ] && eval ${CLIENT_LINK_LED_AMBER}
+    [ "$client_color" = "1" ] && eval ${CLIENT_LINK_LED_RED}
+    [ "$client_color" = "0" ] && eval ${CLIENT_LINK_LED_OFF}
+
+
+}
+
+
+router_link_led_action()
+{
+    led_color_24g=`cat /tmp/led_color`
+    led_color_5g=`cat /tmp/led_color_5g`
+    link_status=`cat /tmp/link_status`
+    link_status_5g=`cat /tmp/link_status_5g`
+    led_link_color=0
+    if [ "$link_status" != "0" ]; then
+        if [ $led_link_color -lt $led_color_24g ];then
+            led_link_color=$led_color_24g
+        fi
+    fi
+    if [ "$link_status_5g" != "0" ]; then
+        if [ $led_link_color -lt $led_color_5g  ]; then
+            led_link_color=$led_color_5g
+        fi
+    fi
+    #  for AP MODE
+    if [ "$(/bin/config get wl_conf_mode)" = "0" -a "$(/bin/cat /tmp/ip_status)" = "1" ]; then
+            led_link_color=3
+    fi
+
+    [ "$led_link_color" = "3" ] && eval ${ROUTER_LINK_LED_GREEN} 
+    [ "$led_link_color" = "2" ] && eval ${ROUTER_LINK_LED_AMBER}
+    [ "$led_link_color" = "1" ] && eval ${ROUTER_LINK_LED_RED}
+    [ "$led_link_color" = "0" ] && eval ${ROUTER_LINK_LED_OFF}
+
+
+}
+
+
+sta_list=0
+sta_list_guest=0
+sta_list_5g=0
+sta_list_5g_guest=0
+
+
+while true; do
+    if [ "$(/bin/config get factory_mode)" = "1"  ];then
+    	/bin/sleep 1
+	continue
+    fi
+    sleep 1
+    [ $check_n -eq 5 ] && let check_n=0
+    let check_n=$check_n+1
+    sta_list=`wlanconfig ath0 list sta | wc -l`
+    if [ "$(config get wlg1_endis_guestNet)" = "1" ]; then
+	if [ "$(/bin/config get repacd_Daisy_Chain_Enable)" = "1" ]; then
+		sta_list_guest=`wlanconfig ath03 list sta | wc -l`
+	else
+		sta_list_guest=`wlanconfig ath02 list sta | wc -l`
+	fi
+    fi
+    sta_list_5g=`wlanconfig ath1 list sta | wc -l`
+    if [ "$(config get wla1_endis_guestNet)" = "1" ]; then
+	sta_list_5g_guest=`wlanconfig ath11 list sta | wc -l`
+    fi
+
+
+#    ap_mode=`cat /tmp/endis_wl_radio`
+#    ap_mode_5g=`cat /tmp/endis_wla_radio`
+
+#    if [ "$ap_mode" = "1" ];then
+#    else
+#       sta_list=0
+#    fi
+#    if [ "$ap_mode_5g" = "1" ];then
+#    else
+#    	sta_list_5g=0
+#    fi
+#    ap_list=`wlanconfig ath01 list sta | wc -l`
+#    ap_list_5g=`wlanconfig ath11 list sta | wc -l`
+#    if [ "$sta_list" != "0" -o "$sta_list_5g" != "0" ] && [ "$ap_list" != "0" -o "$ap_list_5g" != "0" ]; then
+    if [ "$sta_list" != "0" -o "$sta_list_5g" != "0" -o "$sta_list_guest" != "0" -o "$sta_list_5g_guest" != "0" ] ; then
+        let all_link_time=$all_link_time+1
+    else
+        let all_link_time=0
+    fi
+
+
+
+    eth_link=`cat /tmp/eth_link`
+    if [ "$sta_list" != "0" -o "$sta_list_5g" != "0" -o "$eth_link" = "1" -o "$sta_list_guest" != "0" -o "$sta_list_5g_guest" != "0" ]; then
+        if [ "$last_link" = "0" ]; then
+	    echo 1 > /tmp/check_link
+	    last_link=1
+        fi
+    else
+        if [ "$last_link" = "1" ]; then
+	    echo 0 > /tmp/check_link
+	    last_link=0
+        fi
+    fi
+
+
+#    [ "$sta_list" != "0"  ] && update_led_state || eval `echo 0 > /tmp/client_color`
+#    [ "$sta_list_5g" != "0"  ] && update_led_state_5g || eval `echo 0 > /tmp/client_color_5g`
+
+    if [ "$sta_list" != "0" -o "$sta_list_guest" != "0" ]; then
+        update_led_state
+    elif [ ! -d /proc/ath0 -o "$(ifconfig ath0 | grep UP)" = "" ]; then
+        # handle fastlane and radio disable
+        eval `echo -1 > /tmp/client_color`
+        eval `echo -1 > /tmp/client_avg_rate`
+    else
+        eval `echo 0 > /tmp/client_color`
+        eval `echo 0 > /tmp/client_avg_rate`
+    fi
+    if [ "$sta_list_5g" != "0" -o "$sta_list_5g_guest" != "0" ]; then
+        update_led_state_5g
+    elif [ ! -d /proc/ath1 -o "$(ifconfig ath1 | grep UP)" = "" ]; then
+        # handle fastlane and radio disable
+        eval `echo -1 > /tmp/client_color_5g`
+        eval `echo -1 > /tmp/client_avg_rate_5g`
+    else
+        eval `echo 0 > /tmp/client_color_5g`
+        eval `echo 0 > /tmp/client_avg_rate_5g`
+    fi
+
+
+    if [ $check_n -eq 5 ]; then
+        #client_link_led
+        link_led_action $sta_list $sta_list_5g   
+
+        #router_link led
+        router_link_led_action
+
+#        if [ $all_link_time -gt 0 -a $all_link_time -lt 120 ]; then
+#            update_arrow_led_state &
+#        fi
+    fi
+
+
+    
+done

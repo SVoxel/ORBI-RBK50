@@ -1,0 +1,87 @@
+#!/bin/sh
+
+CONFIG=/bin/config
+local cert_time=`cat /tmp/openvpn/client.crt |grep 'Not Before'|cut -d ":" -f 4|cut -d " " -f 2` 
+local sys_time=2017
+local router_time=`date +%Y`
+local running_num=1
+local running_total=3
+local sn_router=$(artmtd -r sn | grep sn: | sed 's/sn://g' | cut -b -13)
+local sn_vpn=`cat /tmp/openvpn/cert.info | cut -b -13`
+
+cert_time_check()
+{
+	check_each_cert  /tmp/openvpn/ca.crt
+	ca_time=$?
+	check_each_cert  /tmp/openvpn/server.crt
+	server_time=$?
+	check_each_cert  /tmp/openvpn/client.crt
+	client_time=$?
+	
+	if [ $ca_time -a $server_time -a $client_time ]; then
+		return 1
+	fi
+	return 0
+}
+
+check_each_cert()
+{
+	if [ ! -f $1 ]; then
+		return 0
+	fi
+	cert_start_time=`openssl x509 -in $1 -text -noout |grep 'Not Before'|cut -d ":" -f 4|cut -d " " -f 2`
+	cert_end_time=`openssl x509 -in $1 -text -noout |grep 'Not After'|cut -d ":" -f 4|cut -d " " -f 2`
+	
+	if [ $cert_end_time -lt $cert_start_time ]; then
+		return 0
+	fi
+	return 1
+}
+
+while [ 1 ]
+do
+	if [ "x`cat /tmp/orbi_type`" != "xBase" ]; then
+		return
+	fi
+
+	if [ $router_time -lt $sys_time ]; then
+		/bin/openvpn_update 
+		cert_time_check
+		cert_time_st=$?
+		if ["x$cert_time_st" = "x0"]; then
+			continue
+		fi
+		$CONFIG set openvpn_cert_update=0
+		rm -rf /tmp/vpn_on_updating
+		rm -rf /tmp/md5vpn
+
+		if [ "x`$CONFIG get vpn_enable`" = "x1" ]; then
+			/etc/init.d/openvpn restart
+		fi
+		break
+	fi
+	if [ $cert_time -lt $sys_time ] || [ "$sn_router" != "$sn_vpn" ]; then
+		/etc/init.d/openvpn regenerate_cert_file
+	fi
+
+	cert_time_check
+	cert_time_st=$?
+	if [ "x$cert_time_st" = "x0" ] || [ "x`cat /tmp/md5vpn`" = "x1" ]; then
+		/etc/init.d/openvpn regenerate_cert_file
+	fi
+
+	cert_time=`cat /tmp/openvpn/client.crt |grep 'Not Before'|cut -d ":" -f 4|cut -d " " -f 2` 
+	sn_router=$(artmtd -r sn | grep sn: | sed 's/sn://g')
+	sn_vpn=`cat /tmp/openvpn/cert.info`
+	cert_time_check
+	cert_time_st=$?
+	if [ $sys_time -le $cert_time ] && [ "$sn_router" = "$sn_vpn" ] && [ "x$cert_time_st" = "x1" ]; then
+		$CONFIG set openvpn_cert_update=0
+		rm -rf /tmp/vpn_on_updating
+		rm -rf /tmp/md5vpn
+		if [ "x`$CONFIG get vpn_enable`" = "x1" ]; then
+			/etc/init.d/openvpn restart
+		fi
+		break
+	fi
+done

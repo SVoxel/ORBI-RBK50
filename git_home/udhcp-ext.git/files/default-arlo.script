@@ -1,0 +1,27 @@
+#!/bin/sh
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+CONFIG="/bin/config"
+ECHO="/bin/echo"
+DATE="/bin/date"
+IFCONFIG="/sbin/ifconfig"
+
+[ -z "$1" ] && $ECHO "Error: should be called from udhcpc" && exit 1
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+
+case "$1" in
+	deconfig)
+
+		$IFCONFIG $interface 0.0.0.0 
+		#&& $CONFIG set wan_dhcp_ipaddr=0.0.0.0
+		;;
+
+	renew|bound)
+		old_ip=$($CONFIG get wan_dhcp_ipaddr)
+		$IFCONFIG $interface $ip $BROADCAST $NETMASK 
+		#&& $CONFIG set wan_dhcp_ipaddr=$ip && $CONFIG set wan_dhcp_oldip=$ip && $CONFIG set wan_dhcp_netmask=$subnet
+
+esac
+
+exit 0

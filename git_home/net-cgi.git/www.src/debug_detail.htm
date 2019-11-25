@@ -1,0 +1,995 @@
+<% http_header("style/form.css","funcs.js") %>
+<script>
+<% refresh_timestamp("debug_info","collect_log","debug_orbi_info","clear_cache","sent_log","debug_save") %>
+var ts="<% cfg_get("debug_info") %>";
+var maintrunk_support="<% maintrunk_support() %>";
+var control_firmware_support="<% control_firmware_support() %>";
+var hw_revision = "<% cat_file_xss("/tmp/hw_revision") %>";
+<% show_wlan_variable_for_debug() %>
+function loadvalue()
+{
+	if(maintrunk_support == "1") {
+		document.getElementById("ehc_wps").style.display="";
+		//document.getElementById("sys_dfs").style.display="";
+	}
+	//if(control_firmware_support == "1"){
+	//	document.getElementById("beta_acceptance").style.display="";
+	//}
+	if("<% cfg_get("debug_boot_up") %>" == "1")
+		document.forms[0].log_capture.checked = true;
+	else
+		document.forms[0].log_capture.checked = false;
+
+	if("<% cfg_get("debug_wanlan_capture") %>" == "1")
+	{
+		document.forms[1].wanlan_capture.checked = true;
+		document.forms[2].store_location.disabled = false;
+	}
+	else
+	{
+		document.forms[1].wanlan_capture.checked = false;
+		document.forms[2].store_location.disabled = true;
+	}
+
+	var locate= "<% cat_file_xss("/tmp/debug_store_locate") %>";
+	if(locate == "")
+		locate = "0";
+	document.forms[2].store_location.value = locate;
+
+	if("<% cat_file_xss("/tmp/enable_telnet") %>" == "1")
+		document.forms[6].enable_telnet.checked = true;
+	else
+		document.forms[6].enable_telnet.checked = false;
+
+	if("<% cat_file_xss("/tmp/debug_mirror_on") %>" == "1")
+		document.forms[7].mirrortolan.checked = true;
+	else
+		document.forms[7].mirrortolan.checked = false;
+
+	if("<% cfg_get("ipv6_allow_ping_internal_hosts") %>" == "1")
+		document.forms[8].allow_ipv6_ping.checked = true;
+	else
+		document.forms[8].allow_ipv6_ping.checked = false;
+
+	if("<% cfg_get("enable_adv_attached") %>"=="1")
+		document.forms[9].adv_attached.checked = true;
+	else
+		document.forms[9].adv_attached.checked = false;
+	
+	if("<% cfg_get("enable_jumbo_frame") %>"=="1")
+		document.forms[10].jumbo_frame.checked = true;
+	else
+		document.forms[10].jumbo_frame.checked = false;
+	if("<% cfg_get("enable_soap_debug") %>"=="1")
+		document.forms[11].soap_debug.checked = true;
+	else
+		document.forms[11].soap_debug.checked = false;
+	if("<% cfg_get("repacd_Daisy_Chain_Enable") %>"=="1")
+		document.forms[12].daisy_chain.checked = false;
+	else
+		document.forms[12].daisy_chain.checked = true;
+	if("<% cfg_get("lbd_RSSISteeringPoint_UG") %>"=="10")
+		document.forms[13].roaming_aggressive.checked = true;
+	else
+		document.forms[13].roaming_aggressive.checked = false;
+	if("<% cfg_get("enable_wifi_debug") %>"=="1")
+		document.forms[14].allow_wifi_debug.checked = true;
+	else
+		document.forms[14].allow_wifi_debug.checked = false;
+		
+	if("<% cfg_get("enable_band_steering") %>"=="1")
+		document.forms[14].allow_band_steering.checked = true;
+	else
+		document.forms[14].allow_band_steering.checked = false;
+	
+		
+	if("<% cfg_get("multi_ap_disablesteering") %>"=="0")
+		document.forms[14].allow_multi_ap.checked = true;
+	else
+		document.forms[14].allow_multi_ap.checked = false;
+		
+		
+	if("<% cfg_get("wlg_implicit_bf") %>"=="1")
+		document.forms[14].bgn_implicitbf.checked = true;
+	else
+		document.forms[14].bgn_implicitbf.checked = false;
+	if("<% cfg_get("wlg_bf") %>"=="1")
+		document.forms[14].bgn_vhtsubfer.checked = true;
+	else
+		document.forms[14].bgn_vhtsubfer.checked = false;
+	if("<% cfg_get("wlg_mu_mimo") %>"=="1")
+		document.forms[14].bgn_vhtmubfee.checked = true;
+	else
+		document.forms[14].bgn_vhtmubfee.checked = false;
+	if("<% cfg_get("wla_implicit_bf") %>"=="1")
+		document.forms[14].an_implicitbf.checked = true;
+	else
+		document.forms[14].an_implicitbf.checked = false;
+	if("<% cfg_get("wla_bf") %>"=="1")
+		document.forms[14].an_vhtsubfer.checked = true;
+	else
+		document.forms[14].an_vhtsubfer.checked = false;
+	if("<% cfg_get("wla_mu_mimo") %>"=="1")
+		document.forms[14].an_vhtmubfee.checked = true;
+	else
+		document.forms[14].an_vhtmubfee.checked = false;
+	if("<% cfg_get("wla_2nd_implicit_bf") %>"=="1")
+		document.forms[14].bh_implicitbf.checked = true;
+	else
+		document.forms[14].bh_implicitbf.checked = false;
+	if("<% cfg_get("wla_2nd_bf") %>"=="1")
+		document.forms[14].bh_vhtsubfer.checked = true;
+	else
+		document.forms[14].bh_vhtsubfer.checked = false;
+	if("<% cfg_get("wla_2nd_mu_mimo") %>"=="1")
+		document.forms[14].bh_vhtmubfee.checked = true;
+	else
+		document.forms[14].bh_vhtmubfee.checked = false;
+	if("<% cfg_get("wla_2nd_ap_bh_backhaul") %>"=="1")
+		document.forms[14].second_backhaul.checked = true;
+	else
+		document.forms[14].second_backhaul.checked = false;
+		
+	if("<% cfg_get("wl_dyn_bw_rts") %>" == "1")
+		document.forms[14].wl_dyn_bw_rts.checked = true;
+	else
+		document.forms[14].wl_dyn_bw_rts.checked = false;
+	
+	if("<% cfg_get("wla_dyn_bw_rts") %>" == "1")
+		document.forms[14].wla_dyn_bw_rts.checked = true;
+	else
+		document.forms[14].wla_dyn_bw_rts.checked = false;
+
+	if("<% cfg_get("ehc_wps") %>" == "1")
+		document.forms[16].ehc_wps.checked = true;
+	else
+		document.forms[16].ehc_wps.checked = false;
+
+	if("<% cfg_get("wla_2nd_enhance_dfs") %>" == "2")
+		document.forms[17].sys_dfs.checked = true;
+	else
+		document.forms[17].sys_dfs.checked = false;
+
+	if("<% cfg_get("beta_acceptance") %>" == "1")
+		document.forms[18].beta_acceptance.checked = true;
+	else
+		document.forms[18].beta_acceptance.checked = false;
+	if(is_dual_band==1){
+		setAChannel(document.forms[19].w_channel_an);
+		
+		document.forms[19].w_channel_an.value = wla_get_channel;
+		if(document.forms[19].w_channel_an.selectedIndex == -1)
+			document.forms[19].w_channel_an.options[0].selected = true;
+	}
+	refresh_start();
+	<% start_debug() %>
+}
+/***************spec14 channel list*******************/
+var ht20_array = new Array(
+/* 0 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "136(DFS)", "140(DFS)" ),
+/* 1 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 2 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 3 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 4 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)" ),
+/* 5 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)" ),
+/* 6 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)" ),
+/* 7 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161", "165" ),
+/* 8 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161", "165" ),
+/* 9 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 10 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 11 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161", "165" ),
+/* 12 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161", "165" ),
+/* 13 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161", "165" ),
+/* 14 */ new Array(""),
+/* 15 */ new Array( "149", "153", "157", "161", "165" ),
+/* 16 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)" ),
+/* 17 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)" ),
+/* 18 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 19 */ new Array( "36", "40", "44", "48", "52", "56", "60", "64", "132", "136", "140", "149", "153", "157", "161", "165" ),
+/* 20 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" ),
+/* 21 */ new Array( "36", "40", "44", "48", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "140(DFS)", "149", "153", "157", "161", "165" )
+);
+
+var ht40_array = new Array(
+/* 0 */ new Array(""),
+/* 1 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 2 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 3 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 4 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)" ),
+/* 5 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)" ),
+/* 6 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)" ),
+/* 7 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 8 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 9 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 10 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 11 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 12 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 13 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 14 */ new Array(""),
+/* 15 */ new Array( "149", "153", "157", "161" ),
+/* 16 */ new Array(""),
+/* 17 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)" ),
+/* 18 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 19 */ new Array( "36", "40", "44", "48", "52", "56", "60", "64", "132", "136", "149", "153", "157", "161" ),
+/* 20 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" ),
+/* 21 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "132(DFS)", "136(DFS)", "149", "153", "157", "161" )
+);
+
+var ht80_array = new Array(
+/* 0 */ new Array(""),
+/* 1 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 2 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "149", "153", "157", "161" ),
+/* 3 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "149", "153", "157", "161" ),
+/* 4 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)" ),
+/* 5 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)" ),
+/* 6 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)" ),
+/* 7 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 8 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 9 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 10 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 11 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 12 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "149", "153", "157", "161" ),
+/* 13 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 14 */ new Array(""),
+/* 15 */ new Array( "149", "153", "157", "161" ),
+/* 16 */ new Array(""),
+/* 17 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)" ),
+/* 18 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 19 */ new Array( "36", "40", "44", "48", "52", "56", "60", "64", "149", "153", "157", "161" ),
+/* 20 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" ),
+/* 21 */ new Array( "36", "40", "44", "48", "52(DFS)", "56(DFS)", "60(DFS)", "64(DFS)", "100(DFS)", "104(DFS)", "108(DFS)", "112(DFS)", "116(DFS)", "120(DFS)", "124(DFS)", "128(DFS)", "149", "153", "157", "161" )
+);
+
+function setAChannel(channel)
+{
+	var cf = document.forms[19];
+	var index = wl_get_countryA;
+	var currentMode = wla_mode;
+	var option_array=document.getElementById("wireless_channel_an").options;
+	var chValue = channel.value;
+	var find_value = 0;
+	var i, j=0, val;
+	var tmp_array = ht40_array[index];
+
+	if ( 1 == currentMode || 2 == currentMode || 7 == currentMode )
+	{
+		tmp_array = ht20_array[index];
+	}
+	else if( 9 == currentMode)
+	{
+		tmp_array = ht80_array[index];
+	}
+
+	channel.options.length = tmp_array.length+1;
+
+	if ( dfs_channel_router_flag == 1 ) //Australia, Canada, Europe
+	{
+		channel.options[j].value = 0;
+		channel.options[j].text = "$auto_mark";
+		j++;
+	}
+
+	for ( i = 0; i < tmp_array.length; i++ )
+	{
+		if ( 0 == hidden_dfs_channel && ( 1 == dfs_channel_router_flag ||
+			( dfs_canada_router_flag == 1 &&  index == 3 ) || //Australia, Canada, Europe
+			( dfs_australia_router_flag == 1 &&  index == 2 ) ||
+			( dfs_europe_router_flag == 1 && index == 4) ||
+			( dfs_japan_router_flag && index == 6 ) ||
+			index == 4 || index == 10) ) //Japan, United States
+		{
+			if ( tmp_array[i].indexOf("(DFS)") > -1 )
+			{
+				val =  tmp_array[i].split("(DFS)")[0];
+				channel.options[j].value = val;
+				channel.options[j].text = tmp_array[i];
+				j++;
+			}
+			else
+			{
+				channel.options[j].value = channel.options[j].text = tmp_array[i];
+				j++
+			}
+		}
+		else
+		{
+			if ( tmp_array[i].indexOf("(DFS)") > -1 )
+				continue;
+			/*if(currentMode == 9 && index == 21)//50244
+				if(tmp_array[i] == "60" || tmp_array[i] == "64")
+					continue;
+			if( (index ==10 || index == 17) && (tmp_array[i] == "149" || tmp_array[i] == "153" || tmp_array[i] == "157" || tmp_array[i] == "161") )//53381
+				continue;*/
+			channel.options[j].value = channel.options[j].text = tmp_array[i];
+			j++;
+		}
+
+	}
+	channel.options.length = j;
+
+	for(i=0; i<option_array.length; i++)
+	{
+		if(option_array[i].value == chValue)
+		{
+			find_value = 1;
+			channel.selectedIndex = i;
+			break
+		}
+	}
+	if (find_value == 0)
+	{/* to fix bug 27403 */
+		for(i=0;i<option_array.length;i++)
+		{
+			if(option_array[i].value == wla_get_channel)
+			{
+				find_value = 1;
+				channel.selectedIndex = i;
+				break;
+			}
+		}	
+	}
+	if(find_value == 0)
+		channel.selectedIndex = 0;
+}
+
+function click_logcapture()
+{
+	var cf = document.forms[0];
+	if(cf.log_capture.checked == true)
+		cf.hid_boot_up.value = "1";
+	else
+		cf.hid_boot_up.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_wanlan()
+{
+	var cf = document.forms[1];
+	if(cf.wanlan_capture.checked == true)
+		cf.hid_wanlan_capture.value = "1";
+	else
+		cf.hid_wanlan_capture.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_location()
+{
+	var cf = document.forms[2];
+	if(cf.store_location.value == "1" && "<% cat_file_xss("/tmp/debug-usb") %>" != "1")
+	{
+		alert("There are no USB devices connected to the router!");
+		cf.store_location.value = "0";
+	}
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_start()
+{
+	var cf = document.forms[3];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_sent()
+{
+	var cf = document.forms[5];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_telnet()
+{
+	var cf = document.forms[6];
+	if(cf.enable_telnet.checked == true)
+		cf.hid_telnet.value = "1";
+	else
+		cf.hid_telnet.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_mirror()
+{
+	var cf = document.forms[7];
+	if(cf.mirrortolan.checked == true)
+		cf.hid_mirrortolan.value = "1";
+	else
+		cf.hid_mirrortolan.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_ipv6()
+{
+	var cf = document.forms[8];
+	if(cf.allow_ipv6_ping.checked == true)
+		cf.hid_ipv6.value = "1";
+	else
+		cf.hid_ipv6.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_adv_attached()
+{
+	var cf = document.forms[9];
+	if(cf.adv_attached.checked == true)
+		cf.hid_adv_attached.value = "1";
+	else
+		cf.hid_adv_attached.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_jumbo_frame()
+{
+	var cf = document.forms[10];
+	if(cf.jumbo_frame.checked == true)
+		cf.hid_jumbo_frame.value = "1";
+	else
+		cf.hid_jumbo_frame.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_soap_debug()
+{
+        var cf = document.forms[11];
+	if(cf.soap_debug.checked == true)
+		cf.hid_soap_debug.value = "1";
+	else
+		cf.hid_soap_debug.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_daisy_chain()
+{
+	var cf = document.forms[12];
+	if(cf.daisy_chain.checked == true)
+		cf.hid_daisy_chain.value = "1";
+	else
+		cf.hid_daisy_chain.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_roaming_aggressive()
+{
+	var cf = document.forms[13];
+	if(cf.roaming_aggressive.checked == true)
+		cf.hid_roaming_aggressive.value = "1";
+	else
+		cf.hid_roaming_aggressive.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function check_steering()
+{
+	var cf = document.forms[14];
+	if(cf.allow_band_steering.checked == true)
+	{
+//		cf.allow_80211kv.checked =true;
+//		cf.allow_legacy.checked =true;
+	}
+	else
+	{
+//		cf.allow_80211kv.checked =false;
+//		cf.allow_legacy.checked =false;
+	}
+}
+
+function check_wlan_debug()
+{
+	var cf = document.forms[14];
+	if(cf.allow_wifi_debug.checked == true)
+	{
+		cf.allow_band_steering.checked =true;
+		cf.allow_multi_ap.checked =true;
+	}
+	else
+	{
+		cf.allow_band_steering.checked =false;
+		cf.allow_multi_ap.checked =false;
+	}
+}
+
+function check_rssi(val)
+{
+	var num = parseInt(val,10);
+
+	if(val > 0 || val <-95)
+		return false;
+	return true;
+}
+
+function check_cca(val)
+{
+	var num = parseInt(val,10);
+
+	if(val!=0 && (val > -11 || val <-94))
+		return false;
+	return true;
+}
+
+function save_orbi_info()
+{
+	var cf = document.forms[14];
+
+	if(cf.allow_wifi_debug.checked == true)
+		cf.hid_wifi_debug.value = "1";
+	else
+		cf.hid_wifi_debug.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_band_steering.value = "1";
+	else
+		cf.hid_band_steering.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_80211kv.value = "1";
+	else
+		cf.hid_80211kv.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_legacy.value = "1";
+	else
+		cf.hid_legacy.value = "0";
+		
+	if(cf.allow_multi_ap.checked == true)
+		cf.hid_multi_ap.value = "0";
+	else
+		cf.hid_multi_ap.value = "1";
+	
+	if(cf.bgn_implicitbf.checked == true)
+		cf.hid_bgn_implicitbf.value = "1";
+	else
+		cf.hid_bgn_implicitbf.value = "0";
+		
+	if(cf.bgn_vhtsubfer.checked == true)
+		cf.hid_bgn_vhtsubfer.value = "1";
+	else
+		cf.hid_bgn_vhtsubfer.value = "0";
+		
+	if(cf.bgn_vhtmubfee.checked == true)
+		cf.hid_bgn_vhtmubfee.value = "1";
+	else
+		cf.hid_bgn_vhtmubfee.value = "0";
+		
+	if(cf.an_implicitbf.checked == true)
+		cf.hid_an_implicitbf.value = "1";
+	else
+		cf.hid_an_implicitbf.value = "0";
+	
+	if(cf.an_vhtsubfer.checked == true)
+		cf.hid_an_vhtsubfer.value = "1";
+	else
+		cf.hid_an_vhtsubfer.value = "0";
+		
+	if(cf.an_vhtmubfee.checked == true)
+		cf.hid_an_vhtmubfee.value = "1";
+	else
+		cf.hid_an_vhtmubfee.value = "0";
+	
+	if(cf.bh_implicitbf.checked == true)
+		cf.hid_bh_implicitbf.value = "1";
+	else
+		cf.hid_bh_implicitbf.value = "0";
+		
+	if(cf.bh_vhtsubfer.checked == true)
+		cf.hid_bh_vhtsubfer.value = "1";
+	else
+		cf.hid_bh_vhtsubfer.value = "0";
+		
+	if(cf.bh_vhtmubfee.checked == true)
+		cf.hid_bh_vhtmubfee.value = "1";
+	else
+		cf.hid_bh_vhtmubfee.value = "0";
+		
+	if(cf.second_backhaul.checked == true)
+		cf.hid_second_backhaul.value = "1";
+	else
+		cf.hid_second_backhaul.value = "0";
+		
+	if(cf.wl_dyn_bw_rts.checked == true)
+		cf.hid_wl_dyn_bw_rts.value = "1";
+	else
+		cf.hid_wl_dyn_bw_rts.value = "0";
+		
+	if(cf.wla_dyn_bw_rts.checked == true)
+		cf.hid_wla_dyn_bw_rts.value = "1";
+	else
+		cf.hid_wla_dyn_bw_rts.value = "0";
+		
+	if(!check_cca(cf.wl_cca_threshold.value) || !check_cca(cf.wla_cca_threshold.value))
+	{
+		alert("CCA Threshold value should be 0 or -11~-94");
+		return false;
+	}
+	
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+	return true;
+}
+
+function click_clear_cache()
+{
+	var cf = document.forms[15];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function refresh_start()
+{
+        var file="/collect_debug.txt";
+        var xmlHttp = createXMLHttpRequest();
+        var result;
+
+	var disable_str="<input type='button' name='Start' class='common_gray_bt' value='Start Capture' disabled/>    Debug Log capturing in progress";
+	var enable_str="<input type='button' name='Start' class='common_bt' value='Start Capture' onclick='click_start();'/>";
+
+        xmlHttp.onreadystatechange=function()
+        {
+                if(xmlHttp.readyState==4 && xmlHttp.status==200)
+                {
+                        result=xmlHttp.responseText;
+			getObj("start_button").innerHTML='';
+                        if(result == 1)
+				getObj("start_button").innerHTML=disable_str;
+                        else
+				getObj("start_button").innerHTML=enable_str;
+                }
+        }
+        xmlHttp.open("GET", file, true);
+        xmlHttp.send();
+
+}
+function get_numkey(e)
+{
+	var keycode, event;
+
+	if (window.event) 
+	{
+		event = window.event;
+		keycode = window.event.keyCode;
+	}	
+	else if (e)
+	{
+		event = e;
+		keycode = e.which;
+	}	
+	else return true;
+
+	if(event.ctrlKey && ( keycode==99 || keycode==118 || keycode==120) )
+		return true;
+	if ((keycode >47 && keycode<58 ) || keycode == 45 || (keycode==8)||(keycode==0))
+		return true;
+	else
+		return false;
+}
+function click_ehc_wps()
+{
+	var cf = document.forms[16];
+	if(cf.ehc_wps.checked == true)
+		cf.hid_ehc_wps.value = "1";
+	else
+		cf.hid_ehc_wps.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_sys_dfs()
+{
+	var cf = document.forms[17];
+	if(cf.sys_dfs.checked == true)
+		cf.hid_sys_dfs.value = "2";
+	else
+		cf.hid_sys_dfs.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_beta_acceptance()
+{
+	var cf = document.forms[18];
+	if(cf.beta_acceptance.checked == true)
+		cf.hid_beta_acceptance.value = "1";
+	else
+		cf.hid_beta_acceptance.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_wla_channel()
+{
+	var cf = document.forms[19];
+	cf.hid_wla_channel.value=cf.w_channel_an.value;
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+</script>
+
+<BODY onLoad="loadvalue();" bgcolor=#ffffff>
+<div id="main">
+<div>
+<table width="100%" border="0" cellpadding="0" cellspacing="10">
+<tr><td colspan=3><hr class=blueBar /></td></tr>
+<tr><td colspan=3><b>Basic Infomation</b></td></tr>
+<tr><td width=30px>&nbsp;</td><td width=250px><b>CPU Load</b></td><td><% cat_file_xss("/tmp/debug_cpu") %></td></tr>
+<tr><td></td><td><b>Memory Usage(Used/Total)</b></td><td><% cat_file_xss("/tmp/debug_mem") %></td></tr>
+<tr><td></td><td><b>Flash Usage(Used/Total)</b></td><td><% cat_file_xss("/tmp/debug_flash") %></td></tr>
+<tr><td></td><td><b>Network Session(Active/Total)</b></td><td><% cat_file_xss("/tmp/debug_session") %></td></tr>
+<tr>
+	<td></td><td><b>System Uptime</b></td>
+	<td>
+	<script>
+	var uptime= "<% show_uptime() %>";
+	var new_time=change_sec_to_time(uptime);
+	document.write(new_time);
+	</script>
+</td></tr>
+</table>
+</div>
+
+<div style="margin-left:5px">
+<b>Debug Log Capture</b>
+<div style="margin-left:50px">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_boot_up" />
+<input type="checkbox" name="log_capture" onClick="click_logcapture();"><b>Start Debug Log Capture when boot up</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_wanlan_capture" />
+<input type="checkbox" name="wanlan_capture" onChange="click_wanlan();"><b>Enable LAN/WAN Packet Capture</b>
+</form>
+<br/>
+<div style="margin-left:30px">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<b>Store location</b>&nbsp;&nbsp;&nbsp;&nbsp;
+	<select name="store_location" onChange="click_location();">
+		<option value="0">System Memory</option>
+		<script>
+		if(parseInt(hw_revision, 16) != 2) {
+			document.write('<option value="1">USB Device</option>');
+		}
+		</script>
+	</select>
+</form>
+</div>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="collect_log" />
+<div id="start_button"></div>
+</form>
+<br/>
+<form action="/debug.cgi? timestamp=<% cfg_get("debug_save") %>" method="post" enctype="multipart/form-data" target="formframe">
+<input type="submit" name="Save" class="common_bt" value="Save Debug Log" onClick="setTimeout('refresh_start()',5000);return true;"/>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none">
+<input type="hidden" name="submit_flag" value="sent_log" /><strong>Sent log to Netgear<br></strong>&nbsp;
+<div id="send_button"><input type="button" name="Sent" class="common_bt" value="Sent" onclick="click_sent();"></div>
+</form>
+
+</div>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_telnet" />
+<input type="checkbox" name="enable_telnet" onClick="click_telnet();"><b>Enable Telnet</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_mirrortolan" />
+<input type="checkbox" name="mirrortolan" onClick="click_mirror();"><b>WAN Port mirror to LAN port1</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_ipv6" />
+<input type="checkbox" name="allow_ipv6_ping" onClick="click_ipv6();"><b>Allow external IPv6 hosts ping internal IPv6 hosts</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none;">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_adv_attached" />
+<input type="checkbox" name="adv_attached" onClick="click_adv_attached();"><b>Enable advanced view of Attached Devices page</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_jumbo_frame" />
+<input type="checkbox" name="jumbo_frame" onClick="click_jumbo_frame();"><b>Enable Jumbo Frame support for traffic between device LAN ports</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_soap_debug" />
+<input type="checkbox" name="soap_debug" onClick="click_soap_debug();"><b>Save SOAP log between APP and Router</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_daisy_chain" />
+<input type="checkbox" name="daisy_chain" onClick="click_daisy_chain();"><b>Disable Daisy-Chain</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_roaming_aggressive" />
+<input type="checkbox" name="roaming_aggressive" onClick="click_roaming_aggressive();"><b>Higher roaming aggressive</b>
+</form>
+<br/>
+</div>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none;">
+<input type="hidden" name="submit_flag" value="debug_orbi_info" />
+<input type="hidden" name="hid_wifi_debug" />
+<input type="hidden" name="hid_band_steering" />
+<input type="hidden" name="hid_80211kv" />
+<input type="hidden" name="hid_legacy" />
+<input type="hidden" name="hid_multi_ap" />
+<input type="hidden" name="hid_bgn_implicitbf" />
+<input type="hidden" name="hid_bgn_vhtsubfer" />
+<input type="hidden" name="hid_bgn_vhtmubfee" />
+<input type="hidden" name="hid_an_implicitbf" />
+<input type="hidden" name="hid_an_vhtsubfer" />
+<input type="hidden" name="hid_an_vhtmubfee" />
+<input type="hidden" name="hid_bh_implicitbf" />
+<input type="hidden" name="hid_bh_vhtsubfer" />
+<input type="hidden" name="hid_bh_vhtmubfee" />
+<input type="hidden" name="hid_second_backhaul" />
+<input type="hidden" name="hid_wl_dyn_bw_rts" />
+<input type="hidden" name="hid_wla_dyn_bw_rts" />
+<div style="display:none">
+<% table_header() %>
+$bluebar
+<tr><td colspan="2"><input type="checkbox" name="allow_wifi_debug" onClick="check_wlan_debug()"><b>Advanced WLAN debug</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;Debug Options:0x<input type="text" name="debug_option" value="<% cfg_get("wifi_debug_option") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;Maximum log file size:<input type="text" name="max_size" value="<% cfg_get("wifi_debug_max_log_size") %>" />MB</td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+</table>
+<div style="display:none">
+<% table_header() %>
+<tr><td colspan="2">&nbsp;<input type="checkbox" name="allow_band_steering" onClick="check_steering()"><b>Enable Band Steering</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Legacy Wi-Fi and 802.11k/v client steering enabled</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Band steering thresholds:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUOverloadThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_muvltd_w5" value="<% cfg_get("lbd_MUOverloadThreshold_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload OffloadingMinRSSI:       <input type="text" onKeyPress="return get_numkey(event)" name="ibd_flmin_rssi" value="<% cfg_get("lbd_OffloadingMinRSSI") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUOverloadThreshold_W2: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_muoltd_w2" value="<% cfg_get("lbd_MUOverloadThreshold_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUSafetyThreshold_W2: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_musftd_w2" value="<% cfg_get("lbd_MUSafetyThreshold_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Idle Steering:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RSSISteeringPoint_UG: <input type="text" onKeyPress="return get_numkey(event)" name="rssi_srpt_ug" value="<% cfg_get("lbd_RSSISteeringPoint_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Active Steering:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RateRSSIXingThreshold_UG: <input type="text" onKeyPress="return get_numkey(event)" name="raterssi_xtd_ug" value="<% cfg_get("lbd_RateRSSIXingThreshold_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Offload:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MUSafetyThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="mu_sftd_w5" value="<% cfg_get("lbd_MUSafetyThreshold_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;<input type="checkbox" name="allow_multi_ap"><b>Enable Multi-AP steering</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToRootMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtort_mininctd" value="<% cfg_get("lbd_APSteerToRootMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToLeafMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtolf_mininctd" value="<% cfg_get("lbd_APSteerToLeafMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToPeerMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtopr_mininctd" value="<% cfg_get("lbd_APSteerToPeerMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option DownlinkRSSIThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_dlrssitd" value="<% cfg_get("lbd_DownlinkRSSIThreshold_W5") %>" /></td></tr>
+
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_CAP_W2: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_CAP_W2" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_CAP_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_CAP_W5: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_CAP_W5" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_CAP_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_RE_W2: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_RE_W2" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_RE_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_RE_W5: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_RE_W5" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_RE_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option TxRateXingThreshold_UG: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_TxRateXingThreshold_UG" value="<% cfg_get("lbd_TxRateXingThreshold_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MUReportPeriod: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MUReportPeriod" value="<% cfg_get("lbd_MUReportPeriod") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LoadBalancingAllowedMaxPeriod: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LoadBalancingAllowedMaxPeriod" value="<% cfg_get("lbd_LoadBalancingAllowedMaxPeriod") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option NormalInactTimeout: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_NormalInactTimeout" value="<% cfg_get("lbd_NormalInactTimeout") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option OverloadInactTimeout: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_OverloadInactTimeout" value="<% cfg_get("lbd_OverloadInactTimeout") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxBTMUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxBTMUnfriendly" value="<% cfg_get("lbd_MaxBTMUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxBTMActiveUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxBTMActiveUnfriendly" value="<% cfg_get("lbd_MaxBTMActiveUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxSteeringUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxSteeringUnfriendly" value="<% cfg_get("lbd_MaxSteeringUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option 11kProhibitTimeShort: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_11kProhibitTimeShort" value="<% cfg_get("lbd_11kProhibitTimeShort") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option 11kProhibitTimeLong: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_11kProhibitTimeLong" value="<% cfg_get("lbd_11kProhibitTimeLong") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option BTMSteeringProhibitShortTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_BTMSteeringProhibitShortTime" value="<% cfg_get("lbd_BTMSteeringProhibitShortTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option BTMUnfriendlyTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_BTMUnfriendlyTime" value="<% cfg_get("lbd_BTMUnfriendlyTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option SteeringProhibitTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_SteeringProhibitTime" value="<% cfg_get("lbd_SteeringProhibitTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option RSSISteeringPoint_UG: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_RSSISteeringPoint_UG" value="<% cfg_get("lbd_RSSISteeringPoint_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option AgeLimit: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_AgeLimit" value="<% cfg_get("lbd_AgeLimit") %>" /></td></tr>
+</table>
+</div>
+<% table_header() %>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_implicitbf" ><b>Enable 2.4G implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_vhtsubfer" ><b>Enable 2.4G vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_vhtmubfee" ><b>Enable 2.4G vhtmubfee</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_implicitbf" ><b>Enable 5G implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_vhtsubfer" ><b>Enable 5G vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_vhtmubfee" ><b>Enable 5G vhtmubfee</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_implicitbf" ><b>Enable Backhaul implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_vhtsubfer" ><b>Enable Backhaul vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_vhtmubfee" ><b>Enable Backhaul vhtmubfee</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="second_backhaul" ><b>Enable 2nd 5G backhaul</b></td></tr>
+</table>
+</div>
+<% table_header() %>
+<tr><td colspan="2">&nbsp;</td></tr>
+$bluebar
+<tr><td colspan="2"><input type="checkbox" name="wl_dyn_bw_rts" ><b>Fronthaul 2.4G Dynamic bandwidth RTS</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="wla_dyn_bw_rts" ><b>Fronthaul 5G Dynamic bandwidth RTS</b></td></tr>
+<tr><td colspan="2"><b>2.4G CCA Threshold:</b> <input type="text" onKeyPress="return get_numkey(event)" name="wl_cca_threshold" value="<% cfg_get("wl_cca_threshold") %>" /></td></tr>
+<tr><td colspan="2"><b>5G CCA Threshold:</b> <input type="text" onKeyPress="return get_numkey(event)" name="wla_cca_threshold" value="<% cfg_get("wla_cca_threshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="save" value="Save" class="common_bt" onClick="return save_orbi_info()"/></td></tr>
+</table>
+</form>
+<br/>
+<div style="display:none">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="clear_cache" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="clear" class="common_bt" value="Clear Cache" onClick="click_clear_cache();"/>
+</form>
+</div>
+<div id="ehc_wps" style="margin-left:5px;display:none;">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_ehc_wps" />
+<input type="checkbox" name="ehc_wps" onClick="click_ehc_wps();"><b>Enable Enhanced WPS</b>
+</form>
+</div>
+<div id="sys_dfs" style="margin-left:5px;display:none;">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_sys_dfs" />
+<input type="checkbox" name="sys_dfs" onClick="click_sys_dfs();"><b>Enable System DFS</b>
+</form>
+</div>
+
+<div id="beta_acceptance" style="margin-left:5px;display:none;">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_beta_acceptance" />
+<input type="checkbox" name="beta_acceptance" onClick="click_beta_acceptance();"><b>Enable Beta Acceptance</b>
+</form>
+</div>
+<br/>
+<div id="wla_channel" style="margin-left:5px;display:none;">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_wla_channel" />
+<b style="padding-left:5px;">5GHz Channel:</b>&nbsp;&nbsp;&nbsp;&nbsp;
+<script>
+var valid_region = "<% valid_firmware_region() %>";
+valid_region = parseInt(valid_region, 10);
+	if(valid_region != 1)
+	{
+		document.write('<select name="w_channel_an" id="wireless_channel_an" size="1" style="width:60px">');
+		document.write('</select>');
+	}
+	else
+	{
+		document.write('<select name="w_channel_an" id="wireless_channel_an" size="1" onChange="click_wla_channel();">');
+		if(dfs_channel_router_flag == 1 )
+			document.write("<option selected value=0>Auto</option> ");
+		document.write('<option value=36>36</option>');
+		document.write('<option value=40>40</option>');
+		document.write('<option value=44>44</option>');
+		document.write('<option value=48>48</option>');
+		document.write('<option value=149>149</option>');
+		document.write('<option value=153>153</option>');
+		document.write('<option value=157>157</option>');
+		document.write('<option value=161>161</option>');
+		document.write('<option value=165>165</option>');
+		document.write('</select>');
+	}
+	if(is_dual_band==1){
+		document.getElementById("wla_channel").style.display = "";
+	}
+
+</script>
+
+</form>
+</div>
+
+</div>
+</body>
+</html>
+

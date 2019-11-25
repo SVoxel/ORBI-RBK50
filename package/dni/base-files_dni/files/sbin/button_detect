@@ -1,0 +1,222 @@
+#!/bin/sh
+
+### Button status defination
+FREE=0	# Button is pop up
+PUSH=1	# Button is pressed
+HOLD=2	# Button is pressed and hold on a moment
+
+### Free button pressed state
+free_pushbut=10
+free_wifibut=20
+free_resetbut=30
+
+### Tool
+CONFIG=/bin/config
+
+buttonfile=/proc/simple_config/button_state
+buttonstate=
+pushbutton=${FREE}
+wifibutton=${FREE}
+resetbutton=${FREE}
+
+ledfile=/proc/simple_config/led_state
+ledstate=
+
+### LED status defination
+OFF=0
+ON=1
+PULSE=2	
+RING=3  
+
+### LED color defination
+RED=0
+GREEN=1
+BLUE=2	
+WHITE=3
+AMBER=4
+CYAN=5
+MAGENTA=6
+
+### recover led state
+run_state=10
+color_state=20
+recover_state=30
+wanportledlock=0
+
+echo -n "" > /tmp/usb_state
+
+#usb enable
+if [ ! -e /sys/class/gpio/gpio45 ]; then
+    echo 45 > /sys/class/gpio/export
+fi
+
+while [ 1 ]
+do
+	usb_enable=`cat /sys/class/gpio/gpio45/value`
+	if [ $usb_enable -eq '0' ];then
+		ledcontrol -n usb_enable -s off
+		/bin/sleep 1
+		ledcontrol -n usb_enable -s on
+	fi
+
+        #----------------------------------------------------------------------#
+	if [ -f /tmp/button_test_mode ];then
+		/bin/sleep 1
+		continue
+	fi	
+
+        #----------------------------------------------------------------------#
+	usb_state=$(cat /tmp/usb_state)
+	cat /proc/partitions | grep sda > /dev/null
+	if [ $? -eq 0 ];then
+	        [ $usb_state -eq 0 ] && ledcontrol -n usb -c green -s on #usb plugin
+		echo 1 > /tmp/usb_state
+		if [ "x`ps |grep speedtest.sh | grep -v grep | awk '{print $1}'`" = "x" ];then
+			ethtool -K eth0 gro on
+			ethtool -K eth1 gro on
+		fi
+	else
+	        [ $usb_state -eq 1 ] && ledcontrol -n usb -c green -s off #usb plugoff
+		echo 0 > /tmp/usb_state
+		if [ "x`ps |grep speedtest.sh | grep -v grep | awk '{print $1}'`" = "x" ];then
+			ethtool -K eth0 gro off
+			ethtool -K eth1 gro off
+		fi
+	fi
+
+        #----------------------------------------------------------------------#
+	#get states of buttons
+	buttonstate=$(/bin/cat ${buttonfile})
+	pushbutton=$(/bin/echo ${buttonstate} | cut -c 2)
+	wifibutton=$(/bin/echo ${buttonstate} | cut -c 4)
+	resetbutton=$(/bin/echo ${buttonstate} | cut -c 6)
+	ehc_wps=`/bin/config get ehc_wps`
+	iface_pid=`pidof iface-mgr`
+	factory_mode=`/bin/config get factory_mode`
+	tt3_mode=`/bin/config get factory_tt3`
+	tt3_support=`/bin/config get dgc_func_have_tt3`
+
+	if [ "x$factory_mode" = "x1" -a "x$tt3_support" = "x1" ];then
+
+		if [ "x$tt3_mode" = "x1" -a ${HOLD} -eq ${pushbutton} ];then  #factory-tt3 mode, action is HOLD
+			led_ring stop
+			ledcontrol -n all -c red -s on
+			tt3_led=1	#record factory_tt3 mode and led turned to solid red 
+			/bin/config set factory_tt3=0
+			/bin/config commit
+		fi
+
+		if [ "x$tt3_mode" = "x1" -a ${PUSH} -eq ${pushbutton} ];then  #factory-tt3 mode, action is PUSH
+			echo Exit from factory TT3 mode >/dev/console
+			/bin/config unset factory_tt3
+			/bin/config commit
+			ledcontrol -n all -c red -s off
+		fi
+
+		echo ${free_pushbut} > ${buttonfile}
+
+	elif [ ${PUSH} -eq ${pushbutton} ]; then
+                echo "********wps button pushed**********" > /dev/console
+                echo "wps_pbc" > /var/run/repacd.pipe &
+                echo "wps_pbc" > /var/run/led_ctrl.pipe &
+
+		# WPS is enabled
+                echo "start" > /tmp/wps_process_state
+		echo "****************killall  ping-netgear on wps********************" > /dev/console
+		killall ping-netgear 2> /dev/null 
+		/sbin/led_ring start white
+                if [ "$ehc_wps" = "1" -a -n "$iface_pid" ]; then
+                    echo "wps_reset" > /var/run/sonwps.pipe &
+                    sleep 2
+                    echo "wps_pbc" > /var/run/sonwps.pipe &
+                else
+                    wlan wps --pbc_start
+                fi
+		echo ${free_pushbut} > ${buttonfile}
+	fi
+	
+	if [ ${PUSH} -eq ${resetbutton} ]; then
+		echo 0x06 > /proc/reboot_reason
+		/sbin/led_ring stop
+		/bin/config set lastRebootReason=2
+		/bin/config commit
+		/sbin/reboot
+		echo ${free_resetbut} > ${buttonfile}
+	elif [ ${HOLD} -eq ${resetbutton} ]; then
+		echo 0x07 > /proc/reboot_reason
+		/sbin/led_ring stop
+		/sbin/factory_default
+		/bin/config set lastRebootReason=3
+		/bin/config commit
+		/sbin/reboot
+		echo ${free_resetbut} > ${buttonfile}
+	fi
+
+	if [ "x$tt3_support" = "x1" ];then
+		#if it's in factory_tt3 mode and led has turned to solid red, the status should be kept
+		if [ "x$tt3_led" = "x1" ];then
+			/bin/sleep 1
+			continue
+		fi
+	fi
+
+        #----------------------------------------------------------------------#
+	#get states of leds
+	ledstate=$(/bin/cat ${ledfile})
+	runstate=$(/bin/echo ${ledstate} | cut -c 2)
+	colorstate=$(/bin/echo ${ledstate} | cut -c 4)
+	recoverstate=$(/bin/echo ${ledstate} | cut -c 6)
+	wanportstate=`cat /tmp/port_status`
+	timeupstate=`cat /tmp/led_time`
+	ledringnum=`ps | grep led_ring_action | grep -v grep | awk '{printf("%s\n",$1)}' | wc -l`
+	wpsstate=`cat /tmp/wps_process_state` 2> /dev/null
+	applyend=`cat /tmp/apply_end` 2> /dev/null
+	hijackstate=`/bin/config get dns_hijack` 2> /dev/null
+	
+	i=0
+	ps | grep led_ring_action | grep -v grep | awk '{printf("%s\n",$1)}' | while read PID
+	do
+	    let "i=$i+1"
+	    if [ $i -ne $ledringnum ];then
+	        kill $PID 2> /dev/null
+	    fi
+	done
+
+	if [ "$wpsstate" = "start" ];then
+		wanportledlock=0
+
+	elif [ "$applyend" = "1" ];then
+		wanportledlock=0
+		rm /tmp/apply_end
+
+	elif [ "$wanportstate" = "0" -a "$timeupstate" = "1" -a "$hijackstate" = "0" ]; then
+		if [ "$wanportledlock" = "0" ];then
+			wanportledlock=1
+			/sbin/led_ring stop 
+			ledcontrol -n all -c magenta -s on
+		fi
+	elif [ "$wanportstate" = "1" ]; then
+		wanportledlock=0
+	fi
+
+	# recover led state
+	if [ ${ON} -eq ${recoverstate} ]; then
+	    echo ${recover_state} > ${ledfile}
+
+	    if [ ${OFF} -eq ${runstate} ]; then
+	        ledcontrol -n all -c ${colorstate} -s off
+
+	    elif [ ${ON} -eq ${runstate} ]; then
+	        ledcontrol -n all -c ${colorstate} -s on
+
+	    elif [ ${PULSE} -eq ${runstate} ]; then
+	        ledcontrol -n all -c ${colorstate} -s pulse
+		
+	    elif [ ${RING} -eq ${runstate} ]; then
+                /sbin/led_ring start ${colorstate} 
+	    fi
+	
+	fi
+	
+	/bin/sleep 1
+done

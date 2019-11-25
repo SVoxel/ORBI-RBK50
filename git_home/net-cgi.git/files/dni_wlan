@@ -1,0 +1,214 @@
+#!/bin/sh
+
+# Main purpose of this script
+# 1. rapid response
+# 2. show status, channel, statistics
+#
+# wlan takes too much time
+# Should exactly follow wlan!
+
+CONFIG=/bin/config
+
+show_usage()
+{
+	cat <<EOF
+	Usage: dni_wlan <command> [<arguments>]
+
+	Commands:
+	radio <11g/11a> <arguments>      : actions related to radio
+	--status                    :: show radio status (ON or OFF)
+	--channel                   :: show current channel
+	statistic                        :: show statistic info
+	help                             : show this
+EOF
+}
+
+## Global Setting
+
+wifi_2g="$($CONFIG get dgc_wlan_2g_phyif)"
+wifi_5g="$($CONFIG get dgc_wlan_5g_phyif)"
+wifi_bh="$($CONFIG get dgc_wlan_5g_bh_phyif)"
+
+ifname_2g_master="$($CONFIG get dgc_wlan_base_2g_ap_if)"
+ifname_2g_guest="$($CONFIG get dgc_wlan_base_2g_guestap_if)"
+ifname_2g_bh="$($CONFIG get dgc_wlan_base_2g_bh_ap_if)"
+
+ifname_5g_master="$($CONFIG get dgc_wlan_base_5g_ap_if)"
+ifname_5g_guest="$($CONFIG get dgc_wlan_base_5g_guestap_if)"
+ifname_5g_bh="$($CONFIG get dgc_wlan_base_5g_bh_ap_if)"
+## GS END
+
+# $1 - Physical interface
+# $2 - Indicator string
+dni_statistic_qcawifi()
+{
+	[ -z $1 ] && return
+	# enable WLAN statistic
+	/usr/sbin/iwpriv "$1" enable_ol_stats 1
+
+	ifconfig $1 > /dev/null 2>&1
+	if [ "$?" = "0" ]; then
+		tx_packets=`athstats -i $1 | grep 'ast_tx_packets' | cut -f 2`
+		rx_packets=`athstats -i $1 | grep 'ast_rx_packets' | cut -f 2`
+		collisions=0
+		tx_bytes=`athstats -i $1 | grep 'ast_tx_bytes' | cut -f 2`
+		rx_bytes=`athstats -i $1 | grep 'ast_rx_bytes' | cut -f 2`
+
+		echo "$2"
+
+		echo "TX packets:$tx_packets"
+		echo "RX packets:$rx_packets"
+		echo "collisons:$collisions"
+		echo "TX bytes:$tx_bytes"
+		echo "RX bytes:$rx_bytes"
+		echo ""
+	fi
+}
+
+
+dni_wifi_statistic()
+{
+	dni_statistic_qcawifi $wifi_2g "###2.4G###"
+	dni_statistic_qcawifi $wifi_5g "###5G###"
+	dni_statistic_qcawifi $wifi_bh "###5G###"
+}
+
+# $1 - VAP ifname
+# $2 - Option
+dni_radio_qcawifi()
+{
+	[ -z $1 ] && return
+	local ifname=$1
+
+	shift
+	while [ "$#" -gt "0" ]; do
+		case $1 in
+			-s|--status)
+				isup=`ifconfig $ifname | grep UP`
+				[ -n "$isup" ] && echo "ON" || echo "OFF"
+				shift
+				;;
+			-c|--channel)
+				isap=`iwconfig $ifname | grep Master`
+				[ -z "$isap" ] && shift && continue
+
+				p_chan=`iwlist $ifname chan | grep Current | awk '{printf "%d\n", substr($5,1,length($5))}'`
+				cur_mode=`iwpriv $ifname g_dni_curmode | cut -d: -f2`
+				is_20=`echo $cur_mode | grep '20'`
+				is_plus=`echo $cur_mode | grep 'PLUS'`
+				is_minus=`echo $cur_mode | grep 'MINUS'`
+				is_80=`echo $cur_mode | grep '80'`
+
+				# when enable wla_ht160, need change mode to HT160 for EU and HT80_80 for NA.
+				# EU use channel "36+40+44+48+52+56+60+64" or "100+104+108+112+116+120+124+128"
+				# NA use channel "36+40+44+48+149+153+157+161"
+				is_80_80=`echo $cur_mode | grep '80_80'`
+				is_160=`echo $cur_mode | grep '160'`
+
+				if [ -n "$is_20" ]; then
+					chan=$p_chan
+				elif [ -n "$is_plus" ]; then
+					s_chan=$(($p_chan + 4));
+					chan="${p_chan}(P) + ${s_chan}(S)"
+				elif [ -n "$is_minus" ]; then
+					s_chan=$(($p_chan - 4));
+					chan="${p_chan}(P) + ${s_chan}(S)"
+				elif [ -z "$is_80_80" -a -n "$is_80" ]; then
+					case "${p_chan}" in
+						36) chan="36(P) + 40 + 44 + 48" ;;
+						40) chan="36 + 40(P) + 44 + 48" ;;
+						44) chan="36 + 40 + 44(P) + 48" ;;
+						48) chan="36 + 40 + 44 + 48(P)" ;;
+						52) chan="52(P) + 56 + 60 + 64" ;;
+						56) chan="52 + 56(P) + 60 + 64" ;;
+						60) chan="52 + 56 + 60(P) + 64" ;;
+						64) chan="52 + 56 + 60 + 64(P)" ;;
+						100) chan="100(P) + 104 + 108 + 112" ;;
+						104) chan="100 + 104(P) + 108 + 112" ;;
+						108) chan="100 + 104 + 108(P) + 112" ;;
+						112) chan="100 + 104 + 108 + 112(P)" ;;
+						116) chan="116(P) + 120 + 124 + 128" ;;
+						120) chan="116 + 120(P) + 124 + 128" ;;
+						124) chan="116 + 120 + 124(P) + 128" ;;
+						128) chan="116 + 120 + 124 + 128(P)" ;;
+						149) chan="149(P) + 153 + 157 + 161";;
+						153) chan="149 + 153(P) + 157 + 161";;
+						157) chan="149 + 153 + 157(P) + 161";;
+						161) chan="149 + 153 + 157 + 161(P)";;
+					esac
+				elif [ -n "$is_80_80" ]; then
+					case "${p_chan}" in
+						36) chan="36(P) + 40 + 44 + 48 + 149 + 153 + 157 + 161" ;;
+						40) chan="36 + 40(P) + 44 + 48 + 149 + 153 + 157 + 161" ;;
+						44) chan="36 + 40 + 44(P) + 48 + 149 + 153 + 157 + 161" ;;
+						48) chan="36 + 40 + 44 + 48(P) + 149 + 153 + 157 + 161" ;;
+						149) chan="36 + 40 + 44 + 48 + 149(P) + 153 + 157 + 161";;
+						153) chan="36 + 40 + 44 + 48 + 149 + 153(P) + 157 + 161";;
+						157) chan="36 + 40 + 44 + 48 + 149 + 153 + 157(P) + 161";;
+						161) chan="36 + 40 + 44 + 48 + 149 + 153 + 157 + 161(P)";;
+					esac
+				elif [ -n "$is_160" ]; then
+					case "${p_chan}" in
+						36) chan="36(P) + 40 + 44 + 48 + 52 + 56 + 60 + 64" ;;
+						40) chan="36 + 40(P) + 44 + 48 + 52 + 56 + 60 + 64" ;;
+						44) chan="36 + 40 + 44(P) + 48 + 52 + 56 + 60 + 64" ;;
+						48) chan="36 + 40 + 44 + 48(P) + 52 + 56 + 60 + 64" ;;
+						52) chan="36 + 40 + 44 + 48 + 52(P) + 56 + 60 + 64" ;;
+						56) chan="36 + 40 + 44 + 48 + 52 + 56(P) + 60 + 64" ;;
+						60) chan="36 + 40 + 44 + 48 + 52 + 56 + 60(P) + 64" ;;
+						64) chan="36 + 40 + 44 + 48 + 52 + 56 + 60 + 64(P)" ;;
+						100) chan="100(P) + 104 + 108 + 112 + 116 + 120 + 124 + 128" ;;
+						104) chan="100 + 104(P) + 108 + 112 + 116 + 120 + 124 + 128" ;;
+						108) chan="100 + 104 + 108(P) + 112 + 116 + 120 + 124 + 128" ;;
+						112) chan="100 + 104 + 108 + 112(P) + 116 + 120 + 124 + 128" ;;
+						116) chan="100 + 104 + 108 + 112 + 116(P) + 120 + 124 + 128" ;;
+						120) chan="100 + 104 + 108 + 112 + 116 + 120(P) + 124 + 128" ;;
+						124) chan="100 + 104 + 108 + 112 + 116 + 120 + 124(P) + 128" ;;
+						128) chan="100 + 104 + 108 + 112 + 116 + 120 + 124 + 128(P)" ;;
+					esac
+				else
+					chan=$p_chan
+				fi
+				echo "$chan"
+				shift
+				;;
+			*)
+				shift
+				;;
+		esac
+	done
+}
+
+dni_wifi_radio()
+{
+	local band=$2
+	case $band in
+		11g)
+			dni_radio_qcawifi $ifname_2g_master $@
+			;;
+		11a)
+			dni_radio_qcawifi $ifname_5g_master $@
+			;;
+		*)
+			if echo "$band" | grep -qE '^ath[0-9]{1,2}$'; then
+				dni_radio_qcawifi $band $@
+			fi
+			;;
+	esac
+}
+
+case "$1" in
+	statistic)
+		dni_wifi_statistic
+		;;
+	radio)
+		dni_wifi_radio "$@"
+		;;
+	*)
+		show_usage
+		;;
+esac
+
+
+
+

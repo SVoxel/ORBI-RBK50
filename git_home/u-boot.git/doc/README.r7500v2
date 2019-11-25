@@ -1,0 +1,50 @@
+About commit ID of qsdk-chipcode.git (or qca_ipq8066.git)
+=========================================================
+
+Current DNI uses branch:
+
+    ipq8064-ilq-1-3_qca_oem_standard_cs1u4_p0p128p512
+
+or revision 2.4.3.1008.179 or commit label r038300122.1 equivalently.
+
+How to build:
+=============
+
+QSDK ILQ 1.3 CS1U4.2 toolchain is under: "$qsdk_root/qsdk/staging_dir/toolchain-arm_v7-a_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/".
+
+#
+# Uncompressed u-boot image and single image without QSDK
+#
+$ export PATH="/path/to/toolchain-arm_v7-a_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/bin:$PATH"
+
+# (optional) Supress "STAGING_DIR" warning messages only
+$ export STAGING_DIR="/path/to/toolchain-arm_v7-a_gcc-4.6-linaro_uClibc-0.9.33.2_eabi/.."
+
+$ make CROSS_COMPILE=arm-openwrt-linux-uclibcgnueabi- hw29764958p0p128p512p3x3p4x4_config
+$ make CROSS_COMPILE=arm-openwrt-linux-uclibcgnueabi- CONFIG_QCA_SINGLE_IMG_GIT="/path/to/qsdk-chipcode.git"
+
+U-Boot image is "u-boot.mbn" and single image is "tools/qca_single_img/u-boot-single.img".
+
+Steps to upgrade u-boot:
+========================
+
+Note: The last argument of the last command, "0x80000" in this case, should be
+      enlarged if size of U-Boot image is larger than the argument, and the
+      argument should align to page size.
+
+In the meantime, u-boot partition takes 44 erase blocks (44 * 0x20000):
+40 code blocks plus 4 env block.
+
+(IPQ) # tftpboot 0x42000000 u-boot.mbn
+(IPQ) # crc32 0x42000000 ${filesize}
+(IPQ) # ipq_nand sbl && nand erase 0x00c80000 0x00580000 && nand write 0x42000000 0x00c80000 0x80000
+
+Steps to upgrade u-boot through single image:
+=============================================
+
+In the meantime, u-boot partition takes 44 erase blocks (44 * 0x20000):
+40 code blocks plus 4 env block.
+
+(IPQ) # tftpboot 0x42000000 u-boot-single.img
+(IPQ) # crc32 0x42000000 ${filesize}
+(IPQ) # ipq_nand sbl && nand erase 0x00c80000 0x00580000 && imgaddr=0x42000000 && source $imgaddr:script

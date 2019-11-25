@@ -1,0 +1,25 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+
+start()
+{
+	boot
+}
+
+stop()
+{
+	[ "$($CONFIG get trend_micro_enable)" = "1" ] && /tm_shn/QoSControl shutdown
+}
+
+restart()
+{
+	stop
+	start
+}
+
+boot()
+{
+	$CONFIG set first_boot_qos=1
+	[ "$($CONFIG get trend_micro_enable)" = "1" ] && /tm_shn/QoSControl setbw
+}

@@ -1,0 +1,102 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org 
+
+START=16
+
+#mount function $1=mount_part $2=mount_dev $3=mount_point $4=part_sz $5=part_name $6=block_size
+mount_part()
+{
+	if [ -b $2 ];then
+		[ ! -d $3 ] && mkdir -p $3
+		if [ "x$2" != "x" ];then
+			[ "x$4" != "x$6" ] && echo "$4 != $6:$5 partition have be modify, will re-format" && mkfs.ext4 $2
+		else
+			echo "No such $2 device!"
+			return
+		fi
+		if [ "x`/bin/config get reset_arlo`" != "x0" ];then
+			echo "have reset factory,$5 partition will be will re-format" && mkfs.ext4 $2
+			/bin/config set reset_arlo=0 && config commit
+		fi
+		filetype=`blkid $2 | grep -o 'TYPE=.*' | awk -F\" '{print $2}' |cut -c -3`
+		if [ "x$filetype" = "xext" ];then
+			[ -d $3 ] && mount -t ext4 $2 $3
+			ret=`echo $?`
+			if [ $ret -ne 0 ];then
+				echo "Will re-format $2 partition."
+				mkfs.ext4 $2
+				ret_2=`echo $?`
+				[ $ret_2 -ne 0 ] && echo "cannot format $2 partition." || echo "format $2 partition success."
+				[ $ret_2 -eq 0 ] && mount -t ext4 $2 $3
+				ret_3=`echo $?`
+				[ $ret_3 -eq 0 ] && echo "mount $5 partition successful."
+			else
+				echo "mount $5 partition successful."
+			fi
+		else
+			mkfs.ext4 $2
+			ret=`echo $?`
+			[ $ret -ne 0 ] && echo "cannot format $2 partition." || echo "format $2 partition success."
+			[ $ret -eq 0 ] && mount -t ext4 $2 $3
+			ret_2=`echo $?`
+			[ $ret_2 -eq 0 ] && echo "mount $5 partition successful."
+		fi
+	else
+		echo "$2 device is not exist."
+	fi
+}
+
+boot()
+{
+	factory_mode_flag=`/bin/config get factory_mode`
+	if [ "x$factory_mode_flag" = "x1" ]; then
+		exit 0
+        fi
+
+	if [ "$(cat /tmp/orbi_type)" = "Satellite" ]; then
+		exit 0
+	fi
+	#create a new partition and mount it to /tmp/arlo
+	if [ "x$(ubinfo -a |grep vol_ntgrdata)" = "x" ]; then
+		mkdir -p /tmp/dal
+	fi
+	mount_point="/tmp/dal"
+	partition_type=`cat /flash_type`
+	if [ "x$partition_type" != "xEMMC" ]; then
+		if [ "x$(ubinfo -a |grep vol_ntgrdata)" != "x" ]; then
+			if [ "x`/bin/config get reset_arlo`" != "x0" ];then
+				rm -rf /tmp/ntgrdata/dal/*
+				/bin/config set reset_arlo=0 && config commit
+			fi
+			ln -s /tmp/ntgrdata/dal $mount_point
+		else
+			ubidev=$(ubinfo -a | grep -B5 vol_arlo | sed -nr 's/Volume ID:.*\(on (ubi.*)\)/\1/p')
+			[ "x$ubidev" = "x" ] && {
+				# make a new volume on ubi0 by default. Should be OK because we always attache
+				# ntgrdata UBI image firstly. Any better idea?
+				ubidev="ubi0"
+				size="5MiB"
+				ubimkvol /dev/$ubidev -N vol_arlo -s $size
+			}
+			ubidev_name=$(ubinfo -a | grep vol_alro)
+			[ "x$ubidev_name" != "x" ] && {
+				ubirmvol /dev/$ubidev -N vol_alro
+			}
+			if [ "x`/bin/config get reset_arlo`" != "x0" ];then
+				echo "have reset factory,partition will be will re-format"
+				arlo_nand_partition=`cat /proc/mtd |grep vol_arlo | awk -F ': ' '{print $1}'`
+				flash_erase /dev/$arlo_nand_partition 0 0
+				/bin/config set reset_arlo=0 && config commit
+			fi
+			mount -t ubifs $ubidev:vol_arlo $mount_point
+		fi
+	else
+		mount_part="$(part_dev arlo |awk -F "dev/" '{print $2}')"
+		mount_dev="/dev/$mount_part"
+		# part size KB
+		part_sz=`cat /proc/partitions | grep $mount_part | awk '{print $3}'`
+		part_name="dal"
+		block_size=`tune2fs -l $mount_dev |grep "Block count:" |awk '{print $NF}'`
+		mount_part $mount_part $mount_dev $mount_point $part_sz $part_name $block_size
+	fi
+}

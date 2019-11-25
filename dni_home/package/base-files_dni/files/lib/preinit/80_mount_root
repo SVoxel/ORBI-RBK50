@@ -1,0 +1,72 @@
+#!/bin/sh
+# Copyright (C) 2006 OpenWrt.org
+# Copyright (C) 2010 Vertical Communications
+
+do_dni_mount_root() {
+
+echo "Before DNI mount_root"
+
+mkdir -p /tmp/mnt
+mkdir -p /tmp/overlay
+
+mount -t overlayfs -olowerdir=/,upperdir=/tmp/overlay "overlayfs:/tmp/overlay" /mnt
+
+. /lib/functions/preinit.sh
+
+pivot /mnt /rom
+flash_type=`cat /proc/device-tree/flash_type`
+if [ "x$flash_type" = "xNAND_FLASH" ];then
+	model_name=$(/sbin/artmtd -r board_model_id | cut -f 2 -d ":")
+	# We use a Base and Satellite common volume to test UBI image is OK or not. Here we choose
+	# "vol_oopsdump".
+	test_volume="vol_oopsdump"
+	if [ -z "$(grep $test_volume /proc/mtd)" -a -n "$(grep ntgrdata /proc/mtd)" ]; then
+		echo "Info: init ubi volumes on ntgrdata raw partition"
+
+		mtdn=$(sed -nr 's/mtd([0-9]*):.*"ntgrdata"/\1/p' /proc/mtd)
+		if [ -z "$mtdn" ]; then
+			echo "Error: can't find ntgrdata partition in mtd device!"
+		else
+			ubiattach /dev/ubi_ctrl -m $mtdn
+			if [ -n "$(grep $test_volume /proc/mtd)" ]; then
+				echo "Info: attach ubi device on ntgrdata success!"
+			else
+				if [ "x$model_name" = "xRBR50" ]; then
+					ubinize -m 2048 -p 128KiB -o /tmp/ntgrdata.ubi /etc/ntgrdata.cfg
+				else
+					ubinize -m 2048 -p 128KiB -o /tmp/ntgrdata.ubi /etc/ntgrdata-rbs50.cfg
+				fi
+				ubidetach /dev/ubi_ctrl -m $mtdn
+				flash_erase /dev/mtd$mtdn 0 0
+				nandwrite -p /dev/mtd$mtdn /tmp/ntgrdata.ubi
+				ubiattach /dev/ubi_ctrl -m $mtdn
+			fi
+			
+						
+		fi
+
+		if [ -z "$(grep $test_volume /proc/mtd)" ]; then
+			echo "Error: create ubi volumes on ntgrdata raw partition fail!"
+		fi
+	fi
+	
+		
+fi
+
+echo "After DNI mount_root"
+}
+
+do_mount_root() {
+	echo "Before mount_root"
+	#mount_root
+	#boot_run_hook preinit_mount_root
+	do_dni_mount_root
+	[ -f /sysupgrade.tgz ] && {
+		echo "- config restore -"
+		cd /
+		tar xzf /sysupgrade.tgz
+	}
+	echo "After mount_root"
+}
+
+[ "$INITRAMFS" = "1" ] || boot_hook_add preinit_main do_mount_root

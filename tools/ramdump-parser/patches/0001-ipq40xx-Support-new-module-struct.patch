@@ -1,0 +1,44 @@
+Index: linux-ramdump-parser-v2/linux-ramdump-parser-v2/ramdump.py
+===================================================================
+--- linux-ramdump-parser-v2.orig/linux-ramdump-parser-v2/ramdump.py	2016-10-13 16:33:34.821046073 +0530
++++ linux-ramdump-parser-v2/linux-ramdump-parser-v2/ramdump.py	2016-10-13 16:41:55.395155289 +0530
+@@ -451,11 +451,17 @@
+                     break
+ 
+         def mod_get_symbol(self, mod_list, mod_sec_addr, val):
+-            module_symtab_count = self.ramdump.read_word(mod_list + self.ramdump.module_symtab_count_offset)
++            if (re.search('3.14.77', self.ramdump.version) is not None):
++                kallsyms = self.ramdump.read_word(mod_list + self.ramdump.kallsyms_offset)
++                module_symtab_count = self.ramdump.read_word(kallsyms + self.ramdump.module_symtab_count_offset)
++                module_strtab = self.ramdump.read_word(kallsyms + self.ramdump.module_strtab_offset)
++                module_symtab = self.ramdump.read_word(kallsyms + self.ramdump.module_symtab_offset)
++            else:
++                module_symtab_count = self.ramdump.read_word(mod_list + self.ramdump.module_symtab_count_offset)
++                module_symtab = self.ramdump.read_word(mod_list + self.ramdump.module_symtab_offset)
++                module_strtab = self.ramdump.read_word(mod_list + self.ramdump.module_strtab_offset)
+             module_init_text_size = self.ramdump.read_word(mod_list + self.ramdump.module_init_text_size_offset)
+             module_core_text_size = self.ramdump.read_word(mod_list + self.ramdump.module_core_text_size_offset)
+-            module_symtab = self.ramdump.read_word(mod_list + self.ramdump.module_symtab_offset)
+-            module_strtab = self.ramdump.read_word(mod_list + self.ramdump.module_strtab_offset)
+             name = self.mod_addr_name
+             best = 0
+             addr = self.mod_addr
+@@ -693,9 +699,15 @@
+         self.module_core_size_offset = self.field_offset('struct module','core_size')
+         self.module_init_text_size_offset = self.field_offset('struct module','init_text_size')
+         self.module_core_text_size_offset = self.field_offset('struct module','core_text_size')
+-        self.module_symtab_offset = self.field_offset('struct module','symtab')
+-        self.module_strtab_offset = self.field_offset('struct module','strtab')
+-        self.module_symtab_count_offset = self.field_offset('struct module','num_symtab')
++        if (re.search('3.14.77', self.version) is not None):
++            self.kallsyms_offset = self.field_offset('struct module', 'kallsyms')
++            self.module_symtab_offset = self.field_offset('struct mod_kallsyms','symtab')
++            self.module_strtab_offset = self.field_offset('struct mod_kallsyms','strtab')
++            self.module_symtab_count_offset = self.field_offset('struct mod_kallsyms','num_symtab')
++        else:
++            self.module_symtab_offset = self.field_offset('struct module','symtab')
++            self.module_strtab_offset = self.field_offset('struct module','strtab')
++            self.module_symtab_count_offset = self.field_offset('struct module','num_symtab')
+         self.symtab_st_shndx_offset = self.field_offset('struct elf32_sym', 'st_shndx')
+         self.symtab_st_value_offset = self.field_offset('struct elf32_sym', 'st_value')
+         self.symtab_st_name_offset = self.field_offset('struct elf32_sym', 'st_name')

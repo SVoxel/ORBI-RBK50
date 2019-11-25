@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<body onload="loadvalue()">
+<% form_submit("apply", "BRS_04_applySettings.html", "wl_ap_mode") %>
+<input type="hidden" name="hid_save_time" value="2">
+<input type="hidden" name="hid_enable_apmode" value="1">
+<input type="hidden" name="hid_dyn_get_ip" value="1">
+<script>
+var port_status = "<% cat_file("/tmp/port_status")%>";
+function loadvalue()
+{
+	if(port_status == "0")
+		this.location.href = "BRS_00_01_noWan.html";
+	else
+		document.forms[0].submit();
+}
+</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_pls_wait);</script></div>
+         </div>
+	</div>
+</div>
+</form>
+</body>
+</html>

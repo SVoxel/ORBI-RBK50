@@ -1,0 +1,34 @@
+#!/bin/sh
+
+lock=/tmp/.sync_arlo_arp
+
+mac=$1
+ip=$2
+
+arlo_table=/tmp/arlo/arlo_list
+dhcpd_conf=/tmp/udhcpd_arlo.conf
+pipo_file=/arlo_pipo
+if [ "`cat $arlo_table|grep "$mac $ip"`" != "" ];then
+    return
+fi
+
+sed -i "/$mac/d" $arlo_table
+sed -i "/$mac/d" $dhcpd_conf
+
+echo "$mac $ip" >> $arlo_table
+echo "static_lease $ip $mac ARLO" >> $dhcpd_conf
+
+[ -f $lock ] && return
+touch $lock
+
+for pid in `ps|grep dhcpd|grep arlo|grep -v grep |awk -F' ' '{print $1}'`;do
+    kill $pid
+done
+
+
+sleep 1
+/sbin/udhcpd $dhcpd_conf &
+
+/usr/sbin/arlo_map_tracker.sh &
+
+rm -f $lock

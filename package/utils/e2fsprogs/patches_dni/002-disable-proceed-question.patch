@@ -1,0 +1,22 @@
+diff -Nuar a/misc/util.c b/misc/util.c
+--- a/misc/util.c	2018-12-16 08:39:33.000000000 +0300
++++ b/misc/util.c	2019-11-17 22:01:41.622788500 +0300
+@@ -104,7 +104,9 @@
+ 		printf(_("Proceed anyway (or wait %d seconds to proceed) ? (y,N) "),
+ 		       delay);
+ 		alarm(delay);
+-	} else
++	}
++# if 0
++	  else
+ 		fputs(_("Proceed anyway? (y,N) "), stdout);
+ 	buf[0] = 0;
+ 	if (!fgets(buf, sizeof(buf), stdin) ||
+@@ -112,6 +114,7 @@
+ 		putc('\n', stdout);
+ 		exit(1);
+ 	}
++#endif
+ 	signal(SIGALRM, SIG_IGN);
+ }
+ 

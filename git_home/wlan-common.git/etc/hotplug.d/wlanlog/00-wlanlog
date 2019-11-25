@@ -1,0 +1,8 @@
+case "$ACTION" in
+    rejected)
+            logger "[WLAN access $ACTION: incorrect security] from MAC address $MAC,"
+            ;;
+    radar)
+            logger "$LOG,"
+            ;;
+esac

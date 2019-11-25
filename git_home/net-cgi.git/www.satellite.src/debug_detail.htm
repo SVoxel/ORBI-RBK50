@@ -1,0 +1,660 @@
+<% http_header("css/form.css","funcs.js") %>
+<script>
+<% refresh_timestamp("debug_info","collect_log","debug_orbi_info","clear_cache","sent_log","debug_save") %>
+var ts="<% cfg_get("debug_info") %>";
+var maintrunk_support="<% maintrunk_support() %>";
+var hw_revision = "<% cat_file("/tmp/hw_revision") %>";
+function loadvalue()
+{
+	if(maintrunk_support == "1") {
+		document.getElementById("ehc_wps").style.display="";
+		//document.getElementById("sys_dfs").style.display="";
+	}
+	if("<% cfg_get("debug_boot_up") %>" == "1")
+		document.forms[0].log_capture.checked = true;
+	else
+		document.forms[0].log_capture.checked = false;
+
+	if("<% cfg_get("debug_wanlan_capture") %>" == "1")
+	{
+		document.forms[1].wanlan_capture.checked = true;
+		document.forms[2].store_location.disabled = false;
+	}
+	else
+	{
+		document.forms[1].wanlan_capture.checked = false;
+		document.forms[2].store_location.disabled = true;
+	}
+
+	var locate= "<% cat_file("/tmp/debug_store_locate") %>";
+	if(locate == "")
+		locate = "0";
+	document.forms[2].store_location.value = locate;
+
+	if("<% cat_file("/tmp/enable_telnet") %>" == "1")
+		document.forms[6].enable_telnet.checked = true;
+	else
+		document.forms[6].enable_telnet.checked = false;
+
+	if("<% cat_file("/tmp/debug_mirror_on") %>" == "1")
+		document.forms[7].mirrortolan.checked = true;
+	else
+		document.forms[7].mirrortolan.checked = false;
+
+	if("<% cat_file("/tmp/allow_ipv6_ping") %>" == "0")
+		document.forms[8].allow_ipv6_ping.checked = false;
+	else
+		document.forms[8].allow_ipv6_ping.checked = true;
+
+	if("<% cfg_get("repacd_Daisy_Chain_Enable") %>"=="1")
+		document.forms[9].daisy_chain.checked = false;
+	else
+		document.forms[9].daisy_chain.checked = true;
+
+	if("<% cfg_get("lbd_RSSISteeringPoint_UG") %>"=="10")
+		document.forms[10].roaming_aggressive.checked = true;
+	else
+		document.forms[10].roaming_aggressive.checked = false;
+		
+	if("<% cfg_get("enable_wifi_debug") %>"=="1")
+		document.forms[11].allow_wifi_debug.checked = true;
+	else
+		document.forms[11].allow_wifi_debug.checked = false;
+		
+	if("<% cfg_get("enable_band_steering") %>"=="1")
+		document.forms[11].allow_band_steering.checked = true;
+	else
+		document.forms[11].allow_band_steering.checked = false;
+	
+		
+	if("<% cfg_get("multi_ap_disablesteering") %>"=="0")
+		document.forms[11].allow_multi_ap.checked = true;
+	else
+		document.forms[11].allow_multi_ap.checked = false;
+
+	if("<% cfg_get("wlg_implicit_bf") %>"=="1")
+		document.forms[11].bgn_implicitbf.checked = true;
+	else
+		document.forms[11].bgn_implicitbf.checked = false;
+	if("<% cfg_get("wlg_bf") %>"=="1")
+		document.forms[11].bgn_vhtsubfer.checked = true;
+	else
+		document.forms[11].bgn_vhtsubfer.checked = false;
+	if("<% cfg_get("wlg_mu_mimo") %>"=="1")
+		document.forms[11].bgn_vhtmubfee.checked = true;
+	else
+		document.forms[11].bgn_vhtmubfee.checked = false;
+	if("<% cfg_get("wla_implicit_bf") %>"=="1")
+		document.forms[11].an_implicitbf.checked = true;
+	else
+		document.forms[11].an_implicitbf.checked = false;
+	if("<% cfg_get("wla_bf") %>"=="1")
+		document.forms[11].an_vhtsubfer.checked = true;
+	else
+		document.forms[11].an_vhtsubfer.checked = false;
+	if("<% cfg_get("wla_mu_mimo") %>"=="1")
+		document.forms[11].an_vhtmubfee.checked = true;
+	else
+		document.forms[11].an_vhtmubfee.checked = false;
+	if("<% cfg_get("wla_2nd_implicit_bf") %>"=="1")
+		document.forms[11].bh_implicitbf.checked = true;
+	else
+		document.forms[11].bh_implicitbf.checked = false;
+	if("<% cfg_get("wla_2nd_bf") %>"=="1")
+		document.forms[11].bh_vhtsubfer.checked = true;
+	else
+		document.forms[11].bh_vhtsubfer.checked = false;
+	if("<% cfg_get("wla_2nd_mu_mimo") %>"=="1")
+		document.forms[11].bh_vhtmubfee.checked = true;
+	else
+		document.forms[11].bh_vhtmubfee.checked = false;
+
+	if("<% cfg_get("wl_dyn_bw_rts") %>" == "1")
+		document.forms[11].wl_dyn_bw_rts.checked = true;
+	else
+		document.forms[11].wl_dyn_bw_rts.checked = false;
+
+	if("<% cfg_get("wla_dyn_bw_rts") %>" == "1")
+		document.forms[11].wla_dyn_bw_rts.checked = true;
+	else
+		document.forms[11].wla_dyn_bw_rts.checked = false;
+
+	if("<% cfg_get("ehc_wps") %>" == "1")
+		document.forms[13].ehc_wps.checked = true;
+	else
+		 document.forms[13].ehc_wps.checked = false;
+
+	if("<% cfg_get("wla_2nd_enhance_dfs") %>" == "2")
+		document.forms[14].sys_dfs.checked = true;
+	else
+		document.forms[14].sys_dfs.checked = false;
+
+	refresh_start();
+	<% start_debug() %>
+}
+
+function click_logcapture()
+{
+	var cf = document.forms[0];
+	if(cf.log_capture.checked == true)
+		cf.hid_boot_up.value = "1";
+	else
+		cf.hid_boot_up.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_wanlan()
+{
+	var cf = document.forms[1];
+	if(cf.wanlan_capture.checked == true)
+		cf.hid_wanlan_capture.value = "1";
+	else
+		cf.hid_wanlan_capture.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_location()
+{
+	var cf = document.forms[2];
+	if(cf.store_location.value == "1" && "<% cat_file("/tmp/debug-usb") %>" != "1")
+	{
+		alert("There are no USB devices connected to the router!");
+		cf.store_location.value = "0";
+	}
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_start()
+{
+	var cf = document.forms[3];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_sent()
+{
+	var cf = document.forms[5];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_telnet()
+{
+	var cf = document.forms[6];
+	if(cf.enable_telnet.checked == true)
+		cf.hid_telnet.value = "1";
+	else
+		cf.hid_telnet.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function click_mirror()
+{
+	var cf = document.forms[7];
+	if(cf.mirrortolan.checked == true)
+		cf.hid_mirrortolan.value = "1";
+	else
+		cf.hid_mirrortolan.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+function click_ipv6()
+{
+	var cf = document.forms[8];
+	if(cf.allow_ipv6_ping.checked == true)
+		cf.hid_ipv6.value = "1";
+	else
+		cf.hid_ipv6.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function check_steering()
+{
+	var cf = document.forms[8];
+	if(cf.allow_band_steering.checked == true)
+	{
+//		cf.allow_80211kv.checked =true;
+//		cf.allow_legacy.checked =true;
+	}
+	else
+	{
+//		cf.allow_80211kv.checked =false;
+//		cf.allow_legacy.checked =false;
+	}
+}
+
+function check_wlan_debug()
+{
+	var cf = document.forms[11];
+	if(cf.allow_wifi_debug.checked == true)
+	{
+		cf.allow_band_steering.checked =true;
+		cf.allow_multi_ap.checked =true;
+	}
+	else
+	{
+		cf.allow_band_steering.checked =false;
+		cf.allow_multi_ap.checked =false;
+	}
+}
+
+function check_rssi(val)
+{
+	var num = parseInt(val,10);
+	if(val > 0 || val <-95)
+		return false;
+	return true;
+}
+
+function check_cca(val)
+{
+	var num = parseInt(val,10);
+
+	if(val!=0 && (val > -11 || val <-94))
+		return false;
+	return true;
+}
+
+function save_orbi_info()
+{
+	var cf = document.forms[11];
+
+//	if(check_rssi(cf.single_threshold.value) == false || check_rssi(cf.multi_threshold.value) == false)
+//	{
+//		alert("RSSI threshold should between 0~-95");
+//		return false;
+//	}
+	if(check_rssi(cf.uplink_5g_threshold.value) == false || check_rssi(cf.uplink_2g_threshold.value) == false || check_rssi(cf.satellite_5g_threshold.value) == false)
+	{
+		alert("RSSI threshold should between 0~-95");
+		return false;
+	}
+	if(cf.allow_wifi_debug.checked == true)
+		cf.hid_wifi_debug.value = "1";
+	else
+		cf.hid_wifi_debug.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_band_steering.value = "1";
+	else
+		cf.hid_band_steering.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_80211kv.value = "1";
+	else
+		cf.hid_80211kv.value = "0";
+		
+	if(cf.allow_band_steering.checked == true)
+		cf.hid_legacy.value = "1";
+	else
+		cf.hid_legacy.value = "0";
+		
+	if(cf.allow_multi_ap.checked == true)
+		cf.hid_multi_ap.value = "0";
+	else
+		cf.hid_multi_ap.value = "1";
+
+	if(cf.bgn_implicitbf.checked == true)
+		cf.hid_bgn_implicitbf.value = "1";
+	else
+		cf.hid_bgn_implicitbf.value = "0";
+
+	if(cf.bgn_vhtsubfer.checked == true)
+		cf.hid_bgn_vhtsubfer.value = "1";
+	else
+		cf.hid_bgn_vhtsubfer.value = "0";
+
+	if(cf.bgn_vhtmubfee.checked == true)
+		cf.hid_bgn_vhtmubfee.value = "1";
+	else
+		cf.hid_bgn_vhtmubfee.value = "0";
+
+	if(cf.an_implicitbf.checked == true)
+		cf.hid_an_implicitbf.value = "1";
+	else
+		cf.hid_an_implicitbf.value = "0";
+
+	if(cf.an_vhtsubfer.checked == true)
+		cf.hid_an_vhtsubfer.value = "1";
+	else
+		cf.hid_an_vhtsubfer.value = "0";
+
+	if(cf.an_vhtmubfee.checked == true)
+		cf.hid_an_vhtmubfee.value = "1";
+	else
+		cf.hid_an_vhtmubfee.value = "0";
+
+	if(cf.bh_implicitbf.checked == true)
+		cf.hid_bh_implicitbf.value = "1";
+	else
+		cf.hid_bh_implicitbf.value = "0";
+
+	if(cf.bh_vhtsubfer.checked == true)
+		cf.hid_bh_vhtsubfer.value = "1";
+	else
+		cf.hid_bh_vhtsubfer.value = "0";
+
+	if(cf.bh_vhtmubfee.checked == true)
+		cf.hid_bh_vhtmubfee.value = "1";
+	else
+		cf.hid_bh_vhtmubfee.value = "0";
+
+	if(cf.wl_dyn_bw_rts.checked == true)
+		cf.hid_wl_dyn_bw_rts.value = "1";
+	else
+		cf.hid_wl_dyn_bw_rts.value = "0";
+
+	if(cf.wla_dyn_bw_rts.checked == true)
+		cf.hid_wla_dyn_bw_rts.value = "1";
+	else
+		cf.hid_wla_dyn_bw_rts.value = "0";
+
+	if(!check_cca(cf.wl_cca_threshold.value) || !check_cca(cf.wla_cca_threshold.value))
+	{
+		alert("CCA Threshold value should be 0 or -11~-94");
+		return false;
+	}
+
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+	return true;
+}
+
+function click_clear_cache()
+{
+	var cf = document.forms[12];
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+
+function refresh_start()
+{
+        var file="/collect_debug.txt";
+        var xmlHttp = createXMLHttpRequest();
+        var result;
+
+	var disable_str="<input type='button' name='Start' class='common_gray_bt' value='Start Capture' disabled/>    Debug Log capturing in progress";
+	var enable_str="<input type='button' name='Start' class='common_bt' value='Start Capture' onclick='click_start();'/>";
+
+        xmlHttp.onreadystatechange=function()
+        {
+                if(xmlHttp.readyState==4 && xmlHttp.status==200)
+                {
+                        result=xmlHttp.responseText;
+			getObj("start_button").innerHTML='';
+                        if(result == 1)
+				getObj("start_button").innerHTML=disable_str;
+                        else
+				getObj("start_button").innerHTML=enable_str;
+                }
+        }
+        xmlHttp.open("GET", file, true);
+        xmlHttp.send();
+
+}
+function get_numkey(e)
+{
+	var keycode, event;
+
+	if (window.event)
+	{
+		event = window.event;
+		keycode = window.event.keyCode;
+	}
+	else if (e)
+	{
+		event = e;
+		keycode = e.which;
+	}
+	else return true;
+
+	if(event.ctrlKey && ( keycode==99 || keycode==118 || keycode==120) )
+		return true;
+	if ((keycode >47 && keycode<58 ) || keycode == 45 || (keycode==8)||(keycode==0))
+		return true;
+	else
+		return false;
+}
+function click_ehc_wps()
+{
+	var cf = document.forms[13];
+	if(cf.ehc_wps.checked == true)
+		cf.hid_ehc_wps.value = "1";
+	else
+		cf.hid_ehc_wps.value = "0";
+	cf.action="/apply.cgi?/debug_detail.htm timestamp="+ts;
+	cf.submit();
+}
+</script>
+
+<BODY onLoad="loadvalue();" bgcolor=#ffffff>
+<div id="main">
+<div>
+<table width="100%" border="0" cellpadding="0" cellspacing="10">
+<tr><td colspan=3><img src="image/liteblue.gif" width=100% height=12></td></tr>
+<tr><td colspan=3><b>Basic Infomation</b></td></tr>
+<tr><td width=30px>&nbsp;</td><td width=250px><b>CPU Load</b></td><td><% cat_file("/tmp/debug_cpu") %></td></tr>
+<tr><td></td><td><b>Memory Usage(Used/Total)</b></td><td><% cat_file("/tmp/debug_mem") %></td></tr>
+<tr><td></td><td><b>Flash Usage(Used/Total)</b></td><td><% cat_file("/tmp/debug_flash") %></td></tr>
+<tr style="display:none"><td></td><td><b>Network Session(Active/Total)</b></td><td><% cat_file("/tmp/debug_session") %></td></tr>
+<tr>
+	<td></td><td><b>System Uptime</b></td>
+	<td>
+	<script>
+	var uptime= "<% show_uptime() %>";
+	var new_time=change_sec_to_time(uptime);
+	document.write(new_time);
+	</script>
+</td></tr>
+</table>
+</div>
+
+<div style="margin-left:5px">
+<b>Debug Log Capture</b>
+<div style="margin-left:50px">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_boot_up" />
+<input type="checkbox" name="log_capture" onClick="click_logcapture();"><b>Start Debug Log Capture when boot up</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_wanlan_capture" />
+<input type="checkbox" name="wanlan_capture" onChange="click_wanlan();"><b>Enable LAN/WAN Packet Capture</b>
+</form>
+<br/>
+<div style="margin-left:30px">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<b>Store location</b>&nbsp;&nbsp;&nbsp;&nbsp;
+	<select name="store_location" onChange="click_location();">
+		<option value="0">System Memory</option>
+		<script>
+		if(parseInt(hw_revision, 16) != 2) {
+			document.write('<option value="1">USB Device</option>');
+		}
+		</script>
+	</select>
+</form>
+</div>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="collect_log" />
+<div id="start_button"></div>
+</form>
+<br/>
+<form action="/debug.cgi? timestamp=<% cfg_get("debug_save") %>" method="post" enctype="multipart/form-data" target="formframe">
+<input type="submit" name="Save" class="common_bt" value="Save Debug Log" onClick="setTimeout('refresh_start()',5000);return true;"/>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none">
+<input type="hidden" name="submit_flag" value="sent_log" /><strong>Sent log to Netgear<br></strong>&nbsp;
+<div id="send_button"><input type="button" name="Sent" class="common_bt" value="Sent" onclick="click_sent();"></div>
+</form>
+
+</div>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_telnet" />
+<input type="checkbox" name="enable_telnet" onClick="click_telnet();"><b>Enable Telnet</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_mirrortolan" />
+<input type="checkbox" name="mirrortolan" onClick="click_mirror();"><b>WAN Port mirror to LAN port1</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_ipv6" />
+<input type="checkbox" name="allow_ipv6_ping" onClick="click_ipv6();"><b>Allow external IPv6 hosts ping internal IPv6 hosts</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_daisy_chain" />
+<input type="checkbox" name="daisy_chain" disabled=true><b>Disable Daisy-Chain</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_roaming_aggressive" />
+<input type="checkbox" name="roaming_aggressive" disabled=true><b>Higher roaming aggressive</b>
+</form>
+<br/>
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe" style="display:none;">
+<input type="hidden" name="submit_flag" value="debug_orbi_info" />
+<input type="hidden" name="hid_wifi_debug" />
+<input type="hidden" name="hid_band_steering" />
+<input type="hidden" name="hid_80211kv" />
+<input type="hidden" name="hid_legacy" />
+<input type="hidden" name="hid_multi_ap" />
+<input type="hidden" name="hid_bgn_implicitbf" />
+<input type="hidden" name="hid_bgn_vhtsubfer" />
+<input type="hidden" name="hid_bgn_vhtmubfee" />
+<input type="hidden" name="hid_an_implicitbf" />
+<input type="hidden" name="hid_an_vhtsubfer" />
+<input type="hidden" name="hid_an_vhtmubfee" />
+<input type="hidden" name="hid_bh_implicitbf" />
+<input type="hidden" name="hid_bh_vhtsubfer" />
+<input type="hidden" name="hid_bh_vhtmubfee" />
+<input type="hidden" name="hid_wl_dyn_bw_rts" />
+<input type="hidden" name="hid_wla_dyn_bw_rts" />
+<div style="display:none">
+<% table_header() %>
+<tr><td colspan=2><img src="image/liteblue.gif" width=100% height=12></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="allow_wifi_debug" onClick="check_wlan_debug()"><b>Advanced WLAN debug</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;Debug Options:0x<input type="text" name="debug_option" value="<% cfg_get("wifi_debug_option") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;Maximum log file size:<input type="text" name="max_size" value="<% cfg_get("wifi_debug_max_log_size") %>" />MB</td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+</table>
+<div style="display:none">
+<% table_header() %>
+<tr><td colspan="2">&nbsp;<input type="checkbox" name="allow_band_steering" onClick="check_steering()"><b>Enable Band Steering</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Legacy Wi-Fi and 802.11k/v client steering enabled</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Band steering thresholds:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUOverloadThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_muvltd_w5" value="<% cfg_get("lbd_MUOverloadThreshold_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload OffloadingMinRSSI:       <input type="text" onKeyPress="return get_numkey(event)" name="ibd_flmin_rssi" value="<% cfg_get("lbd_OffloadingMinRSSI") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUOverloadThreshold_W2: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_muoltd_w2" value="<% cfg_get("lbd_MUOverloadThreshold_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Offload MUSafetyThreshold_W2: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_musftd_w2" value="<% cfg_get("lbd_MUSafetyThreshold_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Idle Steering:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RSSISteeringPoint_UG: <input type="text" onKeyPress="return get_numkey(event)" name="rssi_srpt_ug" value="<% cfg_get("lbd_RSSISteeringPoint_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Active Steering:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;RateRSSIXingThreshold_UG: <input type="text" onKeyPress="return get_numkey(event)" name="raterssi_xtd_ug" value="<% cfg_get("lbd_RateRSSIXingThreshold_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;<b>Offload:</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MUSafetyThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="mu_sftd_w5" value="<% cfg_get("lbd_MUSafetyThreshold_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;<input type="checkbox" name="allow_multi_ap"><b>Enable Multi-AP steering</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToRootMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtort_mininctd" value="<% cfg_get("lbd_APSteerToRootMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToLeafMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtolf_mininctd" value="<% cfg_get("lbd_APSteerToLeafMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option APSteerToPeerMinRSSIIncThreshold: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_apsrtopr_mininctd" value="<% cfg_get("lbd_APSteerToPeerMinRSSIIncThreshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option DownlinkRSSIThreshold_W5: <input type="text" onKeyPress="return get_numkey(event)" name="ibd_dlrssitd" value="<% cfg_get("lbd_DownlinkRSSIThreshold_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_CAP_W2: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_CAP_W2" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_CAP_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_CAP_W5: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_CAP_W5" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_CAP_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_RE_W2: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_RE_W2" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_RE_W2") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LowRSSIAPSteerThreshold_RE_W5: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LowRSSIAPSteerThreshold_RE_W5" value="<% cfg_get("lbd_LowRSSIAPSteerThreshold_RE_W5") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option TxRateXingThreshold_UG: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_TxRateXingThreshold_UG" value="<% cfg_get("lbd_TxRateXingThreshold_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MUReportPeriod: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MUReportPeriod" value="<% cfg_get("lbd_MUReportPeriod") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option LoadBalancingAllowedMaxPeriod: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_LoadBalancingAllowedMaxPeriod" value="<% cfg_get("lbd_LoadBalancingAllowedMaxPeriod") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option NormalInactTimeout: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_NormalInactTimeout" value="<% cfg_get("lbd_NormalInactTimeout") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option OverloadInactTimeout: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_OverloadInactTimeout" value="<% cfg_get("lbd_OverloadInactTimeout") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxBTMUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxBTMUnfriendly" value="<% cfg_get("lbd_MaxBTMUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxBTMActiveUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxBTMActiveUnfriendly" value="<% cfg_get("lbd_MaxBTMActiveUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option MaxSteeringUnfriendly: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_MaxSteeringUnfriendly" value="<% cfg_get("lbd_MaxSteeringUnfriendly") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option 11kProhibitTimeShort: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_11kProhibitTimeShort" value="<% cfg_get("lbd_11kProhibitTimeShort") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option 11kProhibitTimeLong: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_11kProhibitTimeLong" value="<% cfg_get("lbd_11kProhibitTimeLong") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option BTMSteeringProhibitShortTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_BTMSteeringProhibitShortTime" value="<% cfg_get("lbd_BTMSteeringProhibitShortTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option BTMUnfriendlyTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_BTMUnfriendlyTime" value="<% cfg_get("lbd_BTMUnfriendlyTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option SteeringProhibitTime: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_SteeringProhibitTime" value="<% cfg_get("lbd_SteeringProhibitTime") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option RSSISteeringPoint_UG: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_RSSISteeringPoint_UG" value="<% cfg_get("lbd_RSSISteeringPoint_UG") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;option AgeLimit: <input type="text" onKeyPress="return get_numkey(event)" name="lbd_AgeLimit" value="<% cfg_get("lbd_AgeLimit") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+</table>
+</div>
+<% table_header() %>
+<tr><td colspan="2">&nbsp;<b>Satellite's uplink connectivity status</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;5G RSSI Threshold:</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Good>= <input type="text" name="uplink_5g_threshold" onKeyPress="return get_numkey(event)" value="<% cfg_get("rssi_move_far5g") %>" />dBm</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;2G RSSI Threshold:</td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Good>= <input type="text" name="uplink_2g_threshold" onKeyPress="return get_numkey(event)" value="<% cfg_get("rssi_move_far2g") %>" />dBm</td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2">&nbsp;<b>Satellite uses 2G backhaul when</b></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;5G RSSI Threshold: <=<input type="text" name="satellite_5g_threshold" onKeyPress="return get_numkey(event)" value="<% cfg_get("rssi_prefer_2g_bh") %>" />dBm</td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_implicitbf" ><b>Enable 2.4G implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_vhtsubfer" ><b>Enable 2.4G vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bgn_vhtmubfee" ><b>Enable 2.4G vhtmubfee</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_implicitbf" ><b>Enable 5G implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_vhtsubfer" ><b>Enable 5G vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="an_vhtmubfee" ><b>Enable 5G vhtmubfee</b></td></tr>
+<tr><td colspan="2">&nbsp;</td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_implicitbf" ><b>Enable Backhaul implicitbf</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_vhtsubfer" ><b>Enable Backhaul vhtsubfer</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="bh_vhtmubfee" ><b>Enable Backhaul vhtmubfee</b></td></tr>
+</table>
+</div>
+<% table_header() %>
+<tr><td colspan="2">&nbsp;</td></tr>
+$bluebar
+<tr><td colspan="2"><input type="checkbox" name="wl_dyn_bw_rts" ><b>Fronthaul 2.4G Dynamic bandwidth RTS</b></td></tr>
+<tr><td colspan="2"><input type="checkbox" name="wla_dyn_bw_rts" ><b>Fronthaul 5G Dynamic bandwidth RTS</b></td></tr>
+<tr><td colspan="2"><b>2.4G CCA Threshold:</b> <input type="text" onKeyPress="return get_numkey(event)" name="wl_cca_threshold" value="<% cfg_get("wl_cca_threshold") %>" /></td></tr>
+<tr><td colspan="2"><b>5G CCA Threshold:</b> <input type="text" onKeyPress="return get_numkey(event)" name="wla_cca_threshold" value="<% cfg_get("wla_cca_threshold") %>" /></td></tr>
+<tr><td colspan="2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="button" name="save" value="Save" class="common_bt" onClick="return save_orbi_info()"/></td></tr>
+</table>
+</form>
+<br/>
+<div style="display:none">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="clear_cache" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="submit" name="clear" class="common_bt" value="Clear Cache" onClick="click_clear_cache();"/>
+</form>
+</div>
+<div id="ehc_wps" style="display:none">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_ehc_wps" />
+<input type="checkbox" name="ehc_wps" disabled><b>Enable Enhanced WPS</b>
+</form>
+<div id="sys_dfs" style="display:none;">
+<form method="post" action="/apply.cgi?/debug_detail.htm" target="formframe">
+<input type="hidden" name="submit_flag" value="debug_info" />
+<input type="hidden" name="hid_sys_dfs" />
+<input type="checkbox" name="sys_dfs" disabled><b>Enable System DFS</b>
+</form>
+</div>
+</div>
+</div>
+</body>
+</html>
+

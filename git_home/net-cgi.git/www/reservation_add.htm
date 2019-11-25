@@ -1,0 +1,163 @@
+<% http_header("style/form.css", "/funcs.js", "/reservation.js") %>
+<% body_header("_lan", "LAN_lan.htm", "reservation_add") %>
+<div class="page_title">$reservation_head</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common_bt" type="button" name="Refresh" id="refresh" value="$refresh_mark" onClick="location.reload(true);">&nbsp;<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="goBack()">&nbsp;<input class="apply_bt" type="button" name="Add" id="add" value="$add_mark" onClick="return check_reservation_add(document.forms[0],\'add\')"></TD></TR>');
+else
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="common1_bt" type="button" name="Refresh" id="refresh" value="$refresh_mark" disabled>&nbsp;<input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;<input class="apply1_bt" type="button" name="Add" id="add" value="$add_mark" disabled></TD></TR>');
+
+</script>
+</TABLE>
+</div>
+<div id="main" class="main_top_button">
+<% table_header() %>
+
+<script>
+var ts = "<% cfg_get("reservation_add") %>";
+var have_vlan_sb = top.vlan_sb_flag;
+var  wl_type = window.location.href.split("#")[1];
+<% reservation_items_xss() %>
+var lanip="<% cfg_get("lan_ipaddr") %>";
+var lanmask="<% cfg_get("lan_netmask") %>";
+var startip="<% cfg_get("dhcp_start") %>";
+var endip="<% cfg_get("dhcp_end") %>";
+if(wl_type == "guest")
+{
+	lanip="<% cfg_get("guest_lan_ipaddr") %>";
+	lanmask="<% cfg_get("guest_lan_netmask") %>";
+	startip="<% cfg_get("guest_dhcp_start") %>";
+	endip="<% cfg_get("guest_dhcp_end") %>";
+}
+else if(wl_type == "byod")
+{
+	lanip="<% cfg_get("byod_lan_ipaddr") %>";
+	lanmask="<% cfg_get("byod_lan_netmask") %>";
+	startip="<% cfg_get("byod_dhcp_start") %>";
+	endip="<% cfg_get("byod_dhcp_end") %>";
+}
+
+var have_ipmac_flag=parent.have_ipmac_flag;
+var ipmac_binding_flag="<% cfg_get("ipmac_binding_on")%>";
+var is_ipmac=(have_ipmac_flag == 1 && ipmac_binding_flag == 1 && (parent.is_ru_version == 1 || parent.is_pr_version == 1)) ? 1 : 0;
+var lanip_array=lanip.split(".");
+var show_ip_array = new Array();
+var show_mac_array = new Array();
+var show_name_array = new Array();
+var i=0;
+
+
+function loadvalue()
+{
+	var xmlhttp, xmlDoc;
+	var msg = '<TABLE name="address_reser_table" class=tables border=0 cellpadding=2 cellspacing=0 width=100%>'
+		+'<TR class=table_header>'
+		+'<TD nowrap align=center>&nbsp;</TD>'
+		+'<TD nowrap align=center><span class="subhead">#</span></TD>'
+		+'<TD nowrap align=center><span class="subhead">$info_mark_ip</span></TD>'
+		+'<TD nowrap align=center><span class="subhead">$lan_mark_name</span></TD>'
+		+'<TD nowrap align=center><span class="subhead">$info_mark_mac</span></TD>'
+		+'</TR>';
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	xmlhttp.onreadystatechange = function()
+	{
+		if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 )
+		{
+			eval(xmlhttp.responseText);
+			for(var j=0, len = device.length; j<len; j++)
+			{
+				var str_name = device[j]['name'];
+				str_name=str_name.replace(/&#38;/g,"&");
+				show_name_array[i]=str_name;
+				show_ip_array[i]=device[j]['ip'];
+				show_mac_array[i]=device[j]['mac'];
+				if( i%2== 0 )
+					msg += '<TR class="even_line">';
+				else
+					msg += '<TR class="odd_line">';
+				msg += '<TD nowrap><input type="radio" name="MacSelect" id="mac_select'+(i+1)+'" value="'+i+'" onclick="data_select('+i+');"></TD><TD nowrap align=center><span class="subhead">'+eval(i+1)+'</span></TD>';
+				msg += '<TD nowrap align=center>'+show_ip_array[i]+'</TD>';
+				msg += '<TD nowrap align=center>'+show_name_array[i]+'</TD>';
+				msg += '<TD nowrap align=center>'+show_mac_array[i]+'</TD></TR>';
+				i++;
+			}
+			msg += '</table>';
+			document.getElementById("devices").innerHTML=msg;
+		}
+	};
+	xmlhttp.open("GET", "DEV_device_info.htm?ts=" + new Date().getTime(), true);
+	xmlhttp.send();
+	
+	//for different wireless page
+	if(have_vlan_sb == 1)
+	{
+		var cf = document.forms[0];
+		if(wl_type == "guest")
+		{
+			cf.hid_wireless_type.value = "guest";
+			cf.hid_wireless_type.disabled = false;	
+		}
+		else if(wl_type == "byod")
+		{
+			cf.hid_wireless_type.value = "byod";
+			cf.hid_wireless_type.disabled = false;	
+		}
+			
+	}
+}
+</script>
+
+<input type="hidden" name="reservation_ipaddr">  
+<input type="hidden" name="duplicated_reservation">
+<input type="hidden" name="duplicated_num" value=0>
+<input type="hidden" name="hid_wireless_type" value="" disabled />
+<TR>
+	<TD nowrap colspan=2>
+	<A tabindex=-1 href="javascript:loadhelp('_lan','reserved')"><B>$reservation_show</B></A>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2><div align=center id=devices>
+	</div>
+	</TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2 align=center></TD>
+</TR>
+$bluebar
+<TR>
+	<TD nowrap>$info_mark_ip</TD>
+	<TD nowrap>
+	<script>
+		document.write('<input type="text" name="rsv_ip1" id="rsv_ipaddress1" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);"	onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[0]+'">.');
+		document.write('<input type="text" name="rsv_ip2" id="rsv_ipaddress2" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[1]+'">.');
+		document.write('<input type="text" name="rsv_ip3" id="rsv_ipaddress3" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey(\'num\',event);" onkeyup="keyup(event,this);" value="'+lanip_array[2]+'">.');
+	</script>
+	<input type="text" name="rsv_ip4" id="rsv_ipaddress4" maxLength="3" size="3" autocomplete="off" onFocus="this.select();" onkeydown="keydown(event,this);" onKeyPress="return getkey('num',event);" onkeyup="keyup(event,this);">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$info_mark_mac</TD>
+	<TD nowrap>
+	<input type="text" value="" name="rsv_mac" id="rsv_mac" maxlength="17" size="20" onKeyPress="return getkey('mac',event)">
+	</TD>
+</TR>
+<TR>
+	<TD nowrap>$lan_mark_name</TD>
+	<TD nowrap>
+	<input type="text" name="dv_name" id="device_name" maxLength="32" size="16" onKeyPress="return true;">
+	</TD>
+</TR>
+$bluebar
+</TABLE>
+</div>
+<% help_box("0","_lan") %>
+</FORM>
+</BODY>
+</HTML>

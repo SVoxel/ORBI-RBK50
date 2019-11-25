@@ -1,0 +1,48 @@
+<% http_header("style/form.css", "/funcs.js") %>
+<% body_header("", "WLG_adv.htm", "orbi_backhaul") %>
+<script>
+var ignore_check = "<% cfg_get("satellite_ignore") %>";
+<% check_orbi_conn() %>
+function loadvalue()
+{
+	var cf=document.forms[0];
+	if(orbi_no_conn_count == 0 || ignore_check == "1")
+		cf.submit();	
+}
+
+function click_continue()
+{
+	var cf=document.forms[0];
+	if(cf.no_conn_ignore.checked ==true)
+		cf.hid_ignore.value = "1";
+	else
+		cf.hid_ignore.value = "0";
+	cf.submit();
+}
+</script>
+<div class="page_title">$warning_head</div>
+<input type=hidden name="hid_ignore" value="<% cfg_get("satellite_ignore") %>">
+<div class="main">
+<% table_header() %>
+$bluebar
+<script>
+var i;
+for(i=0; i <orbi_no_conn_count; i++)
+{
+	var str=eval("orbi_no_conn"+i);
+	document.write("<tr><td colspan=2>$ORT_007_1("+str+")$ORT_007_2</td></tr>");
+}
+</script>
+<tr><td colspan=2>$ORT_008</td></tr>
+$bluebar
+<tr><td colspan=2><input type="checkbox" name="no_conn_ignore">$orbi_noshow_again</td></tr>
+<tr><td colspan=2 align="center">
+	<input type="button" name="cancel" value="$cancel_mark" class="cancel_bt" onclick="location.href='WLG_adv.htm'">&nbsp;&nbsp;
+	<input type="button" name="continue" value="$continue_mark" class="apply_bt" onclick="click_continue();">
+</td></tr>
+</table>
+</div>
+
+</BODY>
+
+</HTML>

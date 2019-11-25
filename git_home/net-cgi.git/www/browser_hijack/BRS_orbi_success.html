@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<body>
+<script>
+function cllick_done()
+{
+		var winoptions = "width=960,height=800,menubar=yes,scrollbars=yes,toolbar=yes,status=yes,location=yes,resizable=yes";
+		window.open("to_internet_no_auth.htm","brs_ng",winoptions);
+}
+</script>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Connected to Internet -->
+		<div id="card-connected-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="connected-internet-logo" src="images/connected_internet.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_success_conn);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_success_conn_msg);</script></div>
+			<button class="waves-effect waves-light btn button-nav" onclick="cllick_done();">
+				<span><script>document.write(bh_orbi_done_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

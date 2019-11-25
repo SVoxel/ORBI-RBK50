@@ -1,0 +1,34 @@
+diff -ruN procps-3.2.8.org/ps/module.mk procps-3.2.8/ps/module.mk
+--- procps-3.2.8.org/ps/module.mk	2019-08-27 13:33:40.515093606 +0800
++++ procps-3.2.8/ps/module.mk	2019-08-27 13:41:23.307083244 +0800
+@@ -11,6 +11,30 @@
+ # a file to create
+ ALL += ps/ps
+ 
++SHARED     := 1
++
++PROCNAME       :=  proc
++
++LIBVERSION := $(VERSION).$(SUBVERSION).$(MINORVERSION)
++ABIVERSION := 0
++
++SOFILE     := lib$(PROCNAME)-$(LIBVERSION).so
++ifneq ($(ABIVERSION),0)
++SOLINK     := lib$(PROCNAME).so
++SONAME     := lib$(PROCNAME).so.$(ABIVERSION)
++else
++SONAME     := $(SOFILE)
++SOLINK     := $(SOFILE)
++endif
++ANAME      := lib$(PROCNAME).a
++
++ifeq ($(SHARED),1)
++LIBPROC    := proc/$(SONAME)
++else
++LIBPROC    := proc/$(ANAME)
++endif
++
++
+ PS_C    := display global help output parser select sortformat
+ PSNAMES := $(addprefix ps/,$(PS_C))
+ PSOBJ   := $(addsuffix .o,$(PSNAMES))

@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<% cfg_set("from_setting", "") %>
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<meta http-equiv="refresh" content="9; url=BRS_04_applySettings_ping.html" />
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var curr_country = "<% cfg_get("dsl_wan_country") %>";
+var curr_isp = "<% cfg_get("dsl_wan_isp") %>";
+var wan_type = "<% cfg_get("dsl_wan_type") %>";
+var apmode_flag = top.apmode_flag;
+var ap_mode_detection_flag = top.ap_mode_detection_flag;
+<% cfg_set("hijack_refresh_counter", "0") %>
+var ap_mode = "<% cfg_get("ap_mode") %>";
+var ping_result = "<% hijack_apply_result("/tmp/ping_result") %>"
+var wan_proto="<% cfg_get("wan_proto") %>";
+var select_basic="<% cfg_get("internet_type") %>";  //select_basic = 1 dhcp or static, select_basic=0 pppoe or pptp 
+var select_type = "<% cfg_get("internet_ppp_type") %>"; //select_type = 0 pppoe ,select_type = 1 pptp
+
+function loadvalue()
+{
+	if( apmode_flag == "1" && ap_mode == "1" && ap_mode_detection_flag == "1" )
+	{
+		//if(ping_result == "success")
+			this.location.href = "BRS_success.html";
+		/*else if(ping_result == "failed")
+			this.location.href = "BRS_05_networkIssue.html";*/
+	}
+	else if(wan_proto == "3g") //3g
+	{
+		if(ping_result == "success")
+			this.location.href = "BRS_success.html";
+		else if(ping_result == "failed")
+			this.location.href = "BRS_05_networkIssue.html";
+	}
+	else if(select_basic == "0" && select_type == "0")//pppoe
+	{
+		if(ping_result == "failed")
+			this.location.href = "BRS_03A_B_pppoe_reenter.html";
+		else if(ping_result == "success")
+			this.location.href = "BRS_04_applySettings_wget.html";
+	}
+	else if(select_basic == "0" && select_type == "1")//pptp
+	{
+		if(ping_result == "failed")
+			this.location.href = "BRS_03A_C_pptp_reenter.html";
+		else if(ping_result == "success")
+			this.location.href = "BRS_04_applySettings_wget.html";
+	}
+	else if(select_basic == "0" && select_type == "4")//l2tp
+	{
+		if(ping_result == "failed")
+			this.location.href = "BRS_03A_F_l2tp_reenter.html";
+		else if(ping_result == "success")
+			this.location.href = "BRS_04_applySettings_wget.html";
+	}
+	else if(ping_result == "none")
+	{
+		setTimeout("loadValue();", 1000);
+	}
+	else
+	{
+		if(ping_result == "success")
+			this.location.href = "BRS_success.html";
+		else if(ping_result == "failed")
+			this.location.href = "BRS_05_networkIssue.html";
+	}
+}
+</script>
+
+</head>
+
+<body onload="loadvalue();">
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Applying Internet Connection -->
+		<div id="card-applying-internet-connection" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-title"><script>document.write(bh_apply_connection);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_wait);</script></div>
+
+			<div class="spinner"></div>
+			<div class="desc-text wait"><script>document.write(bh_orbi_pls_wait);</script></div>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>
+

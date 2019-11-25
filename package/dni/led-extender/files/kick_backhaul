@@ -1,0 +1,11 @@
+#!/bin/sh
+
+ifname_2g=`/bin/config get wl2g_BACKHAUL_AP`
+ifname_5g=`/bin/config get wl5g_BACKHAUL_AP`
+
+[ -n "$ifname_2g" ] && for mac in `/usr/sbin/wlanconfig $ifname_2g list sta|tail -n +2|cut -d ' ' -f 1`; do
+    iwpriv $ifname_2g kickmac $mac
+done
+[ -n "$ifname_5g" ] && for mac in `/usr/sbin/wlanconfig $ifname_5g list sta|tail -n +2|cut -d ' ' -f 1`; do
+    iwpriv $ifname_5g kickmac $mac
+done

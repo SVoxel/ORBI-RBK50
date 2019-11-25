@@ -1,0 +1,27 @@
+#!/bin/sh /etc/rc.common
+
+START=92
+
+start() {
+	#Agent should not run on Satellite
+	orbi_type=`cat /tmp/orbi_type`
+	[ "$orbi_type" = "Satellite" ] && exit
+
+	INSIGHT_PART=$(/usr/sbin/part_dev insight)
+	[ ! -d /etc/insight ] && mkdir /etc/insight
+	ln -s /etc/insight /var/insight
+	mount $INSIGHT_PART /var/insight
+	if [ ! $? -eq 0 ]; then
+		/usr/sbin/mkfs.ext4 $INSIGHT_PART
+		mount $INSIGHT_PART /var/insight
+	fi
+
+	tar -xf /lib/cmapd_agent_srr60_20171213_r85_1.0.2.3.tgz -h -C /
+	/bin/ConfigAgent &
+	/bin/CloudAgent &
+}
+
+stop() {
+	killall ConfigAgent
+	killall CloudAgent
+}

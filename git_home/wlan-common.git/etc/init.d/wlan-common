@@ -1,0 +1,58 @@
+#!/bin/sh /etc/rc.common
+#START=80
+
+[ -f /etc/ath/wifi.conf ] && . /etc/ath/wifi.conf
+
+boot() {
+       if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+           wlan countrycode
+           wlan updateconf boot
+       else
+           cp /lib/wifi/qcawifi_countrycode.txt /etc/ath/country_code_mapping_table.txt
+       fi
+       if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+           /bin/sh /sbin/factory-test.sh boot
+       elif [ `cat /tmp/orbi_type` = "Satellite" ]; then
+           Daisy_Chain_Enable=$(uci get repacd.WiFiLink.DaisyChain)
+           if [ "$Daisy_Chain_Enable" -eq "1" ]; then
+               return
+           fi
+       fi
+       if [ "x$(/bin/config get factory_mode)" = "x1" -a "x$(/bin/config get ota)" = "x0" ];then
+            /bin/sh /sbin/factory-test.sh mode
+            return
+       fi
+       if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+           wlan down
+       fi
+       wlan up
+       if [ "x$wig_exist" = "xon" ]; then
+           wigig updateconf
+           wigig down
+           wigig up
+       fi
+
+       if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+           /bin/sh /sbin/factory-test.sh mode
+       fi
+
+}
+
+start()    # don't use this command unless you know what it means
+{
+        wlan updateconf
+        wlan up
+}
+
+stop()    # don't use this command unless you know what it means
+{
+        wlan updateconf
+        wlan down
+}
+
+restart()
+{
+        wlan updateconf
+        wlan down
+        wlan up
+}

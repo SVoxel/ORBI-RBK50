@@ -1,0 +1,180 @@
+#!/bin/sh /etc/rc.common
+
+DHCPNAME="/tmp/dhcp_name.conf"
+
+setup_hostname() # $1: apmode/brmode/extmode/factory
+{
+	local hostname
+
+	case "$1" in
+	apmode) hostname=$($CONFIG get ap_netbiosname)
+		;;
+	brmode)	hostname=$($CONFIG get bridge_netbiosname)
+		;;
+	*) hostname="$($CONFIG get netbiosname)" ;;
+	esac
+	[ -z "$hostname" ] && hostname="$($CONFIG get Device_name)"
+
+	echo "$hostname" > /proc/sys/kernel/hostname
+	echo "$hostname" > $DHCPNAME
+}
+
+setup_interface_static() # $1: apmode/brmode/extmode/factory
+{
+	case "$1" in
+	apmode)
+		ifconfig $BR_IF $($CONFIG get ap_ipaddr) netmask $($CONFIG get ap_netmask)
+		route add default gw $($CONFIG get ap_gateway)
+		echo "nameserver $($CONFIG get ap_ether_dns1)" > /tmp/resolv.conf
+		echo "nameserver $($CONFIG get ap_ether_dns2)" >> /tmp/resolv.conf
+		;;
+	brmode)
+		ifconfig $BR_IF $($CONFIG get bridge_ipaddr) netmask $($CONFIG get bridge_netmask)
+		route add default gw $($CONFIG get bridge_gateway)
+		echo "nameserver $($CONFIG get bridge_ether_dns1)" > /tmp/resolv.conf
+		echo "nameserver $($CONFIG get bridge_ether_dns2)" >> /tmp/resolv.conf
+		;;
+	extmode)
+		ifconfig $BR_IF $($CONFIG get extender_ipaddr) netmask $($CONFIG get extender_netmask)
+		route add default gw $($CONFIG get extender_gateway)
+		echo "nameserver $($CONFIG get extender_ether_dns1)" > /tmp/resolv.conf
+		echo "nameserver $($CONFIG get extender_ether_dns2)" >> /tmp/resolv.conf
+		;;
+	factory)
+		ifconfig $BR_IF $($CONFIG get lan_ipaddr) netmask $($CONFIG get lan_netmask)
+		;;
+	esac
+	/sbin/ledcontrol -n wan -c green -s on
+}
+
+setup_interface_dhcp() # $1: apmode/brmode/extmode
+{
+	hostname=$(cat /proc/sys/kernel/hostname)
+	
+	# hostapd always need a lan ip to up.
+	[ "$1" = "apmode" ] && ifconfig $BR_IF $($CONFIG get lan_ipaddr)
+
+	/sbin/udhcpc -a -b -i $BR_IF -h $DHCPNAME -r $($CONFIG get ap_dhcp_ipaddr) &
+
+	case "$1" in
+	apmode) 
+		echo "ap mode start udhcp" 
+		killall udhcpc
+		sleep 10
+		/sbin/udhcpc -a -b -i $BR_IF -h $DHCPNAME -r $($CONFIG get ap_dhcp_ipaddr) &
+		;; 
+	brmode) /etc/init.d/net-br-dhcpc-helper & ;;
+	extmode) sleep 10
+		/etc/init.d/net-br-dhcpc-helper & ;;
+	esac
+}
+
+setup_interface() # $1: apmode/brmode/extmode/factory
+{
+	local dhcp=1
+
+	case "$1" in
+	apmode) 
+			[ "$($CONFIG get ap_ether_ip_assign)" = "0" ] && dhcp=0
+			brctl addif $BR_IF $WAN_PHYIF
+			;;
+	brmode) [ "$($CONFIG get bridge_ether_ip_assign)" = "0" ] && dhcp=0 ;;
+	extmode) [ "$($CONFIG get extender_ether_ip_assign)" = "0" ] && dhcp=0 ;;
+	factory) dhcp=0 ;;
+	esac
+
+	[ "$dhcp" = "1" ] && setup_interface_dhcp $1 || setup_interface_static $1
+}
+
+start0() # $1: boot/start
+{
+	local opmode=$($CONFIG get i_opmode)
+
+	setup_hostname $opmode
+
+	ifconfig $LAN_PHYIF up
+	ifconfig $WAN_PHYIF up
+	ifconfig $BR_IF up
+
+#	/etc/init.d/hyfi-bridging start
+#	wl2g_BACKHAUL_AP=`/bin/config get wl2g_BACKHAUL_AP`
+#	if [ "x$wl2g_BACKHAUL_AP" != "x" ]; then
+#		echo "=====bridge up,should up backhaul ap $wl2g_BACKHAUL_AP first=======" > /dev/console
+#		ifconfig $wl2g_BACKHAUL_AP up
+#	fi
+	
+	/etc/init.d/wlan-common start &
+
+	# Pull low PHY 9 seconds then pull high PHY to let wired client re-obtain IP address
+	# echo -n '911111' > /proc/switch_phy && sleep 10
+	/sbin/eth_handle restart
+
+	setup_interface $opmode 
+
+	/sbin/cmd_ebtables start
+	/etc/init.d/netscan $1      # daemon for getting attached devices
+	/etc/init.d/lltd $1          # Link Layer Topology Discovery Daemon
+	/etc/init.d/telnet $1        # telnet daemon for Router Debugging Mode ...
+	/usr/sbin/update_smb
+	/sbin/cmddlna ip_restart &   # dlan daemon
+	/etc/init.d/upnp $1
+	if [ "$opmode" = "apmode" ]; then
+ 	    /usr/sbin/brctl stp $BR_IF 1
+	fi
+}
+
+start()
+{
+	start0 start
+	/etc/init.d/ntpclient start
+	/etc/init.d/cron start
+	/etc/init.d/dnsmasq stop
+	/etc/init.d/dnsmasq start
+}
+
+stop()
+{
+	# wan service
+	/etc/init.d/dnsmasq stop
+	/etc/init.d/cron stop
+	/etc/init.d/ntpclient stop
+
+	# lan service
+#	/etc/init.d/samba stop
+	/etc/init.d/upnp stop
+	/etc/init.d/telnet stop
+	/etc/init.d/lltd stop
+	/etc/init.d/netscan stop
+	/sbin/cmd_ebtables stop
+	if [ "$($CONFIG get i_opmode)" = "apmode" ]; then
+ 	    /usr/sbin/brctl stp $BR_IF 0
+	fi
+
+	/sbin/ledcontrol -n wan -c amber -s on
+	killall net-br-dhcpc-helper
+	killall zcip
+	killall -SIGUSR2 udhcpc; killall udhcpc; killall udhcpc; sleep 1
+
+	wl2g_BACKHAUL_AP=`/bin/config get wl2g_BACKHAUL_AP`
+	if [ "x$wl2g_BACKHAUL_AP" != "x" ]; then
+		echo "=====before lan bridge down,should down backhaul ap $wl2g_BACKHAUL_AP first=======" > /dev/console
+		ifconfig $wl2g_BACKHAUL_AP down
+	fi
+	/etc/init.d/hyfi-bridging stop
+
+	ifconfig $BR_IF down
+	ifconfig $LAN_PHYIF down
+	ifconfig $WAN_PHYIF down
+}
+
+restart()
+{
+	stop
+	start
+}
+
+boot()
+{
+	/sbin/ledcontrol -n wan -c amber -s on
+	start0 boot
+}

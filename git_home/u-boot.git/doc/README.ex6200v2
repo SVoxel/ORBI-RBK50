@@ -1,0 +1,49 @@
+=========================================================
+
+Current DNI uses branch:
+
+    ipq8064-ilq-3-0_qca_oem_standard_fc1.1
+
+which is based on revision 4.0.5.020 or commit label r00004.1 equivalently.
+
+How to build:
+=============
+
+QSDK IPQ40XX ILQ 1.0 FC toolchain is under: "$qsdk_root/qsdk/staging_dir/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi".
+Need to add "$qsdk_root/qsdk/staging_dir/host/bin/sstrip" into "/PATH/TO/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi/bin"
+
+#
+# Uncompressed u-boot image and single image without QSDK
+#
+$ export PATH="/PATH/TO/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi/bin:$PATH"
+
+# (optional) Supress "STAGING_DIR" warning messages only
+$ export STAGING_DIR="/PATH/TO/toolchain-arm_cortex-a7_gcc-4.8-linaro_uClibc-0.9.33.2_eabi/.."
+
+$ make CROSS_COMPILE=arm-openwrt-linux-uclibcgnueabi- hw29765265p16p0p256p2x2p2x2_config
+$ VERSION_CODE='Barrier Breaker unknown' REVISION='unknown' make HOSTCC=arm-openwrt-linux-uclibcgnueabi-gcc HOSTSTRIP=true CROSS_COMPILE=arm-openwrt-linux-uclibcgnueabi- CONFIG_QCA_SINGLE_IMG_GIT="/PATH/TO/git-home/qsdk-chipcode.git"
+
+U-Boot image is "u-boot-single.img".
+
+Steps to upgrade u-boot:
+========================
+
+Steps to upgrade u-boot through single image:
+=============================================
+
+(IPQ40xx) # setenv machid 8010200
+(IPQ40xx) # setenv ipaddr 192.168.1.1 && setenv serverip 192.168.1.10
+(IPQ40xx) # tftpboot 0x84000000 u-boot-single.img
+(IPQ40xx) # crc32 0x84000000 ${filesize}
+(IPQ40xx) # imgaddr=0x84000000 && source $imgaddr:script
+(IPQ40xx) # reset
+
+Steps to upgrade only u-boot image (refer to flash.scr to get more info):
+=========================================================================
+
+(IPQ40xx) # setenv ipaddr 192.168.1.1 && setenv serverip 192.168.1.10
+(IPQ40xx) # tftpboot 0x84000000 openwrt-ipq40xx-u-boot-stripped.elf
+(IPQ40xx) # crc32 0x84000000 ${filesize}
+(IPQ40xx) # sf probe && sf erase 0x000e0000 +0x00090000
+(IPQ40xx) # sf write $fileaddr 0x000f0000 ${filesize}
+(IPQ40xx) # reset

@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<script>
+<% refresh_timestamp("backup_restore") %>
+var ts = "<% cfg_get("backup_restore") %>"
+function goBack()
+{
+	this.location.href = "BRS_02_genieHelp.html";
+	return false;
+}
+
+function retoreSettings()
+{
+
+	var cf = document.forms[0];
+
+	var file_upgrade = document.getElementById("file_upgrade");
+	var filestr = file_upgrade.value;
+
+	if(filestr.length == 0)
+	{
+		alert(bh_filename_null);
+		return false;
+	}
+	var file_format = filestr.substr(filestr.lastIndexOf(".") + 1);
+	if(file_format != "cfg")
+	{
+		alert(bh_not_correct_file+"cfg");
+		return false;
+	}
+
+	if(confirm(bh_ask_for_restore))
+	{
+		cf.action="/restore.cgi?/BRS_03B_haveBackupFile_fileRestore.html timestamp="+ts;
+		cf.submit();
+	}
+	else
+		return false;
+	return true;
+}
+
+</script>
+
+<body>
+
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Restore Router Settings -->
+		<div id="card-restore-router-settings" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_restore);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_restore_msg1);</script></div>
+
+			<div class="file-field input-field">
+			
+				<div class="file-path-wrapper">
+				<div class="input-title"><script>document.write(bh_orbi_sel_file);</script></div>
+				<input class="file-path validate" type="text" name="restore_file_select" id="file_upgrade">
+			</div>
+			<form action="NETGEAR_WNDR3700.cfg" method="post" enctype="multipart/form-data">
+			<div class="waves-effect btn-flat btn button-nav-skip">
+				<span><script>document.write(bh_orbi_browse_mark);</script></span>
+				<input type="file" multiple name="mtenRestore" id="file_upg">
+			</div>
+			</form>
+		</div>
+
+		<button class="waves-effect waves-light btn button-nav" onclick="return goBack();">
+			<span><script>document.write(bh_orbi_back_mark);</script></span>
+		</button>
+		<button class="waves-effect btn-flat button-nav-skip button-nav-second-block" onclick="return retoreSettings();">
+			<span><script>document.write(bh_orbi_next_mark);</script></span>
+		</button>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

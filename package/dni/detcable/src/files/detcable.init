@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+START=20
+
+start() {
+	# Start detcable
+    if [ $(/bin/config get factory_mode) -eq 1 ];then
+        /usr/bin/detcable 2 $(cat /tmp/orbi_type) &
+    else
+        /usr/bin/detcable 2 $(cat /tmp/orbi_type) >/dev/console
+    fi
+}
+
+stop() {
+	killall detcable
+}
+
+restart() {
+	stop
+	start
+}

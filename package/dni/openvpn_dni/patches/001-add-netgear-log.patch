@@ -1,0 +1,48 @@
+diff --git a/src/openvpn/forward.c b/src/openvpn/forward.c
+index 371ddca..31ff16d 100644
+--- a/src/openvpn/forward.c
++++ b/src/openvpn/forward.c
+@@ -569,6 +569,9 @@ process_coarse_timers(struct context *c)
+ 
+     /* restart if ping not received */
+     check_ping_restart(c);
++    if(c->sig->signal_received == SIGUSR1)
++	    /* for udp connection drop */
++	    syslog(4, "[OpenVPN, connection drop] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
+     if (c->sig->signal_received)
+     {
+         return;
+@@ -733,6 +736,8 @@ read_incoming_link(struct context *c)
+ 
+     if (socket_connection_reset(c->c2.link_socket, status))
+     {
++	  /* for tcp connection drop */ 
++	  syslog(4, "[OpenVPN, connection drop] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
+ #if PORT_SHARE
+         if (port_share && socket_foreign_protocol_detected(c->c2.link_socket))
+         {
+diff --git a/src/openvpn/push.c b/src/openvpn/push.c
+index 5947a31..33c71f9 100644
+--- a/src/openvpn/push.c
++++ b/src/openvpn/push.c
+@@ -458,6 +458,8 @@ send_push_reply(struct context *c, struct push_list *per_client_push_list)
+     const int safe_cap = BCAP(&buf) - extra;
+     bool push_sent = false;
+ 
++    syslog(4, "[OpenVPN, connection successfully] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
++
+     buf_printf(&buf, "%s", push_reply_cmd);
+ 
+     /* send options which are common to all clients */
+diff --git a/src/openvpn/ssl.c b/src/openvpn/ssl.c
+index 15cd94a..f016e93 100644
+--- a/src/openvpn/ssl.c
++++ b/src/openvpn/ssl.c
+@@ -3108,6 +3108,7 @@ error:
+     tls_clear_error();
+     ks->state = S_ERROR;
+     msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");
++    syslog(4, "[OpenVPN, connection fail] from remote IP address: %s", inet_ntoa(ks->remote_addr.dest.addr.in4.sin_addr));
+     INCR_ERROR;
+     gc_free(&gc);
+     return false;

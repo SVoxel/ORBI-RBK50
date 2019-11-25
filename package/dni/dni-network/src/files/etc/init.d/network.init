@@ -1,0 +1,46 @@
+#!/bin/sh /etc/rc.common
+
+START=14
+
+start()
+{
+	for port in 0 1 2 3 4
+	do
+		ssdk_sh debug phy set 0x${port} 0xd 0x7 
+		ssdk_sh debug phy set 0x${port} 0xe 0x8076 
+		ssdk_sh debug phy set 0x${port} 0xd 0x4007 
+		ssdk_sh debug phy set 0x${port} 0xe 0x0070 
+	done
+
+
+	brctl addbr $BR_IF
+	brctl setfd $BR_IF 0
+	brctl stp $BR_IF 0
+	echo 0 > /sys/devices/virtual/net/$BR_IF/bridge/multicast_snooping
+
+	# set lan mac
+	[ -f /tmp/lan_mac ] && lan_default_mac=$(cat /tmp/lan_mac) || (
+	lan_default_mac="00:03:7f:$(hexdump -n 4 /dev/urandom | awk 'NR==1 {print $2$3}' | sed 's/../&:/g' | cut -c 1-8)"
+	)
+	ifconfig $LAN_PHYIF hw ether $lan_default_mac
+	brctl addif $BR_IF $LAN_PHYIF
+	ifconfig $BR_IF hw ether $lan_default_mac
+	echo "init.enet: Default LAN MAC is : $lan_default_mac"
+
+#	[ -f /tmp/wan_mac ] && wan_default_mac=$(cat /tmp/wan_mac) || (
+#	wan_default_mac="00:03:7f:$(hexdump -n 5 /dev/urandom | awk 'NR==1 {print $2$3}' | sed 's/../&:/g' | cut -c 1-8)"
+#	)
+#	ifconfig $WAN_IF hw ether $wan_default_mac
+#	brctl addif $BR_IF $WAN_IF
+#	ifconfig $WAN_IF up
+#	echo "init.enet: Default WAN MAC is : $wan_default_mac"
+	ifconfig lo 127.0.0.1 up 
+}
+
+boot()
+{
+	echo "."
+	echo "= network init"
+	start
+	echo "."
+}

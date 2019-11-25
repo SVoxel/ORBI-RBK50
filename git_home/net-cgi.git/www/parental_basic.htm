@@ -1,0 +1,258 @@
+<% http_header("style/form.css", "css/parentalControls.css", "/funcs.js", "/jquery-1.7.2.min.js") %>
+<% body_header("_parental", "parental_basic.htm", "parental") %>
+<input type="hidden" name="hidden_enable_circle">
+<input type="hidden" name="hidden_enable_opendns">
+<div class="page_title" id="page_title">$parental_control</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+if( master == "admin" )
+        document.write('<TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="location.href=\'parental_basic.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_plc(document.forms[0])"></TD>');
+else
+        document.write(' <TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
+var opendns="<% cfg_get("ParentalControl") %>";
+var circle="<% cfg_get("enable_circle_plc") %>";
+<% circle_popout_mark() %>;
+var enable=0;
+var toggleHandler = function(toggle) {
+    var toggle = toggle;
+    var radio = $$(toggle).find("input");
+
+    var checkToggleState = function() {
+        if (radio.eq(0).is(":checked")) {
+            $$(toggle).removeClass("toggle-off");
+        } else {
+            $$(toggle).addClass("toggle-off");
+        }
+    };
+
+    checkToggleState();
+
+    radio.eq(0).click(function() {
+        $$(toggle).toggleClass("toggle-off");
+    });
+
+    radio.eq(1).click(function() {
+        $$(toggle).toggleClass("toggle-off");
+    });
+};
+
+$$(document).ready(function() {
+    $$(".toggle").each(function(index, toggle) {
+        toggleHandler(toggle);
+    });
+});
+
+</script>
+
+</TR>
+</TABLE>
+
+</div>
+<div id="main" class="main_top_button">
+<table id="parentalControlsTable" width="100%%" border="0" cellpadding="0" cellspacing="3" style="border-collapse:collapse">
+<tr><td colspan=2>&nbsp;</td></tr>
+<TR class="switch-table-wrapper">
+	<TD colspan=2>
+		<div class="toggle" id="circleplc_radio">
+			<label class="toggle-radio" for="toggleOption2">$circle_enable</label>
+			<input type="radio" name="circleplc" id="toggleOption1" value="1" onClick="change_plc('0')" />
+			<label class="toggle-radio" for="toggleOption1">$pppoe2_disable</label>
+			<input type="radio" name="circleplc" id="toggleOption2" value="0" onClick="change_plc('0')" />
+		</div>
+	</TD>
+</TR>
+<TR class="right-block">
+	<TD colspan=2><B>$circle_title</B>
+	</TD>
+</TR>
+<TR class="right-block">
+        <TD colspan=2 style="height:30px">$circle_description
+        </TD>
+</TR>
+<TR class="right-block">
+	<TD colspan=2 style="height:20px"><a class="linktype" target="_blank" href="http://www.netgear.com/circle">$learn_more</a>
+	</TD>
+</TR>
+<TR id="circle-parental-control-info-box" class="right-block">
+	<TD>
+		<div class="mid-block" id="circle_info" style="display:none">
+			<div class="full-block pci-title">$circle_info1</div>
+			<div class="pci-d-box"><a href="https://itunes.apple.com/us/app/circle-home/id1037062934" target="__blank"><img class="ios-badge" src="images/iOS_Download_App_Store_Badge.png"></a>
+			</div>
+			<div class="pci-d-box"><a href="https://play.google.com/store/apps/details?id=com.circlemedia.circlehome" target="__blank"><img class="play-badge" src="images/Google_Play_Store_Badge.png"></a>
+			</div>
+		</div>
+		<% circle_basic_info() %>
+</TR>
+<TR class="switch-table-wrapper">
+	<TD colspan=2>
+		<div class="toggle" id="standard_plc_radio">
+			<label class="toggle-radio" for="toggleOption4">$circle_enable</label>
+			<input type="radio" name="standard_plc" id="toggleOption3" value="1" onClick="change_plc('1')" />
+			<label class="toggle-radio" for="toggleOption3">$pppoe2_disable</label>
+			<input type="radio" name="standard_plc" id="toggleOption4" value="0" onClick="change_plc('1')" />
+			</div>
+	</TD>
+</TR>
+<TR class="right-block">
+	<TD colspan=2><B>$circle_stander_title</B>
+	</TD>
+</TR>
+<TR class="right-block">
+	<TD colspan=2 style="height:30px">$circle_open</TD>
+</TR>
+<TR class="right-block">
+	<TD colspan="2" style="height:20px"><a class="linktype" target="_blank" href="http://www.netgear.com/discover/apps/lpc">$learn_more</a></TD>
+</TR>
+$bluebar
+<TR>
+	<TD colspan="2" style="height:30px" class="footer-info-text">$circle_stander_description1</TD>
+</TR>
+<TR>
+	<TD colspan="2" style="height:15px" class="footer-info-text">$circle_stander_description2</TD>
+</TR>
+<TR>
+	<TD colspan="2" style="height:15px" class="footer-info-text">$circle_stander_description3</TD>
+</TR>
+</TABLE>
+</div>
+<div id="modalBox" class="modal" style="display:none">
+        <div class="modal-content">
+                <div class="modal-header">
+                        <div class="modalBox-title" >$circle_only_title</div>
+			<p>$circle_stander_description1 $circle_only_description1</p>
+			<p><b>$circle_only_description2</b></p>
+			<input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$no_mark" onClick="change_plc('2')">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$yes_mark" onClick="change_plc('3')">
+		</div>
+	</div>
+</div>
+</FORM>
+</BODY>
+<script>
+function loadvalue()
+{
+        var cf = document.forms[0];
+
+	if(top.circle_ec == 1)
+	{
+		cf.circleplc[0].checked = true;
+		cf.standard_plc[1].checked = true;
+		document.getElementById("circle_info").style.display="";
+		document.getElementById("cpc-info").style.display="";
+		enable=1;
+		top.circle_ec = 0;
+	}
+
+        if(circle == "1" || circle_pout == "1")
+	{
+		cf.circleplc[0].checked = true;
+		cf.standard_plc[1].checked = true;
+		document.getElementById("circle_info").style.display="";
+		document.getElementById("cpc-info").style.display="";
+		enable=1;
+	}
+	else if(opendns == "1")
+	{
+		cf.circleplc[1].checked = true;
+		cf.standard_plc[0].checked = true;
+		enable=2;
+	}
+	else
+	{
+		cf.circleplc[1].checked = true;
+		cf.standard_plc[1].checked = true;
+		enable=0;
+	}
+	if(cf.circleplc[0].checked == true)
+		$$("#circleplc_radio").removeClass("toggle-off");
+	if(cf.standard_plc[0].checked == true)
+		$$("#standard_plc_radio").removeClass("toggle-off");
+}
+
+function check_plc(cf)
+{
+	if( cf.circleplc[0].checked == true)
+	{
+		if( cf.standard_plc[0].checked == true){
+			alert("$circle_only_alert");
+			return false;
+		} else {
+			cf.hidden_enable_circle.value="1";
+			cf.hidden_enable_opendns.value="0";
+		}
+	}
+	else if( cf.standard_plc[0].checked == true)
+	{
+		if(cf.circleplc[0].checked == true) {
+			alert("$circle_only_alert");
+			return false;
+		} else {
+			cf.hidden_enable_opendns.value="1";
+			cf.hidden_enable_circle.value="0";
+		}
+	}
+	else
+	{
+		cf.hidden_enable_circle.value="0";
+		cf.hidden_enable_opendns.value="0";
+	}
+	cf.submit();
+}
+
+function change_plc(id)
+{
+	var cf = document.forms[0];
+	if(id == "0"){
+		if(cf.standard_plc[0].checked == true) 
+			document.getElementById("modalBox").style.display = "block";
+		if(cf.circleplc[0].checked == true) {
+			document.getElementById("cpc-info").style.display="";
+			document.getElementById("circle_info").style.display="";
+			enable = 1;
+		} else {
+			document.getElementById("cpc-info").style.display="none";
+                        document.getElementById("circle_info").style.display="none";
+                        enable = 0;
+		}
+	} else if(id == "1"){
+		if(cf.circleplc[0].checked == true)
+			document.getElementById("modalBox").style.display = "block";
+		document.getElementById("cpc-info").style.display="none";
+		document.getElementById("circle_info").style.display="none";
+		if(cf.standard_plc[0].checked == true)
+			enable = 2;
+	} else if(id == "2") {
+		document.getElementById("modalBox").style.display = "none";
+		if(enable == 2) {
+			cf.circleplc[0].checked = true;
+			cf.standard_plc[1].checked = true;
+			enable = 1;
+			document.getElementById("cpc-info").style.display="";
+			document.getElementById("circle_info").style.display="";
+			$$("#standard_plc_radio").addClass("toggle-off");
+                } else if(enable == 1) {
+			cf.circleplc[1].checked = true;
+			cf.standard_plc[0].checked = true;
+			enable = 2;
+			document.getElementById("cpc-info").style.display="none";
+			document.getElementById("circle_info").style.display="none";
+			$$("#circleplc_radio").addClass("toggle-off");
+                }
+	} else {
+		document.getElementById("modalBox").style.display = "none";
+		if(enable == 1) {
+			cf.circleplc[0].checked = true;
+			cf.standard_plc[1].checked = true;
+			$$("#standard_plc_radio").addClass("toggle-off");
+		} else if(enable == 2) {
+			cf.circleplc[1].checked = true;
+			cf.standard_plc[0].checked = true;
+			$$("#circleplc_radio").addClass("toggle-off");
+		}
+	}
+}
+</script>
+</HTML>

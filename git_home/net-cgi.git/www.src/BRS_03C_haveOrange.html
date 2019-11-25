@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<script language="javascript" type="text/javascript" src="script/funcs.js"></script>
+<script language="javascript" type="text/javascript" src="script/brs_hijack_03C_haveOrange.js"></script>
+<% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
+<% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
+</head>
+<body>
+<% form_submit("apply", "BRS_04_applySettings.html", "hijack_orange") %>
+
+<script>
+var master="<% cfg_get("http_loginname") %>";
+function sel_opt(type)
+{
+	var form=document.forms[0];
+	form.Orange_type.value = type;
+	if(form.Orange_type.value == "orange_dhcp")
+		document.getElementById("orange_passwd").style.display = "none";
+	else
+		document.getElementById("orange_passwd").style.display = "";
+}
+</script>
+<input type="hidden" name="hidden_enable_orange">
+<input type="hidden" name="Orange_type">
+<div id="container">
+	<div class="dialog-content">
+		<!-- Orbi Setup WiFi-->
+		<div id="card-orbi-setup-wifi" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			
+			<div class="input-wrapper " style="padding-top:15px">
+				<div class="input-title ddl-title"></div>
+				<div class="dropdown">
+					<input type="button" id="sec-question-one" data-target="#sec-question-one sec-question-one" class="dropdown-menu btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="sec-question-one" style="z-index:10000000">
+						<span>My ISP Profile</span>
+						<img class="ddl-caret" src="images/caret.png">
+					</input>
+					<ul class="dropdown-menu sec-question-one" role="menu" aria-labelledby="sec-question-one">
+						<script>
+						document.write('<li role="presentation" onclick="sel_opt(0);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect active">My ISP Profile</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(\'orange_dhcp\');"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">Orange France DHCP</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(\'orange_pppoe\');"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">Orange France PPPoE</a></li>');
+						</script>
+					</ul>
+				</div>
+			</div>
+
+			<div class="input-wrapper input-text-box-one">
+				<div class="input-title"><script>document.write(bh_pppoe_login_name);</script></div>
+				<input type="text" id="orange_login" maxlength="64" align="right" name="orange_login" autocomplete="off"/>
+			</div>
+
+			<div class="input-wrapper input-text-box-two" id="orange_passwd">
+				<div class="input-title"><script>document.write(bh_ddns_passwd);</script></div>
+				<input type="text"  maxlength="16" align="right" name="orange_passwd" autocomplete="off" />
+			</div>
+
+			<div class="margin-top-10 input-wrapper">
+				<input type="checkbox" name="enable_orange" id="enable_orange" >
+				<label for="enable_orange">Enable Orange TV</label>
+			</div>
+			
+			<button class="waves-effect waves-light btn button-nav" onclick="return check_orange();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+
+          </div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+config DNIACL_EXTRA_FLAGS
+	string
+	prompt "Specify dniacl extra function for different project"
+	default ""
+	help
+	  open macro to enable dniacl extra function

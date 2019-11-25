@@ -1,0 +1,35 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<style>
+.desc-head{margin:20px 50px;text-align:center;font-size:16px;}
+</style>
+<body>
+<script>
+	//this assign value for waiting page cannot get top.bh_plz_wait_moment value.
+	top.bh_plz_wait_moment = bh_plz_wait_moment;
+</script>
+<div id="container">
+
+	<div class="dialog-content">
+
+	<!-- Welcome -->
+		<div id="card-welcome" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-head">You should download Orbi App from the following path and use the App for on-boarding.</div>
+			<div class="desc-head" style="color:#aaa;">https://acupdates2.netgear.com/upv2/</div>
+			<button class="waves-effect waves-light btn button-nav" onclick="location.href='BRS_orbi_welcome.html';return true;">
+			<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

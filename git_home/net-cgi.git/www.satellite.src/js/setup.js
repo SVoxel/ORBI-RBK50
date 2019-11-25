@@ -1,0 +1,1 @@
+(function(a){a(function(){a.checkStatus=function(){if(satellite_status=="1"){location.href="status.htm"}};a.checkStatus()})}(jQuery));

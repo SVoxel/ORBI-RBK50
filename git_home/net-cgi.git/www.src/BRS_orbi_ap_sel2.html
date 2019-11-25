@@ -1,0 +1,86 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+
+<body>
+<% form_submit("apply", "BRS_04_applySettings.html", "wl_ap_mode") %>
+<input type="hidden" name="hid_save_time" value="2">
+<input type="hidden" name="hid_enable_apmode" value="1">
+<input type="hidden" name="hid_dyn_get_ip" value="1">
+<script>
+function apSelectChecking()
+{
+	var cf = document.forms[0];
+	if(document.getElementById("nic-config-router").checked){
+		this.location.href = "BRS_01_checkNet_ping.html";
+		return false;
+	}else
+	{
+		this.location.href = "BRS_orbi_ap_check_wan.html";
+		return false;
+	}
+		
+}
+</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Existing Router Detected -->
+		<div id="card-no-internet-cable" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img id="select_mode" class="search-router-logo" src="images/illustration_ap_router.png" style="margin-top: 15px;">
+
+			<div class="desc-title"><script>document.write(bh_orbi_ap_title);</script></div>
+			<!--<div class="desc-text"><script>document.write(bh_orbi_ap_tips);</script></div>-->
+		
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="ap_help_choice" type="radio" id="nic-config-ap" value="1" checked="">
+						<label for="nic-config-ap"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_ap_mode);</script>
+						<a href=# target="_blank" onclick="goto_url(2); return false;"><font><u><script>document.write("("+bh_mode_illustration+")");</script></u></font></a>
+					</div>
+					<div class="desc-title-bullet" style="padding-left:35px;position:relative;top:-6px;"><script>document.write(bh_ap_sel_desc);</script></div>
+				</div>
+			</div>
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" name="ap_help_choice" type="radio" id="nic-config-router" value="0" >
+						<label for="nic-config-router"></label>
+					</p>
+
+					<div class="bullet"><script>document.write(bh_router_mode);</script>
+						<a href=# target="_blank" onclick="goto_url(1); return false;"><font><u><script>document.write("("+bh_mode_illustration+")");</script></u></font></a>
+					</div>
+					<div class="desc-title-bullet" style="padding-left:35px;position:relative;top:-6px;"><script>document.write(bh_router_sel_desc);</script></div>
+				</div>
+            </div>
+			<div class="bullet-wrapper" style="padding-left:36px;"><a href=# target="_blank" onclick="goto_url(3); return false;"><font><u><script>document.write(bh_ap_learn);</script></u></font></a></div>
+			<button class="waves-effect waves-light btn button-nav" onclick="return apSelectChecking();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+<script>
+function goto_url(tag)
+{
+	if(tag ==1)
+		window.open('BRS_orbi_router_diagram.html', 'show_statistic');
+	if(tag ==2)
+		window.open('BRS_orbi_ap_diagram.html', 'show_statistic');
+	if(tag ==3)
+		window.open('BRS_orbi_ap_learn.html', 'show_statistic');
+
+	//location.href="BRS_ap_learn_more.html";
+}
+</script>
+</html>

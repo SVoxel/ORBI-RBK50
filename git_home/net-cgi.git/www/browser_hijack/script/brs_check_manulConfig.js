@@ -1,0 +1,1 @@
+function loadValue(){var a=document.getElementsByTagName("form");var b=a[0];b.submit()}addLoadEvent(loadValue);

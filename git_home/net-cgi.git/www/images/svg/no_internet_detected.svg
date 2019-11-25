@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="112px" height="98px" viewBox="0 0 112 98" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7 (28169) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <path d="M64.8323469,0.752851711 C70.0052996,-0.25095057 104.028033,-0.25095057 109.031376,0.752851711 C112.359026,5.21419518 111.98763,60.4699576 111.98763,60.4699576 C111.980126,63.5241157 109.498764,66 106.441579,66 L67.5917703,66 C64.5362746,66 62.0427865,63.5339168 62.0303668,60.4699576 C62.0303668,60.4699576 61.5046977,5.21419518 64.8323469,0.752851711 Z" id="path-1"></path>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="50" height="66" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="69" y="49" width="36" height="12"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="36" height="12" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD" transform="translate(-633.000000, -242.000000)">
+            <g id="Group-2" transform="translate(633.000000, 242.000000)">
+                <use id="Rectangle-85" stroke="#00B4F5" mask="url(#mask-2)" stroke-width="4" fill="#FFFFFF" xlink:href="#path-1"></use>
+                <use id="Rectangle-217" stroke="#82D3FF" mask="url(#mask-4)" stroke-width="4" fill="#D9F1FF" xlink:href="#path-3"></use>
+                <g id="Group-3" transform="translate(72.000000, 52.000000)">
+                    <polygon id="Fill-20" fill="#FFC880" points="5 1 1 1 1 5 5 5"></polygon>
+                    <path d="M1.48345943,1.48338608 L4.51683726,1.48338608 L4.51683726,4.51661392 L1.48345943,4.51661392 L1.48345943,1.48338608 Z M6,6 L6,0 L0,0 L0,6 L2.26761608,6 L3.75107551,6 L6,6 Z" id="Fill-21" fill="#FF9600"></path>
+                </g>
+                <g id="Group" transform="translate(40.000000, 77.500000) scale(-1, 1) translate(-40.000000, -77.500000) translate(0.000000, 57.000000)">
+                    <path d="M68.1767542,0 C58.2323361,0 50.141822,8.23787733 50.141822,18.3634264 L50.141822,22.6365736 C50.141822,31.5421717 43.0260635,38.787539 34.2797732,38.787539 L22.1431418,38.787539 C13.5059303,38.787539 6.45144705,31.7740376 6.1728834,23.0467639 L4,23.0467639 C4.27943281,32.9939886 12.3078024,41 22.1431418,41 L34.2797732,41 C44.2241914,41 52.3147054,32.7621227 52.3147054,22.6365736 L52.3147054,18.3634264 C52.3147054,9.45782833 59.430464,2.21246101 68.1767542,2.21246101 L78.9135583,2.21246101 C79.5137087,2.21246101 80,1.71731224 80,1.10623051 C80,0.495148775 79.5137087,0 78.9135583,0 L68.1767542,0 Z" id="Fill-19" fill="#C3E9F9"></path>
+                    <polygon id="Fill-20" fill="#FFC880" points="7 16 2 16 2 21 7 21"></polygon>
+                    <path d="M2.22518914,16.2250791 L6.7752559,16.2250791 L6.7752559,20.7749209 L2.22518914,20.7749209 L2.22518914,16.2250791 Z M9,23 L9,14 L0,14 L0,23 L3.40142412,23 L5.62661326,23 L9,23 Z" id="Fill-21" fill="#FF9600"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

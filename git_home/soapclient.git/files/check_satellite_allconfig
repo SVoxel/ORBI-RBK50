@@ -1,0 +1,20 @@
+#!/bin/sh
+CONFIG=/bin/config
+newsoap_flag=`$CONFIG get newsoap_model`
+mac=$1
+[ "$mac" = "" ] && return
+str1=`cat /tmp/hyt_result |grep $mac`
+ip=`echo $str1|awk  -F ',' '{print $2}'` 
+[ "$ip" = "" ] && return
+sleep 3
+have_pid=`ps -w|grep soapclient |grep $mac |grep -v grep`
+[ "$have_pid" != "" ] && return
+echo "check $mac $ip AllConfig" > /dev/console
+if [ "$newsoap_flag" = "1" ];then
+	$CONFIG set soap_setting=AllConfig
+	killall -SIGUSR1 soap_agent
+else
+	# Close Old LOG Mechaism, Bug 90071
+	#/usr/sbin/soapclient -a $ip -p 80 -m $mac -s AllConfig >> /var/log/soapclient/$mac 2>&1 &
+	/usr/sbin/soapclient -a $ip -p 80 -m $mac -s AllConfig  -d &
+fi

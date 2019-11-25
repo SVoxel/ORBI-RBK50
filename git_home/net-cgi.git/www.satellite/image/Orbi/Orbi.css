@@ -1,0 +1,49 @@
+/**************************************************************
+ * For WN3000RPv2
+ *************************************************************/
+.currentConnection.extender > div  > div:first-child + div  > div > div:first-child{
+  background-image: url('./product2.png');
+}
+.currentConnection.accesspoint > div > div:first-child + div > div > div:first-child  {
+  background-image: url('./product2.png');
+}
+.currentConnection.accesspoint > div  > div:first-child  + div > div > div:first-child + div + div + div{
+  top: 180px;
+}
+.connectionState.extender > div > div:first-child {
+  background-image: url('./product1.png');
+}
+.connectionState.extender > div > div:first-child + div{
+  top: 50px;
+}
+.connectionState.extender > div > div:first-child  + div + div{
+  top: 110px;
+}
+.connectionState.accesspoint > div > div:first-child {
+  background-image: url('./product1.png');
+}
+.wirelessOutputPower > div:first-child + div > div{
+  background-image: url('./product2.png');
+}
+@media screen and (max-width: 600px) {
+  .currentConnection.extender > div  > div:first-child + div  > div > div:first-child{
+    background-image: url('./product2.png');
+  }
+  .currentConnection.accesspoint > div > div:first-child + div > div > div:first-child  {
+    background-image: url('./product2.png');
+  }
+}
+@media screen and (max-width: 480px) {
+  .connectionState.extender > div > div:first-child + div{
+    top: 25px;
+  }
+  .connectionState.extender > div > div:first-child  + div + div{
+    top: 65px;
+  }
+}
+.ie8 .w480 .connectionState.extender > div > div:first-child + div{
+  top: 25px;
+}
+.ie8 .w480 .connectionState.extender > div > div:first-child  + div + div{
+  top: 65px;
+}

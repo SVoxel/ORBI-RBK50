@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<script language="javascript" type="text/javascript" src="script/funcs.js"></script>
+<% hijack_language() %>
+<% deleteFiles("/tmp/ping_result_error", "/tmp/ping_ip_result_error", "/tmp/ping_gateway_result_error")%>
+<% deleteFiles("/tmp/ping_result", "/tmp/wget_file_result") %>
+<script>
+var hijack_process="<% cfg_get("hijack_process") %>";
+function checkL2TP()
+{
+	var forms = document.getElementsByTagName("form");
+	var cf = forms[0];
+
+	var l2tp_username = document.getElementById("inputName");
+	var l2tp_passwd = document.getElementById("inputPasswd");
+	var l2tp_idletime = document.getElementById("inputIdle");
+
+	if(l2tp_username.value=="")
+	{
+		alert(bh_login_name_null);
+		return false;
+	}
+
+	var i;
+	for(i=0; i<l2tp_passwd.value.length; i++)
+	{
+		if(isValidChar(l2tp_passwd.value.charCodeAt(i))==false)
+		{
+			alert(bh_password_error);
+			return false;
+		}
+	}
+	if(l2tp_idletime.value.length <= 0)
+	{
+		alert(bh_idle_time_null);
+		return false;
+	}
+	else if(!_isNumeric(l2tp_idletime.value))
+	{
+		alert(bh_invalid_idle_time);
+		return false;
+	}
+
+	if(!checkIPaddr())
+		return false;
+
+	return true;
+}
+
+function checkIPaddr()
+{
+	var forms = document.getElementsByTagName("form");
+        var cf = forms[0];
+
+	var l2tp_myip = document.getElementById("inputIPaddr");
+        var l2tp_gateway = document.getElementById("inputGateway");
+
+	if(l2tp_myip.value != "")
+	{
+		cf.WANAssign.value = 1;
+		if(checkipaddr(l2tp_myip.value)==false)
+		{
+			alert(bh_invalid_myip);
+			return false;
+		}
+		if(l2tp_gateway.value != "" && checkgateway(l2tp_gateway.value) == false)
+		{
+			alert(bh_invalid_gateway);
+			return false;
+		}
+		if(l2tp_gateway.value != "")
+		{
+			if(isSameIp(l2tp_myip.value,l2tp_gateway.value) == true)
+			{
+				alert(bh_invalid_gateway);
+				return false;
+			}
+		}
+	}
+	else
+		cf.WANAssign.value=0;
+	
+	return true;
+}
+
+/*function gotto_link(sub, id)
+{
+	if(sub != "None")
+		top.open_or_close_sub(sub);
+	top.click_adv_action(id);
+}*/
+
+function manuallyConfig()
+{
+	if(confirm(bh_no_genie_help_confirm) == false)
+			return false;
+	
+	var cf = document.forms[0];
+
+	//if( hijack_process == "1" )
+	//{
+		cf.action = "/apply.cgi?/BRS_orbi_satellite_start.html timestamp=" + ts;
+		cf.submit_flag.value = "hijack_to_manual";
+	//}
+	//else
+		//gotto_link("setup", "internet");
+
+	return true;
+}
+</script>
+
+</head>
+
+<body>
+<% form_submit("apply", "BRS_log12_incorrect_try_again.html", "hijack_l2tp") %>
+
+<input type="hidden" name="WANAssign" value="0" />
+<% save_timestamp("hijack_l2tp", "hijack_to_manual") %>
+<script language="javascript" type="text/javascript">var ts="<% cfg_get("hijack_l2tp") %>";</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Incorrect ISP-->
+		<div id="card-incorrect-ISP" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_incorrect_user_pwd);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_enter_info_again);</script></div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_pppoe_login_name);</script></div>
+				<input type="text" id="inputName" maxlength="60" name="login_name" >
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 input-wrapper-right mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_ddns_passwd);</script></div>
+				<input type="password" id="inputPasswd" maxlength="16" name="passwd">
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_basic_pppoe_idle);</script></div>
+				<input type="number" class="ip-box" id="inputIdle" name="idle_timeout" min="0">
+			</div>
+			
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 input-wrapper-right mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_info_mark_ip);</script></div>
+				<input type="text" id="inputIPaddr" maxlength="15" name="ip_address">
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_info_mark_mask);</script></div>
+				<input type="text" id="inputSubnetMask" name="subnet_mask" >
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 input-wrapper-right">
+				<div class="input-title non-active-val disabled"><script>document.write(bh_basic_pptp_servip);</script></div>
+				<input type="text" value="10.0.0.138" id="inputServerIP" name="serverip">
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left mobile-input-fix">
+				<div class="input-title"><script>document.write(bh_sta_routes_gtwip);</script></div>
+				<input type="text" id="inputGateway" maxlength="15" name="gateway" >
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return manuallyConfig();">
+				<span><script>document.write(bh_orbi_config_conn_mark);</script></span>
+			</button>
+
+			<button class="waves-effect btn-flat button-nav-skip button-nav button-nav-second-block" onclick="return checkL2TP();">
+				<span><script>document.write(bh_orbi_tryagain_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

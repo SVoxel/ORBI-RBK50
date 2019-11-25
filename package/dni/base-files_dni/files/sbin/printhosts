@@ -1,0 +1,12 @@
+#!/bin/sh
+
+ip=$(/bin/config get lan_ipaddr)
+name=$(/bin/config get netbiosname)
+
+[ "x$ip" = "x" ] && ip=192.168.1.1
+[ "x$name" = "x" ] && name=EX7300
+
+cat <<EOF >/tmp/hosts
+127.0.0.1 localhost
+$ip $name
+EOF

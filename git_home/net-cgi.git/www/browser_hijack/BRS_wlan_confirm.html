@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+
+<% hijack_language() %>
+</head>
+
+<body>
+<script>
+var not_change="<% cfg_get("wireless_not_change") %>";
+if(not_change == "1")
+	location.href = 'BRS_orbi_complete.html';
+
+</script>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Personalizing your router -->
+		<div id="card-orbi-personalize-router" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_connect_new_ssid);</script></div>
+			<div class="desc-text desc-title"><script>document.write(bh_orbi_connect_new_ssid_msg);</script></div>
+
+			<div class="master-pin-wrapper">
+				<div class="pin-wrapper pin-wrapper-admin">
+					<img class="pin-admin" src="images/pin_admin.png">
+						<div class="pin-title"><% cfg_get("http_username") %></div>
+						<div class="pin-desc"><% cfg_get("http_passwd") %></div>
+				</div>
+				<div class="pin-wrapper pin-wrapper-WiFi">
+					<img class="pin-Wifi" src="images/pin_WiFi.png">
+						<div class="pin-title"><% cfg_get_ssid_html("wl_ssid") %></div>
+						<div class="pin-desc"><% passphrase_bg_msg() %></div>
+				</div>
+			</div>
+			<button class="waves-effect waves-light btn button-nav" onclick="location.href='BRS_wlan_plsWait.html';">
+				<span><script>document.write(bh_ok_mark);</script></span>
+			</button>
+
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

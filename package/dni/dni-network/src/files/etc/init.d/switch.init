@@ -1,0 +1,34 @@
+#!/bin/sh /etc/rc.common
+
+#START=13
+
+sw_conf="/etc/sw.conf"
+sw_conf_extender="/etc/sw_extender.conf"
+
+start()
+{
+	if [ ! -f $sw_conf ] && [ ! -f $sw_conf_extender ]; then
+		echo "sw config not found!"
+		return
+	fi
+
+	if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
+		swconfig dev switch0 load $sw_conf
+	else
+		swconfig dev switch0 load $sw_conf_extender
+	fi
+	#phy_pwr_reset
+}
+
+stop()
+{
+	echo "switch stop: do nothing"
+}
+
+boot()
+{
+	echo "."
+	echo "= switch init"
+	start
+	echo "."
+}

@@ -1,0 +1,523 @@
+[  {
+    "Device SKU": "*iPhone*",
+    "Device Model": "Apple iPhone",
+    "Device Type": "iPhone(17)"
+  },
+  {
+    "Device SKU": "*iPad*",
+    "Device Model": "Apple iPad",
+    "Device Type": "iPhone(14)"
+  },
+  {
+    "Device SKU": "*iPod*",
+    "Device Model": "Apple iPod",
+    "Device Type": "iPod Touch(18)"
+  },
+  {
+    "Device SKU": "Macintosh",
+    "Device Model": "Apple Mac",
+    "Device Type": "Mac Book(22)"
+  },
+  {
+    "Device SKU": "Apple TV",
+    "Device Model": "Apple TV",
+    "Device Type": "Apple TV(41)"
+  },
+  {
+    "Device SKU": "*SM-G935*",
+    "Device Model": "Samsung Galax S7 Edge",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G930*",
+    "Device Model": "Samsung Galax S7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G928*",
+    "Device Model": "Samsung Galax S6 Edge+",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G925*",
+    "Device Model": "Samsung Galax S6 Edge",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G920*",
+    "Device Model": "Samsung Galax S6",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G900*",
+    "Device Model": "Samsung Galax S5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G903*",
+    "Device Model": "Samsung Galax S5 neo",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G800*",
+    "Device Model": "Samsung Galax S5 mini",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I951*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I950*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SCH-I545*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SGH-I337*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SPH-L720*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SGH-M919*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SHV-E300*",
+    "Device Model": "Samsung Galax S4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-C101*",
+    "Device Model": "Samsung Galax S4 Zoom",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I919*",
+    "Device Model": "Samsung Galax S4 mini",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I930*",
+    "Device Model": "Samsung Galax S3",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I819*",
+    "Device Model": "Samsung Galax S3",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-I910*",
+    "Device Model": "Samsung Galax S2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-N920*",
+    "Device Model": "Samsung Galax Note 5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-N910*",
+    "Device Model": "Samsung Galax Note 4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-N900*",
+    "Device Model": "Samsung Galax Note 3",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-N750*",
+    "Device Model": "Samsung Galax Note 3 Neo",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-N710*",
+    "Device Model": "Samsung Galax Note 2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*GT-N800*",
+    "Device Model": "Samsung Galax Note 10.1",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-P60*",
+    "Device Model": "Samsung Galax Note 10.1",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*GT-N511*",
+    "Device Model": "Samsung Galax Note 8.0",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*GT-N510*",
+    "Device Model": "Samsung Galax Note 8.0",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-A800*",
+    "Device Model": "Samsung Galax A8",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-A810*",
+    "Device Model": "Samsung Galax A8",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-A700*",
+    "Device Model": "Samsung Galax A7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-A710*",
+    "Device Model": "Samsung Galax A7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-A500*",
+    "Device Model": "Samsung Galax A5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-A510*",
+    "Device Model": "Samsung Galax A5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J700*",
+    "Device Model": "Samsung Galax J7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J710*",
+    "Device Model": "Samsung Galax J7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G610*",
+    "Device Model": "Samsung Galax J7 Prime",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J500*",
+    "Device Model": "Samsung Galax J5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J510*",
+    "Device Model": "Samsung Galax J5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G570*",
+    "Device Model": "Samsung Galax J5 Prime",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J200*",
+    "Device Model": "Samsung Galax J2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J210*",
+    "Device Model": "Samsung Galax J2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G532*",
+    "Device Model": "Samsung Galax J2 Prime",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J100*",
+    "Device Model": "Samsung Galax J1",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J120*",
+    "Device Model": "Samsung Galax J1",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-J110*",
+    "Device Model": "Samsung Galax J1 Ace",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G600*",
+    "Device Model": "Samsung Galaxy On7",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-G500*",
+    "Device Model": "Samsung Galaxy On5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*SM-T35*",
+    "Device Model": "Samsung Galaxu Tab A",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T28*",
+    "Device Model": "Samsung Galaxu Tab A",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T58*",
+    "Device Model": "Samsung Galaxu Tab A",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-P58*",
+    "Device Model": "Samsung Galaxu Tab A",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T56*",
+    "Device Model": "Samsung Galaxu Tab E",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T70*",
+    "Device Model": "Samsung Galaxu Tab S",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T80*",
+    "Device Model": "Samsung Galaxu Tab S",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T71*",
+    "Device Model": "Samsung Galaxu Tab S2",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T81*",
+    "Device Model": "Samsung Galaxu Tab S2",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T53*",
+    "Device Model": "Samsung Galaxu Tab 4",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T23*",
+    "Device Model": "Samsung Galaxu Tab 4",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*SM-T33*",
+    "Device Model": "Samsung Galaxu Tab 4",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "*LG-H85*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-H83*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-H82*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-VS987*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-LS992*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-US992*",
+    "Device Model": "LG G5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-H81*",
+    "Device Model": "LG G4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-VS986*",
+    "Device Model": "LG G4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-LS991*",
+    "Device Model": "LG G4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-US991*",
+    "Device Model": "LG G4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-D85*",
+    "Device Model": "LG G3",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-D80*",
+    "Device Model": "LG G2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-VS980*",
+    "Device Model": "LG G2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-LS980*",
+    "Device Model": "LG G2",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-D61*",
+    "Device Model": "LG G2 mini",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-D62*",
+    "Device Model": "LG G2 mini",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-H91*",
+    "Device Model": "LG V20",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-H99*",
+    "Device Model": "LG V20",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-LS997*",
+    "Device Model": "LG V20",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-US996*",
+    "Device Model": "LG V20",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-VS995*",
+    "Device Model": "LG V20",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-K220*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-LS755*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-US610*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-K580*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-K500*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-K200*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*LG-K600*",
+    "Device Model": "LG X",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "Nexus 4",
+    "Device Model": "Nexus 4",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*Nexus 5*",
+    "Device Model": "Nexus 5",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "Nexus 6",
+    "Device Model": "Nexus 6",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "Nexus 7",
+    "Device Model": "Nexus 7",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "Nexus 9",
+    "Device Model": "Nexus 9",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "Nexus 10",
+    "Device Model": "Nexus 10",
+    "Device Type": "Android Tablet(4)"
+  },
+  {
+    "Device SKU": "Nexus One",
+    "Device Model": "Nexus One",
+    "Device Type": "Android Phone(3)"
+  },
+  {
+    "Device SKU": "*Xbox*",
+    "Device Model": "Xbox",
+    "Device Type": "Gaming Console(12)"
+  },
+  {
+    "Device SKU": "*PlayStation*",
+    "Device Model": "PlayStation",
+    "Device Type": "Gaming Console(12)"
+  },
+  {
+    "Device SKU": "*Wii*",
+    "Device Model": "Wii",
+    "Device Type": "Gaming Console(12)"
+  }
+  
+  
+]

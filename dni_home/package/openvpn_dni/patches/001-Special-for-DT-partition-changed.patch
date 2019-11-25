@@ -1,0 +1,19 @@
+--- openvpn-2.3.2/files/openvpn.init.org	2017-12-07 15:48:16.758103868 +0800
++++ openvpn-2.3.2/files/openvpn.init	2017-12-07 15:49:45.654105552 +0800
+@@ -163,6 +163,16 @@
+ }
+ 
+ boot() {
++	dd if=/dev/mmcblk0p21 of=/tmp/openvpn_keys_old.tar.gz skip=71168 bs=512 count=128
++	mkdir /tmp/openvpn_old
++	tar -xzvf /tmp/openvpn_keys_old.tar.gz -C /tmp/openvpn_old
++	TAR_STATUS_OLD=$?
++	rm /tmp/openvpn_keys_old.tar.gz
++	if [ "$TAR_STATUS_OLD" = "0" ]; then
++		dd if=/dev/mmcblk0p21 of=/dev/mmcblk0p26 skip=71168 bs=512 count=128
++		dd if=/dev/urandom of=/dev/mmcblk0p21 seek=71168 bs=512 count=128
++		rm -rf /tmp/openvpn_old
++	fi
+ 	extract_cert_file || {
+ 		echo "extract vpn cert file fail, can not start vpn server" >/dev/console
+ 		exit 1

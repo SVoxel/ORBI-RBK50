@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="98px" height="73px" viewBox="0 0 98 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 3.7 (28169) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="5" y="66" width="80" height="6"></rect>
+        <mask id="mask-2" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="80" height="6" fill="white">
+            <use xlink:href="#path-1"></use>
+        </mask>
+        <rect id="path-3" x="5" y="7" width="6" height="43"></rect>
+        <mask id="mask-4" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="6" height="43" fill="white">
+            <use xlink:href="#path-3"></use>
+        </mask>
+        <rect id="path-5" x="0" y="48" width="90" height="20" rx="4"></rect>
+        <mask id="mask-6" maskContentUnits="userSpaceOnUse" maskUnits="objectBoundingBox" x="0" y="0" width="90" height="20" fill="white">
+            <use xlink:href="#path-5"></use>
+        </mask>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Desktop-HD-Copy-2" transform="translate(-674.000000, -259.000000)">
+            <g id="Group-2" transform="translate(674.000000, 260.000000)">
+                <use id="Rectangle-29-Copy" stroke="#82D3FF" mask="url(#mask-2)" stroke-width="4" fill="#D9F1FF" xlink:href="#path-1"></use>
+                <use id="Rectangle-31" stroke="#70CDFF" mask="url(#mask-4)" stroke-width="4" fill="#C6EBFF" xlink:href="#path-3"></use>
+                <use id="Rectangle-29" stroke="#00B4F5" mask="url(#mask-6)" stroke-width="4" fill="#FFFFFF" xlink:href="#path-5"></use>
+                <circle id="Oval-13" stroke="#C6EBFF" stroke-width="2" fill="#FFFFFF" cx="82" cy="15" r="15"></circle>
+                <g id="Group" transform="translate(76.000000, 9.000000)" fill="#A31891">
+                    <path d="M8.51495965,10.1007461 C7.64914335,10.6692849 6.613193,11 5.5,11 C2.46243388,11 0,8.53756612 0,5.5 C0,2.46243388 2.46243388,0 5.5,0 C8.53756612,0 11,2.46243388 11,5.5 C11,6.70165637 10.6146337,7.81330563 9.96074485,8.71810416 L12.2083015,10.9656608 C12.598166,11.3555253 12.6003537,11.9854327 12.2071068,12.3786797 C11.8165825,12.7692039 11.1861267,12.7719131 10.7940879,12.3798744 L8.51495965,10.1007461 Z M5.5,9 C3.56700338,9 2,7.43299662 2,5.5 C2,3.56700338 3.56700338,2 5.5,2 C7.43299662,2 9,3.56700338 9,5.5 C9,7.43299662 7.43299662,9 5.5,9 Z" id="Combined-Shape"></path>
+                </g>
+                <rect id="Rectangle-32" fill="#A31891" x="6" y="58" width="14" height="2"></rect>
+                <rect id="Rectangle-33" fill="#00A1DE" x="81" y="50" width="2" height="6"></rect>
+                <rect id="Rectangle-33" fill="#00A1DE" x="76" y="50" width="2" height="6"></rect>
+                <rect id="Rectangle-33" fill="#00A1DE" x="71" y="50" width="2" height="6"></rect>
+                <rect id="Rectangle-33" fill="#00A1DE" x="66" y="50" width="2" height="6"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,6 @@
+config AWSIOT_EXTRA_FLAGS
+	string
+	prompt "Specify aws-iot extra function for different project"
+	default ""
+	help
+	  open macro to enable aws-iot extra function

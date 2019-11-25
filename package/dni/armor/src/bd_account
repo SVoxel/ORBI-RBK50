@@ -1,0 +1,36 @@
+#!/bin/sh
+
+sn=`artmtd -r sn|grep sn |awk -F ':' '{print $2}'`
+BD_PROD="https://nimbus.bitdefender.net/bconnect/netgear_redeem_mgmt"
+BD_QA="https://beta.nimbus.bitdefender.net/bconnect/netgear_redeem_mgmt"
+bdkend_token_prod='6e056cb6-cfc3-4254-8959-2f7eeac541a4'
+bdkend_token_qa='0febf7a3-1bd1-4e5d-8cc0-08e3b139b4e1'
+if [ $1 = "" -o "$2" = "" ]; then
+	echo "please input parameters like bd_account retrieve/reset qa/prod"
+fi
+case $1 in
+	retrieve)
+		case $2 in
+			qa)
+				curl -i -k -H "Content-type: application/json" -X POST -d '{"id": 1, "jsonrpc": "2.0", "method": "retrieve", "params": {"serial_number": "'$sn'", "backend_token": "0febf7a3-1bd1-4e5d-8cc0-08e3b139b4e1"} }' $BD_QA 
+			;;
+			prod)
+				curl -i -k -H "Content-type: application/json" -X POST -d '{"id": 1, "jsonrpc": "2.0", "method": "retrieve", "params": {"serial_number": "'$sn'", "backend_token": "6e056cb6-cfc3-4254-8959-2f7eeac541a4"} }' $BD_PROD
+			;;
+		esac
+		;;	
+			
+	reset)
+		case $2 in
+			qa)
+				curl -i -k -H "Content-type: application/json" -X POST -d '{"id": 1, "jsonrpc": "2.0", "method": "clean", "params": {"serial_number": "'$sn'", "backend_token": "0febf7a3-1bd1-4e5d-8cc0-08e3b139b4e1"} }' $BD_QA
+			;;
+			prod)
+				curl -i -k -H "Content-type: application/json" -X POST -d '{"id": 1, "jsonrpc": "2.0", "method": "clean", "params": {"serial_number": "'$sn'", "backend_token": "6e056cb6-cfc3-4254-8959-2f7eeac541a4"} }' $BD_PROD
+			;;
+		esac	
+		;;
+esac
+
+		
+		

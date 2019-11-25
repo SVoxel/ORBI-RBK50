@@ -1,0 +1,117 @@
+#!/bin/sh /etc/rc.common
+START=19
+
+OPENSSL=$(which openssl)
+CRT_FILE=/mnt/ntgr/https_cert/server.pem
+
+get_time()
+{
+	#Get Month
+	Month=$1
+	if [ "$Month" == "Jan" ]; then
+		MM=01
+	elif [ "$Month" == "Feb" ]; then
+		MM=02
+	elif [ "$Month" == "Mar" ]; then
+		MM=03
+	elif [ "$Month" == "Apr" ]; then
+		MM=04
+	elif [ "$Month" == "May" ]; then
+		MM=05
+	elif [ "$Month" == "Jun" ]; then
+		MM=06
+	elif [ "$Month" == "Jul" ]; then
+		MM=07
+	elif [ "$Month" == "Aug" ]; then
+		MM=08
+	elif [ "$Month" == "Sep" ]; then
+		MM=09
+	elif [ "$Month" == "Oct" ]; then
+		MM=10
+	elif [ "$Month" == "Nov" ]; then
+		MM=11
+	elif [ "$Month" == "Dec" ]; then
+		MM=12
+	fi
+	#Get daily
+	daily_old=$2
+	if [ $daily_old -lt 10 ];then
+		daily="0$daily_old"
+	else
+		daily=$daily_old
+	fi
+	echo "$MM$daily" > /tmp/monday.txt
+}
+
+time_check() {
+	END_TIME=`openssl x509 -in $CRT_FILE -noout -enddate |awk -F"=" '{print $2}'`
+	END_TIME_Year=`echo $END_TIME|cut -d " " -f 4`
+	END_TIME_Month=`echo $END_TIME|cut -d " " -f 1`
+	END_TIME_Daily=`echo $END_TIME|cut -d " " -f 2`
+	get_time $END_TIME_Month $END_TIME_Daily 
+	echo "$END_TIME_Year$(cat /tmp/monday.txt)" > /tmp/end_time.txt
+
+	NOW_TIME=`date`
+	NOW_TIME_Year=`echo $NOW_TIME|cut -d " " -f 6`
+	NOW_TIME_Month=`echo $NOW_TIME|cut -d " " -f 2`
+	NOW_TIME_Daily=`echo $NOW_TIME|cut -d " " -f 3`
+	get_time $NOW_TIME_Month $NOW_TIME_Daily 
+	echo "$NOW_TIME_Year$(cat /tmp/monday.txt)" > /tmp/now_time.txt
+}
+
+boot() {
+	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		exit 0
+	fi
+
+	partition_type=`cat /flash_type`
+	router_reset=`/bin/config get reset_flag`
+	if [ "x$partition_type" = "xEMMC" ]; then
+		mount_dev=`part_dev https_cert`
+	fi
+
+	if [ -b $mount_dev -a "x$partition_type" = "xEMMC" ];then
+		[ "x$mount_dev" != "x" ] && filetype=`blkid $mount_dev |grep -o 'TYPE=.*' |awk -F \" '{print $2}'`
+		if [ "x$filetype" != "xext4" -o $router_reset -eq 1 ];then
+			mkfs.ext4 $mount_dev
+		fi
+	elif [ "x$partition_type" = "xNAND_FLASH" ]; then
+		if [ $router_reset -eq 1 ]; then
+			rm -rf /tmp/mnt/ntgr/https_cert
+		fi
+	fi
+
+	#https_cert start
+	[ ! -d '/tmp/mnt/ntgr/https_cert' ] && mkdir -p '/mnt/ntgr/https_cert'
+	if [ "x$partition_type" = "xEMMC" ]; then
+		if [ "x`mount |grep '/tmp/mnt/ntgr/https_cert'`" = "x" ]; then
+			mount $mount_dev '/mnt/ntgr/https_cert'
+			if [ "x$(mount |grep '/tmp/mnt/ntgr/https_cert')" = "x" ]; then
+				mkfs.ext4 $mount_dev
+				mount $mount_dev '/mnt/ntgr/https_cert'
+			fi
+		fi
+	fi
+
+	#check if crt exist and crt is out of date
+	if [ ! -e "/mnt/ntgr/https_cert/server.pem" ] || [ "x$(/bin/config get https_self_signed)" != "x1" ];then
+		flag=1
+	else
+		time_check
+		END_TIME1=$(cat /tmp/end_time.txt)
+		NOW_TIME1=$(cat /tmp/now_time.txt)
+		rm -rf /tmp/monday.txt /tmp/end_time.txt /tmp/now_time.txt
+		if [ $NOW_TIME1 -ge $END_TIME1 ]; then
+			flag=1
+		fi
+	fi
+
+	if [ "x$flag" = "x1" ];then
+		cd /etc/lighttpd/certs/
+		./https_cert.sh
+		cp /etc/lighttpd/certs/server.pem /tmp/mnt/ntgr/https_cert/ -rf
+		/bin/config set https_self_signed=1
+	else
+		cp /tmp/mnt/ntgr/https_cert/server.pem /etc/lighttpd/certs/ -rf
+	fi
+}

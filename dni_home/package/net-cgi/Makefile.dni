@@ -1,0 +1,10 @@
+define Package/net-cgi/install_dniext
+	$(INSTALL_DIR) $(1)/lib/dni_platform/
+	$(CP) $(LOCAL_DNI_EXT_PATH)/files/net-cgi-nc.conf $(1)/lib/dni_platform/
+endef
+
+define Package/net-cgi/prepare_dniext
+	$(CP) $(LOCAL_DNI_EXT_PATH)/www/* $(PKG_BUILD_DIR)/$(WEB_PATH)/
+	$(CP) $(LOCAL_DNI_EXT_PATH)/www.satellite/* $(PKG_BUILD_DIR)/$(WEB_PATH_CC)/
+endef
+

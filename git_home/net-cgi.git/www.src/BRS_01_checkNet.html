@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var hijack_process = "<% cfg_get("hijack_process") %>";
+var ping_result = "none";
+var ap_mode = "<% cfg_get("ap_mode") %>";
+var have_set_passwd = "<% cfg_get("have_set_passwd") %>";
+
+function loadValue()
+{
+	var forms = document.getElementsByTagName("form");
+	var cf = forms[0];
+	var finish=0;
+
+	if(ping_result == "failed")	//failed
+	{ 
+		if( top.apmode_flag == "1" && ap_mode == "1" && top.ap_mode_detection_flag == "1" )
+			this.location.href="BRS_05_networkIssue.html";
+		else
+			this.location.href = "BRS_02_genieHelp.html";
+		finish=1;
+	}
+	else if(ping_result == "success") //success
+	{
+		if(hijack_process == 2 && have_set_passwd == "1")
+			cf.submit();
+		else
+			this.location.href = "BRS_success.html";		
+		finish=1;
+	 }
+	
+	if(finish != 1)
+		setTimeout("loadValue();", 1000);
+}
+</script>
+</head>
+
+<body onload="loadValue();">
+<% form_submit("apply", "BRS_netgear_success.html", "hijack_success")  %>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_check_conn);</script></div>
+		</div>
+	</div>
+</div>
+
+<iframe name="ping_result_frame" src="BRS_ping_result.html" allowtransparency="true" scrolling="no" frameborder="0" style="display:none"></iframe>
+</form>
+</body>
+
+</html>

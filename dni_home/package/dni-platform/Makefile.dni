@@ -1,0 +1,8 @@
+define Package/dni-platform/install_dniext
+	$(INSTALL_DIR) $(1)/lib/dni_platform/project
+	$(INSTALL_BIN) $(LOCAL_DNI_FILES_EXT)/lib/dni_platform/project/* $(1)/lib/dni_platform/project/
+endef
+
+define Package/dni-platform/prepare_dniext
+endef
+

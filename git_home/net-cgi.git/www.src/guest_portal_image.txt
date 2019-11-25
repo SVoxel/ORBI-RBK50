@@ -1,0 +1,1 @@
+<% cfg_get("cp_temp_img") %>

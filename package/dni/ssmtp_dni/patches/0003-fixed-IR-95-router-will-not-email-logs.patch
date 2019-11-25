@@ -1,0 +1,16 @@
+diff -ruN ssmtp-2.64/ssmtp.c ssmtp-2.64.new/ssmtp.c
+--- ssmtp-2.64/ssmtp.c	2017-06-09 15:32:41.949193619 +0800
++++ ssmtp-2.64.new/ssmtp.c	2017-06-09 15:34:27.353193808 +0800
+@@ -875,9 +875,9 @@
+ 		char *begin=buf;
+ 		char *rightside;
+ 		/* Make comments invisible */
+-		if((p = strchr(buf, '#'))) {
+-			*p = (char)NULL;
+-		}
++		//if((p = strchr(buf, '#'))) {
++		//	*p = (char)NULL;
++		//}
+ 
+ 		/* Ignore malformed lines and comments */
+ 		if(strchr(buf, '=') == (char *)NULL) continue;

@@ -1,0 +1,1 @@
+function check_tr069(a,b){if(a.enable_tr069.checked==true){a.hidden_enable_tr069.value="1"}else{a.hidden_enable_tr069.value="0"}if(b==1){a.set_kick.value="kick"}else{a.set_kick.value="no"}return true};

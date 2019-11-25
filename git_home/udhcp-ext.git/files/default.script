@@ -1,0 +1,392 @@
+#!/bin/sh
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+[ "$1" = "reconfig" -a "x`/bin/cat /tmp/link_status`" = "x0" ] && exit 0
+NVRAM="/bin/config"
+ECHO="/bin/echo"
+IFCONFIG="/sbin/ifconfig"
+ROUTE="/sbin/route"
+LEDCTL="/sbin/ledcontrol"
+LAN_DNS_ASSIGN=$($NVRAM get lan_ether_dns_assign)
+LAN_IFNAME=$($NVRAM get dgc_netif_lan_if)
+WLAN_SATE_2G_AP_IFNAME=$($NVRAM get dgc_wlan_sate_2g_ap_if)
+WLAN_SATE_5G_AP_IFNAME=$($NVRAM get dgc_wlan_sate_5g_ap_if)
+#ap_client_enabled=$($NVRAM get ap_client)
+#blanks_state=$($NVRAM get dns_hijack)
+#ap_mode_enabled=$($NVRAM get ap_mode)
+dhcpd_internal=$($NVRAM get enable_dhcpd)
+STATUS_FILE=/proc/$WLAN_SATE_2G_AP_IFNAME/status
+GET_IP=/tmp/.get_ip
+
+print_dhcpd_conf(){
+    cat <<EOF
+pidfile /var/run/udhcpd.pid
+start $2
+end $3
+interface $1
+remaining yes
+auto_time 5
+lease_file /tmp/udhcpd.leases
+option subnet $4
+option router $5
+option dns $6
+option lease $7
+EOF
+}
+
+print_dhcpd_conf_success(){
+    cat <<EOF
+pidfile /var/run/udhcpd.pid
+start $2
+end $3
+interface $1
+remaining yes
+auto_time 5
+lease_file /tmp/udhcpd.leases
+option subnet $4
+option router $5
+option dns $6 $7 $8
+option lease $9
+EOF
+}
+
+update_start_end_ip(){
+net_mask=$($NVRAM get lan_netmask)
+net_mask_3rd=$(echo $net_mask | awk -F "." '{print $3}')
+lan_ip=$($NVRAM get lan_ipaddr)
+a=$(echo $lan_ip | awk -F "." '{print $1"."$2"."$3}')
+start_ip_mannual=$($NVRAM get dhcp_start)
+end_ip_mannual=$($NVRAM get dhcp_end)
+d=$(echo $start_ip_mannual | awk -F "." '{print $4}')
+e=$(echo $end_ip_mannual | awk -F "." '{print $4}')
+
+if [ "$net_mask_3rd" -lt "255" ];then
+    start_real=$d
+    end_real=$e
+else
+    calIP $($NVRAM get lan_ipaddr) $($NVRAM get lan_netmask)
+    start_ip=$(cat /tmp/start_ip)
+    end_ip=$(cat /tmp/end_ip)
+
+    b=$(echo $start_ip | awk -F "." '{print $4}')
+    c=$(echo $end_ip | awk -F "." '{print $4}')
+    start_real=$b
+    end_real=$c
+    [ "$d" -gt "$b" -a "$d" -lt "$c" ] && start_real=$d
+    [ "$e" -gt "$b" -a "$e" -lt "$c" ] && end_real=$e
+fi
+start_ip_new="$a.$start_real"
+$NVRAM set dhcp_start=$start_ip_new
+end_ip_new="$a.$end_real"
+$NVRAM set dhcp_end=$end_ip_new
+}
+
+start_dhcpd() {
+    [ -f /tmp/disable_satelite_dhcpd ] && return
+    [ ! -f /tmp/udhcpd.leases ] && touch /tmp/udhcpd.leases
+    start_ip="192.168.1.128"
+    end_ip="192.168.1.200"
+    if [ "$dhcpd_internal" = "1" ];then
+		start_ip_internal=$($NVRAM get dhcp_start)
+		end_ip_internal=$($NVRAM get dhcp_end)
+		a=$(echo $start_ip | awk -F "." '{print $1"."$2"."$3}')
+		b=$(echo $start_ip_internal | awk -F "." '{print $4}')
+		c=$(echo $end_ip_internal | awk -F "." '{print $4}')
+		start_ip="$a.$b"
+		end_ip="$a.$c"
+		$NVRAM set dhcp_start=$start_ip
+		$NVRAM set dhcp_end=$end_ip
+	fi
+	lan_ip=$($NVRAM get lan_ipaddr)
+    $NVRAM set lan_ipaddr_early=$lan_ip
+    print_dhcpd_conf "$LAN_IFNAME" "$start_ip" "$end_ip" "$($NVRAM get lan_netmask)" "$lan_ip" "$lan_ip" "60" > /tmp/udhcpd.conf
+    udhcpd /tmp/udhcpd.conf
+}
+
+start_dhcpd_success() {
+    [ -f /tmp/disable_satelite_dhcpd ] && return
+    [ ! -f /tmp/udhcpd.leases ] && touch /tmp/udhcpd.leases
+    update_start_end_ip
+    start_ip=$($NVRAM get dhcp_start)
+    end_ip=$($NVRAM get dhcp_end)
+    lan_ip=$($NVRAM get lan_ipaddr)
+    lan_gateway=$($NVRAM get lan_gateway)
+    lan_netmask=$($NVRAM get lan_netmask)
+    lan_dns1=$($NVRAM get lan_dns1)
+    lan_dns2=$($NVRAM get lan_dns2)
+    $NVRAM set lan_ipaddr_early=$lan_ip
+    $NVRAM set lan_gateway_early=$lan_gateway
+    $NVRAM set lan_dns1_early=$lan_dns1
+    print_dhcpd_conf_success "$LAN_IFNAME" "$start_ip" "$end_ip" "$lan_netmask" "$lan_gateway" "$lan_dns1" "$lan_dns2" "$lan_ip" "86400" > /tmp/udhcpd.conf
+
+    udhcpd /tmp/udhcpd.conf
+}
+
+guest_ebt_mod(){
+	[ "x`$NVRAM get wl_conf_mode`" = "x1" -o "x`$NVRAM get wlg1_endis_guestNet`" = "x0" -o "x`$NVRAM get wlg1_endis_allow_guest`" = "x1" ] && return
+
+	old_ip=$($NVRAM get lan_ipaddr)
+	if [ $old_ip != $1 ]; then
+		ebtables -D INPUT -i $WLAN_SATE_5G_AP_IFNAME -p IPv4 --ip-dst $old_ip -j DROP
+		ebtables -A INPUT -i $WLAN_SATE_5G_AP_IFNAME -p IPv4 --ip-dst $1 -j DROP
+	fi
+	
+}
+
+if [ "$LAN_DNS_ASSIGN" = "1" ]; then
+	RESOLV_CONF="/tmp/dhcpc_resolv.conf"
+else
+	RESOLV_CONF="/tmp/resolv.conf"
+fi
+
+[ -z "$1" ] && $ECHO "Error: should be called from udhcpc" && exit 1
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+orbi_type=`cat /tmp/orbi_type`
+
+case "$1" in
+	deconfig)
+		if [ "$orbi_type" = "Satellite" ] && [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+			/usr/sbin/ebtables -P FORWARD DROP
+			/usr/sbin/ebtables -A INPUT -p 0x893A -j DROP
+			/usr/sbin/ebtables -A OUTPUT -p 0x893A -j DROP
+		fi
+		#echo '##### udhcpc deconfig'
+		if [ "x`$NVRAM get lan_dhcp`" = "x1" ]; then
+			$IFCONFIG $interface 192.168.1.250 
+			enable_telnet=`cat /tmp/enable_telnet`
+			if [ "x$enable_telnet" = "x1" ]; then
+				killall utelnetd
+				/usr/sbin/utelnetd -d -i $LAN_IFNAME
+			fi
+		fi
+		$ECHO 0 >/tmp/ip_status
+		;;
+	reconfig)
+		if [ "x`/bin/cat /tmp/link_status`" = "x1" -a "x`$NVRAM get lan_dhcp`" = "x1" ]; then
+			$IFCONFIG $interface 192.168.1.250
+		fi
+		$ECHO 0 >/tmp/ip_status
+		;;
+	renew|bound)
+		if [ "$dhcpd_internal" = "0" ];then
+			[ `ps | grep [u]dhcpd | wc -l` -eq 1 ] && {
+				$ECHO "#####renew##### killall udhcpd"
+				killall udhcpd
+				if [ "x`$NVRAM get wl_conf_mode`" = "x2" ]; then
+				    	#echo -n 5 > /proc/switch_phy
+                    			/sbin/eth_handle restart &
+				fi
+			}
+		fi
+
+		[ "x`$NVRAM get lan_dhcp`" = "x0" ] && killall udhcpc && exit 0
+
+		$IFCONFIG $interface $ip $BROADCAST $NETMASK
+
+        #restart fronthaul vap if change to a new subnet
+        old_ip=`$NVRAM get lan_ipaddr_shadow`
+        old_mask=`$NVRAM get lan_netmask_shadow`
+        [ -n "$old_ip" ] && for i in `seq 1 4`;do
+            old_=$((`echo $old_ip|cut -d '.' -f $i`&`echo $old_mask|cut -d '.' -f $i`))
+            new_=$((`echo $ip|cut -d '.' -f $i`&`echo $NETMASK|cut -d ' ' -f 2|cut -d '.' -f $i`)) #because NETMASK="netmask 255.255.225.0", so
+            if [ "x$old_" != "x$new_"  ];then
+                bring_fronthaul_down restart
+            fi
+        done
+
+		$NVRAM set lan_broadcast=$broadcast 
+		$NVRAM set lan_netmask=$subnet
+		$NVRAM set lan_ipaddr=$ip
+		$NVRAM set lan_netmask_shadow=$subnet
+		$NVRAM set lan_ipaddr_shadow=$ip
+
+
+		if [ "x`$NVRAM get wlg1_endis_guestNet`" = "x1" ] || [ "x`$NVRAM get wla1_endis_guestNet`" = "x1" ] || [ "x`$NVRAM get wlg_arlo_endis_arloNet`" = "x1" ] || [ "x`$NVRAM get wlg2_endis_byodNet`" = "x1" ] || [ "x`$NVRAM get wla2_endis_byodNet`" = "x1" ]; then
+		       	{ sleep 5;wlan lanrestrict on $ip $subnet; } &
+		else
+			wlan lanrestrict off 
+		fi
+        #force create ebtables rules because now guest and arlo vap would be create by default 
+        { sleep 5;wlan lanrestrict on $ip $subnet; } &
+		
+		if [ -n "$router" ] ; then
+			$ECHO "deleting routers"
+			while $ROUTE del default gw 0.0.0.0 dev $interface >&- 2>&-; do
+				:
+			done
+
+			for i in $router ; do
+				$ECHO "adding router $i"
+				$ROUTE add default gw $i dev $interface
+			done
+			$NVRAM set lan_gateway=$router
+		fi
+
+		$ECHO -n > $RESOLV_CONF
+		[ -n "$domain" ] && $ECHO search $domain >> $RESOLV_CONF
+		num=0
+		for i in $dns ; do
+			num=$(($num+1))
+			$ECHO adding dns $i
+			$ECHO nameserver $i >> $RESOLV_CONF
+			$NVRAM set lan_dns$num=$i
+		done
+		[ "$num" = "1" ] && $NVRAM set lan_dns2=""
+		[ -n "$lease" ] && $NVRAM set dhcpc_lease_time=$lease
+		[ -f /tmp/client_wps_pbc ] && rm -rf /tmp/client_wps_pbc
+		[ -f /tmp/client_wps_succ ] && rm -rf /tmp/client_wps_succ
+		if [ "$dhcpd_internal" = "1" ];then
+			lan_ip=$($NVRAM get lan_ipaddr)
+			lan_gateway=$($NVRAM get lan_gateway)
+			lan_dns1=$($NVRAM get lan_dns1)
+			lan_ip_early=$($NVRAM get lan_ipaddr_early)
+			lan_gateway_early=$($NVRAM get lan_gateway_early)
+			lan_dns1_early=$($NVRAM get lan_dns1_early)
+
+			if [ "$lan_ip" != "$lan_ip_early" -o "$lan_gateway" != "$lan_gateway_early" -o "$lan_dns1" != "$lan_dns1_early" -o `ps | grep [u]dhcpd | wc -l` -eq 0 ];then
+				$ECHO "#####renew end##### killall udhcpd"
+				killall udhcpd
+				start_dhcpd_success
+				#echo -n 5 > /proc/switch_phy
+                		/sbin/eth_handle restart &
+			fi
+		fi
+		(echo "td s"; sleep 2) | hyt | tee /tmp/output.txt | sed -nr 's/^.*#.*device: (.*), IPv4 address: ([0-9.]*)(.*)?$/\1,\2/p' > /tmp/001_hyt_result
+		rmac=`cat /tmp/001_hyt_result | cut -d ',' -f1`
+		if [ "x$rmac" = "x" ]; then
+			echo "Warning: Satellite does not get Base mac"
+			#exit 0
+		fi
+		$NVRAM set rbr-mac="$rmac"
+		if [ "x$($NVRAM get enable_block_device)" = "x1" ]; then
+			# Force Base mac as an allowed Device in Satellite
+			/etc/init.d/setacl
+			/etc/init.d/acl restart
+		fi
+		enable_telnet=`cat /tmp/enable_telnet`
+		if [ "x$enable_telnet" = "x1" ]; then
+		    killall utelnetd
+		    /usr/sbin/utelnetd -d -i $LAN_IFNAME
+		fi
+
+		if [ "x`$NVRAM get wl_conf_mode`" = "x0" ]; then
+		    $ECHO 1 >/tmp/ip_status
+		    /sbin/ledcontrol -n link -c green -s on
+		    echo 0 > /proc/sys/net/ipv4/dns_hijack
+                       #pull down wireless
+                       if [ ! -f /tmp/client_wps_pbc -a ! -f /tmp/client_wps_succ  ]; then
+                           vap_status=`ifconfig  | grep $WLAN_SATE_2G_AP_IFNAME[\ ]`
+                       if [ "x$vap_status" != "x"  ]; then
+                           $ECHO "#####renew restart 2.4G interface" > /dev/console
+                           ifconfig $WLAN_SATE_2G_AP_IFNAME down 2> /dev/null
+                           vap_radio=0
+                       fi
+                       vap_status_5g=`ifconfig  | grep $WLAN_SATE_5G_AP_IFNAME[\ ]`
+                       if [ "x$vap_status_5g" != "x"  ]; then
+                           $ECHO "#####renew restart 5G interface" > /dev/console
+                           ifconfig $WLAN_SATE_5G_AP_IFNAME down 2> /dev/null
+                           vap_radio_5g=0
+                       fi
+                       fi
+                       # pull up wireless
+                       if [ "x$vap_radio" = "x0"  ]; then
+                       ifconfig $WLAN_SATE_2G_AP_IFNAME up 2> /dev/null
+                       fi
+                       if [ "x$vap_radio_5g" = "x0"  ]; then
+                        ifconfig $WLAN_SATE_5G_AP_IFNAME up 2> /dev/null
+                        fi
+		fi
+		if [ "x$($NVRAM get conf_time)" = "x0" ]; then
+			killall ntpclient
+			/usr/sbin/ntpclient
+		fi
+		if [ "x$($NVRAM get factory_mode)" !=  "x1" ];then
+			sleep 2
+			/sbin/wlan connection allow
+			killall telnetenable
+			/usr/sbin/telnetenable
+		fi
+		if [ "$orbi_type" = "Satellite" ]; then
+			if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
+				/usr/sbin/ebtables -P FORWARD ACCEPT
+				/usr/sbin/ebtables -D INPUT -p 0x893A -j DROP
+				local total=0;
+				while [ "$?" = "0" ]
+				do
+					usr/sbin/ebtables -D INPUT -p 0x893A -j DROP
+					let total++
+					if [ $total = "10" ]; then
+						break
+					fi
+				done
+				/usr/sbin/ebtables -D OUTPUT -p 0x893A -j DROP
+				local total=0;
+				while [ "$?" = "0" ]
+				do
+					/usr/sbin/ebtables -D OUTPUT -p 0x893A -j DROP
+					let total++
+					if [ $total = "10" ]; then
+						break
+					fi
+				done
+			fi
+			(echo "td discovery"; sleep 2)| hyt &
+		fi
+		;;
+
+	leasefail)
+
+		if [ "x`$NVRAM get wl_conf_mode`" = "x0" ]; then
+		   if [ "$(cat /tmp/LAN4_status)" = "Link down" ]; then
+		       /sbin/ledcontrol -n link -c green -s off
+		       /sbin/ledcontrol -n link -c red -s off
+		       echo 1 > /proc/sys/net/ipv4/dns_hijack
+		    else
+		        /sbin/ledcontrol -n link -c red -s on
+		     fi
+		fi
+
+		[ "x`$NVRAM get lan_dhcp`" = "x0" ] && {
+		killall udhcpc
+		exit 0
+		}
+		
+		if [ `ps | grep [u]dhcpd | wc -l` -eq 1 -a "$dhcpd_internal" = "1" ];then
+			lan_ip=$($NVRAM get lan_ipaddr)
+			$IFCONFIG $interface $lan_ip  netmask "$($NVRAM get lan_netmask)"
+		else
+		#if [ "x`$NVRAM get wl_conf_mode`" = "x1" ]; then
+		$IFCONFIG $interface 192.168.1.250 broadcast 192.255.255.255 
+		$NVRAM set lan_ipaddr=192.168.1.250 
+		$NVRAM set lan_netmask=255.255.255.0 
+		$NVRAM set lan_gateway=0.0.0.0 
+		$NVRAM set lan_dns1=0.0.0.0 
+		$NVRAM set lan_dns2=0.0.0.0 
+		$NVRAM set wan_dhcp_server="" 
+		[ -f $RESOLV_CONF ] && rm -f $RESOLV_CONF
+		#fi
+		$ECHO 0 >/tmp/ip_status
+		if [ "$(cat /tmp/link_status)" = "0" -a "$(cat /tmp/link_status_5g)" = "0" ]; then
+		[ `ps | grep [u]dhcpd | wc -l` -eq 0 ] && {
+			 start_dhcpd 
+			#echo -n 5 > /proc/switch_phy
+		if [ "$(/bin/config get factory_mode)" = "1" ]; then
+			echo "not restart eth_handle in factory_mode"
+		elif [ -f /tmp/disable_satelite_dhcpd ]; then
+			echo "not restart eth_handle when /tmp/disable_satelite_dhcpd existed"
+		else
+            		/sbin/eth_handle restart &
+		fi
+		}
+		fi
+		fi
+		
+		;;
+
+esac
+
+#$NVRAM commit
+#/bin/config commit
+
+exit 0

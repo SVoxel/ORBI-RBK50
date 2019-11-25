@@ -1,0 +1,1023 @@
+<% http_header_no_doc("style/form.css","funcs.js", "led_sechdule.js") %>
+<% body_header("", "led_controls.htm","dev_led_set") %>
+<div class="page_title">$edit_device</div>
+<style>
+.set_title{font: bold 17px arial; color: #9d98ff;}
+#led_set {border-bottom: 2px solid #9d98ff; border-top: 2px solid #9d98ff; height:50px; margin-top:10px;}
+#sync_btn_set {border-bottom: 2px solid #9d98ff; border-top: 2px solid #9d98ff; height:auto;}
+#location_set {border-top: 2px solid #9d98ff; height:auto;}
+
+.table_head{
+	width:100%;
+	font-family: Arial;
+	font-size: 12px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-top-left-radius:10px;
+	border-top-right-radius:10px;
+	margin: 5px 0 10px 0;
+	margin-bottom: 0px;
+}
+.table_head_nobody{
+	width:100%;
+	font-family: Arial;
+	font-size: 12px;
+	border-top: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	border-top-left-radius:10px;
+	border-top-right-radius:10px;
+	border-bottom-left-radius:10px;
+	border-bottom-right-radius:10px;
+	margin: 5px 0 10px 0;
+	margin-bottom: 0px;
+}
+.table_body{
+	width:100%;
+	font-family: Arial;
+	font-size: 12px;
+	border: 1px solid #ccc;
+	border-bottom-left-radius:10px;
+	border-bottom-right-radius:10px;
+}
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 21px;
+  /*height: 34px;*/
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*background-color: #ccc;*/
+  background-color: rgb(248, 248, 248);
+  -webkit-transition: .4s;
+  transition: .4s;
+    border: 1px solid hsla(0, 0%, 87%, 0.36);
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #DDD;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:after {
+  position: absolute;
+  content: "OFF";
+  height: 15px;
+  left: 20px;
+  bottom: 2px;
+}
+
+input:checked + .slider {
+  background-color: #00ADE6;
+  border:0;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #00ADE6;
+  border:0;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(60px);
+  -ms-transform: translateX(60px);
+  transform: translateX(60px);
+  background-color: #FFF;
+    bottom: 3px;
+}
+
+input:checked + .slider:after {
+  content: "ON";
+  left: 10px;
+  bottom: 3px;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* The switch - the box around the slider: for sync button, enabled/disabled switch */
+.enable_switch {
+  position: relative;
+  display: inline-block;
+  width: <% set_switch_width("enabled", "disabled") %>;
+  height: 21px;
+  /*height: 34px;*/
+}
+
+/* Hide default HTML checkbox */
+.enable_switch input {display:none;}
+
+/* The slider */
+.enable_slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /*background-color: #ccc;*/
+  background-color: rgb(248, 248, 248);
+  -webkit-transition: .4s;
+  transition: .4s;
+    border: 1px solid hsla(0, 0%, 87%, 0.36);
+}
+
+.enable_slider:before {
+  position: absolute;
+  content: "";
+  height: 15px;
+  width: 15px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #DDD;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.enable_slider:after {
+  position: absolute;
+  content: "$disabled";
+  height: 15px;
+  left: 20px;
+  bottom: 2px;
+}
+
+input:checked + .enable_slider {
+  background-color: #97c453;
+  border:0;
+}
+
+input:focus + .enable_slider {
+  box-shadow: 0 0 1px #97c453;
+  border:0;
+}
+
+input:checked + .enable_slider:before {
+  -webkit-transform: translateX(<% set_slider_transform("enabled", "disabled") %>);
+  -ms-transform: translateX(<% set_slider_transform("enabled", "disabled") %>);
+  transform: translateX(<% set_slider_transform("enabled", "disabled") %>);
+  background-color: #FFF;
+    bottom: 3px;
+}
+
+input:checked + .enable_slider:after {
+  content: "$enabled";
+  left: 10px;
+  bottom: 3px;
+}
+
+/* Rounded sliders */
+.enable_slider.round {
+  border-radius: 34px;
+}
+
+.enable_slider.round:before {
+  border-radius: 50%;
+}
+</style>
+<script>
+<% save_timestamp("dev_led_set", "led_change_state", "sync_button", "led_brightness") %>
+var ts = "<% cfg_get("dev_led_set") %>";
+<% save_timestamp("dev_led_set","led_schedule_select_to_edit","led_schedule_delete") %>
+var wps_progress_status="<% wps_process_status() %>";
+var accessCtrlOn = "<% cfg_get("wl_acl_enable") %>";
+var link_status = "<% cat_file("/tmp/link_status") %>";
+var edit_mac = "<% cfg_get("orbi_hid_mac") %>";
+var master="<% cfg_get("http_loginname") %>";
+var netgear_region="<% get_firmware_region() %>";
+var valid_region = "<% valid_firmware_region() %>";
+valid_region = parseInt(valid_region, 10);
+var gui_region="<% cfg_get("GUI_Region") %>";
+if(netgear_region == "")
+	netgear_region = "WW";
+
+//var netgear_region=top.netgear_region;
+var wla_channel="<% cfg_get("wla_channel") %>";
+var wps_progress_status="<% wps_process_status() %>";
+var refresh_led_flag=1;
+var refresh_led_flag2=1;
+//wireless schedule
+var ntp_updated = "<% access_file("/tmp/led_ntp_updated") %>";
+<% led_schedule_items() %>
+
+
+//For BUG 33420 to show transmit power control 63% and 33%
+var txctl_63_33_flag = parent.txctl_63_33_flag;
+var super_wifi_flag = parent.super_wifi_flag;
+
+// b/g/n
+<% show_wlan_variable() %>
+//==var old_wla_wds_endis_fun="<% cfg_get("wla_wds_endis_fun") %>";
+var old_wds_repeater_basic="<% cfg_get("wds_repeater_basic") %>";
+var old_endis_wl_radio=endis_wl_radio;
+var security_mode='<% cfg_get("wl_sectype") %>';
+var wlan_adv_wpspin="<% pin_num() %>";
+var wlendis_pin='<% cfg_get("endis_pin") %>';
+var wlendis_pin_tmp='<% cfg_get("wps_lock_down") %>';
+
+var hw_btn_state='<% cfg_get("wl_hw_btn_state") %>';
+
+// a/n
+var old_endis_wla_radio=endis_wla_radio;
+var an_router_flag = parent.an_router_flag;
+var ac_router_flag = parent.ac_router_flag;
+var qos_router_flag = parent.qos_router_flag;
+var transmit_router_flag = parent.transmit_router_flag;
+var guest_router_flag=parent.guest_router_flag;
+var apmode_flag=parent.apmode_flag;
+var adv_coexistence_flag=top.adv_coexistence_flag;
+var qtn_api_statistics_flag = parent.qtn_api_statistics_flag;
+
+var wds_support_wpa = top.wds_support_wpa;
+var pr_flag = (( gui_region == "Chinese" && (netgear_region == "" || netgear_region.toUpperCase() == "WW")) || netgear_region.toUpperCase() == "PR") ? 1 : 0;
+var pr_wds_support_wpa=( wds_support_wpa == 1  && pr_flag == 1) ? 1 : 0;
+
+var wps_protect='<% cfg_get("wps_pin_attack_check") %>';
+var enable_ap_flag="<% cfg_get("ap_mode") %>";//bug 22880 according to the page 128 of spec 2.0,add AP mode
+var dyn_get_ip_flag="<% cfg_get("ap_ether_ip_assign") %>";
+var dyn_get_dns_flag="<% cfg_get("ap_ether_dns_assign") %>";
+
+//Enable 20/40 MHz Coexistence: 0: enable, 1: disabled
+var endis_beamforming = "<% cfg_get("wla_implicit_bf") %>";
+var enable_mu="<% cfg_get("wla_mu_mimo") %>";
+<% get_led_enable() %>
+<% get_location_info() %>
+var stime;
+var device_name_change = 0;
+var jp_flag = (wl_get_countryA !="6")? "0" : (gui_region == "Japanese" || gui_region == "English")? "1" : "0";
+
+function checkled(cf)
+{
+	if(cf.wifi_onoff.checked)
+		cf.led_enable_schedule.value = "1";
+	else
+		cf.led_enable_schedule.value = "0";
+	cf.hid_lightbright.value = cf.lightbright.value;
+
+	return true;
+}
+function check_dev(cf)
+{
+	if(cf.orbi_name.value=="")
+	{
+		alert("$device_name_null");
+		return false;
+	}
+	var name_str=cf.orbi_name.value;
+	if(device_name_change == 1 && name_str.length > 15)
+	{
+		alert("$devname_long");
+		return false;
+	}
+	for(i=0;i<name_str.length;i++)
+	{
+		var c = name_str.charCodeAt(i);
+		if(c == 64 || c == 59)
+		{
+			alert("$device_name_error");
+			return false;
+		}
+	}
+	if(cf.orbi_model.value=="")
+	{
+		alert("Model Name error!");
+		return false;
+	}
+	var name_str=cf.orbi_model.value;
+	for(i=0;i<name_str.length;i++)
+	{
+		var c = name_str.charCodeAt(i);
+		if(c == 64 || c == 59)
+		{
+			alert("Model Name error!");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+function change_device_name(obj)
+{
+	if(device_name_change == 0) {
+		device_name_change = 1;
+		document.forms[0].devname_changed.value = "1";
+		obj.outerHTML = '<input type="text" name="orbi_name" maxlength="15" value="" onFocus="change_device_name(this);" />'
+	}
+}
+
+function click_apply()
+{
+	var cf=document.forms[0];
+	if(check_dev(cf) == false)
+		return false;
+	if(checkled(cf) == false)
+		return false;
+	if(location_support == 1)
+	{
+		if(jp_flag == "1" && location_value != "indoor" && cf.location.value == "indoor")
+		{
+			alert("$jp_indoor_warning");
+		}
+		cf.hid_location.value = cf.location.value;
+	}
+	
+	cf.action="apply.cgi?/led_controls.htm timestamp="+ts; 
+	cf.submit();
+}
+
+function click_cancel()
+{
+	location.href='DEV_show_device.htm';
+}
+
+function power_display()
+{
+	var form = document.forms[0];
+	if( qtn_api_statistics_flag == 1 )
+	{
+		if(form.enable_implicit_beamforming.checked == false && wl_get_countryA != "11")
+			document.getElementById("power_ctrl_an").style.display="";
+		if(form.enable_implicit_beamforming.checked == true)
+			document.getElementById("power_ctrl_an").style.display="none";
+	}		
+}
+function wps_protection_display()
+{
+	var cf=document.forms[0];
+	if ( cf.pin_disable.checked == false || cf.pin_disable.disabled == true)
+		document.getElementById("wladv_appin_cfg").style.display="none";
+	else
+		document.getElementById("wladv_appin_cfg").style.display="";
+	if (cf.prevent_pin_compromise.checked == false)
+		cf.pin_attack_count.disabled = true;
+	else
+		cf.pin_attack_count.disabled = false;
+}
+
+function change_web_format()
+{
+
+	if( adv_coexistence_flag == 1 )
+		document.getElementById("coexistence_line").style.display="";
+        else
+                document.getElementById("coexistence_line").style.display="none";
+
+	//	if( qos_router_flag == 0 )
+        //        document.getElementById("wmm_qos").style.display="";
+        //else
+        //        document.getElementById("wmm_qos").style.display="none";
+
+	if( transmit_router_flag == 1 )
+		document.getElementById("power_ctrl_bgn").style.display="";
+	else
+		document.getElementById("power_ctrl_bgn").style.display="none";
+		
+		document.getElementById("schedule_bgn_enable").style.display="";
+		document.getElementById("schedule_bgn_head").style.display="";
+		document.getElementById("schedule_bgn_table").style.display="";
+		document.getElementById("schedule_bgn_button").style.display="";
+	if( wl_mode == "1" )//54167
+		document.getElementById("frag_bgn").style.display = "";
+	else
+		document.getElementById("frag_bgn").style.display = "none";
+
+	/* a/n */
+	if( an_router_flag == 1 ){
+		document.getElementById("adv_wlan_an").style.display="";
+		document.getElementById("ap_an").style.display="";
+		document.getElementById("cts_rts_an").style.display="";
+		document.getElementById("pream_an").style.display="";
+		document.getElementById("blue_an").style.display="";
+		if(top.fragment_an_flag == 1)
+			document.getElementById("fragment_an").style.display="";
+		else
+			document.getElementById("fragment_an").style.display="none";
+	        //if( qos_router_flag == 0 )
+	        //        document.getElementById("wmm_qos_an").style.display="";
+	        //else
+        	//        document.getElementById("wmm_qos_an").style.display="none";
+		if( transmit_router_flag == 1 )
+			document.getElementById("power_ctrl_an").style.display="";
+		else
+			document.getElementById("power_ctrl_an").style.display="none";
+
+		if( qtn_api_statistics_flag == 1 )
+		{
+			if(endis_beamforming == "1" || wl_get_countryA == "11")
+				document.getElementById("power_ctrl_an").style.display="none";
+		}
+		else
+			document.getElementById("power_ctrl_an").style.display="";		
+		/*wireless schedule*/
+			document.getElementById("schedule_an_enable").style.display="";
+			document.getElementById("schedule_an_head").style.display="";
+			document.getElementById("schedule_an_table").style.display="";
+			document.getElementById("schedule_an_button").style.display="";
+	}
+	else{
+		document.getElementById("adv_wlan_an").style.display="none";
+		document.getElementById("ap_an").style.display="none";
+		document.getElementById("fragment_an").style.display="none";
+		document.getElementById("cts_rts_an").style.display="none";
+		document.getElementById("pream_an").style.display="none";
+		document.getElementById("blue_an").style.display="none";
+		document.getElementById("wmm_qos_an").style.display="none";
+		document.getElementById("power_ctrl_an").style.display="none";
+
+		/*wireless schedule*/
+		document.getElementById("schedule_an_enable").style.display="none";
+		document.getElementById("schedule_an_head").style.display="none";
+		document.getElementById("schedule_an_table").style.display="none";
+		document.getElementById("schedule_an_button").style.display="none";
+
+	}
+
+	if(top.access_control_flag == 0 )
+	{
+		document.getElementById("wlan_access").style.display="";
+		document.getElementById("ap_bluebar").style.display="";
+	}
+	else
+	{
+		document.getElementById("wlan_access").style.display="none";
+		document.getElementById("ap_bluebar").style.display="none";
+	}
+	if(top.airtime_fairness_flag == 1)
+		document.getElementById("wladv_atf").style.display="";	
+	else
+		document.getElementById("wladv_atf").style.display="none";
+	if(top.support_ht160_flag == 1)
+		document.getElementById("wladv_ht160").style.display="";
+	else
+		document.getElementById("wladv_ht160").style.display="none";
+	if(top.mu_mimo_flag == 1)
+		document.getElementById("wladv_mu").style.display="";
+	else
+		document.getElementById("wladv_mu").style.display="none";
+}
+
+function enable_schedule_button()
+{
+	var val = false;
+
+	if(ntp_updated != "1")
+		val = true;
+
+	document.getElementById("wifi_sche_div1").disabled=val;
+	document.getElementById("add_sche").disabled=val;
+	document.getElementById("edit_sche").disabled=val;
+	document.getElementById("del_sche").disabled=val;
+	if(val == true){
+		document.getElementById("add_sche").className = "long_common_gray_bt";
+		document.getElementById("edit_sche").className = "long_common_gray_bt";
+		document.getElementById("del_sche").className = "long_common_gray_bt";
+	}
+	if(led_schedule_num > 0)
+	{
+		var i = 0;
+		for(i=1; i<=led_schedule_num; i++){
+			document.getElementById("sche_select"+i).disabled=val;
+		}
+	}
+	if(ntp_updated != "1")
+		document.getElementById("ntp_warning").style.display = "";
+	else
+		document.getElementById("ntp_warning").style.display = "none";
+}
+
+
+function check_schedule_onoff()
+{
+	var cf = document.forms[0];
+	var i = 0;
+	var disable_flag, checked_flag;
+
+	disable_flag = false;
+	cf.wifi_onoff.disabled = disable_flag;
+	document.getElementById("add_sche").disabled = disable_flag;
+	document.getElementById("edit_sche").disabled = disable_flag;
+	if(master=="guest")
+		document.getElementById("del_sche").disabled = true;
+	else
+		document.getElementById("del_sche").disabled = disable_flag;
+
+	if(led_schedule_num > 1)
+	{
+		for(i=0; i<led_schedule_num; i++)
+		{
+			cf.ruleSelect_2g[i].disabled = disable_flag;			
+		}
+	}
+	else if(led_schedule_num >0)
+	{
+		cf.ruleSelect_2g.disabled = disable_flag;
+	}
+	enable_schedule_button();
+}
+
+function loadvalue()
+{
+	stime = setTimeout("update_data()", 5000);
+
+	//for click browser back reload page.
+	var e=document.getElementById("refreshed");
+	if(e.value=="no")e.value="yes";
+	else{e.value="no";location.href="led_controls.htm";}
+
+	var form=document.forms[0];
+	if(enable_schedule == "1")
+		form.wifi_onoff.checked = true;
+	else
+		form.wifi_onoff.checked = false;
+	if(led_light != "")
+		form.lightbright.value = led_light;
+	check_schedule_onoff();
+	
+	if(master != "admin")
+	{
+		form.led_switch.disabled = true;
+		form.sync_switch.disabled = true;
+	}
+	if(led_onoff == "on")
+	{
+		form.led_switch.checked = true;
+		form.lightbright.disabled = false;
+	}
+	else
+	{
+		form.led_switch.checked = false;
+		form.lightbright.disabled = true;
+	}
+	if(sync_btn_status == "1")
+	{
+		form.sync_switch.checked = true;
+		document.getElementById("sync_btn_warning").style.display = "";
+	}
+	else
+	{
+		form.sync_switch.checked = false;
+		document.getElementById("sync_btn_warning").style.display = "none";
+	}
+	if(location_support == 1)
+	{
+		document.getElementById("location_set").style.display = "";
+		if(location_value == "outdoor" || location_value == "indoor")
+			form.location.value = location_value;
+		else
+			form.location.value = "outdoor";
+	}
+	form.orbi_devtype.value = "<% cfg_get("orbi_hid_devtype") %>";
+	if(form.orbi_devtype.value == 0)
+		document.getElementById("device_type").style.display = "none";
+	//to sync reservation_add, access control page device name maxlength, page only save 20 chars.
+	if(form.orbi_name.value.length > form.orbi_name.maxLength)
+		form.orbi_name.value = form.orbi_name.value.substr(0, form.orbi_name.maxLength);
+}
+
+function transmit_select(form)
+{
+       if( pr_flag ==1 && super_wifi_flag == 1)
+               if(form.tx_power_ctrl.options[0].selected == true && super_wifi_value != "1")
+                       if(!confirm("$super_wifi_warn"))
+				form.tx_power_ctrl.value = wl_txctrl_web;
+
+}
+
+function transmit_select_an(form)
+{
+       if( pr_flag ==1 && super_wifi_flag == 1)
+               if(form.tx_power_ctrl_an.options[0].selected == true && super_wifi_value_an != "1")
+                       if(!confirm("$super_wifi_warn"))
+                                form.tx_power_ctrl_an.value = wla_txctrl_web;
+
+}
+
+function changeLedOnOff(mac)
+{
+	clearTimeout(stime);
+	refresh_led_flag=0;
+	var sta, xmlhttp;
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	
+	document.getElementById("led_switch").disabled = true;
+	document.getElementById("apply").disabled = true;
+	document.getElementById("sync_switch").disabled = true;
+	document.getElementById("lightbright").disabled = true;
+	if(document.getElementById("led_switch").checked == true)
+		sta = "on";
+	else
+		sta = "off";
+	xmlhttp.onreadystatechange = function()
+	{
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+		{
+			var update_ts = xmlhttp.responseText.match(/timestamp=([0-9]+)/g).join("");
+			if(update_ts != "")
+				ts = update_ts.split("=")[1];
+			document.getElementById("led_switch").disabled = false;
+			document.getElementById("apply").disabled = false;
+			document.getElementById("sync_switch").disabled = false;
+			document.getElementById("lightbright").disabled = false;
+			if(document.getElementById("led_switch").checked == true)
+				document.getElementById("lightbright").disabled = false;
+			else
+				document.getElementById("lightbright").disabled = true;
+			stime = setTimeout("update_data();refresh_led_flag=1;", 12000);
+		}
+	}
+	xmlhttp.open("POST", "/apply.cgi?/led_controls.htm timestamp=" + ts, true);
+	data = "submit_flag=led_change_state&hid_mac="+mac+"&led_onoff="+sta;
+	xmlhttp.send(data);
+	
+}
+
+function changeSyncButton(mac)
+{
+	var sta, xmlhttp;
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	
+	document.getElementById("sync_switch").disabled = true;
+	document.getElementById("apply").disabled = true;
+	document.getElementById("led_switch").disabled = true;
+	document.getElementById("lightbright").disabled = true;
+	if(document.getElementById("sync_switch").checked == true)
+	{
+		sta = "1";
+		document.getElementById("sync_btn_warning").style.display = "";
+	}
+	else
+	{
+		sta = "0";
+		document.getElementById("sync_btn_warning").style.display = "none";
+	}
+	xmlhttp.onreadystatechange = function()
+	{
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+		{
+			var update_ts = xmlhttp.responseText.match(/timestamp=([0-9]+)/g).join("");
+			if(update_ts != "")
+				ts = update_ts.split("=")[1];
+			document.getElementById("sync_switch").disabled = false;
+			document.getElementById("apply").disabled = false;
+			document.getElementById("led_switch").disabled = false;
+			if(document.getElementById("led_switch").checked == true)
+				document.getElementById("lightbright").disabled = false;
+			else
+				document.getElementById("lightbright").disabled = true;
+		}
+	}
+	xmlhttp.open("POST", "/apply.cgi?/led_controls.htm timestamp=" + ts, true);
+	data = "submit_flag=sync_button&hid_mac="+mac+"&sync_btn="+sta;
+	xmlhttp.send(data);
+}
+
+function apply_brightness(mac)
+{
+	clearTimeout(stime);
+	refresh_led_flag2=0;
+	var val, xmlhttp;
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	document.getElementById("sync_switch").disabled = true;
+	document.getElementById("apply").disabled = true;
+	document.getElementById("led_switch").disabled = true;
+	document.getElementById("lightbright").disabled = true;
+	val = document.forms[0].lightbright.value;
+	xmlhttp.onreadystatechange = function()
+	{
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+		{
+			var update_ts = xmlhttp.responseText.match(/timestamp=([0-9]+)/g).join("");
+			if(update_ts != "")
+				ts = update_ts.split("=")[1];
+			document.getElementById("sync_switch").disabled = false;
+			document.getElementById("apply").disabled = false;
+			document.getElementById("led_switch").disabled = false;
+			if(document.getElementById("led_switch").checked == true)
+				document.getElementById("lightbright").disabled = false;
+			else
+				document.getElementById("lightbright").disabled = true;
+			stime = setTimeout("update_data();refresh_led_flag2=1;", 7000);
+		}
+	}
+	xmlhttp.open("POST", "/apply.cgi?/led_controls.htm timestamp=" + ts, true);
+	data = "submit_flag=led_brightness&hid_mac="+mac+"&led_bright="+val;
+	xmlhttp.send(data);
+}
+
+function update_data()
+{
+	var form = document.forms[0];
+	var xmlhttp;
+	clearTimeout(stime);
+	if ( window.XMLHttpRequest)
+		xmlhttp = new XMLHttpRequest();
+	else
+		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+	xmlhttp.onreadystatechange = function()
+	{
+		if (xmlhttp.readyState == 4 && xmlhttp.status == 200)
+		{
+			if(refresh_led_flag == 1 && refresh_led_flag2 == 1) {
+			var led_info = eval(xmlhttp.responseText);
+			if(led_info.led_onoff == "on"){
+				form.led_switch.checked = true;
+				form.lightbright.disabled = false;
+			}else{
+				form.led_switch.checked = false;
+				form.lightbright.disabled = true;
+			}
+			form.lightbright.value = led_info.led_bright;
+			}
+			
+			stime = setTimeout(function(){
+				xmlhttp.open("GET", "LED_light_info.htm?ts=" + new Date().getTime(), true);
+				xmlhttp.send();
+			}, 5000);
+		}
+	}
+	xmlhttp.open("GET", "LED_light_info.htm?ts=" + new Date().getTime(), true);
+	xmlhttp.send();
+}
+</script>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2 >
+<TR>
+<script>
+if(master=="admin" && valid_region == 1)
+	document.write('<TD nowrap align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="click_cancel();">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return click_apply();"></TD>');
+else
+	document.write('<TD nowrap align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
+        
+</script>
+</TR>
+</TABLE>
+</div>
+<div id="main" class="main_top_button">
+<div id="edit_dev">
+<div style="padding-top:8px;">
+	<% table_header() %>
+
+<TR>
+	<TD nowrap>$info_mark_ip</TD>
+	<TD nowrap>
+	<% cfg_get("orbi_hid_ip") %>
+	</TD>
+</TR>
+<TR>
+ 	<TD nowrap>$info_mark_mac</TD>
+	<TD nowrap><% cfg_get("orbi_hid_mac") %></TD>
+</TR>
+<TR>
+	<TD nowrap>$device_model</TD>
+	<TD nowrap><input type="text" name="orbi_model" maxlength="30" value="<% cfg_sed_xss("orbi_hid_model") %>"/></TD>
+</TR>
+<TR>
+	<TD nowrap>$lan_mark_name</TD>
+	<TD nowrap><input type="text" name="orbi_name" maxlength="32" value="<% cfg_sed_xss("orbi_hid_name") %>" onFocus="change_device_name(this);" /></TD>
+</TR>
+<TR id="device_type">
+	<TD nowrap>$device_type</TD>
+	<TD nowrap>
+		<select name="orbi_devtype">
+			<option value="1">$qos_device1</option>
+			<option value="2">$qos_device2</option>
+			<option value="3">$qos_device3</option>
+			<option value="4">$qos_device4</option>
+			<option value="5">$qos_device5</option>
+			<option value="6">$qos_device6</option>
+			<option value="7">$qos_device7</option>
+			<option value="8">$qos_device8</option>
+			<option value="9">$qos_device9</option>
+			<option value="10">$qos_device10</option>
+			<option value="11">$qos_device11</option>
+			<option value="12">$qos_device12</option>
+			<option value="13">$qos_device13</option>
+			<option value="14">$qos_device14</option>
+			<option value="15">$qos_device15</option>
+			<option value="16">$qos_device16</option>
+			<option value="17">$qos_device17</option>
+			<option value="18">$qos_device18</option>
+			<option value="19">$qos_device19</option>
+			<option value="20">$qos_device20</option>
+			<option value="21">$qos_device21</option>
+			<option value="22">$qos_device22</option>
+			<option value="23">$qos_device23</option>
+			<option value="24">$qos_device24</option>
+			<option value="25">$qos_device25</option>
+			<option value="26">$qos_device26</option>
+			<option value="27">$qos_device27</option>
+			<option value="28">$qos_device28</option>
+			<option value="29">$qos_device29</option>
+			<option value="30">$qos_device30</option>
+			<option value="31">$qos_device31</option>
+			<option value="32">$qos_device32</option>
+			<option value="33">$qos_device33</option>
+			<option value="34">$qos_device34</option>
+			<option value="35">$qos_device35</option>
+			<option value="36">$qos_device36</option>
+			<option value="37">$qos_device37</option>
+			<option value="38">$qos_device38</option>
+			<option value="39">$qos_device39</option>
+			<option value="40">$qos_device40</option>
+			<option value="41">$qos_device41</option>
+		</select>
+	</TD>
+</TR>
+</TABLE>
+	</div>
+</div><!--edit_dev -->
+
+<div id="led_set">
+	<TABLE width=100% height=100% border=0 cellpadding=0 cellspacing=2 style="vertical-align:middle">
+		<tr><td width=36%><span class="set_title">$led_switch_onoff</span></td>
+		<td align="left"><label class="switch"><input name="led_switch" id="led_switch" onclick="changeLedOnOff(edit_mac)" type="checkbox"><div class="slider round"></div></label></td>
+		</tr>
+	</table>
+</div>
+
+<div id="led_main">
+<div style="border-bottom: 2px solid #9d98ff; height:50px; margin-bottom:8px;">
+<table width=100% height=100% style="vertical-align:middle"><tr><td><span class="set_title">$led_control</span></td></tr></table>
+</div>
+
+<input type="hidden" id="refreshed" value="no">
+<input type="hidden" name="hid_lightbright" value="100">
+<input type="hidden" name="led_enable_schedule" value="">
+<input type="hidden" name="led_schedule_edit_num" value="">
+<input type="hidden" name="led_schedule_type" value="">
+<input type="hidden" name="led_schedule_delete_num" value="">
+<input type="hidden" name="hid_location" value="">
+<input type="hidden" name="devname_changed" value="0">
+<TABLE width="100%" cellspacing="3" cellpadding="2" border="0">
+<TR><TD nowrap width="10%" align="left"><b  style="color:#7d706c">$light_brightness :</b></td>
+	<TD align="left"><select class="divselect" name="lightbright" id="lightbright" onchange="apply_brightness(edit_mac);">
+			<!--option value="0">$off_mark</option-->
+			<option value="100">100%</option>
+			<option value="75">75%</option>
+			<option value="50">50%</option>
+			<option value="25">25%</option>
+	</select></TD>
+</TR>
+
+<TR id="schedule_bgn_enable" ><TD colspan="2" nowrap ><input type="checkbox" name="wifi_onoff" id="wifi_sche_div1" value="1"><A tabindex=-1 href="javascript:loadhelp('_wladv','schedule')"><b  style="color:#7d706c">$light_topsc</b></A></TD></TR>
+<TR id="ntp_warning" style="display:none"><TD colspan="2" nowrap style="color:red"><b>$schedule_ntp_warning
+</b></TD></TR>
+<TR id="schedule_bgn_head"><TD colspan="2" nowrap><b>$light_period:
+</b></TD></TR>
+<TR id="schedule_bgn_table">
+	<TD colspan="3" nowrap>
+	<table width="100%" cellspacing="0" cellpadding="0" border="0"><tr><td>
+	<TABLE class="table_head" id="sch_thead" cellspacing="0" cellpadding="2" border="0">
+	<TR class="table_header">
+		<TD nowrap width="8%" align="center"><span class="subhead">$adva_period</span></TD>
+		<TD nowrap width="25%" align="center"><span class="subhead">$adva_start</span></TD>
+		<TD nowrap width="25%" align='center'><span class="subhead">$adva_end</span></TD>
+		<TD nowrap width="25%" align="center"><span class="subhead">$adva_recur_pattern</span></TD>
+		<TD nowrap align="center"><span class="subhead">$light_brightness</span></TD>
+	</TR></table></td><td id="scroll_fill"></td></tr></table>
+	<div style="max-height:60px;overflow-y:auto"><TABLE id="sch_tbody" class="table_body" cellspacing="0" cellpadding="2" border="0">
+	<script>
+	if(led_schedule_num > 0)
+	{
+		var i = 0, j = 0, n = 0;
+
+		for(i=1; i<=led_schedule_num; i++)
+		{
+			var str = eval("led_schedule_array" + i);
+			str = remove_space(str);
+			var each_info = str.split("-");
+			if(i%2 == 0)
+				document.write("<TR class=\"even_line\">");
+			else
+				document.write("<TR class=\"odd_line\">");
+			document.write('<TD width=8% nowrap align="center"><input type="radio" name="ruleSelect_2g" id="sche_select'+i+'" value="'+(i-1)+'"></TD>');
+			if((gui_region=="German" && netgear_region=="WW") || netgear_region=="GR")
+			{
+				n = parseInt(each_info[0], 10);
+				document.write('<TD width=25% nowrap align="center">'+hour_schedule_24[n]+'</TD>');
+
+				n = parseInt(each_info[1], 10);
+				document.write('<TD width=25% nowrap align="center">'+hour_schedule_24[n]+'</TD>');
+			}
+			else
+			{
+				n = parseInt(each_info[0], 10);
+				document.write('<TD width=25% nowrap align="center">'+hour_schedule_12[n]+'</TD>');
+
+				n = parseInt(each_info[1], 10);
+				document.write('<TD nowrap width=25% align="center">'+hour_schedule_12[n]+'</TD>');
+			}
+
+			document.write('<TD width=25% nowrap align="center">');
+			if(each_info[2] == "Daily")
+				document.write("$email_daily");
+			else if(each_info[2] == "")
+				document.write("&nbsp;");
+			else
+			{
+				var day_num = each_info[2].split(",");
+				for(j=0; j<day_num.length; j++)
+				{
+					n = parseInt(day_num[j], 10);
+					document.write(week_days[n] + " ");
+				}
+				
+			}
+			document.write('</TD>');
+			document.write('<TD nowrap align="center">'+each_info[3]+'%</TD>');
+			document.write('</TR>');
+		}
+	}
+	else
+		document.getElementById("sch_thead").className = "table_head_nobody";
+	</script>
+	</TABLE></div>
+	</TD>
+</TR>
+<TR id="schedule_bgn_button">
+<TD colspan=2 align="center" nowrap>
+<TABLE width="100%" cellspacing="0" cellpadding="2" border="0">
+	<TR><TD nowrap width="8%" align="center"></TD>
+		<TD nowrap width="25%" align="center"><input type="submit" class="long_common_bt" name="Add a new period" id="add_sche" value="$adva_period_add" onClick='check_led_schedule("add"); return false;'></TD>
+		<TD nowrap width="25%" align="center"><input type="submit" class="long_common_bt" name="Edit" id="edit_sche" value="$edit_mark" onClick='check_led_schedule("edit"); return false;'></TD>
+	<script>
+		if( master == "admin" )
+			document.write('<TD nowrap width="25%" align="center"><input type="submit" class="long_common_bt" name="Delete" id="del_sche" value="$delete_mark" onClick="check_led_schedule( \'delete\'); return false;"></TD>');
+		else
+			document.write('<TD nowrap width="25%" align="center"><input type="submit" class="long_common_gray_bt" name="Delete" id="del_sche" value="$delete_mark" disabled></TD>');
+	</script>
+	<TD nowrap align="center"></TD>
+</TD></TR></TABLE></TD>
+</TR>
+</TABLE>
+</div>
+<div id="location_set" style="display:none">
+	<TABLE width=100% height=50px border=0 cellpadding=0 cellspacing=2 style="vertical-align:middle;">
+		<tr><td nowrap width=33%><span class="set_title">$led_location</span></td>
+			<td nowrap width=10%><input type="radio" name="location" value="outdoor">$led_outdoor</td>
+			<td nowrap align=left><input type="radio" name="location" value="indoor">$led_indoor</td>
+		</tr>		
+	</table>
+</div>
+<div id="sync_btn_set">
+	<TABLE width=100% height=50px border=0 cellpadding=0 cellspacing=2 style="vertical-align:middle;">
+		<tr><td width=36%><span class="set_title">$sync_mark</span></td>
+		<td align="left"><label class="enable_switch"><input name="sync_switch" id="sync_switch" onclick="changeSyncButton(edit_mac)" type="checkbox"><div class="enable_slider round"></div></label></td>
+		</tr>		
+	</table>
+	<table id="sync_btn_warning" style="display:none; padding-bottom:5px; margin-top:-10px;">
+		<tr><td style="color:red;"><span><b><% show_sync_warning() %></b></span></td></tr>
+	</table>
+</div>
+</div>
+</form>
+<script>
+	function set_schedule_table_width()
+	{
+		var h_width = document.getElementById("sch_thead").clientWidth;
+		var b_width = document.getElementById("sch_tbody").clientWidth;
+		if(h_width > b_width)
+			document.getElementById("scroll_fill").style.width = (h_width - b_width) + "px";
+		else
+			document.getElementById("scroll_fill").style.width = 0;
+	}
+	set_schedule_table_width();
+</script>
+</body>
+</html>

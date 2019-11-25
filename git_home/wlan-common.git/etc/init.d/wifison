@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+START=50
+
+start()
+{
+    if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+        return
+    fi
+	if [ -n "`which hyd`" ]; then
+		echo "Init wifison script"
+		/sbin/wifison.sh boot
+	else
+		echo "Init wifison script to boot lbd"
+		/sbin/wifison.sh boot lbd
+	fi
+}
+
+
+stop()
+{
+	echo "No such action"
+}

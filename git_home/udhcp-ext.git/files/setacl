@@ -1,0 +1,44 @@
+#!/bin/sh
+CONFIG="/bin/config"
+
+curorder=1
+num=1
+rmac=$($CONFIG get rbr-mac)
+
+if [ "x$(cat /tmp/orbi_type)" = "xBase" ] || [ "x$rmac" = "x" ];then
+	exit
+fi
+
+flag_commit=0
+while [ 1 ]; do
+	ACCESS_CONTROL=$($CONFIG get access_control$num)
+	mac=`echo $ACCESS_CONTROL | cut -f 2 -d ' '`
+	order=`echo $ACCESS_CONTROL | cut -f 4 -d ' '`
+	[ $order -ge $curorder ] && curorder=$(($order + 1))
+
+	if [ "x$mac" = "x" ]; then
+		echo "Note: Satellite preset Base to allow device"
+		$CONFIG set access_control$num="0 $rmac 1 $curorder Unknown 1"
+		flag_commit=1
+		break
+	fi
+
+	if [ "x$rmac" = "x$mac" ]; then
+		status=`echo $ACCESS_CONTROL | cut -f 1 -d ' '`
+		if [ "$status" = "1" ]; then
+			type=`echo $ACCESS_CONTROL | cut -f 3 -d ' '`
+			host=`echo $ACCESS_CONTROL | cut -f 5 -d ' '`
+			log=`echo $ACCESS_CONTROL | cut -f 6 -d ' '`
+			echo "Note: Satellite here change Base to allow device"
+			$CONFIG set access_control$num="0 $mac $type $order $host $log"
+			flag_commit=1
+		else
+			echo "Note: Satellite already set Base as allow device"
+		fi
+		break
+	fi
+	num=$(($num + 1))
+
+done
+
+[ "$flag_commit" -eq 1 ] && $CONFIG commit

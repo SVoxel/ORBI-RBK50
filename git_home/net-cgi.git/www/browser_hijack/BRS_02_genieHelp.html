@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+
+<body onload="loadvalue();">
+<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+<% save_timestamp("wizard_detwan", "hijack_to_manual")%>
+<script language="javascript" type="text/javascript">
+var ts="<% cfg_get("hijack_to_manual") %>";
+
+function loadvalue()
+{
+		var netgear_region = top.netgear_region;
+		if(netgear_region == "WW" && top.support_orange_vlan == "1")
+			$$("#isp_select").show();
+}
+
+function genieHelpChecking()
+{
+	var cf = document.forms[0];
+
+	if($$('#help_auto_detc').is(":checked"))
+	{
+		return true;
+	}
+	else if($$('#help_my_detc').is(":checked"))
+	{
+		if(confirm(bh_no_genie_help_confirm) == false)
+			return false;
+
+		cf.action = "/apply.cgi?/BRS_orbi_satellite_start.html timestamp=" + ts;
+		cf.submit_flag.value = "hijack_to_manual";
+		return true;
+	}
+	else if($$('#help_restore').is(":checked"))
+	{
+		this.location.href = "BRS_03B_haveBackupFile.html";
+		return false;
+	}
+	else if($$('#help_ISP').is(":checked"))
+	{
+		this.location.href = "BRS_03C_haveOrange.html";
+		return false;
+	}
+	else
+	{
+		alert(bh_select_an_option);
+		return false;
+	}
+	
+}
+
+</script>
+<div id="container">
+	<div class="dialog-content">
+      <!-- Configure Internet Connection-->
+		<div id="card-configure-internet-connection" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<div class="desc-title"><script>document.write(bh_orbi_config_conn);</script></div>
+			<div class="desc-text"><script>document.write(bh_connection_further_action);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_help_msg);</script></div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="WANDetc" id="help_auto_detc" value="AutoDetc" checked />
+						<label for="help_auto_detc"></label>
+					</p>
+					<div class="bullet"> <script>document.write(bh_orbi_help_choice_yes);</script></div>
+					<span class="desc-title-bullet long-bullet"><script>document.write(bh_orbi_help_choice1);</script></span>
+				</div>
+			</div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="WANDetc" id="help_my_detc" value="MyDetc" />
+						<label for="help_my_detc"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_orbi_help_choice_no);</script></div>
+					<span class="desc-title-bullet long-bullet"><script>document.write(bh_orbi_help_choice2);</script></span>
+				</div>
+			</div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="WANDetc" id="help_restore" value="Restore" />
+						<label for="help_restore"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_orbi_help_choice_save);</script></div>
+					<span class="desc-title-bullet long-bullet"><script>document.write(bh_orbi_help_choice3);</script></span>
+				</div>
+			</div>
+			
+			<div class="bullet-wrapper last-bullet" id="isp_select" style="display:none">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="WANDetc" id="help_ISP" value="ISP" />
+						<label for="help_ISP"></label>
+					</p>
+					<div class="bullet">No, select Internet service provider(ISP)</div>
+					<span class="desc-title-bullet long-bullet">I want to select my ISP from the ISP profile list</span>
+				</div>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return genieHelpChecking();">
+				<span><script>document.write(bh_orbi_next_mark)</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

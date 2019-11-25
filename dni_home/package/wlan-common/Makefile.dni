@@ -1,0 +1,7 @@
+define Package/wlan-common/install_dniext
+	$(CP) $(LOCAL_DNI_FILES_EXT)/* $(1)/
+endef
+
+define Package/wlan-common/prepare_dniext
+endef
+

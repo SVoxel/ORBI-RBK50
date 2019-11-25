@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<% cfg_set("from_setting","1") %>
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var is_04_refresh_page = 0;
+var ap_mode = "<% cfg_get("ap_mode") %>";
+
+function loadvalue()
+{
+	if(ap_mode =="1")
+	{
+		if(top.location.href.indexOf("BRS_") > -1){
+			if(top.location.href.indexOf("orbilogin.com") > -1){
+				setTimeout("top.location.href='http://orbilogin.net/BRS_index.htm';", 100000);
+			}else{
+				setTimeout("top.location.href='http://orbilogin.com/BRS_index.htm';", 100000);
+			}
+		}else{
+				setTimeout("this.location.href='BRS_04_applySettings_ping.html';", 100000);
+		}
+	}
+	else
+	{
+		var wait_time = 60000;
+		if(top.orange_apply_flag == "1" && top.support_orange_vlan == "1")
+			wait_time = 120000;
+		if(top.location.href.indexOf("BRS_") > -1){
+			if(top.location.href.indexOf("orbilogin.com") > -1){
+				setTimeout("top.location.href='http://orbilogin.net/BRS_index.htm';", wait_time);
+			}else{
+				setTimeout("top.location.href='http://orbilogin.com/BRS_index.htm';", wait_time);
+			}
+		}else
+			setTimeout("this.location.href='BRS_04_applySettings_ping.html';", wait_time);
+	}
+}
+</script>
+</head>
+
+<body onload="loadvalue();">
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Applying Internet Connection -->
+		<div id="card-applying-internet-connection" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-title"><script>document.write(bh_apply_connection);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_wait);</script></div>
+			
+			<div class="spinner"></div>
+			<div class="desc-text wait"><script>document.write(bh_orbi_pls_wait);</script></div>
+		</div>
+	</div>
+</div>
+</body>
+
+</html>

@@ -1,0 +1,1 @@
+<% access_file("/www/gp_temp.txt") %>#<% cat_toc_file_message("/www/gp_temp.txt") %>

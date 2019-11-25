@@ -1,0 +1,21 @@
+#!/bin/sh
+
+old_bh_ssid=`/bin/config get wlg_ap_bh_ssid`
+old_bh_pass=`/bin/config get wlg_ap_bh_wpa2_psk`
+new_bh_ssid=$1
+new_bh_pass=$2
+old_bh_psk=$old_bh_pass
+new_bh_psk=$new_bh_pass
+
+if [ `echo $old_bh_pass|wc -L` -lt "64" ]; then
+    old_bh_psk=`wpa_passphrase $old_bh_ssid $old_bh_pass |grep psk |grep -v "\"" |awk -F "=" '{print $2}'`
+fi
+if [ `echo $new_bh_pass|wc -L` -lt "64" ]; then
+    new_bh_psk=`wpa_passphrase $new_bh_ssid $new_bh_pass |grep psk |grep -v "\"" |awk -F "=" '{print $2}'`
+fi
+if [ "$new_bh_psk" = "$old_bh_psk" -o "$new_bh_psk" = "$old_bh_pass" ]; then
+   echo "0" > /tmp/check_psk_change_status.txt
+else
+   echo "1" > /tmp/check_psk_change_status.txt
+fi
+

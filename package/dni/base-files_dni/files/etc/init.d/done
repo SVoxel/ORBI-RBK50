@@ -1,0 +1,141 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=95
+
+security_enhancement(){
+	local check_security_flag="0"
+	local passwd_backup=$(/bin/config get http_passwd_backup)
+	local answer1_backup=$(/bin/config get PWD_answer1_backup)
+	local answer2_backup=$(/bin/config get PWD_answer2_backup)
+
+	if [ "x$(/bin/config get blank_state)" = "x1" ]; then
+		if [ "x$(/bin/config get origin_blank_state_flag)" = "x1" ]; then
+			if [ "x$(/bin/config get dns_hijack)" = "x1" -a "x$(/bin/config get hijack_process)" = "x1" -a "x$(/bin/config get hijack_config_status)" = "x0" ]; then
+				/bin/config set http_passwd="$passwd_backup"
+				/bin/config set http_passwd_digest="$passwd_backup"
+				/bin/config set PWD_answer1="$answer1_backup"
+				/bin/config set PWD_answer2="$answer2_backup"
+
+				/bin/config unset http_passwd_backup
+				/bin/config unset PWD_answer1_backup
+				/bin/config unset PWD_answer2_backup
+
+				/bin/config set blank_state="0"
+				/bin/config set origin_blank_state_flag="0"
+				/bin/config set flag_use_passwd_digest="1"
+				/bin/config set dns_hijack="0"
+				/bin/config set hijack_process="3"
+				/bin/config set hijack_config_status="4"
+
+				sleep 2
+				killall -SIGUSR2 dnsmasq
+				sleep 1
+				killall -SIGUSR2 dnsmasq
+			else
+				/bin/config set blank_state="0"
+				if [ "x$(/bin/config get flag_use_passwd_digest)" != "x1" ]; then
+					check_security_flag="1"
+				fi
+			fi
+		else
+			/bin/config set blank_state="0"
+			if [ "x$(/bin/config get flag_use_passwd_digest)" != "x1" ]; then
+				check_security_flag="1"
+			fi
+			if [ "x$(/bin/config get dns_hijack)" = "x0" ];then
+				/bin/config set origin_blank_state_flag="1"
+			fi
+		fi
+	else
+		/bin/config set origin_blank_state_flag="0"
+		if [ "x$(/bin/config get flag_use_passwd_digest)" != "x1" ]; then
+			/bin/config set origin_blank_state_flag="1"
+			check_security_flag="1"
+		fi
+	fi
+
+	local http_passwd=$(/bin/config get http_passwd)
+	if [ "x$check_security_flag" = "x1" ]; then
+		if [ "x$(/usr/sbin/hash-data -c "$http_passwd")" = "x1" ]; then
+			/bin/config set weak_password_check="1"
+		fi
+		/bin/config set flag_use_passwd_digest="1"
+	fi
+
+	/bin/config commit
+}
+
+boot() {
+	mount_root done
+	rm -f /sysupgrade.tgz
+
+	# process user commands
+	[ -f /etc/rc.local ] && {
+		sh /etc/rc.local
+	}
+
+	# set leds to normal state
+	. /etc/diag.sh
+	set_state done
+
+	# after DUT boot done, enable GRO
+	/usr/sbin/ethtool -K eth1 gro on
+	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		utelnetd_p=`pidof utelnetd`
+		if [ "x${utelnetd_p}" = "x" ]; then
+			/usr/sbin/utelnetd -d -i br0
+		fi
+	else
+		/sbin/ledcontrol -n power -c green -s on
+	fi
+
+	security_enhancement
+
+	telnetenable_pid=`pidof telnetenable`
+	utelnetd_pid=`pidof utelnetd`
+	if [ "x${telnetenable_pid}" != "x" -a "x${utelnetd_pid}" = "x" ]; then
+		echo "restart the daemon telnetenable for Thin client !!!"
+		/bin/kill -9 $telnetenable_pid
+		/usr/sbin/telnetenable
+	fi
+
+	/sbin/cmdftp restart &
+
+	# Start ipmac binding
+	/sbin/ip_mac start
+	sleep 1
+	/etc/init.d/dnsmasq start &
+	sleep 1
+	/sbin/check_status.sh &
+
+	#tmply fixed pppd can not get ip after upgrade FW.
+        local ipv4_pppd=`ps | grep "pppd call dial-provider updetach" | grep -v "grep" |awk '{print $1}'`
+        local pppip=`ifconfig ppp0 |grep "inet addr" |cut -f2 -d: |cut -f1 -d' '`
+        if [ "x$ipv4_pppd" != "x" ] && [ "x$pppip" = "x" ]; then
+                /bin/kill -SIGHUP $ipv4_pppd
+                /bin/kill $ipv4_pppd; pppd call dial-provider updetach
+        fi
+
+	have_console=`ls -al /dev/console |grep crw`
+	[ "$have_console" = "" ] && rm /dev/console -rf && mknod /dev/console c 5 1
+	ageing_time=$(/bin/config get ageing_time)
+	/usr/sbin/brctl setageing br0 $ageing_time
+
+	##workaroud for memory leak
+	/sbin/drop_caches &
+
+    #workaround for xagent hard to connect to staging
+    if [ "`/bin/config get enable_arlo_function`" = "1" ];then
+        xagent_control -c send_discovery -s 1002
+    fi
+
+	rm -f /tmp/boot_status
+
+	[ "$(/bin/config get fwupgrade_performed)" = "1" ] && /bin/config set fwupgrade_performed=0
+	sysctl -w net.ipv4.neigh.default.gc_reap_limit=100
+	killall klogd
+	/sbin/klogd &
+	echo "restart klogd process" > /dev/console
+	echo "[Orbi]***boot done***" > /dev/console
+}

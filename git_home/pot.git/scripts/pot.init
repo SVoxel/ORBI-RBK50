@@ -1,0 +1,21 @@
+#!/bin/sh /etc/rc.common
+START=70
+
+pot_start() {
+	potd
+	potval -T $($CONFIG get time_zone) -d $DGC_MTD_POT
+}
+
+boot() {
+	pot_start
+}
+
+pot_stop(){
+	killall potval
+	killall potd
+}
+
+restart(){
+	pot_stop
+	pot_start
+}

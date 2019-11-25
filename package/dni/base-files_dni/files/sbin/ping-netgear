@@ -1,0 +1,143 @@
+#!/bin/sh
+
+echo "****************Start of ping-netgear********************" > /dev/console
+INTERVAL=10
+traffic_previous_status=0
+ping_previous_status=0
+old_route_status=""
+route_status=""
+INTERNET_INDICATE="/tmp/internet_status"
+
+net_detect ()
+{
+    if [ "$wait_time" != "30" ];then
+	[ "$route_status" = "$old_route_status" ] && return
+    fi
+
+    sleep 2 # route is ready, wait sometime for dns resolve.
+    echo "do ping..." > /dev/console
+    ping -c 2 www.netgear.com > /tmp/ping_netgear_result 2> /dev/null
+
+    result=`cat /tmp/ping_netgear_result`
+    timeup=`cat /tmp/led_time`
+
+    traffic_previous_status=0
+    if [ "x$result" = "x" ];then
+        if [ "$ping_previous_status" = "0" -a "$timeup" = "1" ];then
+            ping_previous_status=1
+            /sbin/led_ring stop 
+            ledcontrol -n all -c magenta -s on
+        fi
+
+		old_disconnetion=`/bin/config get internetDisconnDuration`
+		let old_disconnetion=old_disconnetion+5
+		/bin/config set internetDisconnDuration=$old_disconnetion
+    else
+		if [ "x$(echo $result |grep "100% packet loss")" != "x" ]; then
+			old_disconnetion=`/bin/config get internetDisconnDuration`
+			let old_disconnetion=old_disconnetion+5
+			/bin/config set internetDisconnDuration=$old_disconnetion
+		fi
+	wanport_status=`cat /tmp/port_status`
+	if [ "$wanport_status" = "1" ];then
+	    echo 1 > /tmp/led_time
+            ping_previous_status=0
+            /sbin/led_ring stop 
+	fi
+    fi
+}
+
+wait_time="0"
+wan_down_time="0"
+while true
+do
+    wps_status=`cat /tmp/wps_process_state` 2> /dev/null
+    gui_led_status=`/bin/config get led_blinking_setting` 2> /dev/null
+    hijack_status=`/bin/config get dns_hijack` 2> /dev/null
+    traffic_status=`/bin/config get traffic_warning_limit` 2> /dev/null
+    wanproto_status=`/bin/config get wan_proto` 2> /dev/null
+    wandod_status=`/bin/config get wan_endis_dod` 2> /dev/null
+    wanport_status=`cat /tmp/port_status` 2> /dev/null
+    dod_connect_status=`cat /tmp/dod-led` 2> /dev/null
+    route_status=`route -n |grep UG`
+    apmode_status=`/bin/config get ap_mode` 2> /dev/null
+
+    if [ "$gui_led_status" = "1" ];then
+        traffic_previous_status=0
+        ping_previous_status=0
+        /sbin/led_ring stop 
+        ledcontrol -n all -c disable -s on
+
+    elif [ "$wps_status" = "start" ];then
+        traffic_previous_status=0
+        ping_previous_status=0
+
+    elif [ "$hijack_status" = "1" ];then
+        ping_previous_status=0
+        if [ "$traffic_status" = "1" -o "$traffic_status" = "2" ];then
+            traffic_previous_status=0
+#/sbin/led_ring start traffic 
+	
+        else
+            if [ "$traffic_previous_status" = "0" ];then
+                traffic_previous_status=1
+                /sbin/led_ring stop 
+                ledcontrol -n all -c white -s on
+            fi
+        fi
+    
+    elif [ "$wanport_status" != "1" ];then
+        timeup=`cat /tmp/led_time`
+        if [ "$ping_previous_status" = "0" -a "$timeup" = "1" ];then
+            traffic_previous_status=0
+            ping_previous_status=1
+        fi
+		wan_down_time=$(( $wan_down_time + 1 ))
+	   if [ "$wan_down_time" -gt "30" ];then
+			if [ "$wanproto_status" = "pppoe" -o "$wanproto_status" = "pptp" -o "$wanproto_status" = "l2tp" ] && [ "$wandod_status" = "1" ] && [ "$apmode_status" = "0" ]; then
+				wan_down_time=0
+			else
+				wan_down_time=0
+				old_disconnetion=`/bin/config get internetDisconnDuration`
+				old_disconnetion=$(($old_disconnetion+5))
+				/bin/config set internetDisconnDuration=$old_disconnetion
+			fi
+		fi
+    elif [ "$dod_connect_status" = "0" ];then
+        timeup=`cat /tmp/led_time`
+        if [ "$ping_previous_status" = "0" -a "$timeup" = "1" ];then
+            traffic_previous_status=0
+            ping_previous_status=1
+            /sbin/led_ring stop 
+            ledcontrol -n all -c magenta -s on
+        fi
+
+    else
+        if [ "$wanproto_status" = "pppoe" -o "$wanproto_status" = "pptp" ] && [ "$apmode_status" = "0" ]; then
+			# If connetion mode is dial-on-demand, then get connection status from file instead of pinging Internet.
+            if [ "$wandod_status" = "1" ];then
+				ppp_status=`cat /tmp/ppp/ppp0-status`
+                /sbin/led_ring stop 
+				if [ "x$ppp_status" = "x1" ];then
+					traffic_previous_status=0
+					ping_previous_status=0
+				else
+					ping_previous_status=1
+					ledcontrol -n all -c magenta -s on
+				fi
+            else
+                net_detect
+            fi
+        else
+            net_detect
+        fi
+    fi
+
+    echo $ping_previous_status > $INTERNET_INDICATE
+    sleep $INTERVAL
+    wait_time=$(( $wait_time + 1 ))
+    [ "$wait_time" -gt "30" ] && wait_time=0
+    old_route_status="$route_status"
+
+done
+echo "****************Stop of ping-netgear********************" > /dev/console

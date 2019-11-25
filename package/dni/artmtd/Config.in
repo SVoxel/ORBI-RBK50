@@ -1,0 +1,137 @@
+menu "ART Conofiguration"
+
+config SUPPORT_BOARDDATA2
+	int	"The length of Serial Number"
+	default 0
+
+config SERIAL_NUMBER_OFFSET
+	string 
+	prompt "SN offset in art partition"
+	default 0x26L
+
+config SERIAL_NUMBER_LENGTH
+	int	"The length of Serial Number"
+	default 13
+
+config REGION_NUMBER_OFFSET
+	string "RN offset in art partition"
+	default 0x33L
+
+config REGION_NUMBER_LENGTH
+	int "The length of Region Number"
+	default 2
+
+config BOARD_HW_ID_OFFSET
+	string  "HW ID offset in art partition"
+	default 0x35L
+
+config BOARD_HW_ID_LENGTH
+	int "The length of board hardware id"
+	default 31
+
+config BOARD_MODEL_ID_OFFSET
+	string "MODEL ID offset in art partition"
+	default 0x54L
+	
+config BOARD_MODEL_ID_LENGTH
+	int "The length of board model id"
+	default 16
+
+config REGION_FILE
+	string "The file of firmware region"
+	default "/tmp/firmware_region"
+
+config BOARD_FRONTHAUL_SSID_OFFSET
+	string "HW ID offset in fronthaul partition"
+	default 0x64L
+
+config BOARD_FRONTHAUL_SSID_LENGTH
+	int "HW ID offset in fronthaul id"
+	default 32
+
+config BOARD_BACKHAUL_SSID_OFFSET
+	string "HW ID offset in backhaul partition"
+	default 0x84L
+
+config BOARD_BACKHAUL_SSID_LENGTH
+	int "HW ID offset in backhaul id"
+	default 32
+
+config BOARD_FRONTHAUL_PASSPHRASE_OFFSET
+	string "HW ID offset in fronthaul passphrase partition"
+	default 0x94L
+
+config BOARD_FRONTHAUL_PASSPHRASE_LENGTH
+	int "HW ID offset in fronthaul passphrase id"
+	default 64
+
+config BOARD_BACKHAUL_PASSPHRASE_OFFSET
+	string "HW ID offset in backhaul passphrase partition"
+	default 0xd4L
+
+config BOARD_BACKHAUL_PASSPHRASE_LENGTH
+	int "PASSPHRASE offset in art id"
+	default 64
+
+config BOARD_DATA_OFFSET
+	string "data offset in art partition"
+	default 0x114L
+
+config BOARD_DATA_LENGTH
+	int "data offset in art id"
+	default 4
+
+config BOOT_PART_OFFSET
+	string "part offset in art partition"
+	default 0x118L
+
+config BOOT_PART_LENGTH
+	int "part offset in art id"
+	default 2
+
+config HW_REVISION_OFFSET
+	string "hw_revision offset in art partition"
+	default 0x122L
+
+config HW_REVISION_LENGTH
+	int "part offset in art id"
+	default 2
+
+config ART_SIZE
+	string "part offset in art id"
+	default 0x10000
+
+config BOARD_BOOT_PARTITION_OFFSET
+	int "part offset in art id"
+	default 0
+
+config BOARD_BOOT_PARTITION_LENGTH
+	int "part offset in art id"
+	default 0
+
+config BOARD_MODE_FLAG_OFFSET
+       string "mode flag in art id"
+       default 0x1L
+
+config BOARD_MODE_FLAG_LENGTH
+       int "the length of mode flag"
+       default 1
+
+config BOARD_DEFAULT_MODE_FLAG_OFFSET
+       string "default mode flag in art id"
+       default 0x2L
+
+config BOARD_DEFAULT_MODE_FLAG_LENGTH
+       int "the length of default mode flag"
+       default 1
+
+config CAL_BLOCK_NUM
+	int "CAL BLOCK NUM"
+	default 1
+
+config MTD_BLOCK_SIZE
+	int "MTD BLOCK SIZE DEFAULT value is 64 * 1024"
+	default 65536
+
+endmenu
+

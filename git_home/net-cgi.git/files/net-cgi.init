@@ -1,0 +1,165 @@
+#!/bin/sh /etc/rc.common
+
+START=23
+
+CONFIG=/bin/config
+CONFIG_FILE="/tmp/net-cgi.conf"
+. /lib/dni_platform/net-cgi-nc.conf
+
+[ "x$HOST_NAME" = "x" ] && HOST_NAME="Orbi"
+[ "x$WLAN_5G_STATUS" = "x" ] && WLAN_5G_STATUS="/tmp/WLAN_5G_status"
+[ "x$BH_AN_MODE" = "x" ] && BH_AN_MODE="1733M"
+[ "x$SUPPORT_PART_DEV" = "x" ] && SUPPORT_PART_DEV=1
+[ "x$HAVE_MCPROXY" = "x" ] && HAVE_MCPROXY=0
+[ "x$HAVE_SATELLITE_INFO" = "x" ] && HAVE_SATELLITE_INFO=1
+[ "x$LIGHTING_LED" = "x" ] && LIGHTING_LED=1
+[ "x$HAVE_AIRTIME_FAIRNESS" = "x" ] && HAVE_AIRTIME_FAIRNESS=0
+[ "x$FRONTHAUL_RESTART" = "x" ] && FRONTHAUL_RESTART=1
+[ "x$NTPST_POSTION" = "x" ] && NTPST_POSTION=2048
+[ "x$STAMAC_POSTION" = "x" ] && STAMAC_POSTION=2052
+[ "x$NANDWRITE" = "x" ] && NANDWRITE=0
+[ "x$VOICE_CONTROL" = "x" ] && VOICE_CONTROL=1
+[ "x$VIE" = "x" ] && VIE=7
+[ "x$SHOW_BITFLIP" = "x" ] && SHOW_BITFLIP=0
+[ "x$ROAMING_AGGRESSIVE" = "x" ] && ROAMING_AGGRESSIVE=15
+[ "x$LAN_PORTS_NUM" = "x" ] && LAN_PORTS_NUM=3
+[ "x$BOOTPART_01" = "x" ] && BOOTPART_01="01"
+[ "x$BOOTPART_02" = "x" ] && BOOTPART_02="02"
+[ "x$INSIGHT_LOG" = "x" ] && INSIGHT_LOG=0
+[ "x$HAVE_ORANGE_VLAN" = "x" ] && HAVE_ORANGE_VLAN=0
+[ "x$HAVE_ISP_FREE" = "x" ] && HAVE_ISP_FREE=0
+[ "x$MAX_POST_SIZE" = "x" ] && MAX_POST_SIZE="0x2280000"
+[ "x$SUPPORT_INSIGHT_APP" = "x" ] && SUPPORT_INSIGHT_APP="0"
+[ "x$SUPPORT_AUTO_UPGRADE" = "x" ] && SUPPORT_AUTO_UPGRADE="0"
+[ "x$GP_FB_WIFI" = "x" ] && GP_FB_WIFI="0"
+[ "x$POWER_SOURCE" = "x" ] && POWER_SOURCE="0"
+[ "x$SUPPORT_EXT_FW" = "x" ] && SUPPORT_EXT_FW="0"
+[ "x$SUPPORT_DTV2" = "x" ] && SUPPORT_DTV2=0
+[ "x$HAVE_DHCP_OPTION" = "x" ] && HAVE_DHCP_OPTION=0
+SATELLITE_MODULE_NAME=$($CONFIG get dgc_sysinfo_module_name_cc)
+BASE_MODULE_NAME=$($CONFIG get dgc_sysinfo_module_name)
+WLANBH_IFNAME=$($CONFIG get dgc_wlan_5g_bh_phyif)
+WLANFRONT_IFNAME=$($CONFIG get dgc_wlan_5g_phyif)
+HAVE_GUEST_NETWORK=$($CONFIG get dgc_func_have_guest_network)
+DNI_PARENTAL_CTL=$($CONFIG get dgc_func_have_dni_parental_ctl)
+HAVE_VLAN=$($CONFIG get dgc_func_have_vlan)
+HAVE_DUAL_IMAGE=$($CONFIG get dgc_func_have_dual_image)
+IMAGE_MTD2=`part_dev firmware2`
+IMAGE_MTD=`part_dev firmware`
+LANG_FLASH_PART=`part_dev language`
+POT_MTD=`part_dev pot`
+ORBI_MINI=$($CONFIG get dgc_func_have_orbi_mini)
+ORBI_READYSHARE_PRINTER=$($CONFIG get dgc_func_have_readyshare_printer)
+HAVE_BYOD_NETWORK=$($CONFIG get dgc_func_have_byod_network)
+AP_GUEST_PORTAL=$($CONFIG get dgc_func_have_guest_portal)
+BUSINESS_AP_DETECT=$($CONFIG get dgc_func_have_business_ap_detect)
+HAVE_VLAN_SB=$($CONFIG get dgc_func_have_vlan_sb)
+HAVE_WIRELESS_COMBINE=$($CONFIG get dgc_func_have_wireless_combine)
+HAVE_SPEEDTEST_MENU=$($CONFIG get dgc_func_have_speedtest_menu)
+HAVE_FORCESHIELD=$($CONFIG get dgc_func_have_forceshield)
+HAVE_SUPPORT_QOS=$($CONFIG get dgc_func_have_qos)
+MAINTRUNK_SUPPORT=1
+HAVE_CIRCLE_SUPPORT=$($CONFIG get dgc_func_have_circle)
+HAVE_ARLO_SUPPORT=$($CONFIG get enable_arlo_function)
+HAVE_CONTROL_FIRMWARE=$($CONFIG get dgc_func_have_control_firmware)
+HAVE_BASE_TRI_BAND=$($CONFIG get dgc_func_base_have_tri_band)
+HAVE_SATE_TRI_BAND=$($CONFIG get dgc_func_sate_have_tri_band)
+HAVE_SIPPORT_ARMOR=$($CONFIG get dgc_func_have_armor)
+HAVE_AUTO_TIMEZONE=1
+WLA_PREFIX=$($CONFIG get dgc_wlan_5g_fh_prefix)
+WLA1_PREFIX=$($CONFIG get dgc_wlan_5g_guest_prefix)
+WLA_2ND_PREFIX=$($CONFIG get dgc_wlan_5g_bh_prefix)
+
+config()
+{
+	printf "### GENERATED AUTOMATICALLY, PLEASE DON'T EDIT MANUALLY\n"
+
+	printf "%s\n" \
+		"nc_host_name \"${HOST_NAME}\"" \
+		"nc_sate_module_name \"${SATELLITE_MODULE_NAME}\"" \
+		"nc_base_module_name \"${BASE_MODULE_NAME}\"" \
+		"nc_wlanbh_ifname \"${WLANBH_IFNAME}\"" \
+		"nc_wlanfont_ifname \"${WLANFRONT_IFNAME}\"" \
+		"nc_have_guest_network \"${HAVE_GUEST_NETWORK}\"" \
+		"nc_parental_ctl \"${DNI_PARENTAL_CTL}\"" \
+		"nc_have_vlan \"$HAVE_VLAN\"" \
+		"nc_have_dual_image \"$HAVE_DUAL_IMAGE\"" \
+		"nc_image_mtd2 \"${IMAGE_MTD2}\"" \
+		"nc_orbi_mini \"$ORBI_MINI\"" \
+		"nc_orbi_readyshare_printer \"$ORBI_READYSHARE_PRINTER\"" \
+		"nc_have_byod_network \"${HAVE_BYOD_NETWORK}\"" \
+		"nc_ap_guest_portal \"${AP_GUEST_PORTAL}\"" \
+		"nc_business_ap_detect \"${BUSINESS_AP_DETECT}\"" \
+		"nc_have_vlan_sb \"${HAVE_VLAN_SB}\"" \
+		"nc_have_wireless_combine \"${HAVE_WIRELESS_COMBINE}\"" \
+		"nc_have_speedtest_menu \"${HAVE_SPEEDTEST_MENU}\"" \
+		"nc_have_forceshield \"${HAVE_FORCESHIELD}\"" \
+		"nc_wlan_5g_status \"${WLAN_5G_STATUS}\"" \
+		"nc_bh_an_mode \"${BH_AN_MODE}\"" \
+		"nc_have_mcproxy \"${HAVE_MCPROXY}\"" \
+		"nc_support_part_dev \"${SUPPORT_PART_DEV}\"" \
+		"nc_have_satellite_info \"${HAVE_SATELLITE_INFO}\"" \
+		"nc_guest_wifi_onoff \"${GUEST_WIFI_ONOFF}\"" \
+		"nc_lightingled_support \"${LIGHTING_LED}\"" \
+		"nc_have_advanced_qos \"${HAVE_SUPPORT_QOS}\"" \
+		"nc_airtime_fairness \"${HAVE_AIRTIME_FAIRNESS}\"" \
+		"nc_maintrunk_support \"${MAINTRUNK_SUPPORT}\"" \
+		"nc_fronthaul_restart_only \"${FRONTHAUL_RESTART}\"" \
+		"nc_have_circle_plc \"${HAVE_CIRCLE_SUPPORT}\"" \
+		"nc_ntpst_postion \"${NTPST_POSTION}\"" \
+		"nc_stamac_postion \"${STAMAC_POSTION}\"" \
+		"nc_pot_mtd \"${POT_MTD}\"" \
+		"nc_lang_flash_part \"${LANG_FLASH_PART}\"" \
+		"nc_image_mtd \"${IMAGE_MTD}\"" \
+		"nc_nandwrite \"${NANDWRITE}\"" \
+		"nc_voice_control \"${VOICE_CONTROL}\"" \
+		"nc_model_type ${VIE}" \
+		"nc_show_bitflip \"${SHOW_BITFLIP}\"" \
+		"nc_support_arlo \"${HAVE_ARLO_SUPPORT}\"" \
+		"nc_roaming_aggressive \"${ROAMING_AGGRESSIVE}\"" \
+		"nc_lan_ports_num \"${LAN_PORTS_NUM}\"" \
+		"nc_bootpart_02 \"${BOOTPART_02}\"" \
+		"nc_bootpart_01 \"${BOOTPART_01}\"" \
+		"nc_insight_log \"${INSIGHT_LOG}\"" \
+		"nc_have_openvpn_certificate \"${HAVE_VPN_CERT}\"" \
+		"nc_have_control_firmware \"${HAVE_CONTROL_FIRMWARE}\"" \
+		"nc_have_isp_free \"${HAVE_ISP_FREE}\""\
+		"nc_have_orange_vlan \"${HAVE_ORANGE_VLAN}\""\
+		"nc_tri_band \"${HAVE_BASE_TRI_BAND}\"" \
+		"nc_sate_tri_band \"${HAVE_SATE_TRI_BAND}\"" \
+		"nc_max_post_size \"${MAX_POST_SIZE}\"" \
+		"nc_support_insight \"${SUPPORT_INSIGHT_APP}\"" \
+		"nc_auto_upgrade_set \"${SUPPORT_AUTO_UPGRADE}\"" \
+		"nc_fb_wifi \"${GP_FB_WIFI}\"" \
+		"nc_power_source \"${POWER_SOURCE}\"" \
+		"nc_support_armor \"${HAVE_SIPPORT_ARMOR}\"" \
+		"nc_support_ext_fw \"${SUPPORT_EXT_FW}\"" \
+		"nc_support_dtv2 \"${SUPPORT_DTV2}\"" \
+		"nc_auto_timezone_detect \"${HAVE_AUTO_TIMEZONE}\"" \
+		"nc_wla_prefix \"${WLA_PREFIX}\"" \
+		"nc_wla1_prefix \"${WLA1_PREFIX}\"" \
+		"nc_wla_2nd_prefix \"${WLA_2ND_PREFIX}\"" \
+		"nc_have_dhcp_option \"${HAVE_DHCP_OPTION}\"" \
+
+		""
+}
+
+start()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+stop()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+restart()
+{
+	echo "net-cgi is managed by uhttpd!!!"
+}
+
+boot()
+{
+	config > $CONFIG_FILE
+}

@@ -1,0 +1,20 @@
+#!/bin/sh /etc/rc.common
+START=70
+
+
+pot_start() {
+	potd
+}
+
+boot() {
+	pot_start
+}
+
+pot_stop(){
+	killall potd
+}
+
+restart(){
+	pot_stop
+	pot_start
+}

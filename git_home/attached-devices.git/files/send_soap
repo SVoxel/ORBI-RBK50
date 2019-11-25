@@ -1,0 +1,45 @@
+#! /bin/sh
+
+CONFIG=/bin/config
+KILLALL=/usr/bin/killall
+NUM=0
+PS0=`ps |grep $0 |grep -v grep | wc -l`
+NEWSOAP_FLAG=`$CONFIG get newsoap_model`
+
+if [ $PS0 -gt 2 ];then
+	exit
+fi
+
+TIME_NOW=`date +%s`
+TIME_LAST=`cat /tmp/netscan/soap_lasttime`
+[ "$TIME_LAST" = "" ] && TIME_LAST=0
+TIME_SUB=$(($TIME_NOW - $TIME_LAST))
+if [ "$TIME_SUB" -gt "0" ] && [ "$TIME_SUB" -lt "14" ]; then
+	exit
+fi
+
+if [ "$NEWSOAP_FLAG" = "1" ];then
+	sleep 2 #skip this time arp show, change to send soap for the next arp show
+	$CONFIG set soap_setting="AttachDevice"
+	echo "$TIME_NOW" > /tmp/netscan/soap_lasttime
+	$KILLALL -SIGUSR1 soap_agent
+	exit
+fi
+
+if [ "x$($CONFIG get soap_setting)" = "xAttachDevice" ]; then
+	$KILLALL -SIGUSR1 soap_agent
+else
+	while [ $NUM -lt 5 ]
+		do
+			PS=`ps | grep soapclient |grep -v grep`
+			if [ "x$PS" = "x" ]; then
+				$CONFIG set soap_setting="AttachDevice"
+				$KILLALL -SIGUSR1 soap_agent
+				break
+			else
+				sleep 60
+				NUM=$(($NUM + 1))
+			fi
+		done
+fi
+

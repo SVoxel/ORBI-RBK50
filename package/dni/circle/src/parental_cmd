@@ -1,0 +1,62 @@
+#!/bin/sh /etc/rc.common
+parental_switch=$($CONFIG get parental_switch)
+opendns_enable=$($CONFIG get ParentalControl)
+circle_enable=$($CONFIG get enable_circle_plc)
+
+circle_function()
+{
+	#Workaround for circled hang on after reboot without internet
+	[ `$CONFIG get reboot_flag_for_circle` -eq 1 ] && return
+	if [ $circle_enable -eq 1 ]; then
+		insmod circle_pcc
+		/mnt/circle/shares/usr/bin/startcircle
+		/usr/bin/circle_check_account &
+	else
+		/mnt/circle/shares/usr/bin/stopcircle orbi
+		/usr/sbin/net-wall restart
+		/etc/init.d/dnsmasq stop
+		/etc/init.d/dnsmasq start
+		echo 1 > /sys/kernel/debug/circle_pcc/unregister
+		rmmod circle_pcc
+		killall circle_check_account
+	fi
+}
+
+
+opendns_function()
+{
+	/usr/sbin/net-wall restart
+	/etc/init.d/dnsmasq stop
+	/etc/init.d/dnsmasq start
+}
+
+#0:No disable operation	1:Circle disable	2:Opendns disable
+start()
+{
+case $parental_switch in
+	"0")
+		if [ $circle_enable -eq 1 ]; then
+			circle_function
+		else if [ $opendns_enable -eq 1 ]; then
+			opendns_function
+		fi
+		fi
+		;;
+	"1")
+		if [ $opendns_enable -eq 1 -a $circle_enable -eq 0 ];then
+			circle_function
+			opendns_function
+		else
+			circle_function
+		fi
+		;;
+	"2")
+		if [ $opendns_enable -eq 0 -a $circle_enable -eq 1 ]; then
+			opendns_function
+			circle_function
+		else
+			opendns_function
+		fi
+		;;
+esac
+}

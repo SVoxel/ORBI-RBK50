@@ -1,0 +1,68 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+
+start()
+{
+	export DAL_ROOT=/tmp/daldata
+	ntgbpm -f `cat $DAL_ROOT/general.fsn` -n `$CONFIG get device_name` -p 1 -b /dev/ttyQHS0 &
+	#ntgbpm -f `dal general.fsn` -n `dal general.model` -p 1 -b /dev/ttyQHS0 &
+	btdm &
+	sleep 2
+	bob &
+}
+
+boot() {
+	BT_ON=`/bin/config get BT_state`
+	if [ "$BT_ON" != "1" ]; then
+		exit
+	fi
+	. /lib/functions.sh
+	CONFIG=/bin/config
+	DAL_ROOT=/tmp/daldata
+	mkdir /tmp/daldata
+	echo -n "true"  > $DAL_ROOT/wifi.2g.supported
+	echo -n "true"  > $DAL_ROOT/wifi.2g.enabled
+	echo -n "true" > $DAL_ROOT/wifi.5g1.supported
+	echo -n "true" > $DAL_ROOT/wifi.5g1.enabled
+	echo -n "true" > $DAL_ROOT/wifi.cfg.dualband
+	echo -n "false" > $DAL_ROOT/wifi.5g2.supported
+	echo -n "false" > $DAL_ROOT/wifi.60g.supported
+	echo -n "false" > $DAL_ROOT/wifi.5g2.enabled
+	echo -n "false" > $DAL_ROOT/wifi.60g.enabled
+	echo -n `$CONFIG get http_passwd` > $DAL_ROOT/setup.password
+	echo -n `$CONFIG get PWD_question1` > $DAL_ROOT/setup.pwdRecovery.q1
+	echo -n `$CONFIG get PWD_question2` > $DAL_ROOT/setup.pwdRecovery.q2
+	echo -n `$CONFIG get PWD_answer1` > $DAL_ROOT/setup.pwdRecovery.a1
+	echo -n `$CONFIG get PWD_answer2` > $DAL_ROOT/setup.pwdRecovery.a2
+	echo -n `$CONFIG get enable_password_recovery` > $DAL_ROOT/setup.pwdRecovery.enabled
+	echo -n `$CONFIG get wl_ssid` > $DAL_ROOT/wifi.2g.ssid
+	echo -n `$CONFIG get wla_ssid` > $DAL_ROOT/wifi.5g1.ssid
+	echo -n `$CONFIG get wl_wpa2_psk` > $DAL_ROOT/wifi.2g.passphrase
+	echo -n `$CONFIG get wla_wpa2_psk` > $DAL_ROOT/wifi.5g1.passphrase
+	echo -n `$CONFIG get wl_wpa2_psk` > $DAL_ROOT/setup.defaultPassphrase
+	echo -n `$CONFIG get dns_hijack` > $DAL_ROOT/setup.blankState
+	echo -n `$CONFIG get Device_name` > $DAL_ROOT/general.model
+	echo -n `artmtd -r sn | sed -n '2p' | cut -d : -f 2` > $DAL_ROOT/general.fsn
+	echo -n "0" > $DAL_ROOT/wan.connected
+	echo -n "0" > $DAL_ROOT/wan.mediaSense
+
+	start
+}
+
+stop()
+{
+	killall bob &
+	killall ntgbpm &
+	killall btdm &
+	#power off bluetooth chip
+	/etc/init.d/bluetopia stop &
+}
+
+restart()
+{
+	stop
+	#power off bluetooth chip
+	/etc/init.d/bluetopia start &
+	start
+}

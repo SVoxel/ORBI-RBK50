@@ -1,0 +1,99 @@
+#!/bin/sh
+export PATH=/bin:/sbin:/usr/bin:/usr/sbin
+
+wifi_topology_file=`cat /etc/ath/wifi.conf  | grep WIFI_TOPOLOGY_FILE | awk -F= '{print $2}'`
+
+hotplug_log(){
+    env -i ACTION="$1" LOG="$2" /sbin/hotplug-call wlanlog
+}
+
+radar_log(){
+    local chan=$1
+
+    for ifname in `awk -v output_rule=ifname -f /etc/search-wifi-interfaces.awk $wifi_topology_file`; do
+        found=`iwlist $ifname chan | grep "Channel $chan"`
+        [ -n "$found" ] && break
+    done
+
+    device=`cat $wifi_topology_file | grep $ifname | cut -d':' -f3`
+
+    hotplug_log "radar" "[DFS radar]Radar found on channel $chan"
+
+    # it may be too first to get the new channel info from iwlist
+    sleep 1
+    new_chan=`iwlist $ifname channel | grep Fre | awk -F ' ' '{print $5}' | cut -d')' -f1`
+    if [ "$new_chan" = "$chan" ];then
+       hotplug_log "radar" "[DFS radar]All DFS channel been ban,stop $device"
+    else
+       hotplug_log "radar" "[DFS radar]Changing to DFS channel $new_chan"
+    fi
+}
+
+case "$ACTION" in
+    RADARDETECT)
+        [ -f /tmp/radardetect.pid ] || /usr/sbin/radardetect
+
+        radar_log `echo $CHANNEL | cut -d':' -f1`
+
+        CHANNEL=`echo $CHANNEL | cut -d':' -f2`
+        for chan in `echo $CHANNEL | sed 's/,/ /g'`; do 
+            /usr/sbin/radardetect_cli -a $chan
+        done
+        echo "Radar Detected at ["`date` "] on channels [$CHANNEL]" >> /tmp/radardetect.log
+        cp /tmp/radardetect.log /tmp/radardetect.log.tmp
+        tail -c 1m /tmp/radardetect.log.tmp > /tmp/radardetect.log
+        ;;
+    BACKHAULSTA_CONNECT)
+        echo "WIFI EVENT: $ACTION: $IFNAME is connected to AP" > /dev/console
+        local lockfile="/tmp/.wsplcd.eventlock"
+        local fileflag="/tmp/.wsplcd.lastrestart"
+        local wifi_topology_file=`cat /etc/ath/wifi.conf  | grep WIFI_TOPOLOGY_FILE | awk -F= '{print $2}'`
+        local ifname other_vap_connected
+        [ -f $lockfile ] && return
+        touch $lockfile
+        for ifname in `awk -v input_optype=BACKHAUL -v input_opmode=STA -v output_rule=ifname -f /etc/search-wifi-interfaces.awk $wifi_topology_file`; do
+            # Don't need to check this VAP's information
+            [ "$ifname" = "$IFNAME" ] && continue
+            other_vap_connected=`cat /proc/sys/net/$ifname/status | head -n 3 | grep RUN`
+            [ -n "$other_vap_connected" ] && {
+                break
+            }
+        done
+
+        # If no other VAP connected, it means this VAP is first connected, just restart wsplcd directly.
+        # If other VAP is connected, we don't know wsplcd has been restarted yet because of race condition.
+        # - Two backhauls are connected at the same time.
+        # Then, check last access time to determine need to restart wsplcd or not.
+        if [ -n "$other_vap_connected" -a -f "$fileflag" ]; then
+            a=`stat -t $fileflag | awk '{print $13}'`
+            b=`date +%s`
+            c=`expr $b - $a`
+            [ "$c" -le 60 ] && {
+                rm $lockfile
+                return
+            }
+        fi
+        touch "$fileflag"
+        echo "WIFI EVENT: $ACTION: Restart wsplcd" > /dev/console
+        ( sleep 2; /etc/init.d/wsplcd restart ) &
+        rm $lockfile
+        ;;
+    BACKHAUL_HOPCOUNT)
+        read IFNAME HOPCOUNT <<EOF
+        $INFO
+EOF
+        echo "WIFI EVENT: $ACTION: $IFNAME with hop counter = $HOPCOUNT" > /dev/console
+        local new_ap_hopcount=$(( $HOPCOUNT + 1 ))
+        if [ $new_ap_hopcount -gt 7 ]; then
+            new_ap_hopcount=7
+        fi
+        for ifname in `awk -v input_optype=BACKHAUL -v input_opmode=AP -v output_rule=ifname -f /etc/search-wifi-interfaces.awk $wifi_topology_file`; do
+            cur_ap_hopcount=`iwpriv $ifname g_dni_hopcnt | awk -F: '{printf "%d", $2}'`
+            if [ "$cur_ap_hopcount" != "$new_ap_hopcount" ]; then
+                echo "WIFI EVENT: Set hop counter $new_ap_hopcount to $ifname" > /dev/console
+                iwpriv $ifname dni_hopcnt $new_ap_hopcount
+            fi
+        done
+        ;;
+esac
+

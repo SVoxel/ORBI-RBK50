@@ -1,0 +1,36 @@
+#! /bin/bash
+
+INS_DIR_PRE=${INS_DIR_PRE}
+INS_BIN_DIR='$(INS_DIR_PRE)/usr/sbin'
+INS_INIT_DIR='$(INS_DIR_PRE)/etc/init.d'
+
+generate_makefile()
+{
+	tab=$'\t'
+	cat <<-EOF
+		# GENERATED AUTOMATICALLY BY configure, DON'T EDIT THIS FILE MANUALLY.
+
+		export INSTALL_DIR:=install -d -m0755
+		export INSTALL_BIN:=install -m0755
+		export INSTALL_DATA:=install -m0644
+		export INSTALL_CONF:=install -m0600
+		export LN:=ln -sf
+		export CP:=cp -fpR
+		export TOUCH:=touch
+
+		export INS_DIR_PRE:=$INS_DIR_PRE
+		export INS_BIN_DIR:=$INS_BIN_DIR
+		export INS_INIT_DIR:=$INS_INIT_DIR
+
+		SOURCE_DIR="src"
+		FILES_DIR="files"
+		SCRIPT_DIR="scripts"
+		
+		all install :
+			$tab\$(MAKE) -C \$(SOURCE_DIR) \$@
+			$tab\$(MAKE) -C \$(SCRIPT_DIR) \$@
+	EOF
+}
+
+# top level Makefile
+generate_makefile > Makefile

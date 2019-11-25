@@ -1,0 +1,192 @@
+<% http_header("style/form.css", "/funcs.js", "/jquery-1.7.2.min.js") %>
+<% body_header("", "DEV_device.htm", "orbi_devname") %>
+<div class="page_title">$edit_device</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<script>
+var master="<% cfg_get("http_loginname") %>";
+var ts="<% cfg_get("orbi_devname") %>";
+var device_name_change = 0;
+function loadvalue()
+{
+	var cf =  document.forms[0];
+
+	cf.orbi_devtype.value = "<% cfg_get("orbi_hid_devtype") %>";
+	if(top.support_new_ntgrtype == "1"){
+		document.getElementById("orbi_devtype2").style.display = "";
+		cf.orbi_devtype2.value = cf.orbi_devtype.value;
+	}else{
+		document.getElementById("orbi_devtype1").style.display = "";
+		cf.orbi_devtype1.value = cf.orbi_devtype.value;
+	}
+	if(cf.orbi_devtype.value == 0)
+		document.getElementById("device_type").style.display = "none";
+	//to sync reservation_add, access control page device name maxlength, page only save 20 chars.
+	if(cf.orbi_name.value.length > cf.orbi_name.maxLength)
+		cf.orbi_name.value = cf.orbi_name.value.substr(0, cf.orbi_name.maxLength);
+}
+
+
+$$(window).unload(function leavepage(){top.back_flag=1;});
+function check_dev(cf)
+{
+	if(top.support_new_ntgrtype == "1")	
+		cf.orbi_devtype.value = cf.orbi_devtype2.value;
+	else
+		cf.orbi_devtype.value = cf.orbi_devtype1.value;
+	if(cf.orbi_name.value=="")
+	{
+		alert("$device_name_null");
+		return false;
+	}
+	var name_str=cf.orbi_name.value;
+	if(device_name_change == 1 && name_str.length > 32)
+	{
+		alert("$devname_long");
+		return false;
+	}
+	for(i=0;i<name_str.length;i++)
+	{
+		var c = name_str.charCodeAt(i);
+		if(cf.orbi_devtype.value == "" && (c <32 || c>126))
+		{
+			alert("$device_name_error");
+			return false;
+		}
+	}
+	if(cf.orbi_model.value=="")
+	{
+		alert("Model Name error!");
+		return false;
+	}
+	cf.submit();
+	return true;
+}
+function backtoDev()
+{
+	location.href="DEV_device.htm";
+}
+function change_device_name(obj)
+{
+	if(device_name_change == 0) {
+		device_name_change = 1;
+		document.forms[0].devname_changed.value = "1";
+		obj.outerHTML = '<input type="text" name="orbi_name" maxlength="32" value="" onFocus="change_device_name(this);" />'
+	}
+}
+if( master =="admin" )
+    document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" onClick="backtoDev();">&nbsp;&nbsp;<input class="apply_bt" type="button" name="Apply" id="apply" value="$apply_mark" onClick="return check_dev(document.forms[0]);"></TD></TR>');
+else
+	document.write('<TR><TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD></TR>');
+</script>
+<input type="hidden" name="devname_changed" value="0">
+<input type="hidden" name="orbi_devtype" value="0">
+</TABLE>
+</div>
+<div id="main" class="main_top_button"> 
+<% table_header() %>
+
+<TR>
+	<TD nowrap>$info_mark_ip</TD>
+	<TD nowrap>
+	<% cfg_get("orbi_hid_ip") %>
+	</TD>
+</TR>
+<TR>
+ 	<TD nowrap>$info_mark_mac</TD>
+	<TD nowrap><% cfg_get("orbi_hid_mac") %></TD>
+</TR>
+<TR>
+	<TD nowrap>$device_model</TD>
+	<TD nowrap><input type="text" name="orbi_model" maxlength="30" value="<% cfg_sed_xss("orbi_hid_model") %>"/></TD>
+</TR>
+<TR>
+	<TD nowrap>$lan_mark_name</TD>
+	<TD nowrap><input type="text" name="orbi_name" maxlength="32" value="<% cfg_sed_xss("orbi_hid_name") %>" onFocus="change_device_name(this);" /></TD>
+</TR>
+<TR id="device_type">
+	<TD nowrap>$device_type</TD>
+	<TD nowrap>
+		<select name="orbi_devtype1" id="orbi_devtype1" style="display:none;">
+			<option value="1">$qos_device1</option>
+			<option value="2">$qos_device2</option>
+			<option value="3">$qos_device3</option>
+			<option value="4">$qos_device4</option>
+			<option value="5">$qos_device5</option>
+			<option value="6">$qos_device6</option>
+			<option value="7">$qos_device7</option>
+			<option value="8">$qos_device8</option>
+			<option value="9">$qos_device9</option>
+			<option value="10">$qos_device10</option>
+			<option value="11">$qos_device11</option>
+			<option value="12">$qos_device12</option>
+			<option value="13">$qos_device13</option>
+			<option value="14">$qos_device14</option>
+			<option value="15">$qos_device15</option>
+			<option value="16">$qos_device16</option>
+			<option value="17">$qos_device17</option>
+			<option value="18">$qos_device18</option>
+			<option value="19">$qos_device19</option>
+			<option value="20">$qos_device20</option>
+			<option value="21">$qos_device21</option>
+			<option value="22">$qos_device22</option>
+			<option value="23">$qos_device23</option>
+			<option value="24">$qos_device24</option>
+			<option value="25">$qos_device25</option>
+			<option value="26">$qos_device26</option>
+			<option value="27">$qos_device27</option>
+			<option value="28">$qos_device28</option>
+			<option value="29">$qos_device29</option>
+			<option value="30">$qos_device30</option>
+			<option value="31">$qos_device31</option>
+			<option value="32">$qos_device32</option>
+			<option value="33">$qos_device33</option>
+			<option value="34">$qos_device34</option>
+			<option value="35">$qos_device35</option>
+			<option value="36">$qos_device36</option>
+			<option value="37">$qos_device37</option>
+			<option value="38">$qos_device38</option>
+			<option value="39">$qos_device39</option>
+			<option value="40">$qos_device40</option>
+			<option value="41">$qos_device41</option>
+		</select>
+		<select name="orbi_devtype2" id="orbi_devtype2" style="display:none;">
+			<option value="Computer (Generic)">Computer (Generic)</option>
+			<option value="Laptop">Laptop</option>
+			<option value="Desktop">Desktop</option>
+			<option value="Entertainment (Generic)">Entertainment (Generic)</option>
+			<option value="TV">$qos_device35</option>
+			<option value="Media Streamer">Media Streamer</option>
+			<option value="Gaming">Gaming</option>
+			<option value="Smart Speaker">Smart Speaker</option>
+			<option value="Home Office (Generic)">Home Office (Generic)</option>
+			<option value="Printer">$qos_device27</option>
+			<option value="IoT (Generic)">IoT (Generic)</option>
+			<option value="Smart Plug">Smart Plug</option>
+			<option value="Fridge">Fridge</option>
+			<option value="Light">Light</option>
+			<option value="Thermostat">Thermostat</option>
+			<option value="Frame">Frame</option>
+			<option value="Smart Phone (Generic)">$qos_device32 (Generic)</option>
+			<option value="Tablet">$qos_device36</option>
+			<option value="Network (Generic)">Network (Generic)</option>
+			<option value="NAS">NAS</option>
+			<option value="Router">$qos_device10</option>
+			<option value="Extender">Extender</option>
+			<option value="IP Phone">IP Phone</option>
+			<option value="Security (Generic)">Security (Generic)</option>
+			<option value="Camera">$qos_device9</option>
+			<option value="Doorbell">Doorbell</option>
+			<option value="Smart Lock">Smart Lock</option>
+			<option value="Wearable (Generic)">Wearable (Generic)</option>
+		</select>
+
+	</TD>
+</TR>
+$bluebar
+</TABLE>
+</div>
+
+</FORM>
+</BODY>
+</HTML>

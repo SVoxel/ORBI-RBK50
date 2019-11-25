@@ -1,0 +1,20 @@
+#!/bin/sh
+
+devmem2 0x102d000 w 0x4902 #45 usb tlf
+devmem2 0x102e000 w 0x4902 #46 usb enable
+
+##devmem2 0x103f000 w 0x4902 #64 power red
+##devmem2 0x1040000 w 0x4902 #63 power green
+
+#devmem2 0x1036000 w 0x4902 #54 led red
+#devmem2 0x1035000 w 0x4902 #53 led green
+#devmem2 0x1039000 w 0x4902 #57 led blue
+#devmem2 0x103c000 w 0x4902 #60 led white
+
+devmem2 0x103a000 w 0x4902 #58 i2c enable
+devmem2 0x103b000 w 0x4902 #59 i2c reset
+
+insmod atherosgpio
+mknod /dev/atherosgpio c 240 0
+
+/sbin/led_ring start white

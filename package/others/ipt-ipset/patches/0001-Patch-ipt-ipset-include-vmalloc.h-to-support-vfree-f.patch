@@ -1,0 +1,25 @@
+From f1ac4d39789c624e7f6479a95dcf701b9791be3f Mon Sep 17 00:00:00 2001
+From: nick.chen <nick.chen@dniserver.dnish.net>
+Date: Fri, 13 Oct 2017 20:35:12 +0800
+Subject: [PATCH] [Patch][ipt-ipset]include vmalloc.h to support vfree function
+
+Signed-off-by: nick.chen <nick.chen@dniserver.dnish.net>
+---
+ .../linux/netfilter/ipset/ip_set_compat.h.in       |    1 +
+ 1 files changed, 1 insertions(+), 0 deletions(-)
+
+diff --git a/kernel/include/linux/netfilter/ipset/ip_set_compat.h.in b/kernel/include/linux/netfilter/ipset/ip_set_compat.h.in
+index 862504b..e1e9693 100644
+--- a/kernel/include/linux/netfilter/ipset/ip_set_compat.h.in
++++ b/kernel/include/linux/netfilter/ipset/ip_set_compat.h.in
+@@ -47,6 +47,7 @@
+ 
+ #include <linux/version.h>
+ #include <linux/netlink.h>
++#include <linux/vmalloc.h>
+ 
+ #ifndef rcu_dereference_bh
+ #define rcu_dereference_bh(p)		rcu_dereference(p)
+-- 
+1.7.0.4
+

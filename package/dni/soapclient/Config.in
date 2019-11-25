@@ -1,0 +1,6 @@
+config SOAPCLIENT_EXTRA_FLAGS
+	string
+	prompt "Specify soapclient extra function for different project"
+	default ""
+	help
+	  open macro to enable soapclient extra function

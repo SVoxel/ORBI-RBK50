@@ -1,0 +1,8 @@
+define Package/aws-iot/prepare_dniext
+	#$(CP) $(LOCAL_DNI_FILES_EXT)/aws-iot.config $(PKG_BUILD_DIR)/files/
+endef
+
+define Package/aws-iot/install_dniext
+	rm $(1)/etc/rc.d/S99aws
+	ln -sv ../init.d/aws $(1)/etc/rc.d/S99zzaws
+endef

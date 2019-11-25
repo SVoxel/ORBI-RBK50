@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+	<% orbi_flow_head() %>
+	<% hijack_language() %>
+</head>
+<script>
+var ts = "<% cfg_get("vpn_update_cert") %>";
+var isMd5 = "<% cat_file("/tmp/md5vpn") %>";
+isMd5 = (isMd5.trim() === '1')? true: false;
+
+function submit_form() {
+	var cf = document.forms[0];
+	cf.submit();
+}
+</script>
+<body>
+<% form_submit("apply", "start.htm", "vpn_update_cert") %>
+<input type="hidden" name="hid_update_cert" value='1'>
+<div id="container">
+
+	<div class="dialog-content">
+		<div class="install-card clearfix">
+		<img class="netgear-logo" src="images/netgear.png">
+
+				<div class="desc-text" style="padding-top:30px; font-size:14px">$update_vpn_cert_warning</div>
+				<button class="waves-effect waves-light btn button-nav" onclick="return submit_form();" style="margin-top: 164px;">
+				<span>
+					<script>
+						if(isMd5)
+							document.write('$update_mark');
+						else
+							document.write('$agree');
+					</script>
+				</span></button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+</html>

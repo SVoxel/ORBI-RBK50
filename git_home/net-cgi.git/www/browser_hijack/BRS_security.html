@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<style>
+ul{margin: 5px 0 5px 23px !important; padding:5px 0;}
+.passwd_hint li img{width:20px;height:20px;margin-left: 22px;}
+span img{width:22px;height:21px;}
+li {list-style-type:none;}
+</style>
+<body onLoad="loadvalue()">
+<% form_submit("apply", "BRS_wlan_security.html", "hijack_passwd") %>
+
+<script>
+var wait = 1000;
+var timeoutID = null;
+
+function loadvalue()
+{
+	if(top.location.href.indexOf("adv_index.htm") > -1)
+	window.parent.document.getElementById("formframe").scrolling="auto";
+}
+
+function debounce() {
+	if(top.security_enhance_flag){
+		clearTimeout(timeoutID);
+		timeoutID = setTimeout(function() {
+		validatepassword();
+		}, wait);
+	}
+};
+function validatepassword()
+{
+	var disabled="image/checkbox-selected-gry.svg";
+	var enabled="image/checkbox-selected.svg";
+	var meet_complex=0, meet_len=0,no_same=0;
+	var cf = document.forms[0];
+	var passwd=cf.sysNewPasswd.value;
+	if(passwd == ""){
+		cf.next.disabled = true;
+	}
+	var re = new RegExp("[a-z]");
+	var len=re.test(passwd);
+	if(len){
+		cf.pwd_complex2.src=enabled;
+		meet_complex++;
+	}else
+		cf.pwd_complex2.src=disabled;
+	re = new RegExp("[A-Z]");
+	len=re.test(passwd);
+	if(len)
+	{
+		cf.pwd_complex1.src=enabled;
+		meet_complex++;
+	}else
+		cf.pwd_complex1.src=disabled;
+	re = new RegExp("[0-9]");
+	len=re.test(passwd);
+	if(len)
+	{
+		cf.pwd_complex3.src=enabled;
+		meet_complex++;
+	}else
+		cf.pwd_complex3.src=disabled;
+	re = new RegExp("((?=[\x21-\x7e]+)[^A-Za-z0-9])");
+	len=re.test(passwd);
+	if(len)
+	{
+		cf.pwd_complex4.src=enabled;
+		meet_complex++;
+	}else
+		cf.pwd_complex4.src=disabled;
+	if(meet_complex>2)
+		cf.pwd_complex.src=enabled;
+	else
+		cf.pwd_complex.src=disabled;
+	if(passwd.length>=6 && passwd.length<=32)
+	{
+		cf.pwd_len.src=enabled;
+		meet_len=1;
+	}else
+		cf.pwd_len.src=disabled;
+
+	re = new RegExp("^.*(.)\\1{2}.*$");
+	len=re.test(passwd);
+	if(!len)
+	{
+		cf.pwd_identical.src=enabled;
+		no_same=1;
+	}else
+		cf.pwd_identical.src=disabled;
+	if(meet_complex>2 && meet_len && no_same){
+		document.getElementById("passwd_hint").style.display="none";
+		cf.pwd_warn.src="image/check.png";
+	}else{
+		document.getElementById("passwd_hint").style.display="";
+		cf.pwd_warn.src="image/warning_flag.jpg";
+	}
+	cf.pwd_warn.style.display="";
+}
+
+function change_display()
+{
+	if(top.security_enhance_flag)
+	{
+		document.forms[0].next.disabled = "";
+		document.getElementById("passwd_hint").style.display="none";
+	}
+}
+
+function sel_opt(opt,num)
+{
+	var cf = document.forms[0];
+	if(opt==1)
+		cf.question1.value = num.toString();
+	if(opt==2)
+		cf.question2.value = num.toString();
+}
+function isValidChar_space(each_char)
+{
+	if( each_char < 32 || each_char > 127)
+		return false;
+}
+
+function checkpasswd(cf)
+{
+	for(i=0;i<cf.sysNewPasswd.value.length;i++)
+	{
+		if(isValidChar_space(cf.sysNewPasswd.value.charCodeAt(i))==false)
+		{
+			alert(bh_password_error);
+			return false;
+		}
+	}
+
+	if(cf.sysNewPasswd.value == "")
+	{
+		alert(bh_password_null);
+		return false;
+	}
+	if(top.security_enhance_flag && cf.sysNewPasswd.value == "password") {
+		alert(bh_must_change_passwd);
+		return false;
+	}
+	if(top.security_enhance_flag && cf.sysNewPasswd.value.length < 6) {
+		alert("Your password must contain six or more characters.");
+		return false;
+	}
+	if (cf.sysNewPasswd.value.length >= 33 || cf.sysConfirmPasswd.value.length >= 33)
+	{
+		alert(bh_max_pwd_len);
+		return false;
+	}
+	if(cf.sysNewPasswd.value != cf.sysConfirmPasswd.value)
+	{ 
+		alert(bh_pwd_no_match);
+		return false;	
+	}
+
+	cf.hidden_enable_recovery.value="1";
+	if( cf.question1.value == "0" || cf.question2.value == "0")
+	{
+		alert(bh_select_quest);
+		return false;
+	}
+	
+	if( cf.answer1.value == "" || cf.answer2.value == "" )
+	{
+		alert(bh_enter_answer);
+		return false;
+	}
+	if( cf.answer1.value.length > 64 || cf.answer2.value.length > 64 )/* to fix bug 26920 */
+	{
+		alert(bh_invalid_answer);
+		return false;
+	}
+	
+	for(i=0; i< cf.answer1.value.length; i++)/* to fix bug 26920 */
+	{
+		if( isValidChar_space(cf.answer1.value.charCodeAt(i))==false )
+		{
+			alert(bh_invalid_answer);
+			return false;
+		}
+	}
+	for(i=0; i< cf.answer2.value.length; i++)/* to fix bug 26920 */
+	{
+		if( isValidChar_space(cf.answer2.value.charCodeAt(i))==false )
+		{
+			alert(bh_invalid_answer);
+			return false;
+		}
+	}
+	if(top.location.href.indexOf("adv_index.htm") > -1)
+		window.parent.document.getElementById("formframe").scrolling="no";
+	return true;
+}
+
+function not_disabled()
+{
+	$$('#next_btn').attr("disabled",false);
+}
+
+</script>
+<input type="hidden" name="hidden_enable_recovery" value="1" />
+<input type="hidden" name="question1" value="0"/>
+<input type="hidden" name="question2" value="0"/>
+<input type="hidden" name="hid_save_time" value="5"/>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Orbi Admin Account Settings-->
+		<div id="card-orbi-admin-account" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_admin_account);</script></div>
+			<div class="desc-text"><script>document.write(bh_account_msg);</script></div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left">
+				<div class="input-title non-active-val disabled"><script>document.write(username);</script></div>
+				<input type="text" value="<% cfg_get("http_loginname") %>  " disabled="disabled"/>
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 input-wrapper-right">
+				<div class="input-title"><script>document.write(key_passphrase);</script></div>
+				<table><tr><td style="padding:0px">
+				<input type="password" autocomplete="off" size="20" name="sysNewPasswd" id="sys_new_passwd" onFocus="this.select();not_disabled();" onkeyup="debounce()" onkeydown="change_display()" >
+				</td><td style="padding:0px">
+				<span style="display:inline-block;vertical-align:bottom;"><img id="pwd_warn" src="" style="display:none;"></span>
+				</td></table>
+			</div>
+			<table>
+			<tr id="passwd_hint" style="display:none">
+				<td nowrap="">
+				<div id="passwd_hint_content" style='border-radius: 20px; max-width: 500px; background-image: url("../image/passwd_bg.jpg");'>
+				<ul>
+					<li>
+						<span style="width:22px;height:21px;"><script>document.write(bh_passwd_condition);</script></span>
+					</li>
+					<li>
+						<ul>
+							<li>
+								<img id="pwd_len" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+								<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions5_1);</script></span>
+							</li>
+							<li>
+								<img id="pwd_identical" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+								<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions6);</script></span>
+							</li>
+						</ul>
+					</li>
+					<li>
+						<ul>
+							<li>
+								<img id="pwd_complex" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+								<span style="width:22px;height:21px;white-space:normal"><script>document.write(bh_password_reset_tip3);</script></span>
+								<ul>
+									<li>
+										<img id="pwd_complex1" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+										<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions1);</script></span>
+									</li>
+									<li>
+										<img id="pwd_complex2" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+										<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions2);</script></span>
+									</li>
+									<li>
+										<img id="pwd_complex3" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+										<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions3);</script></span>
+									</li>
+									<li>
+										<img id="pwd_complex4" src="" style="width:20px;height:20px;margin-left: -22px;display:inline">
+										<span style="width:22px;height:21px;"><script>document.write(bh_password_reset_conditions4);</script></span>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				</div>
+				</td>
+			</tr></table>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-right">
+				<div class="input-title"><script>document.write(bh_passwd_repas);</script></div>
+				<input type="password" autocomplete="off" size="20" name="sysConfirmPasswd" id="sys_confirm_passwd" onFocus="this.select();not_disabled();"/>
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left width-490">
+				<div class="input-title ddl-title"><script>document.write(bh_security_question_1);</script></div>
+				<div class="dropdown">
+					<input type="button" id="sec-question-one" data-target="#sec-question-one sec-question-one" class="dropdown-menu btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="sec-question-one">
+						<span><script>document.write(bh_select_a_question);</script></span>
+						<img class="ddl-caret" src="images/caret.png">
+					</input>
+					<ul class="dropdown-menu sec-question-one" role="menu" aria-labelledby="sec-question-one">
+						<script>
+						document.write('<li role="presentation" onclick="sel_opt(1,0);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect active">'+bh_select_a_question+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,1);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_1+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,2);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_2+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,3);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_3+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,4);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_4+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,5);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_5+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,6);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_6+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,7);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_7+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,8);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_8+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(1,9);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest1_9+'</a></li>');
+						</script>
+					</ul>
+				</div>
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left width-490">
+				<div class="input-title"><script>document.write(bh_answer);</script></div>
+				<input type="text" autocomplete="off" maxLength="64" size="30" name="answer1" id="answer1"  onFocus="this.select();"/>
+			</div>
+
+			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left width-490 margin-top-10" >
+				<div class="input-title ddl-title" ><script>document.write(bh_security_question_2);</script></div>
+				<div class="dropdown">
+					<input type="button" data-target="#sec-question-two sec-question-two" class="dropdown-menu btn btn-default dropdown-toggle" data-toggle="dropdown" aria-controls="sec-question-two">
+						<span><script>document.write(bh_select_a_question);</script></span>
+						<img class="ddl-caret" src="images/caret.png">
+					</input>
+					<ul id="sec-question-two" class="dropdown-menu" role="menu" aria-labelledby="sec-question-two">
+						<script>
+						document.write('<li role="presentation" onclick="sel_opt(2,0);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect active">'+bh_select_a_question+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,1);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_1+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,2);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_2+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,3);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_3+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,4);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_4+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,5);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_5+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,6);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_6+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,7);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_7+'</a></li>');
+						document.write('<li role="presentation" onclick="sel_opt(2,8);"><a role="menuitem" tabindex="-1" href="#" class="waves-effect">'+bh_quest2_8+'</a></li>');
+						</script>
+					</ul>
+				</div>
+			</div>
+
+ 			<div class="input-wrapper col-lg-6 col-md-6 col-sm-6 float-left width-490">
+				<div class="input-title"><script>document.write(bh_answer);</script></div>
+				<input type="text" autocomplete="off" maxLength="64" size="30" name="answer2" id="answer2" onFocus="this.select();"/>
+			</div>
+
+			<button id="next_btn" name="next" class="waves-effect waves-light btn button-nav margin-top-10" disabled onclick="return checkpasswd(document.forms[0])">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

@@ -1,0 +1,152 @@
+<% http_head("stalist_Status") %>
+<body class="statusScreen twoColumns">
+	<% top_bar() %>
+	<% save_timestamp("select_language","change_language") %>
+	<% lang_change_status_finish() %>
+	<img src="image/internet1.png" alt="image" class="hide" />
+	<img src="image/product2.png" alt="image" class="hide" />
+	<img src="image/content/wifiPromo.jpg" alt="image" class="hide" />
+	<img src="image/content/helpPromo.jpg" alt="image" class="hide" />
+	<img src="image/fancyFooter.png" alt="image" class="hide" />
+	<img src="image/iconSprite2x.png" alt="image" class="hide" />
+	<img src="image/currentConnect.png?timestamp=20160412" alt="image" class="hide" />
+	<img src="image/currentConnectionSmallImage.png?timestamp=20160412" alt="image" class="hide" />
+	<script>
+		<% status_icon("5") %>
+		if ( typeof(diff_product) != "undefined" && typeof(host_name) != "undefined" && diff_product == 1) {
+			document.write("<img class='hide' src='image/"+host_name+"/product2.png' />");
+		}
+		<% show_satellite_wlan_info() %>
+		
+	</script>
+	<div class="container sliderWrap">
+		<% cur_menus("status") %>
+		<div id="slider">
+			<div class="main clearfix">
+				<% form_admin("statusForm", "status.htm", "notice") %>
+				<h1 class="<% status_icon("0") %> <% status_icon("7") %>">
+					<i class="dnintg-checkmark"></i>
+					<i class="dnintg-greenclock hide"></i>
+					<span class="extender success">$Orbi_satellite_success</span>
+					<span class="extender poor">$EXT_STR0597</span>
+					<span class="extender failed">$EXT_STR0701</span>
+					<span class="accesspoint success">$EXT_STR0292</span>
+					<span class="accesspoint failed">$ap_failure_noip</span>
+					<span class="accesspoint failed unplug hide">$ap_failure_noplug</span>
+					<span class="normal hide">$on_acc_schedule</span>
+				</h1>
+				<div class="updateInfo hide">
+					<i class="dnintg-fw-refresh"></i>
+					<span>$fw_available</span>
+				</div>
+
+				<div class="sectionWrap withBgGradient withBottomShadow clearfix">
+					<div class="parentDiv <% status_icon("0") %>">
+						<div id="cc_router" class="currentConnections connRouter"></div>
+						<div class="currentConnections longLineInStatus "></div>
+						<div id="cc_black_line" class="currentConnections black_line"></div>
+						<div id="cc_black_line" class="currentConnections black_long_line"></div>
+						<!--div id="cc_red_cross" class="redCross"></div-->
+						<div id="cc_internet" class="currentConnections connInternet"></div>
+						<div id="cc_internet" class="currentConnections connInternet2"></div>
+						<div class="productTwo">
+							<script>
+							var is_outdoor = "<% get_product_series("outdoor") %>";
+							var led_onoff = "<% cat_file("/tmp/led_state") %>";
+							if(is_outdoor == "1"){
+								document.write('<div style="text-align:center"><b>');
+								if(led_onoff == "0" || led_onoff == "")
+								{
+									document.write("Off");
+									document.write('</b></div><img class="sizeTwo" src="image/product2.png" alt="device" style="height:110px"><div style="text-align:center"><b>');
+									document.write("Off");
+								}
+								else
+								{
+									document.write("On");
+									document.write('</b></div><img class="sizeTwo" src="image/product3.png" alt="device" style="height:110px"><div style="text-align:center"><b>');
+									document.write("On");
+								}
+								document.write('</b></div>');
+							}else{
+								document.write('<img class="sizeTwo" src="image/product2.png" alt="device" />');
+							}
+							</script>
+						</div>
+						<div id="cc_text_internet" class="connInternet_string">$internet</div>
+						<div id="cc_text_internet" class="apInternet_string">$internet</div>
+						<div id="cc_text_router" class="connRouter_string">$router</div>
+						<div id="cc_text_extender" class="connWifiExtender_string">$wifi_extender</div>
+						<div id="cc_text_extender" class="accessPoint_string">$ap_mark</div>
+						<div class="loc1 <% status_icon("8")%>">
+							<div id="cc_location1" class="currentConnections location1 bestRouter_24g"></div>
+							<div id="cc_location1" class="currentConnections location1 goodRouter_24g"></div>
+							<div id="cc_location1" class="currentConnections location1 poorRouter_24g"></div>
+							<div id="cc_location1" class="currentConnections location1 noConnectedRouter_24g"></div>
+							<div id="cc_location1" class="currentConnections location1 disableRouter_24g"></div>	
+						</div>
+						<div class="loc4 <% status_icon("9")%>">
+							<div id="cc_location4" class="currentConnections location4 bestRouter_5g"></div>
+							<div id="cc_location4" class="currentConnections location4 bestRouter_dark"></div>
+							<div id="cc_location4" class="currentConnections location4 goodRouter_5g"></div>
+							<div id="cc_location4" class="currentConnections location4 goodRouter_dark"></div>
+							<div id="cc_location4" class="currentConnections location4 poorRouter_5g"></div>
+							<div id="cc_location4" class="currentConnections location4 poorRouter_dark"></div>
+							<div id="cc_location4" class="currentConnections location4 noConnectedRouter_5g"></div>
+							<div id="cc_location4" class="currentConnections location4 disableRouter_5g"></div>
+						</div>
+						<div class="loc2 <% status_icon("10")%>">
+							<div id="cc_location2" class="currentConnections location2 bestClient_24g"></div>
+							<div id="cc_location2" class="currentConnections location2 noConnectedClient_24g"></div>
+							<div id="cc_location2" class="currentConnections location2 disableClient_24g"></div>
+						</div>
+						<div class="loc3 <% status_icon("11")%>">
+							<div id="cc_location3" class="currentConnections location3 bestClient_5g"></div>
+							<div id="cc_location3" class="currentConnections location3 bestClient_dark"></div>
+							<div id="cc_location3" class="currentConnections location3 noConnectedClient_5g"></div>
+							<div id="cc_location3" class="currentConnections location3 disableClient_5g"></div>
+						</div>
+					</div>
+					
+				</div>	 
+
+				<div class="sectionWrap tabletOnly withBottomShadow clearfix">
+					<ul class="version clearfix">
+						<li>$router_status_hwversion: <strong><% cat_file("/hardware_version") %></strong></li>
+						<li>$info_mark_ver: <strong><% cat_file("/firmware_version") %></strong></li>
+					</ul>
+
+					<div class="column first wifi">
+						<h2><a style="cursor: default">$EXT_STR0588</a></h2>
+						<ul class='networkStatus'>
+							<li>$wlan_mark_ssid: <strong><script>document.write("<% cfg_sed_ssid_js("wl_ssid") %>".replace(/ /g, '&nbsp;'));</script></strong></li>
+							<li>$wlan_mark_chan: <strong><% wl_channel() %></strong></li>
+							<li>$wlan_mark_reg: <strong><% satellite_country() %></strong></li>
+							<li>$wlan_mark_mode: <strong><% wl_mode("wl_") %></strong></li>
+							<li>$wlan_ap: <strong><% ap_on_status("bgn") %></strong></li>
+							<li>$router_status_broadcast:  <strong><script>document.write(ssidbro)</script></strong></li>
+							<li>$ca_15_sec: <strong id="sec_24g"></strong></li>
+						</ul>
+					</div>
+
+					<div class="column second wifi">
+						<h2><a style="cursor: default">$EXT_STR0589</a></h2>
+						<ul class='networkStatus'>
+							<li>$wlan_mark_ssid: <strong><script>document.write("<% cfg_sed_ssid_js("wla_ssid") %>".replace(/ /g, '&nbsp;'));</script></strong></li>
+							<li>$wlan_mark_chan: <strong><% wla_channel() %></strong></li>
+							<li>$wlan_mark_reg: <strong><% satellite_country() %></strong></li>
+							<li>$wlan_mark_mode: <strong><% wl_mode("wla_") %></strong></li>
+							<li>$wlan_ap: <strong><% ap_on_status("an") %></strong></li>
+							<li>$router_status_broadcast:  <strong><script>document.write(ssidbro_an)</script></strong></li>
+							<li>$ca_15_sec: <strong id="sec_5g"></strong></li>
+						</ul>
+					</div>
+				</div>
+			</form>
+		</div> <!-- end main -->
+	</div>
+	<% page_footer() %>    
+</div> <!-- end container -->
+
+</body>
+</html>

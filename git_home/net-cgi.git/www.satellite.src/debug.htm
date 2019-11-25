@@ -1,0 +1,25 @@
+<% http_head("debugpage") %>
+<% use_browser_language() %>
+<body>
+<style>
+.container_center{min-width: 820px; _width: 1440px; min-height:830px; _height: 830px; position:absolute; top:97px; bottom:0; left: 20px; right: 20px; }
+#formframe{float: left; position:absolute; top:0; overflow: hidden;}
+</style>
+<script>var need_change_lang=0;</script>
+<div id="fixedHeader">
+	<div class="mask">
+		<div class="container">
+			<header>
+				<img id="logo" src="image/logos/genie.png" alt="Netgear genie logo" />
+				<p id="byline">$Orbi_satellite_title</p>
+			</header>
+		</div>
+	</div>
+</div><!-- end fixed header -->
+<div id="container" class="container_center">
+	<iframe name="formframe" id="formframe" allowtransparency="true" height="100%" width="100%" scrolling="yes" frameborder="0" src="debug_run.htm">
+	</iframe>
+</div>
+
+</body>
+</html>

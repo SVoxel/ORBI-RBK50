@@ -1,0 +1,22 @@
+#!/bin/sh /etc/rc.common
+START=90
+
+start()
+{
+	/sbin/netconn.sh &
+}
+
+stop()
+{
+	killall netconn.sh
+}
+
+boot()
+{
+	start
+}
+
+restart(){
+	stop
+	start
+}

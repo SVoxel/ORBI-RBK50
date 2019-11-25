@@ -1,0 +1,37 @@
+MACRO			| nc config			| Default
+-------------------------------------------------------------------------------
+HOST_NAME		| nc_host_name			| "Orbi"
+BASE_MODULE_NAME	| nc_base_module_name		| "RBR50"
+SATELLITE_MODULE_NAME	| nc_sate_module_name		| "RBS50"
+WLANBH_IFNAME		| nc_wlanbh_ifname		| "wifi2"
+WLANFRONT_IFNAME	| nc_wlanfont_ifname		| "wifi1"
+ORBI_READYSHARE_PRINTER	| nc_orbi_readyshare_printer	| ON
+HAVE_GUEST_NETWORK	| nc_have_guest_network		| ON
+HAVE_BYOD_NETWORK	| nc_have_byod_network		| OFF
+DNI_PARENTAL_CTL	| nc_parental_ctl		| ON
+HAVE_VLAN		| nc_have_vlan			| OFF
+HAVE_VLAN_SB		| nc_have_vlan_sb		| OFF
+HAVE_DUAL_IMAGE		| nc_have_dual_image		| OFF
+IMAGE_MTD2		| nc_image_mtd2			| "/dev/mmcblk0p26"
+AP_GUEST_PORTAL		| nc_ap_guest_portal		| OFF
+BUSINESS_AP_DETECT	| nc_business_ap_detect		| OFF
+HAVE_WIRELESS_COMBINE	| nc_have_wireless_combine	| OFF
+HAVE_SPEEDTEST_MENU	| nc_have_speedtest_menu	| OFF
+ORBI_MINI		| nc_orbi_mini			| OFF
+HAVE_FORCESHIELD	| nc_have_forceshield		| OFF
+SOAP_SECURITY           | nc_soap_security              | ON
+LIGHTING_LED            | nc_lightingled_support        | ON
+N/A			| nc_soap_new_mechanism		| OFF
+SATELLITE_MD5_AUTH	| nc_satellite_md5_auth         | OFF
+GUEST_WIFI_ONOFF	| nc_guest_wifi_onoff		| OFF
+POT_MTD			| nc_pot_mtd			| "/dev/mmcblk0p15"
+STAMAC_POSTION		| nc_stamac_postion		| 2052
+LANG_FLASH_PART		| nc_lang_flash_part		| "/dev/mmcblk0p13"
+IMAGE_MTD		| nc_image_mtd			| "/dev/mmcblk0p21"
+NANDWRITE		| nc_nandwrite			| OFF
+N/A			| nc_show_bitflip		| OFF
+N/A			| nc_support_arlo		| OFF
+N/A			| nc_have_control_firmware	| OFF
+MAX_POST_SIZE		| nc_max_post_size		| 0x2280000
+N/A			| nc_support_armor		| OFF
+N/A			| nc_support_dtv2		| OFF

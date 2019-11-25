@@ -1,0 +1,6 @@
+#!/bin/sh
+#after lose connection with rootap 300s,then can run dhcpd server,otherwise should disable the dhcp server
+[ ! -f /tmp/disable_satelite_dhcpd ] && /bin/touch /tmp/disable_satelite_dhcpd
+/bin/sleep 300
+/bin/rm /tmp/disable_satelite_dhcpd
+

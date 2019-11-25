@@ -1,0 +1,117 @@
+#!/bin/sh
+
+LED_NUM=5
+
+ring_red ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c red -s ring
+    done
+}	
+
+ring_green ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c green -s ring
+    done
+}	
+
+ring_blue ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c blue -s ring
+    done
+}	
+
+ring_white ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c white -s ring
+    done
+}	
+
+ring_amber ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c amber -s ring
+    done
+}	
+
+ring_magenta ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c magenta -s ring
+    done
+}	
+
+ring_cyan ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c cyan -s ring
+    done
+}	
+
+ring_traffic ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c blue -s ring
+        ledcontrol -n all -l ${LED_NUM} -c magenta -s ring
+    done
+}	
+
+ring_apply ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c white -s ring
+    done
+}	
+
+ring_upgrade ()
+{
+    while true
+    do
+        ledcontrol -n all -l ${LED_NUM} -c white -s ring
+    done
+}	
+
+case "$1" in
+    red | 0)
+    ring_red
+    ;;
+    green | 1)
+    ring_green
+    ;;
+    blue | 2)
+    ring_blue
+    ;;
+    white | 3)
+    ring_white
+    ;;
+    amber | 4)
+    ring_amber
+    ;;
+    cyan | 5)
+    ring_cyan
+    ;;
+    magenta | 6)
+    ring_magenta
+    ;;
+    traffic)
+    ring_traffic
+    ;;
+    apply)
+    ring_apply
+    ;;
+    upgrade)
+    ring_upgrade
+    ;;
+esac

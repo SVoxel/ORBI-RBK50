@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+<script>
+function staticIPChoice()
+{
+	if($$('#static_ip_yes').is(":checked"))
+		this.location.href = "BRS_03A_E_IP_problem_staticIP_A_inputIP.html";
+	else
+		this.location.href = "BRS_03A_E_IP_problem_staticIP_B_macClone.html";
+
+}
+</script>
+<body>
+<div id="container">
+	<div class="dialog-content">
+		<!-- Problem detecting Internet Connection -->
+		<div id="card-problem-detecting-internet-con" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<div class="desc-title"><script>document.write(bh_orbi_problem_conn_ip);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_problem_conn_ip_msg1);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_problem_conn_ip_msg2);</script></div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="static_ip_choice" id="static_ip_yes" value="0" checked="checked">
+						<label for="static_ip_yes"></label>
+					</p>
+
+					<div class="bullet"><script>document.write(bh_orbi_help_choice_yes);</script></div>
+					<span class="desc-title-bullet"><script>document.write(bh_orbi_problem_conn_ip_msg3);</script></span>
+				</div>
+			</div>
+
+			<div class="bullet-wrapper">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="static_ip_choice" id="static_ip_no" value="1">
+						<label for="static_ip_no"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_orbi_problem_conn_ip_no);</script></div>
+					<span class="desc-title-bullet"><script>document.write(bh_orbi_problem_conn_ip_msg4);</script></span>
+				</div>
+			</div>
+
+			<div class="bullet-wrapper last-bullet">
+				<div class="desc-title">
+					<p>
+						<input class="with-gap" type="radio" name="static_ip_choice" id="static_ip_unknown" value="2">
+						<label for="static_ip_unknown"></label>
+					</p>
+					<div class="bullet"><script>document.write(bh_do_not_know);</script></div>
+				</div>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="staticIPChoice();">
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

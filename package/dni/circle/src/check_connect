@@ -1,0 +1,35 @@
+#!/bin/sh
+#This script is a workaround for circle hang on after reboot without internet
+#Check if project support circle feature
+if [ "x`/bin/config get dgc_func_have_circle`" != "x1" -o "x`/bin/config get factory_mode`" = "x1" ]; then
+	exit 0
+fi
+
+start_status=0
+for i in `seq 150`
+do
+	sleep 2
+	enable_status=`/bin/config get enable_circle_plc`
+	if [ $enable_status -eq 1 ]; then
+	flag=0
+	ping_result=`ping  -c 1 "www.netgear.com" 2>&1 |grep -v "bad address" |grep -o '.%'`
+	[ "x$ping_result" = "x" ] || [ "x$ping_result" = "x100%" ] && flag=1
+	if [ $flag -eq 1 ]; then
+		echo "unable to access internet, circle will start later" > /dev/console
+		continue
+	else
+		echo "internet connection is OK, start circle now" > /dev/console
+		insmod circle_pcc
+		/mnt/circle/shares/usr/bin/startcircle
+		/usr/bin/circle_check_account &
+		start_status=1
+		break
+	fi
+	fi
+done
+/bin/config set reboot_flag_for_circle=0
+if [ `/bin/config get enable_circle_plc` -eq 1 ] && [ $start_status -eq 0 ]; then
+	insmod circle_pcc
+	/mnt/circle/shares/usr/bin/startcircle
+	/usr/bin/circle_check_account &
+fi

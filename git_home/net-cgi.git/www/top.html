@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<% http_header("style/top.css", "assets/css/banner.css", "funcs.js", "top.js", "jquery-1.7.2.min.js") %>
+<% top_body_header("lang_check.html", "select_language") %>
+<% save_timestamp("select_language", "auto_timezone") %>
+
+<script>
+var ext_check_info = <% get_satellite_check_result() %>;
+var ext_dev_info = <% get_satellite_dev_info() %>;
+var language_oriArray = "<% lang_en() %>".split(" ");
+var language_showArray="<% lang_show() %>".split(" ");
+var gui_region = "<% cfg_get("GUI_Region") %>";
+var browser_lang = "<% get_browser_language() %>";
+var lang_select = "<% cfg_get("Language_Selection") %>";
+//var type = parent.type;
+var dis_lang_crl = "<% cfg_get("Enable_GUIStringTable") %>";
+var jp_multiPPPoE = "<% cfg_get("jp_multiPPPoE") %>";
+var netgear_region=top.netgear_region;
+var wds_support_wpa=top.wds_support_wpa;
+var security_mode="<% cfg_get("wl_sectype") %>";
+var security_mode_a="<% cfg_get("wla_sectype") %>";
+var old_wds_endis_fun="<% cfg_get("wds_endis_fun") %>";
+var old_wds_endis_fun_a="<% cfg_get("wla_wds_endis_fun") %>";
+var an_router_flag = parent.an_router_flag;
+var bgn_pr_wds_support_wpa=0;
+var an_pr_wds_support_wpa=0;
+var app_ad_mark = "<% cfg_get("app_ad_mark") %>";
+<% app_ad_system() %>
+
+if( wds_support_wpa == 1 && gui_region == "Chinese" && (netgear_region == "" || netgear_region.toUpperCase() == "WW"))
+{
+	if((security_mode=="3" ||  security_mode=="4" || security_mode == "5") && old_wds_endis_fun == "1")
+		bgn_pr_wds_support_wpa=1;
+
+	if(an_router_flag == 1 )
+	{
+		if( (security_mode_a == "3" || security_mode_a == "4" || security_mode_a == "5") && old_wds_endis_fun_a == "1" )
+			an_pr_wds_support_wpa=1;
+
+	}	
+}
+
+//for firmware version checking
+var wan_status = "<% detwan_valid() %>";
+var config_status = <% autoup_status() %>;
+<% check_version() %>
+var master="<% cfg_get("http_loginname") %>";
+var ts="<% cfg_get("select_language") %>";
+var d = new Date();
+var offset =d.getTimezoneOffset();
+var timezone_arr = new Array(-780, -720, -660, -600, -570, -540, -480, -420, -360, -330, -300, -240, -180, -120, -60, 0, 60, 120, 180, 210, 240, 300, 360, 420, 480, 540, 600, 660, 720);
+
+function is_support_dst()
+{
+        var cur_year = d.getFullYear();
+        var d1 = new Date(cur_year,0,1);
+        var d2 = new Date(cur_year,6,1);
+        if(d1.getTimezoneOffset() != d2.getTimezoneOffset())
+                return 1;
+        else
+                return 0;
+}
+
+function is_in_dst_period_1()//M3.2.0-M11.1.0
+{
+        var cur_mon = d.getMonth();
+        if(cur_mon<2 || cur_mon>10)
+                return 0;
+
+        var d_dst = new Date();
+        d_dst.setDate(1);
+        var w_day=d_dst.getDay();
+        var dst_day=1;
+
+        if(cur_mon == 2)
+        {
+                if(w_day == 0)
+                        dst_day = 8;
+                else
+                        dst_day = 15-w_day;
+                if(d.getDate() < dst_day)
+                        return 0;
+        }
+
+        if(cur_mon == 10)
+        {
+                if(w_day == 0)
+                        dst_day = 1;
+                else
+                        dst_day = 8-w_day;
+                if(d.getDate() > dst_day)
+                        return 0;
+        }
+
+        return 1;
+}
+
+function is_in_dst_period_2()//Mar last Sunday - Oct last Sunday
+{
+        var cur_mon = d.getMonth();
+        if(cur_mon<2 || cur_mon>9)
+                return 0;
+        if(cur_mon>2 && cur_mon<9)
+                return 1;
+
+        var d_dst = new Date();
+        d_dst.setDate(31);
+        var w_day=d_dst.getDay();
+        var dst_day = 31-w_day;
+        if(cur_mon == 2)
+        {
+                if(d.getDate() < dst_day)
+                        return 0;
+        }
+
+        if(cur_mon == 9)
+        {
+                if(d.getDate() > dst_day)
+                        return 0;
+        }
+
+        return 1;
+}
+
+function is_in_dst_period_3()//Oct last Sunday - Mar last Sunday
+{
+        var cur_mon = d.getMonth();
+        if(cur_mon>2 && cur_mon<9)
+                return 0;
+        if(cur_mon<2 || cur_mon>9)
+                return 1;
+
+        var d_dst = new Date();
+        d_dst.setDate(31);
+        var w_day=d_dst.getDay();
+        var dst_day= 31-w_day;
+
+        if(cur_mon == 2)
+        {
+                if(d.getDate() > dst_day)
+                        return 0;
+        }
+
+        if(cur_mon == 9)
+        {
+                if(d.getDate() < dst_day)
+                        return 0;
+        }
+
+        return 1;
+}
+
+function check_dst()
+{
+        var is_dst_region=is_support_dst();
+       console.log("is_dst_region="+is_dst_region);
+        if(is_dst_region == 0)
+                return;
+        if(offset >=150 && offset<=600)
+        {
+                if(is_in_dst_period_1(d)==1)
+               {
+                       console.log("M3.2.0-M11.1.0");
+                        offset = offset + 60;
+               }
+        }
+
+        if(offset>=-180 && offset <=120)
+        {
+                if(is_in_dst_period_2(d)==1)
+               {
+                       console.log("Mar last Sunday - Oct last Sunday");
+                        offset = offset + 60;
+               }
+        }
+
+        if(offset>=-840 && offset <=-600)
+        {
+                if(is_in_dst_period_3(d)==1)
+               {
+                       console.log("Oct last Sunday - Mar last Sunday");
+                        offset = offset + 60;
+               }
+        }
+}
+
+function check_support_list()
+{
+        var match = 0;
+        for(var j=0; j<6; j++)
+        {
+                for(var i=0; i<timezone_arr.length; i++)
+                {
+                        if(offset == timezone_arr[i])
+                        {
+                                match = 1;
+                                break;
+                        }
+                }
+                if(match == 1)
+                        break;
+                offset += 15;
+        }
+}
+
+function loadvalue()
+{
+	load_top_value();
+	var form = document.forms[0];
+
+	var app_btn = document.getElementById("ad_button");
+	if(app_from == "1")
+		app_btn.innerHTML = "GET";
+	else if(app_from == "2")
+		app_btn.innerHTML = "Install";
+	else
+		app_btn.innerHTML = "Learn more";
+	if(lang_select != "Auto")
+		lang_select = gui_region;
+	document.forms[0].language.value = lang_select;
+
+	if( dis_lang_crl == "0" )
+		document.forms[0].language.disabled = true;
+	else
+	{
+		/* if select is "Auto", change languae to browser_langauge */
+		if(lang_select == "Auto" && browser_lang != gui_region && master == "admin")
+		{
+			if(bgn_pr_wds_support_wpa == 1 || an_pr_wds_support_wpa == 1 )
+				return;
+			top.auto_change_lang = 1;
+	                form.language.disabled=true;
+        	        form.hidden_lang_avi.value=form.language.value;
+                	form.target="formframe";
+                	form.submit();
+			return;
+		}
+
+	}
+	if("<% check_auto_timezone() %>" !="0")
+	{
+               check_dst();
+               console.log("offset="+offset);
+               check_support_list();
+               console.log("finnal offset="+offset);
+               form.hidden_offset.value = offset;
+               var cur = "<% get_timezone_offset() %>";
+               console.log("cur="+cur);
+               if(offset != cur)
+               {
+                       if(!confirm("$auto_timezone_title\n$auto_timezone_msg"))
+                               form.hidden_offset.value="none";
+                       else
+                               form.hidden_offset.value = offset.toString();
+                       form.submit_flag.value="auto_timezone";
+                       form.action="/apply.cgi?/top.html timestamp="+ts;
+                       form.submit();
+               }
+	}
+}
+
+window.onresize = function(){
+	load_top_value();
+}
+</script>
+<style>
+.label_click .label_left { width: 15px; height: 30px; float: left; position: relative }
+.label_click .label_middle { width: auto; height: 30px;  float: left; position: relative }
+.label_click .label_right { width: 15px; height: 30px; float: left; position: relative }
+.label_unclick .label_left { width: 15px; height: 30px;  float: left; position: relative }
+.label_unclick .label_middle { width: auto; height: 30px;  float: left; position: relative }
+.label_unclick .label_right { width: 15px; height: 30px;  float: left; position: relative }
+</style>
+<input type=hidden name=hidden_lang_avi>
+<input type=hidden name=hidden_offset>
+<div id="logo"></div>
+<div id="logout" class="logout_bt" onclick='top.location.href="LGO_logout.htm";'><b>$logout_head</b></div>
+<div id="labels">
+	<div id="basic_label" class="label_unclick" onclick="goto_top('index.htm');">
+		<div class="label_left"></div>
+		<div class="label_middle"><b><span>$basic_title</span></b></div>
+		<div class="label_right"></div>
+	</div>
+	<div id="advanced_label" class="label_unclick" onclick="goto_top('adv_index.htm');">
+		<div class="label_left"></div>
+		<div class="label_middle"><b><span>$advanced_title</span></b></div>
+		<div class="label_right"></div>
+	</div>
+</div>
+<!--Alert starts-->
+<div class="download-alert-orbi" id="orbi-alert" style="display:none;">Get security alerts and manage from anywhere with the Orbi App.
+<div ><a id="ad_button" href="http://orbi-app.com/" class="download-btn-orbi" target="_blank">Learn more</a> <span class="cross" id="app_cross" name="app_cross"><img src="assets/images/cross.svg" class="cross" alt=""/></span></div>
+</div>
+<!--Alert ends-->
+<div id="firm_version" name="firm_version">$router_firmware_version<br /><% cat_file_xss("/firmware_version") %><% get_firmware_region("single_blank", "ww_blank") %></div>
+<div id="update_info" class="update_info_down" onclick="firmwareUpgrade();">
+	<div class="update_info_tip">!</div>
+	<i>$firmware_upgrade_is_available_click_to_get</i>
+</div>
+<% top_signal_strength() %>
+<div id="select_language" align=right>
+	<script language="javascript" type="text/javascript">
+	if( master == "admin" )
+		document.write('<select align=right name="language" id="language" size=1 onChange="change_select();">');
+	else
+		document.write('<select align=right name="language" id="language" size=1 disabled>');
+	
+	
+		languageShowlist();
+	</script>
+	</select>
+</div>
+<script>
+$$("#app_cross").click(function(){
+	$$.ajax({
+		url: "first_login_markforapp.txt",
+		type: "GET",
+		data: {},
+		dataType: 'json',
+		contentType: "application/json; charset=utf-8",
+		success: hide_warn()
+	});
+});
+</script>
+</form>
+</body>
+</html>
+

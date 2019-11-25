@@ -1,0 +1,176 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+} 
+
+
+@font-face {
+	font-family: 'Avenir-Book';
+
+	src: url(../fonts/Avenir-Book.eot); /* IE9 Compat Modes */
+	src: url('../fonts/Avenir-Book.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../fonts/Avenir-Book.woff') format('woff'), /* Modern Browsers */ url('../fonts/Avenir-Book.ttf') format('truetype'), /* Safari, Android, iOS */ url('assets/fonts/Avenir-Book.svg#Avenir-Book') format('svg') /* Legacy iOS */
+}
+
+@font-face {
+	font-family: 'Avenir-Medium';
+	src: url('../fonts/Avenir-Medium/Avenir-Medium-09.eot'); /* IE9 Compat Modes */
+	src: url('../fonts/Avenir-Medium/Avenir-Medium-09.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */ url('../fonts/Avenir-Medium/Avenir-Medium-09.woff') format('woff'), /* Modern Browsers */ url('../fonts/Avenir-Medium/Avenir-Medium-09.ttf') format('truetype'), /* Safari, Android, iOS */ url('../fonts/Avenir-Medium/Avenir-Medium-09.svg#Avenir-Book') format('svg') /* Legacy iOS */
+}
+
+
+  a:focus{outline: none;}   
+.card-orbi-app {
+    border-radius: 5px;
+    background-color: #00a1de;
+    width: 200px;
+    color: #fff;font-family: 'Avenir-Book';
+    position:absolute;
+    top:35%;
+}
+.card-orbi-app-header {
+    text-align: center;
+    padding:15px 20px 0px 20px;
+    font-size: 10px;margin-bottom: -22px;
+    height:90.5px;
+}
+
+    .card-orbi-app-header span{font-family: 'Avenir-Medium';/*font-weight: 600;*/ text-decoration: underline;}
+.card-orbi-app-header span a{ color: #fff;}
+    
+.card-orbi-app-header p {
+    max-width: 140px;
+    margin: auto; margin-top: 5px;margin-bottom: 5px;
+}
+.card-orbi-app-footer {
+    background: #26B2E5;
+    height: 23px;
+    border-radius: 0px 0px 5px 5px;
+    text-align: right;
+    padding-right: 10px;
+}
+.card-orbi-app .disp-cell {
+    padding-left: 15px;
+    display: table-cell;
+    vertical-align: top;text-align: center;
+}
+.card-orbi-app .device-content {
+    position: relative;
+    bottom: -28px;
+    height:149.5px;
+}
+.card-orbi-app a {
+    margin-bottom: 0px;
+    display: block;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;
+    	
+}
+    .card-orbi-app a:hover {transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;  opacity: .8;}
+.card-orbi-app .mb {
+    margin-bottom: 2px;
+}
+.download-alert-orbi {
+    font-size: 14.4px;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 6px;
+    background-color: #00a1de;
+    width: 587px;
+    padding: 18px 15px 18px 20px;
+    display: flex;
+    justify-content: space-between;font-family: 'Avenir-Medium';margin-bottom: 10px;
+}
+.download-btn-orbi {
+    margin-right: 13px;
+    line-height: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    display: inline-block;
+    background-color: #ffffff;
+    font-size: 12px;
+    color: #00a1de;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;
+}
+    .download-btn-orbi:hover { opacity: .8;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;}
+
+
+.card-nighthawk-app {
+    border-radius: 5px;
+    background-color: #2c262d;
+    width: 200px;
+    color: #fff;font-family: 'Avenir-Book';
+}
+.card-nighthawk-app-header {
+    text-align: center;
+    padding:15px 20px 0px 20px;
+    font-size: 11px;margin-bottom: -22px;
+}
+.card-nighthawk-app-header span{font-family: 'Avenir-Medium';/*font-weight: 600;*/text-decoration: underline;}
+    
+.card-nighthawk-app-header p {
+    max-width: 140px;
+    margin: auto; margin-top: 5px;margin-bottom: 5px;
+}
+.card-nighthawk-app-footer {
+    background: #4a444d;
+    height: 23px;
+    border-radius: 0px 0px 5px 5px;
+    text-align: right;
+    padding-right: 10px;
+}
+.card-nighthawk-app .disp-cell {
+    padding-left: 15px;
+    display: table-cell;
+    vertical-align: top;
+    text-align: center;
+}
+.card-nighthawk-app .device-content {
+    position: relative;
+    bottom: -28px;
+}
+.card-nighthawk-app a {
+    margin-bottom: 0px;
+    display: block;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;
+    	
+}
+    .card-nighthawk-app a:hover {transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;  opacity: .8;}
+.card-nighthawk-app .mb {
+    margin-bottom: 2px;
+}
+.download-alert-nighthawk {
+    font-size: 14.4px;
+    text-decoration: none;
+    color: #fff;
+    border-radius: 6px;
+    background-color:  #2c262d;
+    width: 587px;
+    padding: 18px 15px 18px 20px;
+    display: flex;
+    justify-content: space-between;font-family: 'Avenir-Medium';margin-bottom: 10px;
+}
+.download-btn-nighthawk {
+    margin-right: 13px;
+    line-height: 24px;
+    padding-left: 8px;
+    padding-right: 8px;
+    text-decoration: none;
+    border-radius: 3px;
+    display: inline-block;
+    background-color: #ffffff;
+    font-size: 12px;
+    color: #2c262d;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;
+}
+    .download-btn-nighthawk:hover { opacity: .8;transition:all .3s ease-in-out; -moz-transition:all .3s ease-in-out; -webkit-transition:all .3s ease-in-out;}
+
+.app-icon{ margin-top: 5px; display: inline-block; margin-bottom: 10px;box-shadow: 0 2px 10px 0 rgba(0,0,0,0.50);border-radius: 10px;-webkit-box-shadow: 0 2px 10px 0 rgba(0,0,0,0.50);max-height: 40px;}
+.app-icon-nighthawk{margin-top: 5px; display: inline-flex; margin-bottom: 10px;box-shadow: 0 2px 10px 0 rgba(0,0,0,0.85);border-radius: 10px;-webkit-box-shadow: 0 2px 10px 0 rgba(0,0,0,0.85);max-height: 40px;}
+.app-icon img{display: inline-block;}
+
+.v-middle .disp-cell{vertical-align: middle;}
+.v-middle .app-icon {    display: inline-block;    margin-bottom: 10px;    margin-top: -20px;}
+
+.card-nighthawk-app-header span.desktop a{ color: #fff;}
+.store{display:none;}
+.store a{ color: #fff;}
+.app{display:none;}
+.app a{ color: #fff;}

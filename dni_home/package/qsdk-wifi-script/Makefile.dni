@@ -1,0 +1,7 @@
+define Package/qsdk-wifi-script/install_dniext
+	$(CP) $(LOCAL_DNI_FILES_EXT)/* $(1)/
+endef
+
+define Package/qsdk-wifi-script/prepare_dniext
+endef
+

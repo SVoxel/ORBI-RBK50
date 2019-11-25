@@ -1,0 +1,45 @@
+#!/bin/sh
+
+stop()
+{
+    if [ "x$(cat /module_name)" = "xRBR50" -o "x$(cat /module_name)" = "xRBR40" -o "x$(cat /module_name)" = "xRBR30" -o "x$(cat /module_name)" = "xSRR60" ]; then
+    	# /usr/sbin/ssdk_sh debug phy set 0x0 0x0 0x1840   # set register 0x0  bit[11] to 1
+    	/usr/sbin/ssdk_sh debug phy set 0x1 0x0 0x1840   # set register 0x0  bit[11] to 1
+    	/usr/sbin/ssdk_sh debug phy set 0x2 0x0 0x1840   # set register 0x0  bit[11] to 1
+    	/usr/sbin/ssdk_sh debug phy set 0x3 0x0 0x1840   # set register 0x0  bit[11] to 1
+    	# /usr/sbin/ssdk_sh debug phy set 0x4 0x0 0x1840   # set register 0x0  bit[11] to 1
+    else
+    	/usr/sbin/ssdk_sh debug phy set 0x0 0x0 0x1840   # set register 0x0  bit[11] to 1
+	/usr/sbin/ssdk_sh debug phy set 0x1 0x0 0x1840   # set register 0x0  bit[11] to 1
+	/usr/sbin/ssdk_sh debug phy set 0x2 0x0 0x1840   # set register 0x0  bit[11] to 1
+	/usr/sbin/ssdk_sh debug phy set 0x3 0x0 0x1840   # set register 0x0  bit[11] to 1
+	# /usr/sbin/ssdk_sh debug phy set 0x4 0x0 0x1840   # set register 0x0  bit[11] to 1
+    fi
+}
+
+start()
+{
+    if [ "x$(cat /module_name)" = "xRBR50" -o "x$(cat /module_name)" = "xRBR40" -o "x$(cat /module_name)" = "xRBR30" -o "x$(cat /module_name)" = "xSRR60" ]; then
+    	# /usr/sbin/ssdk_sh debug phy set 0x0 0x0 0x1040  # set register 0x0  bit[11] to 0
+    	/usr/sbin/ssdk_sh debug phy set 0x1 0x0 0x1040  # set register 0x0  bit[11] to 0
+    	/usr/sbin/ssdk_sh debug phy set 0x2 0x0 0x1040  # set register 0x0  bit[11] to 0
+    	/usr/sbin/ssdk_sh debug phy set 0x3 0x0 0x1040  # set register 0x0  bit[11] to 0
+    	# /usr/sbin/ssdk_sh debug phy set 0x4 0x0 0x1040  # set register 0x0  bit[11] to 0
+    else
+    	/usr/sbin/ssdk_sh debug phy set 0x0 0x0 0x1040  # set register 0x0  bit[11] to 0
+	/usr/sbin/ssdk_sh debug phy set 0x1 0x0 0x1040  # set register 0x0  bit[11] to 0
+	/usr/sbin/ssdk_sh debug phy set 0x2 0x0 0x1040  # set register 0x0  bit[11] to 0
+	/usr/sbin/ssdk_sh debug phy set 0x3 0x0 0x1040  # set register 0x0  bit[11] to 0
+	# /usr/sbin/ssdk_sh debug phy set 0x4 0x0 0x1040  # set register 0x0  bit[11] to 0
+    fi
+}
+
+restart()
+{
+    stop
+    sleep 8
+    start
+}
+
+
+restart

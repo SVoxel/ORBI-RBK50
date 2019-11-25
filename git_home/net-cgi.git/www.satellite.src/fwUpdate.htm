@@ -1,0 +1,233 @@
+<% http_head("upgrade_head2","js/upgrade.js") %>
+<body class="fwUpdate postSetup twoColumns">
+<% top_bar() %>
+<% save_timestamp("select_language","change_language") %>
+<% lang_change_status_finish() %>
+<div class="container sliderWrap">
+<% cur_menus("fwUpdate") %>
+<script>
+var warning_msg="<% alert_upg() %>";
+var new_version="<% cat_file("/tmp/auto_version") %>".substring(1);
+var current_version="<% cat_file("/firmware_version") %>".substring(1);
+var current_language="<% get_language_version() %>".substring(1);
+<% refresh_timestamp("upgrade_check") %>
+var ts = "<% cfg_get("upgrade_check") %>";
+var model_name="<% cat_file("/module_name") %>";
+<% max_post_file_size() %>
+</script>
+<div id="slider">
+<div class="main clearfix">
+	<h1>$upgrade_head2</h1>
+
+	<!--ul class="formElements firmwareUpdateOptions">
+		<li class="checkUpdate roundCorners">
+		<% form_admin("upgCheckForm", "fwUpdate.htm", "ping") %>
+		<% save_timestamp("ping", "download_confile") %>
+		<p><strong>$EXT_STR0627</strong></p>
+		<p>$check_oneline_note</p>
+		<div class="ftr">
+			<div class="centerButtons">
+				<div><a id="checkFwBt" class="btn primary" href="#">$EXT_STR0628</a></div>
+			</div>
+		</div>   	      
+		</form>
+		</li-->
+	
+			<form  id="updateFirmwareForm" method="post" action="/upgrade_check.cgi?/fwUpdateCheck.htm" enctype="multipart/form-data" autocomplete="off">
+			<table class="formTable updateFile">
+				<tr><td colspan="2"><strong>$EXT_STR0629</strong></td></tr>
+				<tr><td colspan="2">$EXT_STR0630</td></tr>
+				<tr>
+					<td colspan="2" class="fileInputWidget">
+					<input type="text" class="fakeInputField" /><a class="btn secondary browsebtn fileInput">$EXT_STR0622</a>
+					<input type="file" name="update_file" id="updateFile" size="40" />
+					</td>
+				</tr>
+				<tr class="ftr">
+					<td class="centerButtons">
+						<input type="button" name="upload_bt" id="uploadBt" class="btn primary rescheck" value="$upgrade_mark" disabled="disabled" />
+					</td>
+				</tr>
+			</table>
+			</form>
+		<!--/li>
+	</ul>
+	<table class="formTable Checking hide">
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td>
+				<p>$wait_serv4</p>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<img src="image/loading-on-white.gif" alt="waiting" />
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td>
+				<div class="formButtons bottom">
+				  <div class="mobileFooter">
+					<div class="mobileCenterButtons singleButton">
+					  <div>
+							<input class="btn secondary" name="cancel_check" id="cancelCheckBt" type="button" value="$EXT_STR0246">
+						</div>
+					</div>
+					</div>
+				</div>
+			</td>
+		</tr>	
+	</table>
+	<% form_func("onlineUpgradeForm", "status.htm", "download_image") %>
+	<table class="formTable fwCheckingResult hide">
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+			<div>$wait_new_version</div>
+			</td>
+		</tr>
+		<tr class="newFw hide">
+			<td colspan="2">
+			$info_mark_ver
+			</td>
+		</tr>
+		<tr class="newFw hide">
+			<td>$old_ver:</td>
+			<td><strong><label id='cur_version'><% cat_file("/firmware_version") %></label></strong></td>
+		</tr>
+		<tr class="newFw hide">
+			<td>$new_ver:</td>
+			<td><strong><label id="new_version">1.0.0.2</label></strong></td>
+		</tr>
+		<tr class="newLang hide">
+			<td colspan="2">
+			$info_language_ver
+			</td>
+		</tr>
+		<tr class="newLang hide">
+			<td>$old_ver:</td>
+			<td><strong><label id="cur_language"><% get_language_version() %></label></strong></td>
+		</tr>
+		<tr class="newLang hide">
+			<td>$new_ver:</td>
+			<td><strong><label id="new_language">1.0.0.2</label></strong></td>
+		</tr>
+        <tr class="newFw hide">
+            <td colspan=2><% get_upgrade_info() %></td>
+        </tr>
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="formButtons bottom">
+				  <div class="mobileFooter">
+					<div class="mobileCenterButtons">
+					  	<div>
+							<input class="btn primary" name="yes" id="onlineUpgradeYesBt" type="button" value="$yes_mark">
+							<input class="btn secondary" name="no" id="onlineUpgradeNoBt" type="button" value="$no_mark">
+						</div>
+					</div>
+				  </div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	</form-->
+
+	<table class="formTable hide" id="fwUpdateMsg">
+		<tr><td><hr /></td></tr>
+		<tr><td id="pageMsg"></td></tr>
+		<tr><td><hr /></td></tr>
+		<tr><td colspan="2">
+			<div class="formButtons bottom">
+			  <div class="mobileFooter">
+				<div class="mobileCenterButtons singleButton">
+				  	<div>
+						<input class="btn primary" name="ok" id="okBt" type="button" value="$EXT_STR0249">
+					</div>
+				</div>
+			  </div>
+			</div>
+		</td></tr>
+	</table>
+
+	<% form_func("downloadForm", "status.htm", "write_image") %>
+	<% save_timestamp("write_image", "cancel_image", "download_language", "reload_language") %>
+	<table class="formTable downloadImage hide">
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td>
+				$download_image
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<div class="download_bg"><div class="download_per">0%</div></div>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="formButtons bottom">
+				<div class="mobileFooter">
+					<div class="mobileCenterButtons singleButton">
+						<div>
+							<input class="btn secondary" name="cancel_dl_bt" id="cancelDlBt" type="button" value="$EXT_STR0246">
+						</div>
+					</div>
+				</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	</form>
+
+
+</div> <!-- end main -->
+<% page_footer() %>
+</div> <!-- end slider -->
+<div class="reboot hide">
+	<p class="introduce">$restarting<p>
+	<div class="roundedProcess">
+		<div class="per0">
+			<img src="image/process/per0.png" />
+			<img src="image/process/per11.png" />
+			<img src="image/process/per22.png" />
+			<img src="image/process/per33.png" />
+			<img src="image/process/per44.png" />
+			<img src="image/process/per55.png" />
+			<img src="image/process/per66.png" />
+			<img src="image/process/per77.png" />
+			<img src="image/process/per88.png" />
+			<img src="image/process/per100.png" />
+			<img src="image/process/process.png" />
+		</div>
+		<div class="top_bg"></div>
+		<div class="hold hold1">
+			<div class="pie pie1"></div>
+		</div>
+		<div class="hold hold2">
+			<div class="pie pie2"></div>
+		</div>
+		<div class="bg"> </div>
+		<div class="perText">0%</div>
+	</div>
+<div>
+
+</div> <!-- end container -->
+
+</body>
+</html>
+

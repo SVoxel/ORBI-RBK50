@@ -1,0 +1,28 @@
+#!/bin/sh /etc/rc.common
+START=30
+
+start() {
+	local primary_server second_server
+
+	[ "$($CONFIG get endis_ntp)" != "1" ] && exit
+	primary_server=$($CONFIG get ntpserver1)
+	second_server=$($CONFIG get ntpserver2)
+
+	# Start NTP in net-wan script
+	#ntpclient -h "$primary_server" -b "$second_server" -i 15 -m 60 -p 123 -s &
+	/usr/sbin/ntpclient 
+	conf_time="$($CONFIG get conf_time)"
+	if [ "x$conf_time" = "x1" ]; then
+		/bin/config set wladv_schedule_enable=0
+		/bin/config set limit_internet=0
+	fi
+}
+
+stop() {
+	killall ntpclient
+}
+
+restart() {
+	stop
+	start
+}

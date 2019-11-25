@@ -1,0 +1,111 @@
+<% http_head("upgrade_head2", "js/upgrade.js") %>
+<body class="fwUpdate postSetup twoColumns">
+<% top_bar() %>
+<% save_timestamp("select_language","change_language") %>
+<div class="container sliderWrap">
+<% cur_menus("fwUpdate") %>
+<script>
+<% list_upgrade_file_info() %>
+//new_version=new_version.substring(1);
+var current_version="<% cat_file("/firmware_version") %>".substring(1);
+var current_region="<% cat_file("/firmware_region") %>";
+var fw_region="<% cat_file("/tmp/firmware_region") %>"
+var cfg_allow_upgrade="<% cat_file("/tmp/cfg_allow_upgrade_fw") %>";
+var model_name="<% cat_file("/module_name") %>";
+var hw_revision = "<% cat_file("/tmp/hw_revision") %>";
+<% refresh_timestamp("upload_firmware") %>
+var ts = "<% cfg_get("upload_firmware") %>";
+</script>
+<div id="slider">
+<div class="main clearfix">
+	<h1>$upgrade_head2</h1>
+
+	<form id="localUpgradeForm" method="post" action="/upgrade.cgi? timestamp=<% cfg_get("upload_firmware")%>">
+	<input type="hidden" id="upgrade_yes_no" name="upgrade_yes_no" value="">
+	<table class="formTable fwCheckingResult">
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="2" id="upgradeMsg"></td>
+		</tr>
+		<tr class="curFw">
+			<td>$old_ver:</td>
+			<td><strong><label id="cur_version"></label></strong></td>
+		</tr>
+		<tr class="newFw">
+			<td>$new_ver:</td>
+			<td><strong><label id="new_version"></label></strong></td>
+		</tr>
+		<tr>
+			<td colspan="2"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="2">
+				<div class="formButtons bottom">
+				  <div class="mobileFooter">
+					<div class="mobileCenterButtons">
+					  <div>
+							<input class="btn primary" name="yes" id="localUpgradeYesBt" type="button" value="$yes_mark">
+							<input class="btn secondary" name="no" id="localUpgradeNoBt" type="button" value="$no_mark">
+						</div>
+					</div>
+					</div>
+				</div>
+			</td>
+		</tr>
+	</table>
+	</form>
+	<table class="formTable hide" id="fwUpdateMsg">
+		<tr><td><hr /></td></tr>
+		<tr><td id="pageMsg"></td></tr>
+		<tr><td><hr /></td></tr>
+		<tr><td colspan="2">
+			<div class="formButtons bottom">
+			  <div class="mobileFooter">
+				<div class="mobileCenterButtons singleButton">
+				  	<div>
+						<input class="btn primary" name="ok" id="okBt" type="button" value="$EXT_STR0249">
+					</div>
+				</div>
+			  </div>
+			</div>
+		</td></tr>
+	</table>
+
+
+</div> <!-- end main -->
+<% page_footer() %>
+</div> <!-- end slider -->
+<div class="reboot hide">
+	<p class="introduce">$restarting<p>
+	<div class="roundedProcess">
+		<div class="per0">
+			<img src="image/process/per0.png" />
+			<img src="image/process/per11.png" />
+			<img src="image/process/per22.png" />
+			<img src="image/process/per33.png" />
+			<img src="image/process/per44.png" />
+			<img src="image/process/per55.png" />
+			<img src="image/process/per66.png" />
+			<img src="image/process/per77.png" />
+			<img src="image/process/per88.png" />
+			<img src="image/process/per100.png" />
+			<img src="image/process/process.png" />
+		</div>
+		<div class="top_bg"></div>
+		<div class="hold hold1">
+			<div class="pie pie1"></div>
+		</div>
+		<div class="hold hold2">
+			<div class="pie pie2"></div>
+		</div>
+		<div class="bg"> </div>
+		<div class="perText">0%</div>
+	</div>
+<div>
+</div> <!-- end container -->
+
+</body>
+</html>
+

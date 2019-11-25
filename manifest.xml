@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote fetch="git://codeaurora.org/quic/qsdk/" name="caf-qsdk"/>
+  <remote fetch="https://source.codeaurora.org/" name="caf" review="codeaurora.org"/>
+  <default remote="caf" revision="release/dandelion"/>
+  <project name="quic/qsdk/oss/boot/bootdrv" path="qsdk/qca/src/qca-romboot" revision="ac077531a23b31db3d006338c316a67736aa7e43" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/boot/lk-af" path="qsdk/qca/src/lk-af" revision="b726aa848f42a2c457d8c95b8b96202f31168a83" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/boot/u-boot" path="qsdk/qca/src/u-boot" revision="b69bbe3043c7da6708c5d6f816455919d4a6546a" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/boot/u-boot-1.1.4" path="qsdk/qca/src/qca-legacy-uboot" revision="e3d979b4bcac52ce28baec36f7c342a4ed2eca71" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/boot/uboot-1.0" path="qsdk/qca/src/uboot-1.0" revision="e2dcca9da60ce9228662f58781e9efc2458c1768" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/firmware/ath10k-firmware" path="qsdk/qca/src/ath10k-firmware" revision="d8982f0e37f780817c6db33af37efe8b20909e98" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/hyfi/qca-hyfi-bridge" path="qsdk/qca/src/qca-hyfi-bridge" revision="f5bf314158d06b2274db3d6ea0a4a3ff95d3138d" upstream="release/dandelion_mips"/>
+  <project name="quic/qsdk/oss/hyfi/qca-hyfi-qdisc" path="qsdk/qca/src/qca-hyfi-qdisc" revision="8f991cc2b5539b7769f47df95187a0603c4b7f28" upstream="release/dandelion_mips"/>
+  <project name="quic/qsdk/oss/kernel/linux-msm" path="qsdk/qca/src/linux-3.14" revision="187f00df199084e0a971a8a893fa13d37daa0b0c" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/gobinet" path="qsdk/qca/src/gobinet" revision="f09d627a7abb6eec81c395f85c0c0f586f2d28a7" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-cfi" path="qsdk/qca/src/qca-nss-cfi" revision="028cc787904e68195707ba070cb0304b6076cf93" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-clients" path="qsdk/qca/src/qca-nss-clients" revision="77e9a26ebc3c7d3517e2ef71120de3c95ace3bad" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-crypto" path="qsdk/qca/src/qca-nss-crypto" revision="da87264d4988b8665ff3b332537fed9555dc2479" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-drv" path="qsdk/qca/src/qca-nss-drv" revision="4056888c103525582d155e352c06519ed10ce182" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-gmac" path="qsdk/qca/src/qca-nss-gmac" revision="901380c355a8088841143bd8c5c67c1df5827023" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/nss-macsec" path="qsdk/qca/src/qca-nss-macsec" revision="bab12613e0fbf7a1d9d4f60732b00646d927b382" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/qca-mcs" path="qsdk/qca/src/qca-mcs" revision="6ee959ca8cb99a2f587754585f1e301022e9533a" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/qca-nss-ecm" path="qsdk/qca/src/qca-nss-ecm" revision="3e00cb1ddfa9f158fbb1b1665e7c226ebaeeea0f" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/qca-rfs" path="qsdk/qca/src/qca-rfs" revision="4f585a30f472424af6af2286ea313746cadc5f33" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/qca-ssdk" path="qsdk/qca/src/qca-ssdk" revision="7986334bb76fc3624772493f883e8939a1e05ea6" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/lklm/shortcut-fe" path="qsdk/qca/src/shortcut-fe" revision="eea45d5270aed67692450706bef61d083c6e3153" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/qca-ieee19051-dissector" path="qsdk/qca/src/qca-ieee19051-dissector" revision="6428d26c9ff683456e8f717166fe327672898dd2" upstream="release/dandelion_mips"/>
+  <project name="quic/qsdk/oss/qca-lacpd" path="qsdk/qca/src/qca-lacpd" revision="7b296fc475d068fba4b23dabf4d24a257a02a63d" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/qca/src/btconfig" path="qsdk/qca/src/btconfig" revision="65e8e74223f8e98067c71649a789afbc03b671df" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/releases/configs/qca955x" path="qsdk/qca/configs/qca955x.ln" revision="b36a2783943dcfa217e583949168bdbbe2f3d75f" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/releases/configs/qsdk" path="qsdk/qca/configs/qsdk" revision="6bf39f236974bb45a41354245291dc470f165eee" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/ssdk-shell" path="qsdk/qca/src/qca-ssdk-shell" revision="6ee6e4e6cd187e5a3f1bd40f142d7509c815d19b" upstream="release/dandelion"/>
+  <project name="oss/system/feeds/alljoyn" path="qsdk/qca/feeds/alljoyn" remote="caf-qsdk" revision="9fe1af4efdfd16690f09835ca5cb6329a96d8e16"/>
+  <project name="quic/qsdk/oss/system/feeds/ath10k-fw-package" path="qsdk/qca/feeds/ath10k-firmware" revision="5b670b2016444e1d5193c1565d10a8427c47a507" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/luci" path="qsdk/qca/feeds/luci" revision="c9d9415480855d623748d82a038b078e403e16da" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/networking" path="qsdk/qca/feeds/networking" revision="4eb484005e9a9f55c45e50e6532cfa79139c4456" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/nss-host" path="qsdk/qca/feeds/nss-host" revision="dd6c1a86164e7f8b74a42b368c8a2d2418fd8011" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/packages" path="qsdk/qca/feeds/packages" revision="8d822ba7af8fb463fb36b32a043af7f0b39e38a3" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/routing" path="qsdk/qca/feeds/routing" revision="d27aff904b2a557e049a884d1c404dfc6620ddcd" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/shortcut-fe" path="qsdk/qca/feeds/shortcut-fe" revision="8b1844ed6c5c2f6c1689b0d7ab0f59c8203d2593" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/ssdk" path="qsdk/qca/feeds/ssdk" revision="6d5eff0b84d82136adfd896f96ac2e097b985c79" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/weave" path="qsdk/qca/feeds/weave" revision="9ee78cf3d57273036c545c44b6de821167a4f35f" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/feeds/wlan-open" path="qsdk/qca/feeds/wlan-open" revision="192a3279ee1bc0ebab3a8ce780ff290471d6b1bd" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/openwrt" path="qsdk" revision="791864811126cee19d0d438b3a3bdbd0625733d6" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/system/openwrt/feeds/qca-wifi-10.4" path="qsdk/qca/feeds/wlan_10_4" revision="d8b5ebc03c44fcd47a503169abc2d6fe91e21cfd" upstream="release/dandelion_mips"/>
+  <project name="quic/qsdk/oss/tools/meta" path="meta-scripts" revision="5492f49d737c9b9dd2f5d672d59505aba0979b64" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/tools/skales" path="skales" revision="6209e1ce5f328ad0683583fc198688f83372ab9d" upstream="release/dandelion"/>
+  <project name="quic/qsdk/oss/wlan-host-cmn" path="qsdk/qca/src/qca-wifi-10.4/cmn_dev" revision="42a55a47e6c3e4b70e5f222e039122628de6a961" upstream="release/dandelion_mips"/>
+</manifest>

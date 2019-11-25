@@ -1,0 +1,188 @@
+comment "Network Interface Information"
+
+config DGC_IF_WAN_PHYNAME
+	string "WAN Physical Interface"
+	default "eth0"
+	help
+	  Specify the WAN Physical Interface
+
+config DGC_IF_LAN_PHYNAME
+	string "LAN Physical Interface"
+	default "eth1"
+	help
+	  Specify the LAN Physical Interface
+
+config DGC_IF_WLAN_2G_PHYNAME
+	string "WLAN 2.4G Physical Interface"
+	default "wifi0"
+	help
+	  Specify the WLAN 2.4G Physical Interface
+
+config DGC_IF_WLAN_5G_PHYNAME
+	string "WLAN 5G band Physical Interface"
+	default "wifi1"
+	help
+	  Specify the WLAN 5G band Physical Interface
+
+config DGC_IF_WLAN_5G_BH_PHYNAME
+	string "WLAN 5G band Backhual Physical Interface"
+	default "wifi2"
+	help
+	  Specify the WLAN 5G band Backhual Physical Interface
+
+config DGC_IF_WLAN_5G_FH_PREFIX
+	string "WLAN 5G fronthual Interface prefix"
+	default "wla"
+	help
+	  Specify the WLAN 5G fronthual Interface prefix
+
+config DGC_IF_WLAN_5G_GUEST_PREFIX
+        string "WLAN 5G guest Interface prefix"
+        default "wla1"
+        help
+          Specify the WLAN 5G guest Interface prefix
+
+config DGC_IF_WLAN_5G_BH_PREFIX
+        string "WLAN 5G backhual Interface prefix"
+        default "wla"
+        help
+          Specify the WLAN 5G backhual Interface prefix
+
+config DGC_IF_WAN_IFNAME
+	string "WAN Interface"
+	default "brwan"
+	help
+	  Specify the WAN Interface
+
+config DGC_IF_LAN_IFNAME
+	string "LAN Interface"
+	default "br0"
+	help
+	  Specify the LAN Interface
+
+config DGC_IF_PPP_IFNAME
+	string "PPP(PPPoE/PPTP/L2TP) Interface"
+	default "ppp0"
+	help
+	  Specify the PPP(PPPoE/PPTP/L2TP) Interface
+
+config DGC_IF_MPPP_IFNAME
+	string "Multi-PPPoE Interface"
+	default "ppp1"
+	help
+	  Specify the Multi-PPPoE Interface
+
+config DGC_IF_IPV6_PPP_IFNAME
+	string "IPv6 PPPoE Interface"
+	default "ppp2"
+	help
+	  Specify the IPv6 PPPoE Interface
+
+config DGC_IF_WLAN_Base_2G_AP_IFNAME
+	string "Base 2.4G Primary AP Interface"
+	default "ath0"
+	help
+	  Specify the Base 2.4G Primary AP Interface
+
+config DGC_IF_WLAN_Base_2G_GUEST_AP_IFNAME
+        string "Base 2.4G Guest AP Interface"
+        default "ath02"
+        help
+          Specify the Base 2.4G Guest AP Interface
+
+config DGC_IF_WLAN_Base_5G_AP_IFNAME
+        string "Base 5G Primary AP Interface"
+        default "ath1"
+        help
+          Specify the Base 5G Primary AP Interface
+
+config DGC_IF_WLAN_Base_5G_GUEST_AP_IFNAME
+        string "Base 5G Guest AP Interface"
+        default "ath11"
+        help
+          Specify the Base 5G Guest AP Interface
+
+config DGC_IF_WLAN_Base_2G_BH_AP_IFNAME
+        string "Base 2.4G Backhual AP Interface"
+        default "ath01"
+        help
+          Specify the Base 2.4G Backhual AP Interface
+
+config DGC_IF_WLAN_Base_5G_BH_AP_IFNAME
+        string "Base 5G Backhual AP Interface"
+        default "ath2"
+        help
+          Specify the Base 5G Backhual AP Interface
+
+config DGC_IF_WLAN_Sate_2G_AP_IFNAME
+        string "Satellite 2.4G Primary AP Interface"
+        default "ath0"
+        help
+          Specify the Satellite 2.4G Primary AP Interface
+
+config DGC_IF_WLAN_Sate_2G_GUEST_AP_IFNAME
+        string "Satellite 2.4G Guest AP Interface"
+        default "ath02"
+        help
+          Specify the Satellite 2.4G Guest AP Interface
+
+config DGC_IF_WLAN_Sate_5G_AP_IFNAME
+        string "Satellite 5G Primary AP Interface"
+        default "ath1"
+        help
+          Specify the Satellite 5G Primary AP Interface
+
+config DGC_IF_WLAN_Sate_5G_GUEST_AP_IFNAME
+        string "Satellite 5G Guest AP Interface"
+        default "ath11"
+        help
+          Specify the Satellite 5G Guest AP Interface
+
+config DGC_IF_WLAN_Sate_2G_BH_STA_IFNAME
+        string "Satellite 2.4G Backhual STA Interface"
+        default "ath01"
+        help
+          Specify the Satellite 2.4G Backhual STA Interface
+
+config DGC_IF_WLAN_Sate_5G_BH_STA_IFNAME
+        string "Satellite 5G Backhual STA Interface"
+        default "ath2"
+        help
+          Specify the Satellite 5G Backhual STA Interface
+
+config DGC_IF_WLAN_Sate_DS_2G_BH_AP_IFNAME
+        string "Satellite 2.4G Backhual AP Interface when Daisy Chain Enable"
+        default "ath01"
+        help
+          Specify the Satellite 2.4G Backhual AP Interface when Daisy Chain Enable
+
+config DGC_IF_WLAN_Sate_DS_2G_GUEST_AP_IFNAME
+        string "Satellite 2.4G Guest AP Interface when Daisy Chain Enable"
+        default "ath03"
+        help
+          Specify the Satellite 2.4G Guest AP Interface when Daisy Chain Enable
+
+config DGC_IF_WLAN_Sate_DS_5G_BH_AP_IFNAME
+        string "Satellite 5G Backhual AP Interface when Daisy Chain Enable"
+        default "ath2"
+        help
+          Specify the Satellite 5G Backhual AP Interface when Daisy Chain Enable
+
+config DGC_IF_WLAN_Sate_DS_5G_GUEST_AP_IFNAME
+        string "Satellite 5G Guest AP Interface when Daisy Chain Enable"
+        default "ath11"
+        help
+          Specify the Satellite 5G Guest AP Interface when Daisy Chain Enable
+
+config DGC_IF_WLAN_Sate_DS_2G_BH_STA_IFNAME
+        string "Satellite 2.4G Backhual STA Interface when Daisy Chain Enable"
+        default "ath02"
+        help
+          Specify the Satellite 2.4G Backhual STA Interface when Daisy Chain Enable
+
+config DGC_IF_WLAN_Sate_DS_5G_BH_STA_IFNAME
+        string "Satellite 5G Backhual STA Interface when Daisy Chain Enable"
+        default "ath21"
+        help
+          Specify the Satellite 5G Backhual STA Interface when Daisy Chain Enable
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<% hijack_success_page() %>
+</head>
+
+<script language="javascript" type="text/javascript">
+var ts = "<% hijack_get_timestamp("hijack_success") %>";
+
+<% cfg_set("wiz_success", "1") %>
+<% cfg_set("hijack_config_status", "1") %>
+//fix bug 29052
+
+</script>
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Connected to Internet -->
+		<div id="card-connected-internet" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="connected-internet-logo" src="images/connected_internet.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_success_conn);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_success_conn_msg)</script></div>
+			<button class="waves-effect waves-light btn button-nav" onclick='location.href="BRS_orbi_satellite_start.html";'>
+				<span><script>document.write(bh_orbi_next_mark)</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,14 @@
+<% help_head() %>
+</HEAD>
+$h_BAS_ether
+<script>
+var have_dhcp_option = parent.parent.have_dhcp_option;
+if(have_dhcp_option == 1)
+{
+	var newNode0 = document.createElement("p");
+	newNode0.innerHTML = "$dhcp_option_help";	
+	var orgNode = document.getElementsByTagName("p")[30];
+	orgNode.insertAdjacentElement("afterEnd", newNode0);
+}
+</script>
+</HTML>

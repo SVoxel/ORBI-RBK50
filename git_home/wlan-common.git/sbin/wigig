@@ -1,0 +1,485 @@
+#!/bin/sh
+# Copyright (C) 2006 OpenWrt.org
+
+. /lib/functions.sh
+
+usage() {
+	cat <<EOF
+Usage: $0 [down|detect]
+enables (default), disables or detects a wigig configuration.
+EOF
+	exit 1
+}
+
+find_net_config() {(
+	local vif="$1"
+	local cfg
+	local ifname
+
+	config_get cfg "$vif" network
+
+	[ -z "$cfg" ] && {
+		include /lib/network
+		if eval "type scan_interfaces" 2>/dev/null >/dev/null; then
+			scan_interfaces
+		fi
+
+		config_get ifname "$vif" ifname
+
+		if eval "type find_config" 2>/dev/null >/dev/null; then
+			cfg="$(find_config "$ifname")"
+		fi
+	}
+	[ -z "$cfg" ] && return 0
+	echo "$cfg"
+)}
+
+
+bridge_interface() {(
+	local cfg="$1"
+	[ -z "$cfg" ] && return 0
+
+	include /lib/network
+	if eval "type scan_interfaces" 2>/dev/null >/dev/null; then
+		scan_interfaces
+	fi
+
+	for cfg in $cfg; do
+		config_get iftype "$cfg" type
+		[ "$iftype" = bridge ] && config_get "$cfg" ifname
+		prepare_interface_bridge "$cfg"
+		return $?
+	done
+)}
+
+wifi_fixup_hwmode() {
+	local device="$1"
+	local default="$2"
+	local hwmode hwmode_11n
+
+	config_get channel "$device" channel
+	config_get hwmode "$device" hwmode
+	case "$hwmode" in
+		11ad) hwmode=ad;;
+		11bg) hwmode=bg;;
+		11a) hwmode=a;;
+		11b) hwmode=b;;
+		11g) hwmode=g;;
+		11n*)
+			hwmode_11n="${hwmode##11n}"
+			case "$hwmode_11n" in
+				a|g) ;;
+				default) hwmode_11n="$default"
+			esac
+			config_set "$device" hwmode_11n "$hwmode_11n"
+		;;
+		*)
+			hwmode=
+			if [ "${channel:-0}" -gt 0 ]; then 
+				if [ "${channel:-0}" -gt 14 ]; then
+					hwmode=a
+				else
+					hwmode=g
+				fi
+			else
+				hwmode="$default"
+			fi
+		;;
+	esac
+	config_set "$device" hwmode "$hwmode"
+}
+
+# Do not call this function if there is still anything you want to do after it,
+# because it is exited directly.
+wigig_updateconf() {
+	local reload_time=10;
+	if eval "type update-wifi" 2>/dev/null >/dev/null; then
+		update-wifi -t wigig
+		uci show wigig > $NEW_WIGIG_CONF
+		[ -f /etc/wigig_config_comp.awk ] && {
+		    awk -f /etc/wigig_config_comp.awk $OLD_WIGIG_CONF $NEW_WIGIG_CONF
+		}
+		for driver in ${WIGIG_DRIVERS}; do
+			devices=
+			for device in ${2:-$WIGIG_DEVICES}; do
+				config_get type $device type
+				if [ "$type" = "$driver" ]; then
+					append devices $device
+				fi
+			done
+			if eval "type reload_time_${driver}" 2>/dev/null >/dev/null; then
+				eval "reload_time_${driver} driver_reload_time \"${devices}\""
+				reload_time=$(( $reload_time + $driver_reload_time ))
+			fi
+		done
+		exit $reload_time
+	fi
+}
+
+wigig_updown() {
+	#[ enable = "$1" ] && {
+	#	wigig_updown disable "$2"
+	#	scan_wigig
+	#}
+	for driver in ${WIGIG_DRIVERS}; do (
+		if eval "type pre_${driver}" 2>/dev/null >/dev/null; then
+			eval "pre_${driver}" ${1}
+		fi
+	); done
+	for device in ${2:-$WIGIG_DEVICES}; do (
+		config_get disabled "$device" disabled
+		[ 1 == "$disabled" ] && {
+			echo "'$device' is disabled"
+			set disable
+		}
+		config_get iftype "$device" type
+		if eval "type ${1}_$iftype" 2>/dev/null >/dev/null; then
+			eval "scan_$iftype '$device'"
+			eval "${1}_$iftype '$device' dni" || echo "$device($iftype): ${1} failed"
+		else
+			echo "$device($iftype): Interface type not supported"
+		fi
+	); done
+	for driver in ${WIGIG_DRIVERS}; do (
+		if eval "type post_${driver}" 2>/dev/null >/dev/null; then
+			eval "post_${driver}" ${1} ${WIGIG_DEVICES}
+		fi
+	); done
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "${1}" = "enable" ]; then
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported on_led function"
+			fi
+		); done
+		uci show wigig > $OLD_WIGIG_CONF
+	else
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type force_off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "force_off_led_${driver}" || echo "$driver: force off led failed"
+			else
+				echo "$driver: Interface type not supported force_off_led function"
+			fi
+		); done
+	fi
+}
+
+wigig_detect() {
+	for driver in ${2:-$WIGIG_DRIVERS}; do (
+		if eval "type detect_$driver" 2>/dev/null >/dev/null; then
+			eval "detect_$driver dni $1" || echo "$driver: Detect failed" >&2
+		else
+			echo "$driver: Hardware detection not supported" >&2
+		fi
+	); done
+}
+
+start_net() {(
+	local iface="$1"
+	local config="$2"
+	local vifmac="$3"
+
+	[ -f "/var/run/$iface.pid" ] && kill "$(cat /var/run/${iface}.pid)" 2>/dev/null
+	[ -z "$config" ] || {
+		include /lib/network
+		if eval "type scan_interfaces" 2>/dev/null >/dev/null; then
+			scan_interfaces
+		fi
+		for config in $config; do
+			setup_interface "$iface" "$config" "" "$vifmac"
+		done
+	}
+)}
+
+set_wifi_up() {
+	local cfg="$1"
+	local ifname="$2"
+	uci_set_state wigig "$cfg" up 1
+	uci_set_state wigig "$cfg" ifname "$ifname"
+}
+
+set_wifi_down() {
+	local cfg="$1"
+	local vifs vif vifstr
+
+	[ -f "/var/run/wifi-${cfg}.pid" ] &&
+		kill "$(cat "/var/run/wifi-${cfg}.pid")" 2>/dev/null
+	uci_revert_state wigig "$cfg"
+	config_get vifs "$cfg" vifs
+	for vif in $vifs; do
+		uci_revert_state wigig "$vif"
+	done
+}
+
+scan_wigig() {
+	local cfgfile="$1"
+	WIGIG_DEVICES=
+	config_cb() {
+		local type="$1"
+		local section="$2"
+
+		# section start
+		case "$type" in
+			wigig-device)
+				append WIGIG_DEVICES "$section"
+				config_set "$section" vifs ""
+				config_set "$section" ht_capab ""
+			;;
+		esac
+
+		# section end
+		config_get TYPE "$CONFIG_SECTION" TYPE
+		case "$TYPE" in
+			wigig-iface)
+				config_get device "$CONFIG_SECTION" device
+				config_get vifs "$device" vifs 
+				append vifs "$CONFIG_SECTION"
+				config_set "$device" vifs "$vifs"
+			;;
+		esac
+	}
+	config_load "${cfgfile:-wigig}"
+}
+
+wigig_wps() {
+	for device in ${WIGIG_DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type wps_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wps_$iftype" "$device" "$@" || echo "$iftype: WPS failed" >&2
+		else
+			echo "$iftype: Hardware wps ion not supported" >&2
+		fi
+	); done
+}
+
+wigig_toggle() {
+	no_update_hw_btn_state=
+	if [ "$2" = "--no-update-hw-btn-state" ]; then
+		no_update_hw_btn_state="$2"
+	fi
+
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_state hw_btn_state"
+		eval "config_get_$CONFIGS _tmp_gui_radio_state wig_gui_radio_state"
+	fi
+	for device in ${WIGIG_DEVICES}; do
+		config_get iftype "$device" type
+		(if eval "type wigigtoggle_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wigigtoggle_$iftype" "$device" "$_tmp_state" "$_tmp_gui_radio_state" "$@" || echo "$iftype: WIGIGTOGGLE failed" >&2
+		else
+			echo "$iftype: Hardware wigigtoggle not supported" >&2
+		fi);
+	done
+	if [ "$_tmp_state" = "on" ]; then
+		next_state="off"
+	else
+		next_state="on"
+	fi
+	dni_toggle_hw_btn_state
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "$next_state" = "on" ]; then
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	else
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "off_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: force off led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	fi
+	if [ "$no_update_hw_btn_state" ]; then
+		# Revert Wi-Fi button state back to old state
+		dni_toggle_hw_btn_state
+	fi
+}
+
+wigig_schedule() {
+	local band=$2
+	local newstate=$3
+
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_state hw_btn_state"
+	fi
+	for device in ${WIGIG_DEVICES}; do (
+		config_get hwmode "$device" hwmode
+		is11ad=$(echo $hwmode | grep -i "^11ad")
+		[ "$band" = "11ad" -a "x$is11ad" != "x" ] || continue
+
+		config_get iftype "$device" type
+		if eval "type wigigschedule_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wigigschedule_$iftype" "$device" "$_tmp_state" "$@" || echo "$iftype: WIGIG SCHEDULE failed" >&2
+		else
+			echo "$iftype: Hardware wigig schedule not supported" >&2
+		fi
+	); done
+	if [ "$newstate" = "on" -a "$_tmp_state" = "on" ]; then
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS sched_status $band 0"
+		fi
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS wl_onoff $band 1"
+		fi
+	else
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS sched_status $band 1"
+		fi
+		if eval "type config_set_$CONFIGS" 2>/dev/null >/dev/null; then
+			eval "config_set_$CONFIGS wl_onoff $band 0"
+		fi
+	fi
+	if eval "type config_get_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_get_$CONFIGS _tmp_radio_num radio_num"
+		eval "config_get_$CONFIGS _tmp_security_type security_type"
+		eval "config_get_$CONFIGS _tmp_radio_type radio_type"
+		eval "config_get_$CONFIGS _tmp_led_blinking_setting led_blinking_setting"
+	fi
+	if [ "$newstate" = "on" -a "$_tmp_state" = "on" ]; then
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type on_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "on_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: on led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	else
+		for driver in ${WIGIG_DRIVERS}; do (
+			if eval "type off_led_${driver}" 2>/dev/null >/dev/null; then
+				eval "off_led_${driver} $_tmp_radio_num $_tmp_security_type $_tmp_radio_type $_tmp_led_blinking_setting" || echo "$driver: off led failed"
+			else
+				echo "$driver: Interface type not supported"
+			fi
+		); done
+	fi
+	if eval "type config_commit_$CONFIGS" 2>/dev/null >/dev/null; then
+		eval "config_commit_$CONFIGS"
+	fi
+}
+
+wigig_stainfo() {
+	for device in ${WIGIG_DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type wigigstainfo_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wigigstainfo_$iftype" "$device" "$@" || echo "$iftype: WIGIG STAINFO failed" >&2
+		else
+			echo "$iftype: Hardware wigig stainfo not supported" >&2
+		fi
+	); done
+}
+
+wigig_radio() {
+	local band=$2
+
+	for device in ${WIGIG_DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type wigigradio_$iftype" 2>/dev/null >/dev/null; then
+			shift
+			eval "wigigradio_$iftype" "$device" "$@" || echo "$iftype: WIGIG RADIO failed" >&2
+		else
+			echo "$iftype: Hardware wigig radio not supported" >&2
+		fi
+	); done
+}
+
+wigig_statistic() {
+	for device in ${WIGIG_DEVICES}; do (
+		config_get iftype "$device" type
+		if eval "type statistic_$iftype" 2>/dev/null >/dev/null; then
+			eval "statistic_$iftype" "$device" || echo "$iftype: STATISTIC failed" >&2
+		else
+			echo "$iftype: Hardware statistic not supported" >&2
+		fi
+	); done
+}
+
+
+wigig_mac() {
+	MAC_2G_FILE=/tmp/mac_addr_2g
+	MAC_5G_FILE=/tmp/mac_addr_5g
+	[ -f "$MAC_2G_FILE" ] && MAC_2G_ADDR=`cat ${MAC_2G_FILE}`
+	[ -f "$MAC_5G_FILE" ] && MAC_5G_ADDR=`cat ${MAC_5G_FILE}`
+
+	[ -n "$MAC_2G_ADDR" ] && {
+		echo "###2.4G###"
+		echo $MAC_2G_ADDR
+		echo ""
+	}
+	[ -n "$MAC_5G_ADDR" ] && {
+		echo "###5G###"
+		echo $MAC_5G_ADDR
+	}
+}
+
+show_usage() {
+    cat <<EOF
+Usage: $0 <command> [<arguments>]
+
+Commands:
+    updateconf                       : update wigig configurations
+    up                               : bring up wigig interfaces
+    down                             : bring down wigig interfaces
+    wps <arguments>                  : wps actions.
+         --client_pin <pin number>   :: start WPS client PIN
+         --pbc_start                 :: start WPS PBC
+         --wps_stop                  :: stop WPS actions
+    toggle                           : toggle wigig radio (ON <-> OFF)
+         --no-update-hw-btn-state    :: do not update "hw_btn_state"
+    schedule <11ad> <on/off>         : do wigig schedule
+    stainfo                          : show all attached wigig stations.
+    radio <11g/11a> <arguments>      : actions related to radio
+         --status                    :: show radio status (ON or OFF)
+         --channel                   :: show current channel
+         --coext <on/off>            :: enable/disable coexistence function.
+    statistic                        :: show statistic info
+    mac                              :: show mac info
+    help                             : show this
+EOF
+}
+
+WIGIG_DEVICES=
+WIGIG_DRIVERS=
+CONFIGS=
+include /lib/wifi
+scan_wigig
+
+CONF_FOLDER=/tmp/wigig_update
+[ -d $CONF_FOLDER ] || mkdir -p $CONF_FOLDER
+OLD_WIGIG_CONF=$CONF_FOLDER/wigig.old
+NEW_WIGIG_CONF=$CONF_FOLDER/wigig.new
+
+case "$1" in
+	updateconf) wigig_updateconf "$2";;
+	down) wigig_updown "disable" "$2";;
+	detect) wigig_detect "$2";;
+	wps) wigig_wps "$@";;
+	toggle) wigig_toggle "$@";;
+	schedule) wigig_schedule "$@";;
+	stainfo) wigig_stainfo "$@";;
+	radio) wigig_radio "$@";;
+	up) wigig_updown "enable" "$2";;
+	statistic ) wigig_statistic ;;
+	mac ) wigig_mac ;;
+	*) show_usage ;;
+esac

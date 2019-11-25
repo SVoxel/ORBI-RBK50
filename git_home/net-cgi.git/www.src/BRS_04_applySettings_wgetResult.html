@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<meta http-equiv="refresh" content="5; url=BRS_04_applySettings_wgetResult.html" />
+<% hijack_language() %>
+<script language="javascript" type="text/javascript">
+var wget_result = "<% hijack_wget_result("/tmp/wget_file_result")  %>";
+var select_basic="<% cfg_get("internet_type") %>";  //select_basic = 1 dhcp or static, select_basic=0 pppoe or pptp 
+var select_type = "<% cfg_get("internet_ppp_type") %>"; //select_type = 0 pppoe ,select_type = 1 pptp
+
+function loadvalue()
+{
+	if(select_basic == "0" && select_type == "0")//pppoe
+	{
+		if(wget_result == "failed")
+			this.location.href = "BRS_03A_B_pppoe_reenter.html";
+		else if(wget_result == "success")
+			this.location.href = "BRS_success.html";
+	}
+	else if(select_basic == "0" && select_type == "1")//pptp
+	{
+		if(wget_result == "failed")
+			this.location.href = "BRS_03A_C_pptp_reenter.html";
+		else if(wget_result == "success")
+			this.location.href = "BRS_success.html";
+	}
+	else if(select_basic == "0" && select_type == "4")//l2tp
+	{
+		if(wget_result == "failed")
+			this.location.href = "BRS_03A_F_l2tp_reenter.html";
+		else if(wget_result == "success")
+			this.location.href = "BRS_success.html";
+	}
+}
+</script>
+
+</head>
+
+<body onload="loadvalue();">
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Applying Internet Connection -->
+		<div id="card-applying-internet-connection" class="install-card clearfix">
+
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="desc-title"><script>document.write(bh_apply_connection);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_wait);</script></div>
+
+			<div class="spinner"></div>
+			<div class="desc-text wait"><script>document.write(bh_orbi_pls_wait);</script></div>
+		</div>
+	</div>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+
+<script language="javascript" type="text/javascript">
+var ip_addr = "<% cfg_get("lan_ipaddr") %>";
+var toppic = "<% cfg_get("toppic") %>";
+</script>
+</head>
+
+<body>
+<form action="/apply.cgi?/continue.htm timestamp=<% hijack_get_timestamp("conflict") %>" method="post">
+<input type="hidden" name="submit_flag" value="conflict">
+
+<div id="container">
+	<div class="dialog-content">
+		<!-- Important Update -->
+		<div id="card-important-udpate" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_important);</script></div>
+			<div class="desc-text-red">
+				<script>document.write(bh_orbi_important_msg_1+"<b>"+ip_addr+"</b>"+bh_orbi_important_msg_2);</script>
+			</div>
+
+			<button class="waves-effect waves-light btn button-nav" onclick="return true;">
+				<span><script>document.write(bh_orbi_continue_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+
+</form>
+</body>
+
+</html>

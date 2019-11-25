@@ -1,0 +1,15 @@
+
+choice
+	prompt "Armor version type support"
+	default ARMOR_PRO
+	help
+	  Select the version type of your Armor.
+
+	config ARMOR_PRO
+		bool "Support Armor Pro full version"
+
+	config ARMOR_BASIC
+		bool "Support Armor Basic version"
+
+endchoice
+

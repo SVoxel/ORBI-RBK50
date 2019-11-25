@@ -1,0 +1,1 @@
+<% cat_file("/tmp/wps_process_state") %>

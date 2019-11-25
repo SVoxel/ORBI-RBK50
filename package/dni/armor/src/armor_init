@@ -1,0 +1,107 @@
+#!/bin/sh /etc/rc.common
+#To use circle function,please identify the value of "mount_dev"
+START=94
+boot() {
+    if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+        exit 0
+    fi
+	if [ "`/bin/config get dgc_func_have_armor`" != "1" ]; then
+		exit 0
+	fi
+	if [ "x`cat /tmp/orbi_type`" != "xBase" ]; then
+		exit 0
+	fi
+
+	local router_region=`artmtd -r region |grep REGION|awk -F ': ' '{print $2}'`
+	if [ "x$router_region" = "xPR" ]; then
+		exit 0
+	fi
+
+	mount_dev=`part_dev armor`
+	router_reset=`/bin/config get reset_flag`
+	partition_type=`cat /flash_type`
+
+	if [ "x$partition_type" != "xEMMC" ]; then
+		ubidev=$(ubinfo -a | grep -B5 vol_armor | sed -nr 's/Volume ID:.*\(on (ubi.*)\)/\1/p')
+		if [ "$ubidev" = "" -a "$(ubinfo -a | grep vol_ntgrdata)" != "" ]; then
+			have_vol_ntgrdata=1
+		fi
+	fi
+	
+	if [ -b $mount_dev -a "x$partition_type" = "xEMMC" ];then
+		[ "x$mount_dev" != "x" ] && filetype=`blkid $mount_dev |grep -o 'TYPE=.*' |awk -F \" '{print $2}'`
+		if [ "x$filetype" != "xext4" -o $router_reset -eq 1 ];then
+			mkfs.ext4 $mount_dev
+		fi
+	elif [ "x$partition_type" != "xEMMC" ]; then
+		if [ $router_reset -eq 1 ]; then
+			if [ "$have_vol_ntgrdata" = "1" ]; then
+				[ -d "/tmp/ntgrdata/armor" ] && rm -rf /tmp/ntgrdata/armor/*
+			else
+				flash_erase $mount_dev 0 0
+			fi
+		fi
+	fi
+
+	#armor start
+	mkdir -p /mnt/bitdefender/ /tmp/opt/
+	ln -s /tmp/opt /opt
+	ln -s /mnt/bitdefender /opt/bitdefender
+
+	if [ "x`mount |grep '/tmp/mnt/bitdefender'`" = "x" -a "$have_vol_ntgrdata" = "" ]; then
+		[ ! -d '/tmp/mnt/bitdefender' ] && mkdir '/opt/bitdefender'
+		if [ "x$partition_type" != "xEMMC" ]; then
+			mount -t ubifs $ubidev:vol_armor '/opt/bitdefender'
+			if [ "x$(mount |grep '/tmp/mnt/bitdefender')" = "x" ]; then
+				flash_erase $mount_dev 0 0
+				mount -t ubifs $ubidev:vol_armor '/opt/bitdefender'
+			fi
+		else
+			mount $mount_dev '/opt/bitdefender'
+			if [ "x$(mount |grep '/tmp/mnt/bitdefender')" = "x" ]; then
+				mkfs.ext4 $mount_dev
+				mount $mount_dev '/opt/bitdefender'
+			fi
+		fi
+	elif [ "$have_vol_ntgrdata" = "1" ]; then
+		[ ! -d "/tmp/ntgrdata/armor" ] && mkdir -p "/tmp/ntgrdata/armor"
+		[ -d /mnt/bitdefender/ ] && rm -r /mnt/bitdefender/ && ln -s "/tmp/ntgrdata/armor" '/tmp/mnt/bitdefender'
+	fi
+
+	#For version before 2.3.5.8,we only know nvram LastRebootReason from RA to check if router has performed FW upgrade, but this value still exist on case that router directly power off,for version after 2.3.5.8, we specially add nvram fwupgrade_performed for this purpose, value set to 1 before upgrading and set to 0 in done script.
+	LastRebootReason=`/bin/config get lastRebootReason`
+	FW_is_upraded=`/bin/config get fwupgrade_performed`
+	if [ "$FW_is_upraded" = "1" ]; then
+		/usr/share/armor/upgrade_bd_cfg.sh backup
+	elif [ "$FW_is_upraded" = "" ]; then
+		if [ "$LastRebootReason" = "6" ]; then
+			#For RA value reboot reason,there is limitation,this value still is 6 if user directly power off and power on, to handle this we set another value to mark and skip this case,for fw after this version,GUI will set fwupgrade_performed for armor and we only need to check this value
+			LastRebootReason_armor=`/bin/config get lastRebootReason_armor`
+			if [ "$LastRebootReason_armor" != "1" ]; then
+				/usr/share/armor/upgrade_bd_cfg.sh backup
+				/bin/config set lastRebootReason_armor=1
+			fi
+		fi
+	fi
+			
+
+	if [ ! -e "/opt/bitdefender/bitdefender-release" ]; then
+		[ -e /lib/armor/phase2.tar.gz ] && tar -zxvf /lib/armor/phase2.tar.gz -C / --keep-directory-symlink
+	fi
+
+	if [ ! -e "/opt/bitdefender/bin/bdupd" ]; then
+		[ -e /lib/armor/phase2-upd.tar.gz ] && tar -zxvf /lib/armor/phase2-upd.tar.gz -C /opt/bitdefender --keep-directory-symlink
+	fi
+	chown -R root:root /opt/bitdefender/
+	chmod +x /opt/bitdefender/guster/scripts/*
+	#Per MH request,disable bdupdater carried in BD agent, Set BD updater check interval to 14days, this requirement is from DT 2.3.0.28
+	sed -ri "/check_interval/s/(check_interval=)[^ ]+/\11209600/g" /opt/bitdefender/etc/patch.server
+
+	if [ -e /lib/armor/phase2.tar.gz ]; then
+		#if we have prebuild BD agent, directly start
+		/usr/share/armor/BD_START.sh &
+	elif [ -e /lib/armor/phase2-upd.tar.gz ]; then
+		#If not have prebuild BD agent, call bdupd to download and start
+		/usr/share/armor/bdupd_start.sh boot &
+	fi
+}	

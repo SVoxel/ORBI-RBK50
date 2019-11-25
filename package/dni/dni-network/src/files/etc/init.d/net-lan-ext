@@ -1,0 +1,202 @@
+#!/bin/sh /etc/rc.common
+#START=20
+
+DHCPNAME="/tmp/dhcp_name.conf"
+
+print_dhcpd_conf_success(){
+    cat <<EOF
+pidfile /var/run/udhcpd.pid
+start $2
+end $3
+interface $1
+remaining yes
+auto_time 5
+lease_file /tmp/udhcpd.leases
+option subnet $4
+option router $5
+option dns $6 $7 $8
+option lease $9
+EOF
+}
+ 
+start_dhcpd_success() {
+    [ -f /tmp/disable_satelite_dhcpd ] && return
+    [ ! -f /tmp/udhcpd.leases ] && touch /tmp/udhcpd.leases
+    start_ip=$($CONFIG get dhcp_start)
+    end_ip=$($CONFIG get dhcp_end)
+    lan_ip=$($CONFIG get lan_ipaddr)
+    lan_gateway=$($CONFIG get lan_gateway)
+    lan_netmask=$($CONFIG get lan_netmask)
+    lan_dns1=$($CONFIG get lan_dns1)
+    lan_dns2=$($CONFIG get lan_dns2)
+    $NVRAM set lan_ipaddr_early=$lan_ip
+    $NVRAM set lan_gateway_early=$lan_gateway
+    $NVRAM set lan_dns1_early=$lan_dns1
+    print_dhcpd_conf_success "$BR_IF" "$start_ip" "$end_ip" "$lan_netmask" "$lan_gateway" "$lan_dns1" "$lan_dns2" "$lan_ip" "86400" > /tmp/udhcpd.conf
+
+    udhcpd /tmp/udhcpd.conf
+}
+
+start_dhcpc() {
+    if [ "x$($CONFIG get wan_domain)" = "x" ];then
+        udhcpc -b -i $BR_IF -h $DHCPNAME -r $($CONFIG get wan_dhcp_ipaddr) -N $($CONFIG get wan_dhcp_oldip)
+    else
+        udhcpc -b -i $BR_IF -h $DHCPNAME -r $($CONFIG get wan_dhcp_ipaddr) -N $($CONFIG get wan_dhcp_oldip) -d $($CONFIG get wan_domain)
+    fi
+}
+
+start() {
+	local lan_ip lan_mask
+	echo 0 > /tmp/eth_link
+	wan6_type=`$CONFIG get ipv6_type`
+	lan6_ip=`ifconfig $BR_IF |grep "inet6 addr" |grep -v "Link" |awk '{print $3}'`
+	factory_mode_flag=`/bin/config get factory_mode`
+
+	# set iptv interface
+	#gui_region=$($CONFIG get GUI_Region)
+	#firmware_region=`cat /tmp/firmware_region | awk '{print $1}'`
+	#if [ "$firmware_region" = "" ] || [ "$firmware_region" = "WW" ];then
+	#	if [ "$gui_region" = "Russian" ];then
+	#		vlan-set $($CONFIG get iptv_mask) 1>/tmp/vlan-set-result
+	#	else
+	#		vlan-set 0 1>/tmp/vlan-set-result
+	#	fi
+	#elif [ "$firmware_region" = "RU" ];then
+	#	vlan-set $($CONFIG get iptv_mask) 1>/tmp/vlan-set-result
+	#else
+	#	vlan-set 0 1>/tmp/vlan-set-result
+	#fi
+
+	lan_ip=$($CONFIG get lan_ipaddr)
+	lan_mask=$($CONFIG get lan_netmask)
+
+	ifconfig $BR_IF ${lan_ip:-192.168.1.250} netmask ${lan_mask:-255.255.255.0}
+	
+	ifconfig $LAN_PHYIF up
+	wl2g_BACKHAUL_AP=`/bin/config get wl2g_BACKHAUL_AP`
+	if [ "x$wl2g_BACKHAUL_AP" != "x" ]; then
+		echo "=====before lan bridge down,should down backhaul ap $wl2g_BACKHAUL_AP first=======" > /dev/console
+		ifconfig $wl2g_BACKHAUL_AP down
+	fi
+
+    if [ "x$factory_mode_flag" != "x1"  ];then
+        /etc/init.d/hyfi-bridging stop
+        ifconfig $BR_IF down
+        # Enable DAD, and randomly generate anoter link-local address if
+        # MAC-based duplicate link-local address has been found.
+        echo 3 > /proc/sys/net/ipv6/conf/default/accept_dad
+        echo 3 > /proc/sys/net/ipv6/conf/${BR_IF}/accept_dad
+        sleep 2
+        ifconfig $BR_IF up
+        /etc/init.d/hyfi-bridging start
+    fi
+
+	wl2g_BACKHAUL_AP=`/bin/config get wl2g_BACKHAUL_AP`
+	if [ "x$wl2g_BACKHAUL_AP" != "x" ]; then
+		echo "=====bridge up,should up backhaul ap $wl2g_BACKHAUL_AP first=======" > /dev/console
+		ifconfig $wl2g_BACKHAUL_AP up
+	fi
+	# start syslogd earlier on boot process
+	[ -f /tmp/boot_status ] && /usr/sbin/dsyslog start
+
+	[ ! -f /tmp/link_status ] && echo 0 > /tmp/link_status
+	if [ "$($CONFIG get cgi_ap_mode)" = "0" ]; then
+	    echo 0 > /proc/sys/net/ipv4/block_dhcp
+	else
+	    if [ "$($CONFIG get wl_conf_mode)" = "0" ]; then
+	        echo 1 > /proc/sys/net/ipv4/block_dhcp
+	    else
+	        echo 2 > /proc/sys/net/ipv4/block_dhcp
+	    fi
+	fi
+	
+	local hostname="$($CONFIG get netbiosname)"
+	echo "$hostname" > $DHCPNAME
+
+	if [ "$($CONFIG get lan_dhcp)" = "1" ]; then
+		if [ "x$factory_mode_flag" = "x1" ];then
+			start_dhcpc &
+		else
+			start_dhcpc
+		fi
+	else
+		/sbin/route del default gw 0.0.0.0 dev $BR_IF
+		dns_server=$($CONFIG get lan_ether_dns1)
+		gateway=$($CONFIG get lan_gateway)
+		/sbin/route add default gw $gateway dev $BR_IF
+		echo nameserver $dns_server > /tmp/resolv.conf
+	fi
+
+#	echo -n 9 > /proc/switch_phy && sleep 10
+	if [ "x$factory_mode_flag" != "x1" ];then
+		/sbin/eth_handle restart
+	fi
+
+	# Attach Device
+	mkdir -p /tmp/netscan
+	/etc/init.d/netscan start
+
+	# Restart UPnP
+	[ ! -f /tmp/boot_status ] && /sbin/cmdupnp restart
+
+	# Start Router Debugging Mode ...
+	if [ -f /lib/network/RtDebug.sh ]; then
+		. /lib/network/RtDebug.sh
+		start_RtDebugMode
+	fi
+
+	# Apply static route    
+	#/sbin/cmdroute start
+
+	# Start lld2d
+	echo "$($CONFIG get netbiosname)" > /proc/sys/kernel/hostname
+	/usr/sbin/lld2d $($CONFIG get lan_ifname)
+
+	if [ "$($CONFIG get dns_hijack)" = "0" ]; then
+		echo 0 > /proc/sys/net/ipv4/dns_hijack
+	else
+		echo 1 > /proc/sys/net/ipv4/dns_hijack
+	fi
+
+	# reset lan ipv6 adddress
+	if [ ! -f /tmp/boot_status ] && [ "x$wan6_type" != "xdisabled" ]; then
+		[ "x$lan6_ip" != "x" ] && ip -6 addr add $lan6_ip dev $BR_IF
+	fi
+	dhcpd_enable=$($CONFIG get enable_dhcpd)
+	echo $dhcpd_enable > /proc/dhcp_bl
+	if [ "$dhcpd_enable" = "1" -a "$($CONFIG get lan_dhcp)" = "0" ]; then
+		start_dhcpd_success
+	fi
+	if [  -f /tmp/boot_status ]; then
+		/etc/init.d/wlan-common boot &
+	fi
+
+	#add raw table rule to cut down satellite's network session number
+	iptables -t raw -A OUTPUT -o lo -j CT --notrack
+}
+
+stop() {
+	killall udhcpd
+	killall udhcpc
+	killall -9 net-scan
+	killall lld2d
+	ifdown $LAN_PHYIF	
+
+	# PHY link will be pulled low some seconds to force transition to reboot state 
+	# and generating DHCP request and Discovery protocol and address refresh in the 
+	# devices connected to the NETGEAR Local Area Network ports.
+	#echo -n 5 > /proc/switch_phy
+}
+
+restart() {
+	stop
+	start
+}
+
+boot()
+{
+	echo "."
+	echo "= net-lan init"
+	start
+	echo "."
+}

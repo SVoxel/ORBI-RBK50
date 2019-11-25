@@ -1,0 +1,318 @@
+<% http_header("style/form.css", "/funcs.js", "/vlan.js") %>
+<% body_header("_VLAN_IPTV", "VLAN_IPTV.htm", "apply_vlan_edit") %>
+<div class="page_title">$vlan_edit_head</div>
+<div class="fix_button">
+<TABLE width=100% border=0 cellpadding=0 cellspacing=2>
+<TR>
+	<TD nowrap colspan=2 align=center>
+	<script>
+	var master="<% cfg_get("http_loginname") %>";
+	if( master == "admin" )
+		document.write('<input class="cancel_bt" type="button" name="Cancel" value="$cancel_mark" onClick="location.href=\'VLAN_IPTV.htm\';">&nbsp;&nbsp;<input class="apply_bt" type="submit" name="Apply" value="$apply_mark" onClick="return check_vlan_input(document.forms[0],\'edit\');">');
+	else
+		document.write('<input class="cancel1_bt" type="button" name="Cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="submit" name="Apply" value="$apply_mark" disabled>');
+	</script>
+	</TD>
+</TR>
+</TABLE>
+
+</div>
+<div id="main" class="main_top_button">
+
+<input type="hidden" name="hid_wired_port" value="0" />
+<input type="hidden" name="hid_wireless_port" value="0" />
+<input type="hidden" name="hid_vlan_name" value="" />
+<input type="hidden" name="hid_vlan_orange" value="0" />
+<input type="hidden" name="hidden_pwd_change" value="0">
+
+<% table_header() %>
+
+<script>
+var is_for_RU=parent.is_ru_version;
+var sel_num="<% cfg_get("vlan_edit_num") %>";
+<% vlan_items_xss() %>
+var sel_str=eval( 'vlanArray' + sel_num )
+var each_info=sel_str.split(' ');
+var default_internet=(each_info[1]=="Internet" || (each_info[1]=="Intranet" && is_for_RU==1 ))? 1:0;
+var lan_ports_num = top.lan_ports_num;
+var enable_orange="<% cfg_get("enable_orange") %>";
+var internet_type="<% cfg_get("internet_type") %>";
+var internet_ppp_type="<% cfg_get("internet_ppp_type") %>";
+var pppoe_empty=<% cfg_get_length("wan_orange_pppoe_passwd") %>;
+//var con_endis_wl_radio="<% cfg_get("endis_wl_radio") %>";
+//var con_endis_wla_radio="<% cfg_get("endis_wla_radio") %>";
+//var get_endis_guestNet="<% cfg_get("wlg1_endis_guestNet") %>";
+//var get_endis_guestNet_an="<% cfg_get("wla1_endis_guestNet") %>";
+
+function loadvalue()
+{
+	var cf=document.forms[0];
+	if(lan_ports_num == 1){
+		document.getElementById("port2_td").style.display="none";
+		document.getElementById("port3_td").style.display="none";
+
+	}
+	if(top.support_orange_vlan == "1")
+		document.getElementById("vlantype").style.display="";
+	if(default_internet == 1)
+	{
+		if(enable_orange == "1" || (internet_type == "0" && (internet_ppp_type == "6" || internet_ppp_type == "7"))) {
+			document.getElementById("orange_login").style.display ="";
+			if(internet_ppp_type == "6") {
+				document.getElementById("orange_login_password").style.display ="";
+				if(pppoe_empty == "0") {
+					cf.pppoe_orange_passwd.value = "";
+				} else {
+					cf.pppoe_orange_passwd.value = "*********";
+				}
+			} else {
+				document.getElementById("orange_login_password").style.display ="none";
+			}
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		} else
+			document.getElementById("orange_login").style.display ="none";
+		document.getElementById("vlanname_1").style.display="none";
+		document.getElementById("vlanname_2").style.display="";
+		document.getElementById("vlan_ports").style.display="none";
+	}
+	else
+	{
+		document.getElementById("orange_login").style.display ="none";
+		document.getElementById("vlanname_1").style.display="";
+		document.getElementById("vlanname_2").style.display="none";
+		if(each_info[1] == "OrangeIPTV") {
+			document.getElementById("vlan_ports").style.display="none";
+			cf.vlan_name.disabled = true;
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		}
+		else if(each_info[1] == "SpainIPTV") {
+			document.getElementById("vlan_ports").style.display="";
+			cf.vlan_name.disabled = true;
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		}
+		else
+		{
+			cf.vlan_id.disabled = false;
+			cf.vlan_priority.disabled = false;
+			document.getElementById("vlan_ports").style.display="";
+		}
+		cf.vlan_name.value=each_info[1].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");;
+
+		var wired_port=parseInt(each_info[4],10);
+		var wireless_port=parseInt(each_info[5],10);
+		if(wired_port>=4 && wired_port<=7)
+			cf.iptv_ports_2.checked=true;
+		else
+			cf.iptv_ports_2.checked=false;
+		if(wired_port==7 ||wired_port==6 ||wired_port==3 ||wired_port==2)
+			cf.iptv_ports_1.checked=true;
+		else
+			cf.iptv_ports_1.checked=false;
+		if(wired_port%2 ==1)
+			cf.iptv_ports_0.checked=true;
+		else
+			cf.iptv_ports_0.checked=false;
+/*		if(wireless_port%2 ==1)
+			cf.iptv_ports_10.checked=true;
+		else
+			cf.iptv_ports_10.checked=false;
+		if(wireless_port==15 ||wireless_port==14 ||wireless_port==11 ||wireless_port==10 ||wireless_port==7 ||wireless_port==6 ||wireless_port==3 ||wireless_port==2)
+			cf.iptv_ports_11.checked=true;
+		else
+			cf.iptv_ports_11.checked=false;
+		if((wireless_port>=12 && wireless_port<=15) || (wireless_port>=4 && wireless_port<=7))
+			cf.iptv_ports_12.checked=true;
+		else
+			cf.iptv_ports_12.checked=false;
+		if(wireless_port>=8 && wireless_port<=15)
+			cf.iptv_ports_13.checked=true;
+		else
+			cf.iptv_ports_13.checked=false;
+		if(con_endis_wl_radio=="1")
+			cf.iptv_ports_10.disabled=false;
+		else
+			cf.iptv_ports_10.disabled=true;
+		if(con_endis_wla_radio=="1")
+			cf.iptv_ports_11.disabled=false;
+		else
+			cf.iptv_ports_11.disabled=true;
+		if(get_endis_guestNet=="1")
+			cf.iptv_ports_12.disabled=false;
+		else
+			cf.iptv_ports_12.disabled=true;
+		if(get_endis_guestNet_an=="1")
+			cf.iptv_ports_13.disabled=false;
+		else
+			cf.iptv_ports_13.disabled=true;*/
+	}
+	cf.vlan_id.value=each_info[2];
+	cf.vlan_priority.value=each_info[3];
+}
+
+function change_pppoe_password(obj)
+{
+	if( obj.type == "password" )
+	{
+		if( get_browser() == "Firefox" )
+		{
+			obj.value = "";
+			obj.type = "text";
+		}
+		else
+		{
+			obj.outerHTML = '<input type="text" name="pppoe_orange_passwd" maxlength="64" size="16" onFocus="this.select();change_pppoe_password(this);" onKeyPress="return getkey(\'ssid\', event)" value="">';
+			document.forms[0].pppoe_orange_passwd.select();
+		}
+	}
+	document.forms[0].hidden_pwd_change.value="1";
+}
+
+function change_type(cf)
+{
+	if(cf.vlan_type.value == "orange_dhcp" || cf.vlan_type.value == "orange_pppoe" || cf.vlan_type.value == "orange") {
+		document.getElementById("vlan_ports").style.display ="none";
+		cf.vlan_name.value = "Orange France TV";
+		cf.vlan_name.disabled = true;
+		if(default_internet == 1) {
+			document.getElementById("orange_login").style.display ="";
+			if(cf.vlan_type.value == "orange_dhcp") {
+				document.getElementById("orange_login_password").style.display ="none";
+				cf.vlan_id.value = "832";
+				cf.vlan_id.disabled = true;
+				cf.vlan_priority.value = "6";
+				cf.vlan_priority.disabled = true;
+			} else if (cf.vlan_type.value == "orange_pppoe") {
+				document.getElementById("orange_login_password").style.display ="";
+				cf.vlan_id.value = "835";
+				cf.vlan_priority.value = "0";
+				cf.vlan_id.disabled = true;
+				cf.vlan_priority.disabled = true;
+			}
+		} else {
+			document.getElementById("orange_login").style.display ="none";
+			cf.vlan_id.value = "840";
+			cf.vlan_priority.value = "5";
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		}
+	}else if(cf.vlan_type.value == "spain_voda_iptv")
+	{
+		document.getElementById("vlan_ports").style.display ="";
+		document.getElementById("orange_login").style.display ="none";
+		cf.vlan_name.value = "Spain Voda IPTV";
+		cf.vlan_name.disabled = true;
+		cf.vlan_id.value = "105";
+		cf.vlan_priority.value = "0";
+		cf.vlan_id.disabled = true;
+		cf.vlan_priority.disabled = true;
+	}
+	else {
+		if(default_internet != 1) {
+			document.getElementById("vlan_ports").style.display ="";
+			cf.vlan_name.value = each_info[1];
+			cf.vlan_name.disabled = false;
+		}
+		cf.vlan_id.disabled = false;
+		cf.vlan_priority.disabled = false;
+		document.getElementById("orange_login").style.display ="none";
+	}
+}
+
+</script>
+
+<TR id="vlantype" style="display:none">
+	<TD nowrap><B>ISP Profile</B></TD>
+	<TD nowrap><select name="vlan_type" id="vlan_type" onChange="change_type(document.forms[0])">
+	<script>
+		var netgear_region="<% get_firmware_region() %>";
+		if(netgear_region == "WW") {
+			if (default_internet == 1) {
+				if((internet_type == "0" && (internet_ppp_type == "6")))
+					document.write('<option value="orange_dhcp">Orange France DHCP</option><option value="orange_pppoe" selected>Orange France PPPoE</option><option value="others">Others</option>');
+				else if((internet_type == "0" && (internet_ppp_type == "7")))
+					document.write('<option value="orange_dhcp" selected>Orange France DHCP</option><option value="orange_pppoe">Orange France PPPoE</option><option value="others">Others</option>');
+				else
+					document.write('<option value="orange_dhcp">Orange France DHCP</option><option value="orange_pppoe">Orange France PPPoE</option><option value="others" selected>Others</option>');
+			} else {
+				if(each_info[1] == "OrangeIPTV")
+					document.write('<option value="orange" selected>Orange France TV</option><option value="spain_voda_iptv">Spain Voda IPTV</option><option value="others">Others</option>');
+				else if(each_info[1] == "SpainIPTV")
+					document.write('<option value="orange">Orange France TV</option><option value="spain_voda_iptv" selected>Spain Voda IPTV</option><option value="others">Others</option>');
+				else
+					document.write('<option value="orange">Orange France TV</option><option value="spain_voda_iptv">Spain Voda IPTV</option><option value="others" selected>Others</option>');
+			}
+		} else {
+			document.write('<option value="others" selected>Others</option>');
+		}
+	</script>
+	</TD>
+</TR>
+
+<TR id="vlanname_1" style="display:none">
+	<TD nowrap><B>$sta_routes_name</B></TD>
+	<TD nowrap><input type="text" name="vlan_name" value="" maxlength="10" size="20" onKeyPress="return getkey( 'ssid',event)"></TD>
+</TR>
+<TR id="vlanname_2" style="display:none">
+	<TD nowrap><B>$sta_routes_name</B></TD>
+	<TD nowrap id="default_vlan_name">
+	<script>
+		document.write(each_info[1]);
+	</script>
+	</TD>
+</TR>
+<TR id="vlanid">
+	<TD nowrap><B>$vlan_id</B></TD>
+	<TD nowrap><input type="text" name="vlan_id" value="" maxlength="4" size="20" onKeyPress="return getkey( 'num',event)">
+	<script>
+	if(default_internet == 1)
+		document.write("(0~4094,0: $vlan_id_internet)");
+	else
+		document.write("(1~4094)");
+	</script>
+	</TD>
+</TR>
+<TR id="vlanpro">
+	<TD nowrap><B>$qos_priority</B></TD>
+	<TD nowrap><input type="text" name="vlan_priority" value="0" maxlength="1" size="20" onKeyPress="return getkey( 'num',event)">
+	<script>
+		document.write("(0~7)");
+	</script>
+	</TD>
+</TR>
+</table>
+
+<div id="vlan_ports" style="display:none">
+<table border="0" cellpadding="0" cellspacing="0">
+<tr>
+	<td align="center" id="port1_td"><input type="checkbox" id="iptv_ports_0" name="iptv_ports_0">Port1</td>
+	<td align="center" id="port2_td"><input type="checkbox" id="iptv_ports_1" name="iptv_ports_1">Port2</td>
+	<td align="center" id="port3_td"><input type="checkbox" id="iptv_ports_2" name="iptv_ports_2">Port3</td>
+	<td>&nbsp;</td>
+	<!--td align="center"><input type="checkbox" id="iptv_ports_10" name="iptv_ports_10">WiFi-2.4G</td>
+	<td align="center"><input type="checkbox" id="iptv_ports_11" name="iptv_ports_11">WiFi-5G</td>
+	<td style="display:none" align="center"><input type="checkbox" id="iptv_ports_12" name="iptv_ports_12">Guest-2.4G</td>
+	<td style="display:none" align="center"><input type="checkbox" id="iptv_ports_13" name="iptv_ports_13">Guest-5G</td-->
+</tr>
+</table>
+</div>
+$bluebar
+<div id="orange_login" style="display:none">
+<table width="100%" cellspacing="3" cellpadding="0" border="0">
+	<TR><TD nowrap><B>Customer Login</B></TD>
+	<TD nowrap><input type="text" name="orange_username" id="orange_username" maxLength="64" size="20" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_orange_username") %>">
+	</TD></TR>
+	<TR id="orange_login_password" style="display:none"><TD nowrap><B>Password</B></TD>
+	<TD nowrap><input type="text" name="orange_password" id="orange_password" maxLength="64" size="16" onFocus="change_pppoe_password(this);" onKeyPress="return getkey('ssid', event)">
+	</TD></TR>
+</table>
+</div>
+
+</div>
+<% help_box("0","_VLAN_iptv") %>
+</FORM>
+</BODY>
+</HTML>
+

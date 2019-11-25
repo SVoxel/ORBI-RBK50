@@ -1,0 +1,90 @@
+<% http_head("String Table Upload") %>
+<% use_browser_language() %>
+<body class="hiddenPage">
+<% login_timestamp() %>
+<div class="main">
+<script>
+var netgear_module="<% cat_file("/module_name") %>";
+var netgear_region=top.netgear_region;
+var netgear_ver="<% cat_file("/firmware_version") %>";
+var need_change_lang=0;
+function clickUpgradeLanguage(form)
+{
+	if(form.filename.value=="")
+	{
+		$$.alertBox("$in_upgrade");
+		return false;
+	}
+	var filestr=form.filename.value;
+	var file_format=filestr.substr(filestr.lastIndexOf("-")+1);
+	if(file_format.toUpperCase()!="TABLE")
+	{
+		$$.alertBox("$not_correct_file"+netgear_module+"-*-Language-table");
+		return false;
+	}
+	var win_file_name=filestr.substr(filestr.lastIndexOf("\\")+1);
+	var unix_file_name=filestr.substr(filestr.lastIndexOf("/")+1);
+	if(win_file_name == filestr && unix_file_name != filestr)
+		file_name=unix_file_name;
+	else if( win_file_name != filestr && unix_file_name == filestr)
+		file_name=win_file_name;
+	else if (win_file_name == filestr && unix_file_name == filestr)
+		file_name=unix_file_name;
+	else
+	{
+		$$.alertBox("$not_correct_file"+netgear_module+"-*-Language-table");
+		return false;
+	}
+	var file_array=file_name.split('-');
+	if(file_array.length!=4)
+	{
+		$$.alertBox("$not_correct_file"+netgear_module+"-*-Language-table");
+		return false;
+	}
+	var file_module=file_array[0];
+	if(file_module.toUpperCase()!=netgear_module.toUpperCase())
+	{
+		$$.alertBox("$not_correct_file"+netgear_module+"-*-Language-table");
+		return false;
+	}
+	var file_end=file_array[2];
+	if(file_end.toUpperCase()!="LANGUAGE")
+	{
+		$$.alertBox("$not_correct_file"+netgear_module+"-*-Language-table");
+		return false;
+	}
+	return true;
+}
+</script>
+<h1>$ch_lang_head_update</h1>
+<form id="langupg" method="post" action="/langupg.cgi" enctype="multipart/form-data">
+<ul class="formElements">
+	<li>
+		<label>$ch_language_fromdisk</label>
+	</li>
+	<li>
+		<div class="fileInputWidget">
+			<input type="text" class="fakeInputField" /><a class="btn secondary fileInput">$EXT_STR0622</a>
+			<input type="file" name="filename" id="filename" size="32" />	
+		</div>
+	</li>
+	<li>
+		<div class="formButtons bottom">
+			<div class="mobileFooter">
+				<div class="mobileCenterButtons">
+					<div>
+					<input class="btn primary" type=submit  value="$upg_mark" onClick='return clickUpgradeLanguage(document.forms[0])'>
+					<input class="btn secondary" type='button' value="$cancel_mark">
+					</div>
+				</div>
+			</div>
+		</div>
+	</li>
+</ul>
+</form>
+</div>
+<script>
+	$$('#langupg').attr('action', '/langupg.cgi');
+</script>
+</body>
+</html>

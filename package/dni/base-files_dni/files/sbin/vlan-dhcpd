@@ -1,0 +1,50 @@
+#!/bin/sh
+
+CONFIG=/bin/config
+
+arlo_list=/tmp/arlo/arlo_list
+
+print_dhcpd_conf() #$1: name, $2:prefix, $3: vid
+{
+	local n=1
+	local static_lease
+	local leases_file=/tmp/udhcpd_${1}.leases
+	[ ! -f $leases_file ] && touch $leases_file
+
+	cat <<EOF
+pidfile /var/run/udhcpd_${1}.pid
+start $($CONFIG get ${2}dhcp_start)
+end $($CONFIG get ${2}dhcp_end)
+interface $3
+remaining yes
+auto_time 5
+lease_file $leases_file
+option subnet $($CONFIG get ${2}lan_netmask)
+option router $($CONFIG get ${2}lan_ipaddr)
+option dns $($CONFIG get ${2}lan_ipaddr)
+option lease $($CONFIG get ${2}lan_lease)
+EOF
+
+	cat $arlo_list|while read line ; do
+        mac="`echo $line|awk -F' ' '{print $1}'`"
+        ip="`echo $line|awk -F' ' '{print $2}'`"
+	    echo "static_lease $ip $mac ARLO"
+	done
+}
+udhcpd_process=`ps | grep udhcpd | grep arlo | grep -v grep` 
+if [ "x$udhcpd_process" != "x" ]; then
+	exit
+fi
+ 
+#$1: name, $2: br
+
+local br=$2
+local prefix
+
+[ $1 = "Internet" ] && vid=0 || prefix=${1%_*}_
+
+[ "$($CONFIG get ${prefix}lan_dhcp)" = "0" ] && return
+
+print_dhcpd_conf $1 ${prefix} ${br} > /tmp/udhcpd_${1}.conf
+ifconfig br${vid} `$CONFIG get ${prefix}lan_ipaddr`
+udhcpd /tmp/udhcpd_${1}.conf

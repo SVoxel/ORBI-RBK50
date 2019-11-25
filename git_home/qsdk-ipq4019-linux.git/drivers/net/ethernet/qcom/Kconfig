@@ -1,0 +1,30 @@
+#
+# Qualcomm Ethernet device configuration
+#
+#
+
+config NET_VENDOR_QCOM
+	bool "Qualcomm devices"
+	default y
+	---help---
+	  If you have a network (Ethernet) card belonging to this class, say Y.
+	  Otherwise, none of the ethernet devices under this class will be
+	  compiled.
+
+if NET_VENDOR_QCOM
+
+config ESSEDMA
+	tristate "Qualcomm ESS Edmasupport"
+	---help---
+	  This driver supports qca961x ethernet edma adapter.
+	  Say Y to build this driver.
+
+	  To compile this driver as a module, choose M here. The module
+	  will be called essedma.ko.
+
+endif
+
+config HAVE_LACPD_DNI
+	tristate " LACPDsupport"
+	---help---
+	  enable it to support lacp function

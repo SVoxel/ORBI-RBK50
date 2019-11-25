@@ -1,0 +1,68 @@
+#!/bin/sh
+lock_file=/tmp/.bring_fronthaul_down.lock
+
+add_lock(){
+    [ -f $lock_file ] && exit
+    touch $lock_file
+}
+remove_lock(){
+    rm -f $lock_file
+}
+kick_all_client(){
+    vap=$1
+    for client in `wlanconfig $vap list |sed '1d'|awk -F' ' '{print $1}'`;do
+        iwpriv $vap kickmac $client
+    done
+}
+restart(){
+    /sbin/wlan kickallclient
+    /sbin/wlan connection deny
+    sleep 3
+    /sbin/wlan connection allow
+
+}
+
+normal(){
+    add_lock
+    backhaul_connection=0
+    if [ "x`uci get repacd.repacd.Role`" = "xCAP" ];then
+        ifname_backhaul_sta=
+    else
+        ifname_backhaul_sta=`config get wl5g_BACKHAUL_STA`" "`config get wl2g_BACKHAUL_STA`
+    fi
+
+    if [ "`/bin/config get enable_arlo_function`" = "1" ];then
+        arlo_vap="`/bin/config get wl2g_ARLO_AP`"
+        kick_all_client $arlo_vap
+        #sleep to let driver have time send out deauth or disassoc
+        { sleep 3;ifconfig $arlo_vap down; } &
+    fi
+
+    i=0
+    while [ $i -lt 4 ];do
+        sleep 30
+        for ifname in $ifname_backhaul_sta;do
+            if [ "x`iwconfig $ifname|grep 'Not-Associated'`" = "x" ];then
+                backhaul_connection=1
+                break
+            fi
+        done
+        if [ $backhaul_connection -eq 1 ];then
+            break
+        fi
+        let i++
+    done
+    if [ $backhaul_connection -eq 0 ];then
+        /sbin/wlan kickallclient
+        /sbin/wlan connection deny
+    fi
+    remove_lock
+}
+case "$1" in 
+    "restart")
+        restart
+        ;;
+    *)
+        normal
+        ;;
+esac

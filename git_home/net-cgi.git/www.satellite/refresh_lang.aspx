@@ -1,0 +1,1 @@
+{ <% satellite_change_lang_status() %> }

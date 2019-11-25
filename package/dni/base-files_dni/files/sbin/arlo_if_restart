@@ -1,0 +1,70 @@
+#!/bin/sh
+# 2018.4.24
+
+CONFIG=/bin/config
+
+update_arlo_dhcp_static_lease(){
+    rm -f /tmp/arlo/arlo_list
+    sed -i 'd/.*\:.*\:/g' /tmp/udhcpd_arlo.conf
+}
+
+# GUI set new lan_ip . So arlo ip will also change.
+reset_arlo_ip(){
+	
+	local arlo_fucntion=$($CONFIG get enable_arlo_function)
+	if [ "$arlo_fucntion" = "1" ];then
+		local lan_ip=$($CONFIG get lan_ipaddr)
+		local lan_mask=$($CONFIG get lan_netmask)
+		local lan_mask3=$(echo $lan_mask |  awk  -F "." ' {printf $3} ')
+		if [ "$lan_mask3" = "255" ]; then   				# lan_mask >= 255.255.255.0 .so arlo and vpn netmask=255.255.255.0
+			local vpn_net=$(tun_net $lan_ip 255.255.255.0)
+		else
+			local vpn_net=$(tun_net $lan_ip $lan_mask)
+		fi
+		$CONFIG set vpn_subnet=$vpn_net
+		local arlo_net=$(tun_net $vpn_net 255.255.255.0)
+		local arlo_net1=$(echo $arlo_net |  awk  -F "." ' {printf $1} ')
+		local arlo_net2=$(echo $arlo_net |  awk  -F "." ' {printf $2} ')
+		local arlo_net3=$(echo $arlo_net |  awk  -F "." ' {printf $3} ')
+
+        if [ "`$CONFIG get arlo_lan_ipaddr`" != "$arlo_net1.$arlo_net2.$arlo_net3.1" ];then
+            $CONFIG set restart_vzdaemon=1 
+            update_arlo_dhcp_static_lease
+        fi
+		
+		$CONFIG set arlo_lan_ipaddr=$arlo_net1.$arlo_net2.$arlo_net3.1
+		$CONFIG set arlo_lan_netmask=255.255.255.0
+		$CONFIG set arlo_dhcp_start=$arlo_net1.$arlo_net2.$arlo_net3.2
+		$CONFIG set arlo_dhcp_end=$arlo_net1.$arlo_net2.$arlo_net3.254
+
+	fi
+}
+
+restart_arlo(){
+
+	arlo_ip=`/bin/config get arlo_lan_ipaddr`
+	arlo_netmask=`/bin/config get arlo_lan_netmask`
+	ifconfig brarlo down
+	ifconfig brarlo $arlo_ip netmask $arlo_netmask up 
+
+	udhcpd_process=`ps | grep udhcpd | grep arlo | grep -v grep | cut -f 1 -d "r"` 
+	if [ "x$udhcpd_process" != "x" ]; then
+		kill $udhcpd_process
+	fi
+
+	/sbin/vlan-dhcpd arlo brarlo
+}
+
+arlo_conflict(){
+	restart_arlo
+	wlan down
+	eth_handle
+	wlan up
+}
+
+
+case $1 in
+	GUI) reset_arlo_ip ;;
+	conflict) arlo_conflict ;;
+	*) restart_arlo ;;
+esac

@@ -1,0 +1,7 @@
+define Package/armor/install_dniext
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/phase2.tar.gz $(1)/lib/armor/
+endef
+
+define Package/armor/prepare_dniext
+endef
+

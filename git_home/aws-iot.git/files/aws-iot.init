@@ -1,0 +1,191 @@
+#!/bin/sh
+# Copyright (C) 2006 OpenWrt.org 
+rae_partion=$(part_dev rae)
+panic_partion=$(part_dev crashinfo)
+RAE_DIR=/tmp/router-analytics
+
+START=99
+
+#only run on base, MR2.x  use /tmp/orbi_type judge the orbi type
+start() {
+	if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
+		killall -9  aws-iot
+		rm /var/run/aws_iot.pid
+		/usr/sbin/aws-iot
+	fi
+}
+
+stop() 
+{
+	killall -9 aws-iot
+	rm /var/run/aws_iot.pid
+}
+
+restart()
+{
+	stop
+	start
+}
+
+update()
+{
+	cd $RAE_DIR
+	FILES="policy_version rae_version RAE_Policy.json /usr/sbin/aws-iot /usr/sbin/data_collector /usr/sbin/subscribe_publish_sample"
+	tar -zcf rae.tar.gz $FILES
+	dd if=/dev/zero bs=1024k count=1 |tr "\000" "\377" >1024kdata
+	dd if=rae.tar.gz of=1024kdata
+	flash_erase $rae_partion 0 0
+	cat 1024kdata > $rae_partion
+	rm rae.tar.gz
+	rm 1024kdata
+	echo 1 >$RAE_DIR/status
+}
+
+check()
+{
+	mkdir $RAE_DIR
+	echo 0 >$RAE_DIR/status
+	dd if=$rae_partion of=/tmp/rae.tar.gz
+	tar -zxf /tmp/rae.tar.gz -C $RAE_DIR/
+	tar_status=$?
+	if [ -s $RAE_DIR/rae_version -a -s $RAE_DIR/policy_version -a -s $RAE_DIR/usr/sbin/aws-iot -a -s $RAE_DIR/usr/sbin/data_collector -a -s $RAE_DIR/usr/sbin/subscribe_publish_sample -a -s $RAE_DIR/RAE_Policy.json ];then
+		mv $RAE_DIR/usr/sbin/* /usr/sbin/
+		echo 1 >$RAE_DIR/status
+		rm /tmp/rae.tar.gz -rf
+		rm $RAE_DIR/usr -rf
+	fi
+}
+
+boot()
+{
+	#if DUT not get ntp time, use firmware release time
+	if [ "x$(date | grep 1970)" != "x" ]; then
+		local date=`cat /firmware_time`
+		local mon=`echo $date |awk '{print $2}'`
+		local day=`echo $date |awk '{print $3}'`
+		[ "$(echo $mon |wc -L)" = "1" ] && mon="0$mon"
+		[ "$(echo $day |wc -L)" = "1" ] && day="0$day"
+		local time=`echo $date |awk '{print $4}'`
+		local hour=`echo $time |awk  -F ':' '{print $1}'`
+		local min=`echo $time |awk -F ':' '{print $2}'`
+		local year=`echo $date |awk '{print $6}'`
+		case "$mon" in
+			Jan) mon="01";;
+			Feb) mon="02";;
+			Mar) mon="03";;
+			Apr) mon="04";;
+			May) mon="05";;
+			Jun) mon="06";;
+			Jul) mon="07";;
+			Aug) mon="08";;
+			Sep) mon="09";;
+			Oct) mon="10";;
+			Nov) mon="11";;
+			Dec) mon="12";;
+		esac
+		date $mon$day$hour$min$year
+	fi
+	if [ -f /tmp/orbi_type ]; then
+		if [ "$(cat /tmp/orbi_type)" == "Satellite" ]; then
+			exit 1
+		fi
+	fi
+	dd if=$panic_partion of=/tmp/crash_log bs=131072 count=2
+	local crash_newline=`cat /tmp/crash_log | wc -l`
+	local crash_oldline=`/bin/config get crash_line`
+	if [ "$crash_newline" != "$crash_oldline" ] && [ "x$crash_oldline" != "x" ]; then
+		/bin/config set lastRebootReason=1
+		local UTC_time=`date +%s`
+		local get_time_zone=`/bin/config get time_zone`
+		local modify_zone=`echo $get_time_zone | cut -d \T -f 2`
+		local symbol=`echo ${modify_zone%%[0-9]*}`
+		local value=`echo ${modify_zone#[-+]*}`
+		local value_s=$(($value*3600))
+		if [ "$symbol" = "+" ]; then 
+			UTC_time=$(($value_s+$UTC_time-180))
+		fi
+		if [ "$symbol" = "-" ]; then 
+			UTC_time=$(($UTC_time-$value_s-180))
+		fi
+		/bin/config set time_crash=$UTC_time
+		local get_line=$(($crash_newline-$crash_oldline))
+		tail -n$get_line < /tmp/crash_log > /tmp/crash_aws_log
+		/bin/config set crash_line=$crash_newline
+		/bin/config set eventtype=0
+	fi
+	if [ "x$crash_oldline" == "x" ]; then
+		/bin/config set crash_line=$crash_newline
+	fi
+	
+	check
+	 /bin/config set cpu_flag=1
+	 /bin/config set memory_flag=1
+	 [ "x$(/bin/config get lastRebootReason)" = "x" ] && /bin/config set lastRebootReason=0
+	 /bin/config set eventtype=0
+	 /bin/config commit
+	if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
+		if [ "$(cat $RAE_DIR/status)" = "1" ]; then
+		/sbin/ping-gateway &
+			start
+		else
+			/usr/sbin/ra_check
+		fi
+	fi
+}
+
+cpu_test()
+{
+	for in in `seq $1`
+	do 
+		echo -ne "i=0;
+		while true
+		do 
+			i=i+1;
+		done" | /bin/sh &
+		
+	done
+}
+
+memory_test()
+{
+	if [ "$1" = 1 ]; then
+		mkdir /tmp/memory
+		mount -t tmpfs -o size=280M tmpfs /tmp/memory
+		dd if=/dev/zero of=/tmp/memory/block
+	else
+		rm /tmp/memory/block
+		umount /tmp/memory
+		rmdir /tmp/memory
+	fi
+}
+
+case "$1" in 
+	"boot")
+		boot
+	;;
+	"start")
+		start
+	;;
+	"stop")
+		stop
+	;;
+	"restart")
+		restart
+	;;
+	"update")
+		update
+	;;
+	"check")
+		check
+	;;
+	"cpu")
+		cpu_test  $2
+	;;
+	"memory")
+		memory_test $2
+	;;
+	*)
+		echo "Unknow command" > /dev/console
+		echo "Usage: $0 boot|start|stop|restart|update" > /dev/console
+	;;
+esac

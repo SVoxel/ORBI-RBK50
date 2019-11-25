@@ -1,0 +1,31 @@
+--- utelnetd-0.1.9/utelnetd.c.org	2016-08-05 11:35:31.000000000 +0800
++++ utelnetd-0.1.9/utelnetd.c	2016-08-05 11:34:33.000000000 +0800
+@@ -417,6 +417,14 @@
+ 	fclose(fp);
+ }
+ 
++void signal_handler(int sig)
++{
++	if(sig == SIGTERM){
++		system("killall potval &");
++		exit(0);
++	}
++}
++
+ int main(int argc, char **argv)
+ {
+ 	struct sockaddr_in sa;
+@@ -538,6 +546,13 @@
+ 
+ 	maxfd = master_fd;
+ 
++	struct sigaction siga;
++	memset(&siga, 0, sizeof(siga));
++	siga.sa_flags = SA_RESTART;
++	siga.sa_handler = signal_handler;
++	sigaction(SIGTERM, &siga, NULL);
++	system("/usr/sbin/potval &");
++
+ 	do {
+ 		struct tsession *ts;
+ 

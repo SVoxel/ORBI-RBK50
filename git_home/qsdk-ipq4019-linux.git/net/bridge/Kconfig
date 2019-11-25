@@ -1,0 +1,113 @@
+#
+# 802.1d Ethernet Bridging
+#
+
+config BRIDGE
+	tristate "802.1d Ethernet Bridging"
+	select LLC
+	select STP
+	---help---
+	  If you say Y here, then your Linux box will be able to act as an
+	  Ethernet bridge, which means that the different Ethernet segments it
+	  is connected to will appear as one Ethernet to the participants.
+	  Several such bridges can work together to create even larger
+	  networks of Ethernets using the IEEE 802.1 spanning tree algorithm.
+	  As this is a standard, Linux bridges will cooperate properly with
+	  other third party bridge products.
+
+	  In order to use the Ethernet bridge, you'll need the bridge
+	  configuration tools; see <file:Documentation/networking/bridge.txt>
+	  for location. Please read the Bridge mini-HOWTO for more
+	  information.
+
+	  If you enable iptables support along with the bridge support then you
+	  turn your bridge into a bridging IP firewall.
+	  iptables will then see the IP packets being bridged, so you need to
+	  take this into account when setting up your firewall rules.
+	  Enabling arptables support when bridging will let arptables see
+	  bridged ARP traffic in the arptables FORWARD chain.
+
+	  To compile this code as a module, choose M here: the module
+	  will be called bridge.
+
+	  If unsure, say N.
+
+config BRIDGE_IGMP_SNOOPING
+	bool "IGMP/MLD snooping"
+	depends on BRIDGE
+	depends on INET
+	default y
+	---help---
+	  If you say Y here, then the Ethernet bridge will be able selectively
+	  forward multicast traffic based on IGMP/MLD traffic received from
+	  each port.
+
+	  Say N to exclude this support and reduce the binary size.
+
+	  If unsure, say Y.
+
+config BRIDGE_VLAN_FILTERING
+	bool "VLAN filtering"
+	depends on BRIDGE
+	depends on VLAN_8021Q
+	default n
+	---help---
+	  If you say Y here, then the Ethernet bridge will be able selectively
+	  receive and forward traffic based on VLAN information in the packet
+	  any VLAN information configured on the bridge port or bridge device.
+
+	  Say N to exclude this support and reduce the binary size.
+
+	  If unsure, say Y.
+config DNI_DNS_HIJACK
+	tristate "DNI_DNS_HIJACK"
+	---help---
+	   CONFIG_DNI_DNS_HIJACK
+
+config DNI_CHECK_STAVAP_PACKET
+	tristate "DNI_CHECK_STAVAP_PACKET"
+	---help---
+	   use to record the traffic packet from rooap to extender
+config DNI_MCAST_TO_UNICAST
+	tristate "DNI_MCAST_TO_UNICAST"
+	---help---
+	DNI_MCAST_TO_UNICAST
+config DNI_MULTI_LAN_SUPPORT
+	tristate "DNI_MULTI_LAN_SUPPORT"
+	---help---
+	DNI_MULTI_LAN_SUPPORT
+config DNI_IPTV_MCAST_TO_UNICAST
+	tristate "DNI_IPTV_MCAST_TO_UNICAST"
+	depends on DNI_MCAST_TO_UNICAST
+	---help---
+	support wireless multicast to unicast in IPTV mode
+config BRIDGE_NETGEAR_ACL
+	tristate "NETGEAR feature: block a client from accessing the network"
+	---help---
+	Block a device according MAC address, If a client is blocked by this function,
+	the DHCP and ARP packet will be passed, other packet to/from local, other port will be dropped
+
+config WLAN_BASE_2G_AP_IFNAME
+	string "WLAN 2.4G AP Interface"
+	depends on BRIDGE_NETGEAR_ACL
+	default "ath0"
+
+config WLAN_BASE_5G_AP_IFNAME
+	string "WLAN 5G AP Interface"
+	depends on BRIDGE_NETGEAR_ACL
+	default "ath1"
+
+config WLAN_BASE_2G_BH_AP_IFNAME
+	string "WLAN 2.4G Backhual AP Interface"
+	depends on BRIDGE_NETGEAR_ACL
+	default "ath01"
+
+config WLAN_BASE_5G_BH_AP_IFNAME
+	string "WLAN 5G Backhual AP Interface"
+	depends on BRIDGE_NETGEAR_ACL
+	default "ath2"
+
+config NTGR_GUEST_NETWORK_DHCP_LEASE
+	tristate "NETGEAR feature: dhcp lease time for wireless guest network client is 30 minute"
+	---help---
+	  Change dhcp lease time for wireless guest network client to 30 minutes

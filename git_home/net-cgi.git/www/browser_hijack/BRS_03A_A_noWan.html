@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+<% cfg_set("from_nowan_retry", "0") %>
+</head>
+
+<body>
+<script>
+var hijack_process="<% cfg_get("hijack_process") %>";
+function clickRetry()
+{
+	document.getElementById("card-no-ethernet-cable").style.display="none";
+	document.getElementById("card-searching-internet").style.display="";
+
+	/* to fix bug22377: change the refresh time from 15 seconds to 30 seconds. wan lan conflict need time to change ip address*/
+        if( hijack_process == "1" )
+        {
+                if( location.href.indexOf("orbilogin.com") == -1 )
+                        setTimeout("top.location.href='http://orbilogin.com/BRS_retry.htm';", 30000);
+                else
+                        setTimeout("top.location.href='http://orbilogin.net/BRS_retry.htm';", 30000);
+        }
+        else
+        {
+                if( location.href.indexOf("orbilogin.com") == -1 )
+                        setTimeout("top.location.href='http://orbilogin.com/adv_index.htm';", 30000);
+                else
+                        setTimeout("top.location.href='http://orbilogin.net/adv_index.htm';", 30000);
+        }
+
+	return true;
+}
+
+</script>
+<div id="container">
+	<div class="dialog-content">
+	<% form_submit("func", "BRS_03A_detcInetType.html", "wizard_detwan")  %>
+		<!-- No Ethernet Cable is Plugged Internet -->
+		<div id="card-no-ethernet-cable" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_nowan);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_nowan_msg1);</script></div>
+			<div class="desc-text text-block-child"><script>document.write(bh_orbi_nowan_msg2);</script></div>
+			<button class="waves-effect waves-light btn button-nav" onclick="clickRetry();">
+				<span><script>document.write(bh_orbi_tryagain_mark);</script></span>
+			</button>
+		</div>
+
+		<!-- Searching for Internet -->
+		<div id="card-searching-internet" class="install-card clearfix" style="display:none">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="orbi-logo svg-transition" src="images/orbi.png">
+
+			<div class="spinner"></div>
+			<div class="desc-text"><script>document.write(bh_orbi_check_conn);</script></div>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

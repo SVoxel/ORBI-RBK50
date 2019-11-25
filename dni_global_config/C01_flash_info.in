@@ -1,0 +1,153 @@
+comment "Flash Information"
+
+choice
+	prompt "Flash Type"
+	default DGC_FLASH_TYPE_EMMC
+	help
+	  Product Flash Type
+	config DGC_FLASH_TYPE_EMMC
+		bool "eMMC Flash"
+	config DGC_FLASH_TYPE_NOR
+		bool "Nor Flash"
+	config DGC_FLASH_TYPE_NAND
+		bool "NAND Flash"
+endchoice
+
+config DGC_SUPPORT_NAND_FLASH
+	string "Project support NOND flash"
+ 	default ""
+ 	help
+	  Project support NOND flash
+ 
+config DGC_SUPPORT_NOR_FLASH
+	string "Project support NOR flash"
+ 	default ""
+ 	help
+	  Project support NOR flash
+ 
+config DGC_SUPPORT_EMMC
+	string "Project support EMMC"
+ 	default ""
+ 	help
+	  Project support EMMC
+
+config DGC_FLASH_CALDATA_NAME
+	string "CALDATA Partition Name"
+	default ""
+	help
+	  Specify the CALDATA Partition Name
+
+config DGC_FLASH_CALDATA_DEV
+	string "CALDATA Partition Dev ID"
+	default ""
+	help
+	  Specify the CALDATA Partition Dev ID
+
+config DGC_FLASH_LANGUAGE_NAME
+	string "LANGUAGE Partition Name"
+	default ""
+	help
+	  Specify the LANGUAGE Partition Name
+
+config DGC_FLASH_LANGUAGE_DEV
+	string "LANGUAGE Partition Dev ID"
+	default ""
+	help
+	  Specify the LANGUAGE Partition Dev ID
+
+config DGC_FLASH_CONFIG_NAME
+	string "CONFIG Partition Name"
+	default ""
+	help
+	  Specify the CONFIG Partition Name
+
+config DGC_FLASH_CONFIG_DEV
+	string "CONFIG Partition Dev ID"
+	default ""
+	help
+	  Specify the CONFIG Partition Dev ID
+
+config DGC_FLASH_POT_NAME
+	string "POT Partition Name"
+	default ""
+	help
+	  Specify the POT Partition Name
+
+config DGC_FLASH_POT_DEV
+	string "POT Partition Dev ID"
+	default ""
+	help
+	  Specify the POT Partition Dev ID
+
+config DGC_FLASH_TRAFFICMETER_NAME
+	string "TRAFFIC_METER Partition Name"
+	default ""
+	help
+	  Specify the TRAFFIC_METER Partition Name
+
+config DGC_FLASH_TRAFFICMETER_DEV
+	string "TRAFFIC_METER Partition Dev ID"
+	default ""
+	help
+	  Specify the TRAFFIC_METER Partition Dev ID
+
+config DGC_FLASH_FW_NAME
+	string "Firmware Partition Name"
+	default ""
+	help
+	  Specify the Firmware Partition Name
+
+config DGC_FLASH_FW_DEV
+	string "Firmware Partition Dev ID"
+	default ""
+	help
+	  Specify the Firmware Partition Dev ID
+
+config DGC_FLASH_FW2_NAME
+	string "Dual Firmware-2 Partition Name"
+	default ""
+	help
+	  Specify the Dual Firmware-2 Partition Name
+
+config DGC_FLASH_FW2_DEV
+	string "Dual Firmware-2 Partition Dev ID"
+	default ""
+	help
+	  Specify the Dual Firmware-2 Partition Dev ID
+
+config DGC_FLASH_OOPS_NAME
+	string "MTD_OOPS Partition Name"
+	default ""
+	help
+	  Specify the MTD_OOPS Partition Name
+
+config DGC_FLASH_OOPS_DEV
+	string "MTD_OOPS Partition Dev ID"
+	default ""
+	help
+	  Specify the MTD_OOPS Partition Dev ID
+
+config DGC_FLASH_CERT_NAME
+	string "CERT Partition Name"
+	default ""
+	help
+	  Specify the CERT Partition Name
+
+config DGC_FLASH_CERT_DEV
+	string "CERT Partition Dev ID"
+	default ""
+	help
+	  Specify the CERT Partition Dev ID
+
+config DGC_FLASH_DEVTABLE_NAME
+	string "Device Table Partition Name"
+	default ""
+	help
+	  Specify the Device Table Partition Name
+
+config DGC_FLASH_DEVTABLE_DEV
+	string "Device Table Partition Dev ID"
+	default ""
+	help
+	  Specify the Device Table Partition Dev ID
+

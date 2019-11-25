@@ -1,0 +1,16 @@
+diff -Nur procd-2015-10-29.1-old/initd/init.c procd-2015-10-29.1/initd/init.c
+--- procd-2015-10-29.1-old/initd/init.c	2018-12-21 17:21:09.671455721 +0800
++++ procd-2015-10-29.1/initd/init.c	2018-12-21 17:21:56.071455716 +0800
+@@ -106,10 +106,10 @@
+ 	} else {
+ 		int i;
+ 
+-		for (i = 0; i < 120; i++) {
++		for (i = 0; i < 240; i++) {
+ 			if (waitpid(pid, NULL, WNOHANG) > 0)
+ 				break;
+-			sleep(1);
++			usleep(500000);
+ 			watchdog_ping();
+ 		}
+ 	}

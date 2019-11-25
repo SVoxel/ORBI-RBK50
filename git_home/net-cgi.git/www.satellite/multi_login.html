@@ -1,0 +1,35 @@
+﻿<% http_head("wifi_range_ext","js/login.js") %>
+<% use_browser_language() %>
+<body class="login">
+<div id="fixedHeader">
+	<div class="mask">
+		<div class="container">
+			<header>
+				<img id="logo" src="image/logos/genie.png" alt="Netgear genie logo" />
+				<p id="byline">$Orbi_satellite_title</p>
+			</header>
+		</div>
+	</div>
+</div><!-- end fixed header -->
+<div id="content">
+	<div class="container">
+		<div class="middleMsg">
+			<h1>$multi_user_warning</h1>
+		</div>
+	</div>
+</div>
+<div id="fixedFooter">
+	<div class="container">
+		<footer>
+			<div class="centerButtons">
+				<div class="processButtons">
+					<input class="btn secondary" id="cancelBtn" type="button" value="$no_mark" onClick="top.location.href='goodbye.html'" />
+					<input id="nextStep" class="btn primary" type="button" value="$yes_mark" onClick="top.location.href='change_user.html'" />
+				</div>
+			</div>
+		</footer>
+	</div>
+</div><!-- end fixed footer -->
+</body>
+
+</html>

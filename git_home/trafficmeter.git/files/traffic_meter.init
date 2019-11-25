@@ -1,0 +1,16 @@
+#!/bin/sh /etc/rc.common
+START=85
+
+start() {
+	/sbin/cmd_traffic_meter start
+}
+
+stop() {
+	/sbin/cmd_traffic_meter stop
+}
+
+boot()
+{
+	mkdir -p /tmp/traffic_meter
+	start
+}

@@ -1,0 +1,1 @@
+<% cat_file("/tmp/ez-ipupd.status") %>

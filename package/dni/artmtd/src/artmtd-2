@@ -1,0 +1,31 @@
+#!/bin/sh
+
+show_usage(){
+echo "Please input below format:"
+echo "artmtd-2 fronthaul_ssid backhaul_ssid fronthaul_passphrase backhaul_passphrase sn board_data"
+exit
+}
+arg_num=$#
+[ "$arg_num" != 6 ] && show_usage
+
+
+artmtd -w fronthaul_ssid $1
+[ "$(artmtd -r fronthaul_ssid | cut -d : -f 2)" != "$1" ] && echo "fronthaul_ssid input error!" && show_usage
+artmtd -w backhaul_ssid $2
+[ "$(artmtd -r backhaul_ssid | cut -d : -f 2)" != "$2" ] && echo "backhaul_ssid input error!"&& show_usage 
+artmtd -w fronthaul_passphrase $3
+[ "$(artmtd -r fronthaul_passphrase | cut -d : -f 2)" != "$3" ] && echo "fronthaul_passphrase input error!" && show_usage
+artmtd -w backhaul_passphrase $4
+[ "$(artmtd -r backhaul_passphrase | cut -d : -f 2)" != "$4" ] && echo "backhaul_passphrase input error!"&& show_usage
+artmtd -w sn $5
+[ "$(artmtd -r sn | cut -d : -f 2| sed -n '1p')" != "$5" ] && echo "sn input error!" && show_usage
+artmtd -w board_data $6
+[ "$(artmtd -r board_data | cut -d : -f 2)" != " $6" ] && echo "board_data input error!" && show_usage
+
+echo "artmtd-2 set value success!"
+echo -n "fronthaul_";artmtd -r fronthaul_ssid
+echo -n "backhaul_";artmtd -r backhaul_ssid
+echo -n "fronthaul_";artmtd -r fronthaul_passphrase
+echo -n "backhaul_";artmtd -r backhaul_passphrase
+artmtd -r sn | sed -n '2p'
+artmtd -r board_data

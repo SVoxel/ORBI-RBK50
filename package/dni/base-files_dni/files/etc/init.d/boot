@@ -1,0 +1,92 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006-2011 OpenWrt.org
+
+START=10
+STOP=98
+
+uci_apply_defaults() {
+	. /lib/functions/system.sh
+
+	cd /etc/uci-defaults || return 0
+	files="$(ls)"
+	[ -z "$files" ] && return 0
+	mkdir -p /tmp/.uci
+	for file in $files; do
+		( . "./$(basename $file)" ) && rm -f "$file"
+	done
+	uci commit
+}
+
+boot() {
+	echo 1 > /tmp/boot_status
+	
+	[ -f /proc/mounts ] || /sbin/mount_root
+	[ -f /proc/jffs2_bbc ] && echo "S" > /proc/jffs2_bbc
+	[ -f /proc/net/vlan/config ] && vconfig set_name_type DEV_PLUS_VID_NO_PAD
+
+	mkdir -p /var/run
+	mkdir -p /var/log
+	mkdir -p /var/lock
+	mkdir -p /var/state
+	mkdir -p /tmp/.uci
+	chmod 0700 /tmp/.uci
+	mkdir -p /tmp/.jail
+	touch /var/log/wtmp
+	touch /var/log/lastlog
+	touch /tmp/resolv.conf
+	ln -sf /lib/libm-1.0.14.so /lib/libm.so.1
+	grep -q debugfs /proc/filesystems && /bin/mount -o noatime -t debugfs debugfs /sys/kernel/debug
+	[ "$FAILSAFE" = "true" ] && touch /tmp/.failsafe
+
+	cat /proc/device-tree/flash_type > /flash_type
+	. /lib/dni_platform/dni_platform.sh
+	dni_boot_stage0
+
+	# allow wifi modules time to settle
+	#sleep 3
+
+	#/sbin/wifi detect > /tmp/wireless.tmp
+	#[ -s /tmp/wireless.tmp ] && {
+	#	cat /tmp/wireless.tmp >> /etc/config/wireless
+	#}
+	#rm -f /tmp/wireless.tmp
+
+	/bin/board_detect
+	uci_apply_defaults
+	
+	# temporary hack until configd exists
+	/sbin/reload_config
+
+    if [ "`cat /firmware_version |awk -F'.' '{print $3}'`" = "10" ];then
+        /bin/config set enable_arlo_function=1
+        /bin/config set i_wlg_arlo_br="brarlo"
+    else
+        /bin/config set enable_arlo_function=0
+        /bin/config set wlg_arlo_endis_arloNet=0
+        /bin/config set i_wlg_arlo_br="br0"
+    fi
+    /bin/config set wlg_ul_bssid=""
+    /bin/config set wla_ul_bssid=""
+    /bin/config set wla_2nd_ul_bssid=""
+    /bin/config commit
+
+
+	# create /dev/root if it doesn't exist
+	[ -e /dev/root -o -h /dev/root ] || {
+		rootdev=$(awk 'BEGIN { RS=" "; FS="="; } $1 == "root" { print $2 }' < /proc/cmdline)
+		[ -n "$rootdev" ] && ln -s "$rootdev" /dev/root
+	}
+
+	. /lib/dni_platform/dni_platform.sh
+	dni_boot_stage1
+	mkdir /tmp/config
+	echo "root:!:0:0:root:/root:/bin/ash" >> /tmp/config/passwd
+
+	# Start hotplug2
+	mkdir /tmp/mnt
+	killall -q hotplug2
+	[ -x /sbin/hotplug2 ] && /sbin/hotplug2 --override --persistent \
+			--set-rules-file /etc/hotplug2.rules \
+			--set-coldplug-cmd /sbin/udevtrigger \
+			--max-children 4 >/dev/null 2>&1 &
+}

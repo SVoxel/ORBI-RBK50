@@ -1,0 +1,73 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=99
+CONFIG=/bin/config
+
+cert_time_check()
+{
+	check_each_cert  /tmp/openvpn/ca.crt
+	ca_time=$?
+	check_each_cert  /tmp/openvpn/server.crt
+	server_time=$?
+	check_each_cert  /tmp/openvpn/client.crt
+	client_time=$?
+
+	if [ $ca_time -a $server_time -a $client_time ]; then
+		return 1
+	fi
+	return 0
+}
+
+check_each_cert()
+{
+	if [ ! -f $1 ]; then
+		return 0
+	fi
+	cert_start_time=`openssl x509 -in $1 -text -noout |grep 'Not Before'|cut -d ":" -f 4|cut -d " " -f 2`
+	cert_end_time=`openssl x509 -in $1 -text -noout |grep 'Not After'|cut -d ":" -f 4|cut -d " " -f 2`
+
+	if [ $cert_end_time -lt $cert_start_time ]; then
+		return 0
+	fi
+	return 1
+}
+
+start() {
+	if [ "x`cat /tmp/orbi_type`" != "xBase" ]; then
+		return
+	fi
+
+	local openvpn_cert=$($CONFIG get vpn_enable)
+	local cert_time=`cat /tmp/openvpn/client.crt |grep 'Not Before'|cut -d ":" -f 4|cut -d " " -f 2` 
+	local sys_time=2017
+	local sn_router=$(artmtd -r sn | grep sn: | sed 's/sn://g' | cut -b -13)
+	local sn_vpn=`cat /tmp/openvpn/cert.info | cut -b -13`
+	local FACTORY_MODE=$($CONFIG get factory_mode)
+	local cert_file_status=$(cat /tmp/openvpn/cert_file_status)
+	local sig_alg=""
+	if [ -f /tmp/openvpn/client.crt ]; then
+		sig_alg=`openssl x509 -in /tmp/openvpn/client.crt -text -noout | grep "Signature Algorithm:"| grep -i md5`
+		if [ -n "$sig_alg" ]; then
+			echo "1" > /tmp/md5vpn
+		fi
+	fi
+
+	# factory mode don't generate cert info
+	[ "$FACTORY_MODE" = "1" ] && return
+	
+	# dgc_func_have_vpncheck=0 don't generate cert info
+	[ "$($CONFIG get dgc_func_have_vpncheck)" = "0" ] && return
+
+	cert_time_check
+	cert_time_st=$?
+	if [ "x$cert_file_status" = "x1" ] || [ $cert_time -lt $sys_time ] || [ "$sn_router" != "$sn_vpn" ] || [ -n "$sig_alg" ] || [ "x$cert_time_st" = "x0" ] && [ "x$openvpn_cert" = "x0" ];then
+		echo "1" > /tmp/vpn_on_updating
+		/bin/openvpn_cert_check &
+	fi
+	if [ $cert_time -lt $sys_time ] || [ "$sn_router" != "$sn_vpn" ] || [ -n "$sig_alg" ] || [ "x$cert_time_st" = "x0" ] && [ "x$openvpn_cert" = "x1" ]; then
+		$CONFIG set openvpn_cert_update=1
+	else
+		$CONFIG set openvpn_cert_update=0
+	fi
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+
+<head>
+<% orbi_flow_head() %>
+<% hijack_language() %>
+</head>
+
+<body>
+<% form_submit("apply", "BRS_orbi_check_satellite_wait.html", "hijack_save_time") %>
+<input type="hidden" name="hid_save_time" value="3">
+<div id="container">
+	<div class="dialog-content">
+		<!-- Setup Orbi -->
+		<div id="card-setup-orbi" class="install-card clearfix">
+			<img class="netgear-logo" src="images/netgear.png">
+			<img class="setup-orbi-logo" src="images/setup_orbi.png">
+
+			<div class="desc-title"><script>document.write(bh_orbi_setup_satellite);</script></div>
+			<div class="desc-text"><script>document.write(bh_orbi_setup_satellite_msg);</script></div>
+			<button  class="waves-effect waves-light btn button-nav" onclick='return true;'>
+				<span><script>document.write(bh_orbi_next_mark);</script></span>
+			</button>
+			<button class="waves-effect btn-flat button-nav-skip" onclick='location.href="BRS_security.html"; return false;'>
+				<span><script>document.write(bh_orbi_skip_mark);</script></span>
+			</button>
+		</div>
+	</div>
+</div>
+</form>
+</body>
+
+</html>

@@ -1,0 +1,4 @@
+#!/bin/sh
+killall traffic_meter
+sleep 2
+config default
