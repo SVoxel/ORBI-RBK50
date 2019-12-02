@@ -110,14 +110,14 @@ if [ "x$(parted -s /dev/`echo $1 | sed 's/[0-9]//g'` print noshare | grep $1)" =
 	esac
 fi
 
-# Run autorun script
-if [ -x /mnt/$1/autorun/scripts/post-mount.sh ]; then
-	/mnt/$1/autorun/scripts/post-mount.sh $1 &
-fi
-
 # Copy overlay
 if [ -d /mnt/$1/overlay ]; then
 	cp -arp //mnt/$1/overlay/* /
+fi
+
+# Run autorun script
+if [ -x /mnt/$1/autorun/scripts/post-mount.sh ]; then
+	/mnt/$1/autorun/scripts/post-mount.sh $1 &
 fi
 
 # Trick with OpenVPN client config files stored in /openvpn-client folder on the USB
