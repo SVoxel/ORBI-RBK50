@@ -27,7 +27,7 @@ tools-$(BUILD_TOOLCHAIN) += gmp mpfr mpc libelf
 tools-y += m4 libtool autoconf automake flex bison pkg-config sed mklibs
 tools-y += sstrip make-ext4fs e2fsprogs mtd-utils mkimage
 tools-y += firmware-utils patch-image patch quilt yaffs2 flock padjffs2
-tools-y += mm-macros missing-macros xz cmake scons bc findutils gengetopt patchelf
+tools-y += mm-macros missing-macros xz scons bc findutils gengetopt patchelf
 tools-$(CONFIG_TARGET_orion_generic) += wrt350nv2-builder upslug2
 tools-$(CONFIG_powerpc) += upx
 tools-$(CONFIG_TARGET_x86) += qemu
@@ -39,7 +39,7 @@ tools-y += lzma squashfs4
 tools-$(BUILD_B43_TOOLS) += b43-tools
 tools-$(BUILD_PPL_CLOOG) += ppl cloog
 tools-$(CONFIG_USE_SPARSE) += sparse
-tools-y += coccinelle
+# tools-y += coccinelle
 
 # builddir dependencies
 $(curdir)/bison/compile := $(curdir)/flex/install
