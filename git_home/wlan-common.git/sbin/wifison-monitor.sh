@@ -2,6 +2,7 @@
 POLLING_SEC=10
 ALIVE_CHECK_TIMES=10 
 ALIVE_CHECK_SEC=1
+DIFF_SSID=$(/bin/config get allow_diff_ssid)
 
 hyd_enable=
 wsplcd_enable=
@@ -189,18 +190,20 @@ if [ "x$ssid_2g" != "x$ssid_5g" -o "x$passwd_2g_wpa2" != "x$passwd_5g_wpa2" \
     if [ $wifi_basic_setting_not_match_count -gt 6 ]; then
         echo "[wifison-monitor] make wireless basic setting equal for both 2G/5G" >/dev/console
         wifi_basic_setting_not_match_count=0
-        if [ "x$orbi_project" = "xDesktop" -o "x$orbi_project" = "xOrbipro" ];then
-            /bin/config set wla_ssid=`/bin/config get wl_ssid`
-            /bin/config set wla_wpa2_psk=`/bin/config get wl_wpa2_psk`
-            /bin/config set wla_wpas_psk=`/bin/config get wl_wpas_psk`
-            /bin/config set wla_sectype=`/bin/config get wl_sectype`
-        elif [ "x$orbi_project" = "xOrbimini" ];then
-            /bin/config set wla_2nd_ssid=`/bin/config get wl_ssid`
-            /bin/config set wla_2nd_wpa2_psk=`/bin/config get wl_wpa2_psk`
-            /bin/config set wla_2nd_wpas_psk=`/bin/config get wl_wpas_psk`
-            /bin/config set wla_2nd_sectype=`/bin/config get wl_sectype`
-        fi
-        config commit
+	if [ ! "$DIFF_SSID" == "1" ]; then
+	        if [ "x$orbi_project" = "xDesktop" -o "x$orbi_project" = "xOrbipro" ];then
+	            /bin/config set wla_ssid=`/bin/config get wl_ssid`
+	            /bin/config set wla_wpa2_psk=`/bin/config get wl_wpa2_psk`
+	            /bin/config set wla_wpas_psk=`/bin/config get wl_wpas_psk`
+	            /bin/config set wla_sectype=`/bin/config get wl_sectype`
+	        elif [ "x$orbi_project" = "xOrbimini" ];then
+	            /bin/config set wla_2nd_ssid=`/bin/config get wl_ssid`
+	            /bin/config set wla_2nd_wpa2_psk=`/bin/config get wl_wpa2_psk`
+	            /bin/config set wla_2nd_wpas_psk=`/bin/config get wl_wpas_psk`
+	            /bin/config set wla_2nd_sectype=`/bin/config get wl_sectype`
+	        fi
+	        config commit
+	fi
         wlan updateconf
         wlan down fronthaul
         wlan up
