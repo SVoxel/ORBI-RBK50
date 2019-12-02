@@ -1,6 +1,6 @@
 --- a/src/vasprintf.c
 +++ b/src/vasprintf.c
-@@ -42,6 +42,7 @@ http://www.gnu.org/licenses/ or write to
+@@ -72,6 +72,7 @@ https://www.gnu.org/licenses/ or write t
  #endif /* HAVE_VA_COPY */
  
  #ifdef HAVE_WCHAR_H
