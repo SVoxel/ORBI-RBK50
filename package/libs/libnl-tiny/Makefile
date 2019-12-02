@@ -8,13 +8,22 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnl-tiny
-PKG_VERSION:=0.1
-PKG_RELEASE:=4
+PKG_VERSION:=2019-10-29-0219008c
+PKG_RELEASE:=1
+
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE_URL=$(PROJECT_GIT)/project/libnl-tiny.git
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=0219008c
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
+PKG_MIRROR_MD5SUM:=dda479d75db048c94b889c23bfdf2727
+CMAKE_INSTALL:=1
 
 PKG_LICENSE:=LGPL-2.1
-PKG_MAINTAINER:=Felix Fietkau <nbd@openwrt.org>
+PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 
 include $(INCLUDE_DIR)/package.mk
+include $(INCLUDE_DIR)/cmake.mk
 
 define Package/libnl-tiny
   SECTION:=libs
@@ -26,30 +35,16 @@ define Package/libnl-tiny/description
  This package contains a stripped down version of libnl
 endef
 
-define Build/Prepare
-	mkdir -p $(PKG_BUILD_DIR)
-	$(CP) ./src/* $(PKG_BUILD_DIR)/
-endef
-
-TARGET_CFLAGS += $(FPIC)
-
-define Build/Compile
-	$(MAKE) -C $(PKG_BUILD_DIR) \
-		$(TARGET_CONFIGURE_OPTS) \
-		CFLAGS="$(TARGET_CFLAGS)" \
-		all
-endef
-
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/pkgconfig $(1)/usr/include/libnl-tiny
-	$(CP) $(PKG_BUILD_DIR)/include/* $(1)/usr/include/libnl-tiny
-	$(CP) $(PKG_BUILD_DIR)/libnl-tiny.so $(1)/usr/lib/
-	$(CP) ./files/libnl-tiny.pc $(1)/usr/lib/pkgconfig
+	$(CP) $(PKG_INSTALL_DIR)/usr/include/libnl-tiny/* $(1)/usr/include/libnl-tiny
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libnl-tiny.so $(1)/usr/lib/
+	$(INSTALL_DATA) $(PKG_BUILD_DIR)/libnl-tiny.pc $(1)/usr/lib/pkgconfig
 endef
 
 define Package/libnl-tiny/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(CP) $(PKG_BUILD_DIR)/libnl-tiny.so $(1)/usr/lib/
+	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libnl-tiny.so $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libnl-tiny))
