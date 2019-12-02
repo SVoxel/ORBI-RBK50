@@ -1,5 +1,6 @@
 #
 # Copyright (C) 2015 OpenWrt.org
+# Copyright (C) 2016 LEDE project
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -7,24 +8,17 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=make-ext4fs
-PKG_VERSION:=2015-05-01
+PKG_VERSION:=2017-05-29-eebda1d5
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://git.openwrt.org/project/make_ext4fs.git
-PKG_SOURCE_BRANCH:=openwrt/master
+PKG_SOURCE_URL=$(PROJECT_GIT)/project/make_ext4fs.git
 PKG_SOURCE_PROTO:=git
-PKG_SOURCE_VERSION:=7c15bef6c732896d9ffb883fb1480fcd60c94a50
+PKG_SOURCE_DATE:=2017-05-29
+PKG_SOURCE_VERSION:=eebda1d55d9701ace2700d7ae461697fadf52d1f
+PKG_MIRROR_HASH:=c52e14101d7de89292a0c8b30506839aca3164603a20f8e491e42103083b9d8c
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_MIRROR_MD5SUM:=d81eca37852cbf840108e1a8ad8fb22f
-PKG_CAT:=zcat
-
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/$(PKG_NAME)-$(PKG_VERSION)
 
 include $(INCLUDE_DIR)/host-build.mk
-
-define Host/Compile
-	$(MAKE) -C $(HOST_BUILD_DIR) make_ext4fs
-endef
 
 define Host/Install
 	$(INSTALL_BIN) $(HOST_BUILD_DIR)/make_ext4fs $(STAGING_DIR_HOST)/bin/
