@@ -3306,7 +3306,7 @@ CONFIG_DGC_PRDL=""
 #
 # Firmware's information
 #
-CONFIG_DGC_FW_VERSION="2.5.0.42SF-HW"
+CONFIG_DGC_FW_VERSION="2.5.0.43SF-HW"
 CONFIG_DGC_LG_VERSION="V1.0.0.360"
 CONFIG_DGC_FW_REGION=""
 CONFIG_DGC_CLOUD_VERSION="20170605"
@@ -3341,3 +3341,7 @@ CONFIG_DGC_DTS_SATELLITE7="qcom-ipq40xx-db.dk02.1-c1_cc"
 CONFIG_DGC_DTS_SATELLITE8="qcom-ipq40xx-ap.dk04.1-c4_cc"
 CONFIG_DGC_DTS_SATELLITE9="qcom-ipq40xx-ap.dk06.1-c1_cc"
 # CONFIG_PACKAGE_kmod-armor-guster is not set
+#
+# HiLink modem support
+CONFIG_PACKAGE_hilink-modem-init=y
+CONFIG_PACKAGE_kmod-hilink-modem=y
