@@ -19,9 +19,17 @@ load_kcode_modules() {
 
 
 start() {
+	# Check: is it router, exit if "no"
+	if [ "$MODULE_NAME" != "RBR50" ]; then
+		load_kcode_modules
+		echo This device is not router (satellite). Exit.
+		exit 0
+	fi	
+
 	# Check: is router mode, exit if "no"
 	if [ "$AP_MODE" != "0" ] || [ "$BRIDGE_MODE" != "0" ] || [ "$EXTENDER_MODE" != "0" ]; then
 		load_kcode_modules
+		echo This device is not in router mode. Exit.
 		exit 0
 	fi
 
@@ -29,6 +37,7 @@ start() {
 	detcable show $MODULE_NAME | grep "LAN0 : Plug in" > /dev/null
 	if [ $? -eq 0 ]; then
 		load_kcode_modules
+		echo Cable is attached to WAN. Exit.
 		exit 0
 	fi
 
@@ -69,6 +78,7 @@ start() {
 		rmmod rndis_host
 		rmmod cdc_ether
 		load_kcode_modules
+		echo No HiLink modem found. Exit.
 		exit 0
 	fi
 }
