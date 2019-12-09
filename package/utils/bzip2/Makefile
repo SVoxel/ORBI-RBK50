@@ -8,23 +8,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=bzip2
-PKG_VERSION:=1.0.6
-PKG_RELEASE:=2
+PKG_VERSION:=1.0.8
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=http://www.bzip.org/$(PKG_VERSION)
-PKG_MD5SUM:=00b516f4704d4a7cb50a1d97e6e8e15b
-PKG_MAINTAINER:=Steven Barth <cyrus@openwrt.org>
+PKG_SOURCE_URL:=https://sourceware.org/pub/bzip2
+PKG_MD5SUM:=67e051268d0c475ea773822f7500d0e5
 
-PKG_LICENSE:=BZIP2
+PKG_MAINTAINER:=Steven Barth <cyrus@openwrt.org>
+PKG_LICENSE:=bzip2-1.0.8
 PKG_LICENSE_FILES:=LICENSE
+PKG_CPE_ID:=cpe:/a:bzip:bzip2
 
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/package.mk
 
 define Package/bzip2/Default
   SUBMENU:=Compression
-  URL:=http://www.bzip.org/
+  URL:=https://sourceware.org/bzip2/
 endef
 
 define Package/libbz2
@@ -33,6 +34,7 @@ $(call Package/bzip2/Default)
   CATEGORY:=Libraries
   DEPENDS:=
   TITLE:=bzip2 library.
+  ABI_VERSION:=1.0
 endef
 
 define Package/libbz2/description
@@ -54,14 +56,14 @@ define Package/bzip2/description
 endef
 
 TARGET_CFLAGS += \
-	$(FPIC) \
-	$(TARGET_LDFLAGS)
+	$(FPIC)
 
 CONFIGURE_ARGS += --prefix=/usr
 
 MAKE_FLAGS += \
 	-f Makefile-libbz2_so \
 	CFLAGS="$(TARGET_CFLAGS)" \
+	LDFLAGS="$(TARGET_LDFLAGS)" \
 	all
 
 define Build/InstallDev
@@ -82,22 +84,24 @@ endef
 define Package/bzip2/install
 	$(INSTALL_DIR) $(1)/usr/bin/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bzip2-shared $(1)/usr/bin/bzip2
+	$(LN) bzip2 $(1)/usr/bin/bzcat
+	$(LN) bzip2 $(1)/usr/bin/bunzip2
 endef
 
 HOST_CFLAGS += \
-	$(FPIC) \
-	$(HOST_LDFLAGS)
+	$(FPIC)
 
 HOST_MAKE_FLAGS+= \
 	CFLAGS="$(HOST_CFLAGS)" \
+	LDFLAGS="$(HOST_LDFLAGS)" \
 	all
 
 HOST_CONFIGURE_ARGS+= \
-	--prefix=$(STAGING_DIR_HOST)
+	--prefix=$(STAGING_DIR_HOSTPKG)
 
 define Host/Install
-	$(INSTALL_DIR) $(STAGING_DIR_HOST)/bin/
-	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR_HOST)/usr/ install
+	$(INSTALL_DIR) $(STAGING_DIR_HOSTPKG)/bin/
+	$(MAKE) -C $(HOST_BUILD_DIR) PREFIX=$(STAGING_DIR_HOSTPKG)/ install
 endef
 
 $(eval $(call HostBuild))
