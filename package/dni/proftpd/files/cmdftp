@@ -280,13 +280,6 @@ mount1()
         	
 		if [ $? -ne 0 ];then
 			rmdir /tmp/$4/shares/"$3"
-		else
-			case "$5" in
-				0)chmod -R 777 /tmp/$4/shares/"$3";;
-				1)[ "$4" = "ftpadmin" ] && chmod -R 777 /tmp/$4/shares/"$3";;
-				2)chmod -R 777 /tmp/$4/shares/"$3";;
-				*);;
-			esac
 		fi
 	fi
 }
@@ -728,6 +721,7 @@ generate_proftpd_conf()
 	cat << EOF >$proftpd_anony
 <Anonymous /tmp/ftpadmin>
 User guest
+Group guest
 UserAlias anonymous guest
 RequireValidShell off
 EOF
@@ -806,13 +800,19 @@ sleep 5
 case "$1" in
 	stop)
 		killall proftpd
+		umount_all "ftpadmin"
+		umount_all "ftpguest"
 	;;
 	start)
 		killall proftpd
+		umount_all "ftpadmin"
+		umount_all "ftpguest"
 		ftp_start
 	;;
 	restart)
 		killall proftpd
+		umount_all "ftpadmin"
+		umount_all "ftpguest"
 		ftp_start
 	;;
 esac
