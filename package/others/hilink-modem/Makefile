@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2016 Voxel
+# Copyright (C) 2019 Voxel
 #
 
 include $(TOPDIR)/rules.mk
@@ -66,10 +66,9 @@ endef
 define KernelPackage/hilink-modem
   SECTION:=kernel
   CATEGORY:=Kernel modules
-  TITLE:= cdc_ether, rndis_host, udc-core kernel modules
+  TITLE:= cdc_ether, rndis_host kernel modules
   FILES:=$(LINUX_DIR)/drivers/net/usb/cdc_ether.$(LINUX_KMOD_SUFFIX) \
-         $(LINUX_DIR)/drivers/net/usb/rndis_host.$(LINUX_KMOD_SUFFIX) \
-         $(LINUX_DIR)/drivers/usb/gadget/udc-core.$(LINUX_KMOD_SUFFIX)
+         $(LINUX_DIR)/drivers/net/usb/rndis_host.$(LINUX_KMOD_SUFFIX)
 endef
 
 define KernelPackage/hilink-modem/description

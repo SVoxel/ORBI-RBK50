@@ -22,14 +22,14 @@ start() {
 	# Check: is it router, exit if "no"
 	if [ "$MODULE_NAME" != "RBR50" ]; then
 		load_kcode_modules
-		echo This device is not router (satellite). Exit.
+		echo "This device is not router (satellite). Exit."
 		exit 0
 	fi	
 
 	# Check: is router mode, exit if "no"
 	if [ "$AP_MODE" != "0" ] || [ "$BRIDGE_MODE" != "0" ] || [ "$EXTENDER_MODE" != "0" ]; then
 		load_kcode_modules
-		echo This device is not in router mode. Exit.
+		echo "This device is not in router mode. Exit."
 		exit 0
 	fi
 
@@ -37,7 +37,7 @@ start() {
 	detcable show $MODULE_NAME | grep "LAN0 : Plug in" > /dev/null
 	if [ $? -eq 0 ]; then
 		load_kcode_modules
-		echo Cable is attached to WAN. Exit.
+		echo "Cable is attached to WAN. Exit."
 		exit 0
 	fi
 
@@ -65,6 +65,8 @@ start() {
 		/etc/init.d/ntpclient stop
 		echo modem > /tmp/modem
 		echo -n 1 > /tmp/port_status
+		/etc/init.d/stubby stop
+		/etc/init.d/dnscrypt-proxy-2 stop
 
 		# Start services and restart firewall
 		/etc/init.d/net-wan start
@@ -72,13 +74,15 @@ start() {
 		killall ntpclient
 		sleep 15
 		/etc/init.d/ntpclient start
+		/etc/init.d/dnscrypt-proxy-2 start
+		/etc/init.d/stubby start
 		exit 0
 	else
 		# No modem found, just unload cdc_ether and rndis_host kernel objects
 		rmmod rndis_host
 		rmmod cdc_ether
 		load_kcode_modules
-		echo No HiLink modem found. Exit.
+		echo "No HiLink modem found. Exit."
 		exit 0
 	fi
 }
