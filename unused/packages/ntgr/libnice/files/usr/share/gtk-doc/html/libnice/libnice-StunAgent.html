@@ -1,0 +1,1362 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: StunAgent</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch03.html" title="">
+<link rel="prev" href="ch03.html" title="">
+<link rel="next" href="libnice-StunMessage.html" title="StunMessage">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#libnice-StunAgent.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch03.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ch03.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="libnice-StunMessage.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="libnice-StunAgent"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnice-StunAgent.top_of_page"></a>StunAgent</span></h2>
+<p>StunAgent — STUN agent for building and validating STUN messages</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="libnice-StunAgent.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="libnice-StunAgent.html#StunMessageIntegrityValidate" title="StunMessageIntegrityValidate ()">*StunMessageIntegrityValidate</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<span class="c_punctuation">(</span><a class="link" href="libnice-StunAgent.html#StunDebugHandler" title="StunDebugHandler ()">*StunDebugHandler</a><span class="c_punctuation">)</span> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-init" title="stun_agent_init ()">stun_agent_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-StunAgent.html#StunValidationStatus" title="enum StunValidationStatus"><span class="returnvalue">StunValidationStatus</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()">stun_agent_validate</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-default-validater" title="stun_agent_default_validater ()">stun_agent_default_validater</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-init-request" title="stun_agent_init_request ()">stun_agent_init_request</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-init-indication" title="stun_agent_init_indication ()">stun_agent_init_indication</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-init-response" title="stun_agent_init_response ()">stun_agent_init_response</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-init-error" title="stun_agent_init_error ()">stun_agent_init_error</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-build-unknown-attributes-error" title="stun_agent_build_unknown_attributes_error ()">stun_agent_build_unknown_attributes_error</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()">stun_agent_finish_message</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-forget-transaction" title="stun_agent_forget_transaction ()">stun_agent_forget_transaction</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-agent-set-software" title="stun_agent_set_software ()">stun_agent_set_software</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-debug-enable" title="stun_debug_enable ()">stun_debug_enable</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-debug-disable" title="stun_debug_disable ()">stun_debug_disable</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-StunAgent.html#stun-set-debug-handler" title="stun_set_debug_handler ()">stun_set_debug_handler</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="typedef_keyword">typedef</td>
+<td class="function_name"><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent">StunAgent</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-StunAgent.html#StunCompatibility" title="enum StunCompatibility">StunCompatibility</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-StunAgent.html#StunAgentUsageFlags" title="enum StunAgentUsageFlags">StunAgentUsageFlags</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-StunAgent.html#StunValidationStatus" title="enum StunValidationStatus">StunValidationStatus</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="libnice-StunAgent.html#StunDefaultValidaterData" title="StunDefaultValidaterData">StunDefaultValidaterData</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;stun/stunagent.h&gt;
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.description"></a><h2>Description</h2>
+<p>The STUN Agent allows you to create and validate STUN messages easily.
+It's main purpose is to make sure the building and validation methods used
+are compatible with the RFC you create it with. It also tracks the transaction
+ids of the requests you send, so you can validate if a STUN response you
+received should be processed by that agent or not.</p>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="StunMessageIntegrityValidate"></a><h3>StunMessageIntegrityValidate ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+<span class="c_punctuation">(</span>*StunMessageIntegrityValidate<span class="c_punctuation">)</span> (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                 <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *message</code></em>,
+                                 <em class="parameter"><code><span class="type">uint8_t</span> *username</code></em>,
+                                 <em class="parameter"><code><span class="type">uint16_t</span> username_len</code></em>,
+                                 <em class="parameter"><code><span class="type">uint8_t</span> **password</code></em>,
+                                 <em class="parameter"><code><span class="type">size_t</span> *password_len</code></em>,
+                                 <em class="parameter"><code><span class="type">void</span> *user_data</code></em>);</pre>
+<p>This is the prototype for the <em class="parameter"><code>validater</code></em>
+ argument of the <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a>
+function.</p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.2.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>message</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> being validated</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username found in the <em class="parameter"><code>message</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The password associated with that username. This argument is a
+pointer to a byte array that must be set by the validater function.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+which must also be set by the
+validater function.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>Data to give the function</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.2.7"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the authentication was successful,
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the authentication failed</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunDebugHandler"></a><h3>StunDebugHandler ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+<span class="c_punctuation">(</span>*StunDebugHandler<span class="c_punctuation">)</span> (<em class="parameter"><code>const <span class="type">char</span> *format</code></em>,
+                     <em class="parameter"><code><span class="type">va_list</span> ap</code></em>);</pre>
+<p>Callback for a debug message from the STUN code.</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>format</p></td>
+<td class="parameter_description"><p>printf()-style debug message format string</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>ap</p></td>
+<td class="parameter_description"><p>Parameters to substitute into message placeholders</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-init"></a><h3>stun_agent_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+stun_agent_init (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                 <em class="parameter"><code>const <span class="type">uint16_t</span> *known_attributes</code></em>,
+                 <em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunCompatibility" title="enum StunCompatibility"><span class="type">StunCompatibility</span></a> compatibility</code></em>,
+                 <em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgentUsageFlags" title="enum StunAgentUsageFlags"><span class="type">StunAgentUsageFlags</span></a> usage_flags</code></em>);</pre>
+<p>This function must be called to initialize an agent before it is being used.</p>
+<div class="note">
+<p>
+    The <em class="parameter"><code>known_attributes</code></em> data must exist in memory as long as the <em class="parameter"><code>agent</code></em> is used
+    </p>
+<p>
+    If the <a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-SHORT-TERM-CREDENTIALS:CAPS"><span class="type">STUN_AGENT_USAGE_SHORT_TERM_CREDENTIALS</span></a> and
+    <a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-LONG-TERM-CREDENTIALS:CAPS"><span class="type">STUN_AGENT_USAGE_LONG_TERM_CREDENTIALS</span></a> usage flags are not set, then the
+    agent will default in using the short term credentials mechanism
+    </p>
+<p>
+    The <a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-USE-FINGERPRINT:CAPS"><span class="type">STUN_AGENT_USAGE_USE_FINGERPRINT</span></a> and <a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-ADD-SOFTWARE:CAPS"><span class="type">STUN_AGENT_USAGE_ADD_SOFTWARE</span></a>
+    usage flags are only valid if the <a class="link" href="libnice-StunAgent.html#STUN-COMPATIBILITY-RFC5389:CAPS"><span class="type">STUN_COMPATIBILITY_RFC5389</span></a> or
+    <a class="link" href="libnice-StunAgent.html#STUN-COMPATIBILITY-WLM2009:CAPS"><span class="type">STUN_COMPATIBILITY_WLM2009</span></a> <em class="parameter"><code>compatibility</code></em> is used
+    </p>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.4.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to initialize</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>known_attributes</p></td>
+<td class="parameter_description"><p>An array of <span class="type">uint16_t</span> specifying which attributes should
+be known by the agent. Any STUN message received that contains a mandatory
+attribute that is not in this array will yield a
+<a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-UNKNOWN-REQUEST-ATTRIBUTE:CAPS"><span class="type">STUN_VALIDATION_UNKNOWN_REQUEST_ATTRIBUTE</span></a> or a
+<a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-UNKNOWN-ATTRIBUTE:CAPS"><span class="type">STUN_VALIDATION_UNKNOWN_ATTRIBUTE</span></a> error when calling <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunCompatibility" title="enum StunCompatibility"><span class="type">StunCompatibility</span></a> to use for this agent. This will affect
+how the agent builds and validates the STUN messages</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>usage_flags</p></td>
+<td class="parameter_description"><p>A bitflag using <a class="link" href="libnice-StunAgent.html#StunAgentUsageFlags" title="enum StunAgentUsageFlags"><span class="type">StunAgentUsageFlags</span></a> values to define which
+STUN usages the agent should use.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-validate"></a><h3>stun_agent_validate ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-StunAgent.html#StunValidationStatus" title="enum StunValidationStatus"><span class="returnvalue">StunValidationStatus</span></a>
+stun_agent_validate (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                     <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                     <em class="parameter"><code>const <span class="type">uint8_t</span> *buffer</code></em>,
+                     <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                     <em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunMessageIntegrityValidate" title="StunMessageIntegrityValidate ()"><span class="type">StunMessageIntegrityValidate</span></a> validater</code></em>,
+                     <em class="parameter"><code><span class="type">void</span> *validater_data</code></em>);</pre>
+<p>This function is used to validate an inbound STUN message and transform its
+data buffer into a <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a>. It will take care of various validation
+algorithms to make sure that the STUN message is valid and correctly
+authenticated.</p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-default-validater" title="stun_agent_default_validater ()"><code class="function">stun_agent_default_validater()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.5.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The data buffer of the STUN message</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>validater</p></td>
+<td class="parameter_description"><p>A <a class="link" href="libnice-StunAgent.html#StunMessageIntegrityValidate" title="StunMessageIntegrityValidate ()"><span class="type">StunMessageIntegrityValidate</span></a> function callback that will
+be called if the agent needs to validate a MESSAGE-INTEGRITY attribute. It
+will only be called if the agent finds a message that needs authentication
+and a USERNAME is present in the STUN message, but no password is known.
+The validater will not be called if the <a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-IGNORE-CREDENTIALS:CAPS"><span class="type">STUN_AGENT_USAGE_IGNORE_CREDENTIALS</span></a>
+usage flag is set on the agent, and it will always be called if the
+<a class="link" href="libnice-StunAgent.html#STUN-AGENT-USAGE-FORCE-VALIDATER:CAPS"><span class="type">STUN_AGENT_USAGE_FORCE_VALIDATER</span></a> usage flag is set on the agent.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>validater_data</p></td>
+<td class="parameter_description"><p>A user data to give to the <em class="parameter"><code>validater</code></em>
+callback when it gets
+called.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.5.7"></a><h4>Returns</h4>
+<p> A <a class="link" href="libnice-StunAgent.html#StunValidationStatus" title="enum StunValidationStatus"><span class="type">StunValidationStatus</span></a></p>
+<div class="note"><p>
+if the return value is different from <a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-NOT-STUN:CAPS"><span class="type">STUN_VALIDATION_NOT_STUN</span></a> or
+<a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-INCOMPLETE-STUN:CAPS"><span class="type">STUN_VALIDATION_INCOMPLETE_STUN</span></a>, then the <em class="parameter"><code>msg</code></em> argument will contain a valid
+STUN message that can be used.
+This means that you can use the <em class="parameter"><code>msg</code></em> variable as the <em class="parameter"><code>request</code></em> argument to
+functions like <a class="link" href="libnice-StunAgent.html#stun-agent-init-error" title="stun_agent_init_error ()"><code class="function">stun_agent_init_error()</code></a> or
+<a class="link" href="libnice-StunAgent.html#stun-agent-build-unknown-attributes-error" title="stun_agent_build_unknown_attributes_error ()"><code class="function">stun_agent_build_unknown_attributes_error()</code></a>.
+If the return value is <a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-BAD-REQUEST:CAPS"><span class="type">STUN_VALIDATION_BAD_REQUEST</span></a>,
+<a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-UNAUTHORIZED:CAPS"><span class="type">STUN_VALIDATION_UNAUTHORIZED</span></a> or <a class="link" href="libnice-StunAgent.html#STUN-VALIDATION-UNAUTHORIZED-BAD-REQUEST:CAPS"><span class="type">STUN_VALIDATION_UNAUTHORIZED_BAD_REQUEST</span></a>
+then the <em class="parameter"><code>key</code></em> in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> will not be set, so that error responses
+will not have a MESSAGE-INTEGRITY attribute.
+</p></div>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-default-validater"></a><h3>stun_agent_default_validater ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_default_validater (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                              <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *message</code></em>,
+                              <em class="parameter"><code><span class="type">uint8_t</span> *username</code></em>,
+                              <em class="parameter"><code><span class="type">uint16_t</span> username_len</code></em>,
+                              <em class="parameter"><code><span class="type">uint8_t</span> **password</code></em>,
+                              <em class="parameter"><code><span class="type">size_t</span> *password_len</code></em>,
+                              <em class="parameter"><code><span class="type">void</span> *user_data</code></em>);</pre>
+<p>This is a helper function to be used with <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a>. If no
+complicated processing of the username needs to be done, this function can
+be used with <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a> to quickly and easily match the username
+of a STUN message with its password. Its <em class="parameter"><code>user_data</code></em>
+ argument must be an array
+of <a class="link" href="libnice-StunAgent.html#StunDefaultValidaterData" title="StunDefaultValidaterData"><span class="type">StunDefaultValidaterData</span></a> which will allow us to map a username to a
+password</p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.6.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>message</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> being validated</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username found in the <em class="parameter"><code>message</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The password associated with that username. This argument is a
+pointer to a byte array that must be set by the validater function.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+which must also be set by the
+validater function.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>user_data</p></td>
+<td class="parameter_description"><p>This must be an array of <a class="link" href="libnice-StunAgent.html#StunDefaultValidaterData" title="StunDefaultValidaterData"><span class="type">StunDefaultValidaterData</span></a> structures.
+The last element in the array must have a username set to NULL</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.6.7"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the authentication was successful,
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the authentication failed</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-init-request"></a><h3>stun_agent_init_request ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_init_request (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                         <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                         <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                         <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                         <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMethod" title="enum StunMethod"><span class="type">StunMethod</span></a> m</code></em>);</pre>
+<p>Creates a new STUN message of class <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a> and with the method <em class="parameter"><code>m</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.7.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of the buffer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>m</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMethod" title="enum StunMethod"><span class="type">StunMethod</span></a> of the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.7.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was initialized correctly, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-init-indication"></a><h3>stun_agent_init_indication ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_init_indication (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                            <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                            <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                            <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                            <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMethod" title="enum StunMethod"><span class="type">StunMethod</span></a> m</code></em>);</pre>
+<p>Creates a new STUN message of class <a class="link" href="libnice-StunMessage.html#STUN-INDICATION:CAPS"><span class="type">STUN_INDICATION</span></a> and with the method <em class="parameter"><code>m</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of the buffer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>m</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMethod" title="enum StunMethod"><span class="type">StunMethod</span></a> of the indication</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.8.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was initialized correctly, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-init-response"></a><h3>stun_agent_init_response ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_init_response (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                          <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                          <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                          <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                          <em class="parameter"><code>const <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *request</code></em>);</pre>
+<p>Creates a new STUN message of class <a class="link" href="libnice-StunMessage.html#STUN-RESPONSE:CAPS"><span class="type">STUN_RESPONSE</span></a> and with the same method
+and transaction ID as the message <em class="parameter"><code>request</code></em>
+. This will also copy the pointer
+to the key that was used to authenticate the request, so you won't need to
+specify the key with <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a></p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.9.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of the buffer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>request</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> of class <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a> that this response is for</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.9.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was initialized correctly, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-init-error"></a><h3>stun_agent_init_error ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_init_error (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                       <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                       <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                       <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                       <em class="parameter"><code>const <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *request</code></em>,
+                       <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunError" title="enum StunError"><span class="type">StunError</span></a> err</code></em>);</pre>
+<p>Creates a new STUN message of class <a class="link" href="libnice-StunMessage.html#STUN-ERROR:CAPS"><span class="type">STUN_ERROR</span></a> and with the same method
+and transaction ID as the message <em class="parameter"><code>request</code></em>
+. This will also copy the pointer
+to the key that was used to authenticate the request (if authenticated),
+so you won't need to specify the key with <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a>.
+It will then add the ERROR-CODE attribute with code <em class="parameter"><code>err</code></em>
+ and the associated
+string.</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.10.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of the buffer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>request</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> of class <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a> that this error response
+is for</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>err</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunError" title="enum StunError"><span class="type">StunError</span></a> to put in the ERROR-CODE attribute of the error response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.10.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the message was initialized correctly, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-build-unknown-attributes-error"></a><h3>stun_agent_build_unknown_attributes_error ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_agent_build_unknown_attributes_error
+                               (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                                <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                                <em class="parameter"><code>const <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *request</code></em>);</pre>
+<p>Creates a new STUN message of class <a class="link" href="libnice-StunMessage.html#STUN-ERROR:CAPS"><span class="type">STUN_ERROR</span></a> and with the same method
+and transaction ID as the message <em class="parameter"><code>request</code></em>
+.  It will then add the ERROR-CODE
+attribute with code <a class="link" href="libnice-StunMessage.html#STUN-ERROR-UNKNOWN-ATTRIBUTE:CAPS"><span class="type">STUN_ERROR_UNKNOWN_ATTRIBUTE</span></a> and add all the unknown
+mandatory attributes from the <em class="parameter"><code>request</code></em>
+ STUN message in the
+<a class="link" href="libnice-StunMessage.html#STUN-ATTRIBUTE-UNKNOWN-ATTRIBUTES:CAPS"><span class="type">STUN_ATTRIBUTE_UNKNOWN_ATTRIBUTES</span></a> attribute, it will then finish the message
+by calling <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a></p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use in the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The length of the buffer</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>request</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> of class <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a> that this response is for</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.11.6"></a><h4>Returns</h4>
+<p> The size of the message built</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-finish-message"></a><h3>stun_agent_finish_message ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_agent_finish_message (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                           <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                           <em class="parameter"><code>const <span class="type">uint8_t</span> *key</code></em>,
+                           <em class="parameter"><code><span class="type">size_t</span> key_len</code></em>);</pre>
+<p>This function will 'finish' a message and make it ready to be sent. It will
+add the MESSAGE-INTEGRITY and FINGERPRINT attributes if necessary. If the
+STUN message has a <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a> class, it will save the transaction id of
+the message in the agent for future matching of the response.</p>
+<p>See also: <a class="link" href="libnice-StunAgent.html#stun-agent-forget-transaction" title="stun_agent_forget_transaction ()"><code class="function">stun_agent_forget_transaction()</code></a></p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.12.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to finish</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>key</p></td>
+<td class="parameter_description"><p>The key to use for the MESSAGE-INTEGRITY attribute</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>key_len</p></td>
+<td class="parameter_description"><p>The length of the <em class="parameter"><code>key</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.12.7"></a><h4>Returns</h4>
+<p> The final size of the message built or 0 if an error occured</p>
+<div class="note">
+<p>
+The return value must always be checked. a value of 0 means the either
+the buffer's size is too small to contain the finishing attributes
+(MESSAGE-INTEGRITY, FINGERPRINT), or that there is no more free slots
+for saving the sent id in the agent's state.
+</p>
+<p>
+Everytime <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a> is called for a <a class="link" href="libnice-StunMessage.html#STUN-REQUEST:CAPS"><span class="type">STUN_REQUEST</span></a>
+message, you must make sure to call <a class="link" href="libnice-StunAgent.html#stun-agent-forget-transaction" title="stun_agent_forget_transaction ()"><code class="function">stun_agent_forget_transaction()</code></a> in
+case the response times out and is never received. This is to avoid
+filling up the <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a>'s sent ids state preventing any further
+use of the <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a>
+</p>
+</div>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-forget-transaction"></a><h3>stun_agent_forget_transaction ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_agent_forget_transaction (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                               <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunTransactionId" title="StunTransactionId"><span class="type">StunTransactionId</span></a> id</code></em>);</pre>
+<p>This function is used to make the <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> forget about a previously
+created transaction.</p>
+<p>
+This function should be called when a STUN request was previously
+created with <a class="link" href="libnice-StunAgent.html#stun-agent-finish-message" title="stun_agent_finish_message ()"><code class="function">stun_agent_finish_message()</code></a> and for which no response was ever
+received (timed out). The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> keeps a list of the sent transactions
+in order to validate the responses received. If the response is never received
+this will allow the <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to forget about the timed out transaction and
+free its slot for future transactions.
+</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.13.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>id</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunTransactionId" title="StunTransactionId"><span class="type">StunTransactionId</span></a> of the transaction to forget</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.13.7"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the transaction was found, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.0.6</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-agent-set-software"></a><h3>stun_agent_set_software ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+stun_agent_set_software (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                         <em class="parameter"><code>const <span class="type">char</span> *software</code></em>);</pre>
+<p>This function will set the value of the SOFTWARE attribute to be added to
+STUN requests, responses and error responses.</p>
+<p>
+Calling this function will automatically enable the addition of the SOFTWARE
+attribute for RFC5389 and WLM2009 compatibility modes.
+
+</p>
+<div class="note">
+<p>
+       The <em class="parameter"><code>software</code></em> argument must be in UTF-8 encoding and only the first
+       128 characters will be sent.
+     </p>
+<p>
+       The value of the <em class="parameter"><code>software</code></em> argument must stay valid throughout the life of
+       the StunAgent's life. Do not free its content.
+     </p>
+</div>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.14.7"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>software</p></td>
+<td class="parameter_description"><p>The value of the SOFTWARE attribute to add.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.10</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-debug-enable"></a><h3>stun_debug_enable ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+stun_debug_enable (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Enable debug messages to stderr</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-debug-disable"></a><h3>stun_debug_disable ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+stun_debug_disable (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Disable debug messages to stderr</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-set-debug-handler"></a><h3>stun_set_debug_handler ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+stun_set_debug_handler (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunDebugHandler" title="StunDebugHandler ()"><span class="type">StunDebugHandler</span></a> handler</code></em>);</pre>
+<p>Set a callback function to be invoked for each debug message from the STUN
+code. The callback will only be invoked if STUN debugging is enabled using
+<a class="link" href="libnice-StunAgent.html#stun-debug-enable" title="stun_debug_enable ()"><code class="function">stun_debug_enable()</code></a>.</p>
+<p>The default callback prints the formatted debug message to stderr.</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.8.17.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>handler</p></td>
+<td class="parameter_description"><p> Handler for STUN debug messages, or <a href="/usr/share/gtk-doc/html/liboil/liboil-liboiljunk.html#NULL:CAPS"><code class="literal">NULL</code></a> to use the
+default. </p></td>
+<td class="parameter_annotations"><span class="annotation">[<acronym title="NULL may be passed as the value in, out, in-out; or as a return value."><span class="acronym">nullable</span></acronym>]</span></td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="StunAgent"></a><h3>StunAgent</h3>
+<pre class="programlisting">typedef struct stun_agent_t StunAgent;
+</pre>
+<p>An opaque structure representing the STUN agent.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunCompatibility"></a><h3>enum StunCompatibility</h3>
+<p>Enum that specifies the STUN compatibility mode of the <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a></p>
+<div class="refsect3">
+<a name="id-1.3.2.1.9.3.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-COMPATIBILITY-RFC3489:CAPS"></a>STUN_COMPATIBILITY_RFC3489</p></td>
+<td class="enum_member_description">
+<p>Use the STUN specifications compatible with
+RFC 3489</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-COMPATIBILITY-RFC5389:CAPS"></a>STUN_COMPATIBILITY_RFC5389</p></td>
+<td class="enum_member_description">
+<p>Use the STUN specifications compatible with
+RFC 5389</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-COMPATIBILITY-WLM2009:CAPS"></a>STUN_COMPATIBILITY_WLM2009</p></td>
+<td class="enum_member_description">
+<p>Use the STUN specifications compatible with
+Windows Live Messenger 2009 (a mix between RFC3489 and RFC5389, as well as
+a special usecase against a typo in their code)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-COMPATIBILITY-OC2007:CAPS"></a>STUN_COMPATIBILITY_OC2007</p></td>
+<td class="enum_member_description">
+<p>Use the STUN specifications compatible with
+Microsoft Office Communicator 2007 (basically RFC3489 with swapped
+REALM and NONCE attribute hex IDs, attributes are not aligned)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-COMPATIBILITY-LAST:CAPS"></a>STUN_COMPATIBILITY_LAST</p></td>
+<td class="enum_member_description">
+<p>Dummy last compatibility mode</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunAgentUsageFlags"></a><h3>enum StunAgentUsageFlags</h3>
+<p>This enum defines a bitflag usages for a <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> and they will define how
+the agent should behave, independently of the compatibility mode it uses.</p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-init" title="stun_agent_init ()"><code class="function">stun_agent_init()</code></a> </p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.2.1.9.4.6"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-SHORT-TERM-CREDENTIALS:CAPS"></a>STUN_AGENT_USAGE_SHORT_TERM_CREDENTIALS</p></td>
+<td class="enum_member_description">
+<p>The agent should be using the short
+term credentials mechanism for authenticating STUN messages</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-LONG-TERM-CREDENTIALS:CAPS"></a>STUN_AGENT_USAGE_LONG_TERM_CREDENTIALS</p></td>
+<td class="enum_member_description">
+<p>The agent should be using the long
+term credentials mechanism for authenticating STUN messages</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-USE-FINGERPRINT:CAPS"></a>STUN_AGENT_USAGE_USE_FINGERPRINT</p></td>
+<td class="enum_member_description">
+<p>The agent should add the FINGERPRINT
+attribute to the STUN messages it creates.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-ADD-SOFTWARE:CAPS"></a>STUN_AGENT_USAGE_ADD_SOFTWARE</p></td>
+<td class="enum_member_description">
+<p>The agent should add the SOFTWARE attribute
+to the STUN messages it creates. Calling <a class="link" href="NiceAgent.html#nice-agent-set-software" title="nice_agent_set_software ()"><code class="function">nice_agent_set_software()</code></a> will have
+the same effect as enabling this Usage. STUN Indications do not have the
+SOFTWARE attributes added to them though. The SOFTWARE attribute is only
+added for the RFC5389 and WLM2009 compatibility modes.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-IGNORE-CREDENTIALS:CAPS"></a>STUN_AGENT_USAGE_IGNORE_CREDENTIALS</p></td>
+<td class="enum_member_description">
+<p>The agent should ignore any credentials
+in the STUN messages it receives (the MESSAGE-INTEGRITY attribute
+will never be validated by <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a>)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-NO-INDICATION-AUTH:CAPS"></a>STUN_AGENT_USAGE_NO_INDICATION_AUTH</p></td>
+<td class="enum_member_description">
+<p>The agent should ignore credentials
+in the STUN messages it receives if the <a class="link" href="libnice-StunMessage.html#StunClass" title="enum StunClass"><span class="type">StunClass</span></a> of the message is
+<a class="link" href="libnice-StunMessage.html#STUN-INDICATION:CAPS"><span class="type">STUN_INDICATION</span></a> (some implementation require <a class="link" href="libnice-StunMessage.html#STUN-INDICATION:CAPS"><span class="type">STUN_INDICATION</span></a> messages to
+be authenticated, while others never add a MESSAGE-INTEGRITY attribute to a
+<a class="link" href="libnice-StunMessage.html#STUN-INDICATION:CAPS"><span class="type">STUN_INDICATION</span></a> message)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-FORCE-VALIDATER:CAPS"></a>STUN_AGENT_USAGE_FORCE_VALIDATER</p></td>
+<td class="enum_member_description">
+<p>The agent should always try to validate
+the password of a STUN message, even if it already knows what the password
+should be (a response to a previously created request). This means that the
+<a class="link" href="libnice-StunAgent.html#StunMessageIntegrityValidate" title="StunMessageIntegrityValidate ()"><span class="type">StunMessageIntegrityValidate</span></a> callback will always be called when there is
+a MESSAGE-INTEGRITY attribute.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-AGENT-USAGE-NO-ALIGNED-ATTRIBUTES:CAPS"></a>STUN_AGENT_USAGE_NO_ALIGNED_ATTRIBUTES</p></td>
+<td class="enum_member_description">
+<p>The agent should not assume STUN
+attributes are aligned on 32-bit boundaries when parsing messages and also
+do not add padding when creating messages.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunValidationStatus"></a><h3>enum StunValidationStatus</h3>
+<p>This enum is used as the return value of <a class="link" href="libnice-StunAgent.html#stun-agent-validate" title="stun_agent_validate ()"><code class="function">stun_agent_validate()</code></a> and represents
+the status result of the validation of a STUN message.</p>
+<div class="refsect3">
+<a name="id-1.3.2.1.9.5.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-SUCCESS:CAPS"></a>STUN_VALIDATION_SUCCESS</p></td>
+<td class="enum_member_description">
+<p>The message is validated</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-NOT-STUN:CAPS"></a>STUN_VALIDATION_NOT_STUN</p></td>
+<td class="enum_member_description">
+<p>This is not a valid STUN message</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-INCOMPLETE-STUN:CAPS"></a>STUN_VALIDATION_INCOMPLETE_STUN</p></td>
+<td class="enum_member_description">
+<p>The message seems to be valid but incomplete</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-BAD-REQUEST:CAPS"></a>STUN_VALIDATION_BAD_REQUEST</p></td>
+<td class="enum_member_description">
+<p>The message does not have the cookie or the
+fingerprint while the agent needs it with its usage</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-UNAUTHORIZED-BAD-REQUEST:CAPS"></a>STUN_VALIDATION_UNAUTHORIZED_BAD_REQUEST</p></td>
+<td class="enum_member_description">
+<p>The message is valid but
+unauthorized with no username and message-integrity attributes.
+A BAD_REQUEST error must be generated</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-UNAUTHORIZED:CAPS"></a>STUN_VALIDATION_UNAUTHORIZED</p></td>
+<td class="enum_member_description">
+<p>The message is valid but unauthorized as
+the username/password do not match.
+An UNAUTHORIZED error must be generated</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-UNMATCHED-RESPONSE:CAPS"></a>STUN_VALIDATION_UNMATCHED_RESPONSE</p></td>
+<td class="enum_member_description">
+<p>The message is valid but this is a
+response/error that doesn't match a previously sent request</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-UNKNOWN-REQUEST-ATTRIBUTE:CAPS"></a>STUN_VALIDATION_UNKNOWN_REQUEST_ATTRIBUTE</p></td>
+<td class="enum_member_description">
+<p>The message is valid but
+contains one or more unknown comprehension attributes.
+<a class="link" href="libnice-StunAgent.html#stun-agent-build-unknown-attributes-error" title="stun_agent_build_unknown_attributes_error ()"><code class="function">stun_agent_build_unknown_attributes_error()</code></a> should be called</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-VALIDATION-UNKNOWN-ATTRIBUTE:CAPS"></a>STUN_VALIDATION_UNKNOWN_ATTRIBUTE</p></td>
+<td class="enum_member_description">
+<p>The message is valid but contains one
+or more unknown comprehension attributes. This is a response, or error,
+or indication message and no error response should be sent</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunDefaultValidaterData"></a><h3>StunDefaultValidaterData</h3>
+<pre class="programlisting">typedef struct {
+  uint8_t *username;
+  size_t username_len;
+  uint8_t *password;
+  size_t password_len;
+} StunDefaultValidaterData;
+</pre>
+<p>This structure is used as an element of the user_data to the
+<a class="link" href="libnice-StunAgent.html#stun-agent-default-validater" title="stun_agent_default_validater ()"><code class="function">stun_agent_default_validater()</code></a> function for authenticating a STUN
+message during validationg.</p>
+<p> See also: <a class="link" href="libnice-StunAgent.html#stun-agent-default-validater" title="stun_agent_default_validater ()"><code class="function">stun_agent_default_validater()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.2.1.9.6.6"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><span class="type">uint8_t</span> *<em class="structfield"><code><a name="StunDefaultValidaterData.username"></a>username</code></em>;</p></td>
+<td class="struct_member_description"><p>The username</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><span class="type">size_t</span> <em class="structfield"><code><a name="StunDefaultValidaterData.username-len"></a>username_len</code></em>;</p></td>
+<td class="struct_member_description"><p>The length of the <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><span class="type">uint8_t</span> *<em class="structfield"><code><a name="StunDefaultValidaterData.password"></a>password</code></em>;</p></td>
+<td class="struct_member_description"><p>The password</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><span class="type">size_t</span> <em class="structfield"><code><a name="StunDefaultValidaterData.password-len"></a>password_len</code></em>;</p></td>
+<td class="struct_member_description"><p>The length of the <em class="parameter"><code>password</code></em>
+</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-StunAgent.see-also"></a><h2>See Also</h2>
+<p><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>

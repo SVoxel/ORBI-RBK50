@@ -1,0 +1,504 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: NiceCandidate</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch01.html" title="">
+<link rel="prev" href="libnice-NiceAddress.html" title="NiceAddress">
+<link rel="next" href="ch02.html" title="Libnice helper functions">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#NiceCandidate.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#NiceCandidate.object-hierarchy" class="shortcut">Object Hierarchy</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="libnice-NiceAddress.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="ch02.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="NiceCandidate"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="NiceCandidate.top_of_page"></a>NiceCandidate</span></h2>
+<p>NiceCandidate — ICE candidate representation</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="NiceCandidate.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#NICE-CANDIDATE-MAX-FOUNDATION:CAPS" title="NICE_CANDIDATE_MAX_FOUNDATION">NICE_CANDIDATE_MAX_FOUNDATION</a></td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="returnvalue">NiceCandidate</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="NiceCandidate.html#nice-candidate-new" title="nice_candidate_new ()">nice_candidate_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="NiceCandidate.html#nice-candidate-free" title="nice_candidate_free ()">nice_candidate_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="returnvalue">NiceCandidate</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="NiceCandidate.html#nice-candidate-copy" title="nice_candidate_copy ()">nice_candidate_copy</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#NiceCandidate-struct" title="struct NiceCandidate">NiceCandidate</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#NiceCandidateType" title="enum NiceCandidateType">NiceCandidateType</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#NiceCandidateTransport" title="enum NiceCandidateTransport">NiceCandidateTransport</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#TurnServer" title="struct TurnServer">TurnServer</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="NiceCandidate.html#NiceRelayType" title="enum NiceRelayType">NiceRelayType</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-Boxed-Types.html">GBoxed</a>
+    <span class="lineart">╰──</span> NiceCandidate
+</pre>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.description"></a><h2>Description</h2>
+<p>A representation of an ICE candidate. Make sure you read the ICE drafts[1] to
+understand correctly the concept of ICE candidates.</p>
+<p>[1] http://tools.ietf.org/wg/mmusic/draft-ietf-mmusic-ice/</p>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="NICE-CANDIDATE-MAX-FOUNDATION:CAPS"></a><h3>NICE_CANDIDATE_MAX_FOUNDATION</h3>
+<pre class="programlisting">#define NICE_CANDIDATE_MAX_FOUNDATION                (32+1)
+</pre>
+<p>The maximum size a candidate foundation can have.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-candidate-new"></a><h3>nice_candidate_new ()</h3>
+<pre class="programlisting"><a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="returnvalue">NiceCandidate</span></a> *
+nice_candidate_new (<em class="parameter"><code><a class="link" href="NiceCandidate.html#NiceCandidateType" title="enum NiceCandidateType"><span class="type">NiceCandidateType</span></a> type</code></em>);</pre>
+<p>Creates a new candidate. Must be freed with <a class="link" href="NiceCandidate.html#nice-candidate-free" title="nice_candidate_free ()"><code class="function">nice_candidate_free()</code></a></p>
+<div class="refsect3">
+<a name="id-1.2.2.3.8.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>type</p></td>
+<td class="parameter_description"><p>The <a class="link" href="NiceCandidate.html#NiceCandidateType" title="enum NiceCandidateType"><span class="type">NiceCandidateType</span></a> of the candidate to create</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.3.8.3.6"></a><h4>Returns</h4>
+<p> A new <a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a></p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-candidate-free"></a><h3>nice_candidate_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_candidate_free (<em class="parameter"><code><a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a> *candidate</code></em>);</pre>
+<p>Frees a <a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a></p>
+<div class="refsect3">
+<a name="id-1.2.2.3.8.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>candidate</p></td>
+<td class="parameter_description"><p>The candidate to free</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-candidate-copy"></a><h3>nice_candidate_copy ()</h3>
+<pre class="programlisting"><a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="returnvalue">NiceCandidate</span></a> *
+nice_candidate_copy (<em class="parameter"><code>const <a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a> *candidate</code></em>);</pre>
+<p>Makes a copy of a <a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a></p>
+<div class="refsect3">
+<a name="id-1.2.2.3.8.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>candidate</p></td>
+<td class="parameter_description"><p>The candidate to copy</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.3.8.5.6"></a><h4>Returns</h4>
+<p> A new <a class="link" href="NiceCandidate.html" title="NiceCandidate"><span class="type">NiceCandidate</span></a>, a copy of <em class="parameter"><code>candidate</code></em>
+</p>
+<p></p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="NiceCandidate-struct"></a><h3>struct NiceCandidate</h3>
+<pre class="programlisting">struct NiceCandidate {
+  NiceCandidateType type;
+  NiceCandidateTransport transport;
+  NiceAddress addr;
+  NiceAddress base_addr;
+  guint32 priority;
+  guint stream_id;
+  guint component_id;
+  gchar foundation[NICE_CANDIDATE_MAX_FOUNDATION];
+  gchar *username;        /* pointer to a NULL-terminated username string */
+  gchar *password;        /* pointer to a NULL-terminated password string */
+  TurnServer *turn;
+  gpointer sockptr;
+};
+</pre>
+<p>A structure to represent an ICE candidate</p>
+<div class="note"><p>
+   The <em class="parameter"><code>priority</code></em> is an integer as specified in the ICE draft 19. If you are
+   using the MSN or the GOOGLE compatibility mode (which are based on ICE
+   draft 6, which uses a floating point qvalue as priority), then the <em class="parameter"><code>priority</code></em>
+   value will represent the qvalue multiplied by 1000.
+   </p></div>
+<div class="refsect3">
+<a name="id-1.2.2.3.9.2.6"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="NiceCandidate.html#NiceCandidateType" title="enum NiceCandidateType"><span class="type">NiceCandidateType</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.type"></a>type</code></em>;</p></td>
+<td class="struct_member_description"><p>The type of candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="NiceCandidate.html#NiceCandidateTransport" title="enum NiceCandidateTransport"><span class="type">NiceCandidateTransport</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.transport"></a>transport</code></em>;</p></td>
+<td class="struct_member_description"><p>The transport being used for the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.addr"></a>addr</code></em>;</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> of the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.base-addr"></a>base_addr</code></em>;</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> of the base address used by the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.priority"></a>priority</code></em>;</p></td>
+<td class="struct_member_description"><p>The priority of the candidate <span class="emphasis"><em> see note </em></span></p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.stream-id"></a>stream_id</code></em>;</p></td>
+<td class="struct_member_description"><p>The ID of the stream to which belongs the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.component-id"></a>component_id</code></em>;</p></td>
+<td class="struct_member_description"><p>The ID of the component to which belongs the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.foundation"></a>foundation</code></em>[NICE_CANDIDATE_MAX_FOUNDATION];</p></td>
+<td class="struct_member_description"><p>The foundation of the candidate</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="NiceCandidate-struct.username"></a>username</code></em>;</p></td>
+<td class="struct_member_description"><p>The candidate-specific username to use (overrides the one set
+by <code class="function">nice_agent_set_local_credentials()</code> or <a class="link" href="NiceAgent.html#nice-agent-set-remote-credentials" title="nice_agent_set_remote_credentials ()"><code class="function">nice_agent_set_remote_credentials()</code></a>)</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="NiceCandidate-struct.password"></a>password</code></em>;</p></td>
+<td class="struct_member_description"><p>The candidate-specific password to use (overrides the one set
+by <code class="function">nice_agent_set_local_credentials()</code> or <a class="link" href="NiceAgent.html#nice-agent-set-remote-credentials" title="nice_agent_set_remote_credentials ()"><code class="function">nice_agent_set_remote_credentials()</code></a>)</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="NiceCandidate.html#TurnServer" title="struct TurnServer"><span class="type">TurnServer</span></a> *<em class="structfield"><code><a name="NiceCandidate-struct.turn"></a>turn</code></em>;</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="NiceCandidate.html#TurnServer" title="struct TurnServer"><span class="type">TurnServer</span></a> settings if the candidate is
+of type <a class="link" href="NiceCandidate.html#NICE-CANDIDATE-TYPE-RELAYED:CAPS"><code class="literal">NICE_CANDIDATE_TYPE_RELAYED</code></a></p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> <em class="structfield"><code><a name="NiceCandidate-struct.sockptr"></a>sockptr</code></em>;</p></td>
+<td class="struct_member_description"><p>The underlying socket</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NiceCandidateType"></a><h3>enum NiceCandidateType</h3>
+<p>An enum represneting the type of a candidate</p>
+<div class="refsect3">
+<a name="id-1.2.2.3.9.3.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TYPE-HOST:CAPS"></a>NICE_CANDIDATE_TYPE_HOST</p></td>
+<td class="enum_member_description">
+<p>A host candidate</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TYPE-SERVER-REFLEXIVE:CAPS"></a>NICE_CANDIDATE_TYPE_SERVER_REFLEXIVE</p></td>
+<td class="enum_member_description">
+<p>A server reflexive candidate</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TYPE-PEER-REFLEXIVE:CAPS"></a>NICE_CANDIDATE_TYPE_PEER_REFLEXIVE</p></td>
+<td class="enum_member_description">
+<p>A peer reflexive candidate</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TYPE-RELAYED:CAPS"></a>NICE_CANDIDATE_TYPE_RELAYED</p></td>
+<td class="enum_member_description">
+<p>A relay candidate</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NiceCandidateTransport"></a><h3>enum NiceCandidateTransport</h3>
+<p>An enum representing the type of transport to use</p>
+<div class="refsect3">
+<a name="id-1.2.2.3.9.4.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TRANSPORT-UDP:CAPS"></a>NICE_CANDIDATE_TRANSPORT_UDP</p></td>
+<td class="enum_member_description">
+<p>UDP transport</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TRANSPORT-TCP-ACTIVE:CAPS"></a>NICE_CANDIDATE_TRANSPORT_TCP_ACTIVE</p></td>
+<td class="enum_member_description">
+<p>TCP Active transport</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TRANSPORT-TCP-PASSIVE:CAPS"></a>NICE_CANDIDATE_TRANSPORT_TCP_PASSIVE</p></td>
+<td class="enum_member_description">
+<p>TCP Passive transport</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-CANDIDATE-TRANSPORT-TCP-SO:CAPS"></a>NICE_CANDIDATE_TRANSPORT_TCP_SO</p></td>
+<td class="enum_member_description">
+<p>TCP Simultaneous-Open transport</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="TurnServer"></a><h3>struct TurnServer</h3>
+<pre class="programlisting">struct TurnServer {
+  gint ref_count;
+
+  NiceAddress server;
+  gchar *username;
+  gchar *password;
+  NiceRelayType type;
+};
+</pre>
+<p>A structure to store the TURN relay settings</p>
+<div class="refsect3">
+<a name="id-1.2.2.3.9.5.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="type">gint</span></a> <em class="structfield"><code><a name="TurnServer.ref-count"></a>ref_count</code></em>;</p></td>
+<td class="struct_member_description"><p>Reference count for the structure.</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> <em class="structfield"><code><a name="TurnServer.server"></a>server</code></em>;</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> of the TURN server</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="TurnServer.username"></a>username</code></em>;</p></td>
+<td class="struct_member_description"><p>The TURN username</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *<em class="structfield"><code><a name="TurnServer.password"></a>password</code></em>;</p></td>
+<td class="struct_member_description"><p>The TURN password</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><a class="link" href="NiceCandidate.html#NiceRelayType" title="enum NiceRelayType"><span class="type">NiceRelayType</span></a> <em class="structfield"><code><a name="TurnServer.type"></a>type</code></em>;</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="NiceCandidate.html#NiceRelayType" title="enum NiceRelayType"><span class="type">NiceRelayType</span></a> of the server</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NiceRelayType"></a><h3>enum NiceRelayType</h3>
+<p>An enum representing the type of relay to use</p>
+<div class="refsect3">
+<a name="id-1.2.2.3.9.6.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-RELAY-TYPE-TURN-UDP:CAPS"></a>NICE_RELAY_TYPE_TURN_UDP</p></td>
+<td class="enum_member_description">
+<p>A TURN relay using UDP</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-RELAY-TYPE-TURN-TCP:CAPS"></a>NICE_RELAY_TYPE_TURN_TCP</p></td>
+<td class="enum_member_description">
+<p>A TURN relay using TCP</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="NICE-RELAY-TYPE-TURN-TLS:CAPS"></a>NICE_RELAY_TYPE_TURN_TLS</p></td>
+<td class="enum_member_description">
+<p>A TURN relay using TLS over TCP</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="NiceCandidate.see-also"></a><h2>See Also</h2>
+<p><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a></p>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>

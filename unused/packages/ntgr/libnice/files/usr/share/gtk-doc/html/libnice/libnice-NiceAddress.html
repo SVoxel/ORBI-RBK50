@@ -1,0 +1,758 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: NiceAddress</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch01.html" title="">
+<link rel="prev" href="NiceAgent.html" title="NiceAgent">
+<link rel="next" href="NiceCandidate.html" title="NiceCandidate">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#libnice-NiceAddress.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch01.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="NiceAgent.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="NiceCandidate.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="libnice-NiceAddress"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnice-NiceAddress.top_of_page"></a>NiceAddress</span></h2>
+<p>NiceAddress — IP address convenience library</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-init" title="nice_address_init ()">nice_address_init</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="returnvalue">NiceAddress</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-new" title="nice_address_new ()">nice_address_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-free" title="nice_address_free ()">nice_address_free</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="returnvalue">NiceAddress</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-dup" title="nice_address_dup ()">nice_address_dup</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-set-ipv4" title="nice_address_set_ipv4 ()">nice_address_set_ipv4</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-set-ipv6" title="nice_address_set_ipv6 ()">nice_address_set_ipv6</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-set-port" title="nice_address_set_port ()">nice_address_set_port</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-get-port" title="nice_address_get_port ()">nice_address_get_port</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-set-from-string" title="nice_address_set_from_string ()">nice_address_set_from_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-set-from-sockaddr" title="nice_address_set_from_sockaddr ()">nice_address_set_from_sockaddr</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-copy-to-sockaddr" title="nice_address_copy_to_sockaddr ()">nice_address_copy_to_sockaddr</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-equal" title="nice_address_equal ()">nice_address_equal</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-equal-no-port" title="nice_address_equal_no_port ()">nice_address_equal_no_port</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-to-string" title="nice_address_to_string ()">nice_address_to_string</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-is-private" title="nice_address_is_private ()">nice_address_is_private</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-is-valid" title="nice_address_is_valid ()">nice_address_is_valid</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-NiceAddress.html#nice-address-ip-version" title="nice_address_ip_version ()">nice_address_ip_version</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress">NiceAddress</a></td>
+</tr>
+<tr>
+<td class="define_keyword">#define</td>
+<td class="function_name"><a class="link" href="libnice-NiceAddress.html#NICE-ADDRESS-STRING-LEN:CAPS" title="NICE_ADDRESS_STRING_LEN">NICE_ADDRESS_STRING_LEN</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.description"></a><h2>Description</h2>
+<p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> structure will allow you to easily set/get and modify an IPv4
+or IPv6 address in order to communicate with the <a class="link" href="NiceAgent.html" title="NiceAgent"><span class="type">NiceAgent</span></a>.</p>
+</div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="nice-address-init"></a><h3>nice_address_init ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_init (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Initialize a <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> into an undefined address</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.2.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to init</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-new"></a><h3>nice_address_new ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="returnvalue">NiceAddress</span></a> *
+nice_address_new (<em class="parameter"><code><span class="type">void</span></code></em>);</pre>
+<p>Create a new <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> with undefined address
+You must free it with <a class="link" href="libnice-NiceAddress.html#nice-address-free" title="nice_address_free ()"><code class="function">nice_address_free()</code></a></p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.3.5"></a><h4>Returns</h4>
+<p> The new <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a></p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-free"></a><h3>nice_address_free ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_free (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Frees a <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> created with <a class="link" href="libnice-NiceAddress.html#nice-address-new" title="nice_address_new ()"><code class="function">nice_address_new()</code></a> or <a class="link" href="libnice-NiceAddress.html#nice-address-dup" title="nice_address_dup ()"><code class="function">nice_address_dup()</code></a></p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to free</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-dup"></a><h3>nice_address_dup ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="returnvalue">NiceAddress</span></a> *
+nice_address_dup (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Creates a new <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> with the same address as <em class="parameter"><code>addr</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to dup</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.5.6"></a><h4>Returns</h4>
+<p> The new <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a></p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-set-ipv4"></a><h3>nice_address_set_ipv4 ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_set_ipv4 (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> addr_ipv4</code></em>);</pre>
+<p>Set <em class="parameter"><code>addr</code></em>
+ to an IPv4 address using the data from <em class="parameter"><code>addr_ipv4</code></em>
+</p>
+<div class="note"><p>
+   This function will reset the port to 0, so make sure you call it before
+   <a class="link" href="libnice-NiceAddress.html#nice-address-set-port" title="nice_address_set_port ()"><code class="function">nice_address_set_port()</code></a>
+  </p></div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.6.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addr_ipv4</p></td>
+<td class="parameter_description"><p>The IPv4 address</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-set-ipv6"></a><h3>nice_address_set_ipv6 ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_set_ipv6 (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                       <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guchar"><span class="type">guchar</span></a> *addr_ipv6</code></em>);</pre>
+<p>Set <em class="parameter"><code>addr</code></em>
+ to an IPv6 address using the data from <em class="parameter"><code>addr_ipv6</code></em>
+</p>
+<div class="note"><p>
+   This function will reset the port to 0, so make sure you call it before
+   <a class="link" href="libnice-NiceAddress.html#nice-address-set-port" title="nice_address_set_port ()"><code class="function">nice_address_set_port()</code></a>
+  </p></div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.7.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addr_ipv6</p></td>
+<td class="parameter_description"><p>The IPv6 address</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-set-port"></a><h3>nice_address_set_port ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_set_port (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                       <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a> port</code></em>);</pre>
+<p>Set the port of <em class="parameter"><code>addr</code></em>
+ to <em class="parameter"><code>port</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>port</p></td>
+<td class="parameter_description"><p>The port to set</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-get-port"></a><h3>nice_address_get_port ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="returnvalue">guint</span></a>
+nice_address_get_port (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Retreive the port of <em class="parameter"><code>addr</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.9.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.9.6"></a><h4>Returns</h4>
+<p> The port of <em class="parameter"><code>addr</code></em>
+</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-set-from-string"></a><h3>nice_address_set_from_string ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+nice_address_set_from_string (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                              <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *str</code></em>);</pre>
+<p>Sets an IPv4 or IPv6 address from the string <em class="parameter"><code>str</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.10.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>str</p></td>
+<td class="parameter_description"><p>The string to set</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.10.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if success, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on error</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-set-from-sockaddr"></a><h3>nice_address_set_from_sockaddr ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_set_from_sockaddr (<em class="parameter"><code><a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                                <em class="parameter"><code>const <span class="type">struct sockaddr</span> *sin</code></em>);</pre>
+<p>Sets an IPv4 or IPv6 address from the sockaddr structure <em class="parameter"><code>sin</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to modify</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>sin</p></td>
+<td class="parameter_description"><p>The sockaddr to set</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-copy-to-sockaddr"></a><h3>nice_address_copy_to_sockaddr ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_copy_to_sockaddr (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                               <em class="parameter"><code><span class="type">struct sockaddr</span> *sin</code></em>);</pre>
+<p>Fills the sockaddr structure <em class="parameter"><code>sin</code></em>
+ with the address contained in <em class="parameter"><code>addr</code></em>
+</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.12.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>sin</p></td>
+<td class="parameter_description"><p>The sockaddr to fill</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-equal"></a><h3>nice_address_equal ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+nice_address_equal (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *a</code></em>,
+                    <em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *b</code></em>);</pre>
+<p>Compares two <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> structures to see if they contain the same address
+and the same port.</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.13.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>a</p></td>
+<td class="parameter_description"><p>First <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to compare</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>b</p></td>
+<td class="parameter_description"><p>Second <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to compare</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.13.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>a</code></em>
+and <em class="parameter"><code>b</code></em>
+are the same address, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if they are different</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-equal-no-port"></a><h3>nice_address_equal_no_port ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+nice_address_equal_no_port (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *a</code></em>,
+                            <em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *b</code></em>);</pre>
+<p>Compares two <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> structures to see if they contain the same address,
+ignoring the port.</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.14.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>a</p></td>
+<td class="parameter_description"><p>First <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to compare</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>b</p></td>
+<td class="parameter_description"><p>Second <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to compare</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.14.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>a</code></em>
+and <em class="parameter"><code>b</code></em>
+are the same address, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if they
+are different</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-to-string"></a><h3>nice_address_to_string ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+nice_address_to_string (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *dst</code></em>);</pre>
+<p>Transforms the address <em class="parameter"><code>addr</code></em>
+ into a human readable string</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.15.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>dst</p></td>
+<td class="parameter_description"><p>The string to fill</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-is-private"></a><h3>nice_address_is_private ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+nice_address_is_private (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Verifies if the address in <em class="parameter"><code>addr</code></em>
+ is a private address or not</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.16.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.16.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>addr</code></em>
+is a private address, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-is-valid"></a><h3>nice_address_is_valid ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+nice_address_is_valid (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Validate whether the <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> <em class="parameter"><code>addr</code></em>
+ is a valid IPv4 or IPv6 address</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.17.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.17.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>addr</code></em>
+is valid, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="nice-address-ip-version"></a><h3>nice_address_ip_version ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+nice_address_ip_version (<em class="parameter"><code>const <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> *addr</code></em>);</pre>
+<p>Returns the IP version of the address</p>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.18.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> to query</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.2.2.2.7.18.6"></a><h4>Returns</h4>
+<p> 4 for IPv4, 6 for IPv6 and 0 for undefined address</p>
+<p></p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-NiceAddress.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="NiceAddress"></a><h3>NiceAddress</h3>
+<pre class="programlisting">typedef struct {
+  union
+  {
+    struct sockaddr     addr;
+    struct sockaddr_in  ip4;
+    struct sockaddr_in6 ip6;
+  } s;
+} NiceAddress;
+</pre>
+<p>The <a class="link" href="libnice-NiceAddress.html#NiceAddress" title="NiceAddress"><span class="type">NiceAddress</span></a> structure that represents an IPv4 or IPv6 address.</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="NICE-ADDRESS-STRING-LEN:CAPS"></a><h3>NICE_ADDRESS_STRING_LEN</h3>
+<pre class="programlisting">#define NICE_ADDRESS_STRING_LEN INET6_ADDRSTRLEN
+</pre>
+<p>The maximum string length representation of an address.
+When using <a class="link" href="libnice-NiceAddress.html#nice-address-to-string" title="nice_address_to_string ()"><code class="function">nice_address_to_string()</code></a> make sure the string has a size of
+at least <a class="link" href="libnice-NiceAddress.html#NICE-ADDRESS-STRING-LEN:CAPS" title="NICE_ADDRESS_STRING_LEN"><code class="literal">NICE_ADDRESS_STRING_LEN</code></a></p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>

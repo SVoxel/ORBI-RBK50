@@ -1,0 +1,767 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: TURN</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch04.html" title="STUN usages">
+<link rel="prev" href="libnice-ICE.html" title="ICE">
+<link rel="next" href="libnice-Timer.html" title="Timer">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#libnice-TURN.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch04.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="libnice-ICE.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="libnice-Timer.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="libnice-TURN"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnice-TURN.top_of_page"></a>TURN</span></h2>
+<p>TURN — TURN Allocation Usage</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="libnice-TURN.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-TURN.html#stun-usage-turn-create" title="stun_usage_turn_create ()">stun_usage_turn_create</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-TURN.html#stun-usage-turn-create-refresh" title="stun_usage_turn_create_refresh ()">stun_usage_turn_create_refresh</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="returnvalue">StunUsageTurnReturn</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-TURN.html#stun-usage-turn-process" title="stun_usage_turn_process ()">stun_usage_turn_process</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="returnvalue">StunUsageTurnReturn</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-TURN.html#stun-usage-turn-refresh-process" title="stun_usage_turn_refresh_process ()">stun_usage_turn_refresh_process</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-TURN.html#stun-usage-turn-create-permission" title="stun_usage_turn_create_permission ()">stun_usage_turn_create_permission</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility">StunUsageTurnCompatibility</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-TURN.html#StunUsageTurnRequestPorts" title="enum StunUsageTurnRequestPorts">StunUsageTurnRequestPorts</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn">StunUsageTurnReturn</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;stun/usages/turn.h&gt;
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.description"></a><h2>Description</h2>
+<p>The STUN TURN usage allows for easily creating and parsing STUN Allocate
+requests and responses used for TURN. The API allows you to create a new
+allocation or refresh an existing one as well as to parse a response to
+an allocate or refresh request.</p>
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="stun-usage-turn-create"></a><h3>stun_usage_turn_create ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_usage_turn_create (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                        <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                        <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                        <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                        <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *previous_response</code></em>,
+                        <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnRequestPorts" title="enum StunUsageTurnRequestPorts"><span class="type">StunUsageTurnRequestPorts</span></a> request_ports</code></em>,
+                        <em class="parameter"><code><span class="type">int32_t</span> bandwidth</code></em>,
+                        <em class="parameter"><code><span class="type">int32_t</span> lifetime</code></em>,
+                        <em class="parameter"><code><span class="type">uint8_t</span> *username</code></em>,
+                        <em class="parameter"><code><span class="type">size_t</span> username_len</code></em>,
+                        <em class="parameter"><code><span class="type">uint8_t</span> *password</code></em>,
+                        <em class="parameter"><code><span class="type">size_t</span> password_len</code></em>,
+                        <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility"><span class="type">StunUsageTurnCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Create a new TURN Allocation request</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.2.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to use to build the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use for creating the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The size of the <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>previous_response</p></td>
+<td class="parameter_description"><p>If this is the first request you are sending, set this
+argument to NULL, if it's a subsequent request you are building, then set this
+argument to the response you have received. This argument is used for building
+long term credentials (using the REALM and NONCE attributes) as well as for
+getting the RESERVATION-TOKEN attribute when you previously requested an
+allocation which reserved two ports</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>request_ports</p></td>
+<td class="parameter_description">
+<p>Specify how you want to request the allocated port(s).
+This is only used if the compatibility is set to
+<a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-COMPATIBILITY-DRAFT9:CAPS"><span class="type">STUN_USAGE_TURN_COMPATIBILITY_DRAFT9</span></a></p>
+<p>See <a class="link" href="libnice-TURN.html#StunUsageTurnRequestPorts" title="enum StunUsageTurnRequestPorts"><span class="type">StunUsageTurnRequestPorts</span></a> </p>
+</td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>bandwidth</p></td>
+<td class="parameter_description"><p>The bandwidth to request from the server for the allocation. If
+this value is negative, then no BANDWIDTH attribute is added to the request.
+This is only used if the compatibility is set to
+<a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-COMPATIBILITY-DRAFT9:CAPS"><span class="type">STUN_USAGE_TURN_COMPATIBILITY_DRAFT9</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>lifetime</p></td>
+<td class="parameter_description"><p>The lifetime of the allocation to request from the server. If
+this value is negative, then no LIFETIME attribute is added to the request.
+This is only used if the compatibility is set to
+<a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-COMPATIBILITY-DRAFT9:CAPS"><span class="type">STUN_USAGE_TURN_COMPATIBILITY_DRAFT9</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The key to use for building the MESSAGE-INTEGRITY</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for building the Allocation
+request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.2.6"></a><h4>Returns</h4>
+<p> The length of the message to send</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-turn-create-refresh"></a><h3>stun_usage_turn_create_refresh ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_usage_turn_create_refresh (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                                <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                                <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *previous_response</code></em>,
+                                <em class="parameter"><code><span class="type">int32_t</span> lifetime</code></em>,
+                                <em class="parameter"><code><span class="type">uint8_t</span> *username</code></em>,
+                                <em class="parameter"><code><span class="type">size_t</span> username_len</code></em>,
+                                <em class="parameter"><code><span class="type">uint8_t</span> *password</code></em>,
+                                <em class="parameter"><code><span class="type">size_t</span> password_len</code></em>,
+                                <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility"><span class="type">StunUsageTurnCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Create a new TURN Refresh request</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to use to build the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use for creating the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The size of the <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>previous_response</p></td>
+<td class="parameter_description"><p>If this is the first request you are sending, set this
+argument to NULL, if it's a subsequent request you are building, then set this
+argument to the response you have received. This argument is used for building
+long term credentials (using the REALM and NONCE attributes)</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>lifetime</p></td>
+<td class="parameter_description"><p>The lifetime of the allocation to request from the server. If
+this value is negative, then no LIFETIME attribute is added to the request.
+This is only used if the compatibility is set to
+<a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-COMPATIBILITY-DRAFT9:CAPS"><span class="type">STUN_USAGE_TURN_COMPATIBILITY_DRAFT9</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The key to use for building the MESSAGE-INTEGRITY</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for building the Allocation
+request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.3.6"></a><h4>Returns</h4>
+<p> The length of the message to send</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-turn-process"></a><h3>stun_usage_turn_process ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="returnvalue">StunUsageTurnReturn</span></a>
+stun_usage_turn_process (<em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                         <em class="parameter"><code><span class="type">struct sockaddr_storage</span> *relay_addr</code></em>,
+                         <em class="parameter"><code><span class="type">socklen_t</span> *relay_addrlen</code></em>,
+                         <em class="parameter"><code><span class="type">struct sockaddr_storage</span> *addr</code></em>,
+                         <em class="parameter"><code><span class="type">socklen_t</span> *addrlen</code></em>,
+                         <em class="parameter"><code><span class="type">struct sockaddr_storage</span> *alternate_server</code></em>,
+                         <em class="parameter"><code><span class="type">socklen_t</span> *alternate_server_len</code></em>,
+                         <em class="parameter"><code><span class="type">uint32_t</span> *bandwidth</code></em>,
+                         <em class="parameter"><code><span class="type">uint32_t</span> *lifetime</code></em>,
+                         <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility"><span class="type">StunUsageTurnCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Process a TURN Allocate response and extract the necessary information from
+the message</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.4.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The message containing the response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>relay_addr</p></td>
+<td class="parameter_description"><p>A pointer to a <span class="type">sockaddr</span> structure to fill with the relay address
+that the TURN server allocated for us</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>relay_addrlen</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>relay_addr</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>A pointer to a <span class="type">sockaddr</span> structure to fill with the mapped address
+that the STUN response contains.
+This argument will only be filled if the return value
+of the function is <a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-RETURN-MAPPED-SUCCESS:CAPS"><span class="type">STUN_USAGE_TURN_RETURN_MAPPED_SUCCESS</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addrlen</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>addr</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>alternate_server</p></td>
+<td class="parameter_description"><p>A pointer to a <span class="type">sockaddr</span> structure to fill with the
+address of an alternate server to which we should send our new STUN
+Allocate request, in case the currently used TURN server is requesting the use
+of an alternate server. This argument will only be filled if the return value
+of the function is <a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-RETURN-ALTERNATE-SERVER:CAPS"><span class="type">STUN_USAGE_TURN_RETURN_ALTERNATE_SERVER</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>alternate_server_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>alternate_server</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>bandwidth</p></td>
+<td class="parameter_description"><p>A pointer to fill with the bandwidth the TURN server allocated us</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>lifetime</p></td>
+<td class="parameter_description"><p>A pointer to fill with the lifetime of the allocation</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for processing the Allocation
+response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.4.6"></a><h4>Returns</h4>
+<p> A <a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="type">StunUsageTurnReturn</span></a> value</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-turn-refresh-process"></a><h3>stun_usage_turn_refresh_process ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="returnvalue">StunUsageTurnReturn</span></a>
+stun_usage_turn_refresh_process (<em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                 <em class="parameter"><code><span class="type">uint32_t</span> *lifetime</code></em>,
+                                 <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility"><span class="type">StunUsageTurnCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Process a TURN Refresh response and extract the necessary information from
+the message</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The message containing the response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>lifetime</p></td>
+<td class="parameter_description"><p>A pointer to fill with the lifetime of the allocation</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for processing the Refresh
+response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.5.6"></a><h4>Returns</h4>
+<p> A <a class="link" href="libnice-TURN.html#StunUsageTurnReturn" title="enum StunUsageTurnReturn"><span class="type">StunUsageTurnReturn</span></a> value. A <a class="link" href="libnice-TURN.html#STUN-USAGE-TURN-RETURN-RELAY-SUCCESS:CAPS"><span class="type">STUN_USAGE_TURN_RETURN_RELAY_SUCCESS</span></a>
+means the Refresh was successful, but no relay address is given (kept the same
+as for the original allocation)</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-turn-create-permission"></a><h3>stun_usage_turn_create_permission ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_usage_turn_create_permission (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                   <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                   <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                                   <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                                   <em class="parameter"><code><span class="type">uint8_t</span> *username</code></em>,
+                                   <em class="parameter"><code><span class="type">size_t</span> username_len</code></em>,
+                                   <em class="parameter"><code><span class="type">uint8_t</span> *password</code></em>,
+                                   <em class="parameter"><code><span class="type">size_t</span> password_len</code></em>,
+                                   <em class="parameter"><code><span class="type">uint8_t</span> *realm</code></em>,
+                                   <em class="parameter"><code><span class="type">size_t</span> realm_len</code></em>,
+                                   <em class="parameter"><code><span class="type">uint8_t</span> *nonce</code></em>,
+                                   <em class="parameter"><code><span class="type">size_t</span> nonce_len</code></em>,
+                                   <em class="parameter"><code><span class="type">struct sockaddr_storage</span> *peer</code></em>,
+                                   <em class="parameter"><code><a class="link" href="libnice-TURN.html#StunUsageTurnCompatibility" title="enum StunUsageTurnCompatibility"><span class="type">StunUsageTurnCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Create a new TURN CreatePermission request</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.6.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to use to build the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use for creating the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The size of the <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The key to use for building the MESSAGE-INTEGRITY</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>realm</p></td>
+<td class="parameter_description"><p>The realm identifier to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>realm_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>realm</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>nonce</p></td>
+<td class="parameter_description"><p>Unique and securely random nonce to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>nonce_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>nonce</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>peer</p></td>
+<td class="parameter_description"><p>Server-reflexive host address to request permission for</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for building the
+CreatePermission request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.4.8.6.6"></a><h4>Returns</h4>
+<p> The length of the message to send</p>
+<p></p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-TURN.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="StunUsageTurnCompatibility"></a><h3>enum StunUsageTurnCompatibility</h3>
+<p>Specifies which TURN specification compatibility to use</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.9.2.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-COMPATIBILITY-DRAFT9:CAPS"></a>STUN_USAGE_TURN_COMPATIBILITY_DRAFT9</p></td>
+<td class="enum_member_description">
+<p>Use the specification compatible with
+TURN Draft 09</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-COMPATIBILITY-GOOGLE:CAPS"></a>STUN_USAGE_TURN_COMPATIBILITY_GOOGLE</p></td>
+<td class="enum_member_description">
+<p>Use the specification compatible with
+Google Talk's relay server</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-COMPATIBILITY-MSN:CAPS"></a>STUN_USAGE_TURN_COMPATIBILITY_MSN</p></td>
+<td class="enum_member_description">
+<p>Use the specification compatible with
+MSN TURN servers</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-COMPATIBILITY-OC2007:CAPS"></a>STUN_USAGE_TURN_COMPATIBILITY_OC2007</p></td>
+<td class="enum_member_description">
+<p>Use the specification compatible with
+Microsoft Office Communicator 2007</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-COMPATIBILITY-RFC5766:CAPS"></a>STUN_USAGE_TURN_COMPATIBILITY_RFC5766</p></td>
+<td class="enum_member_description">
+<p>Use the specification compatible with
+RFC 5766 (the final, canonical TURN standard)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunUsageTurnRequestPorts"></a><h3>enum StunUsageTurnRequestPorts</h3>
+<p>This enum is used to specify which port configuration you want when creating
+a new Allocation</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.9.3.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-REQUEST-PORT-NORMAL:CAPS"></a>STUN_USAGE_TURN_REQUEST_PORT_NORMAL</p></td>
+<td class="enum_member_description">
+<p>Request a normal port</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-REQUEST-PORT-EVEN:CAPS"></a>STUN_USAGE_TURN_REQUEST_PORT_EVEN</p></td>
+<td class="enum_member_description">
+<p>Request an even port</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-REQUEST-PORT-EVEN-AND-RESERVE:CAPS"></a>STUN_USAGE_TURN_REQUEST_PORT_EVEN_AND_RESERVE</p></td>
+<td class="enum_member_description">
+<p>Request an even port and
+reserve the next higher port</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunUsageTurnReturn"></a><h3>enum StunUsageTurnReturn</h3>
+<p>Return value of <a class="link" href="libnice-TURN.html#stun-usage-turn-process" title="stun_usage_turn_process ()"><code class="function">stun_usage_turn_process()</code></a> and
+<a class="link" href="libnice-TURN.html#stun-usage-turn-refresh-process" title="stun_usage_turn_refresh_process ()"><code class="function">stun_usage_turn_refresh_process()</code></a> which allows you to see what status the
+function call returned.</p>
+<div class="refsect3">
+<a name="id-1.3.3.4.9.4.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-RETURN-RELAY-SUCCESS:CAPS"></a>STUN_USAGE_TURN_RETURN_RELAY_SUCCESS</p></td>
+<td class="enum_member_description">
+<p>The response was successful and a relay
+address is provided</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-RETURN-MAPPED-SUCCESS:CAPS"></a>STUN_USAGE_TURN_RETURN_MAPPED_SUCCESS</p></td>
+<td class="enum_member_description">
+<p>The response was successful and a
+relay address as well as a mapped address are provided</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-RETURN-ERROR:CAPS"></a>STUN_USAGE_TURN_RETURN_ERROR</p></td>
+<td class="enum_member_description">
+<p>The response resulted in an error</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-RETURN-INVALID:CAPS"></a>STUN_USAGE_TURN_RETURN_INVALID</p></td>
+<td class="enum_member_description">
+<p>The response is not a valid response</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-TURN-RETURN-ALTERNATE-SERVER:CAPS"></a>STUN_USAGE_TURN_RETURN_ALTERNATE_SERVER</p></td>
+<td class="enum_member_description">
+<p>The server requests the message
+to be sent to an alternate server</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>

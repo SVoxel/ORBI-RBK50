@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE book PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "">
+<book xmlns="http://www.devhelp.net/book" title="libnice Reference Manual" link="index.html" author="" name="libnice" version="2" language="c">
+  <chapters>
+    <sub name="ICE Library" link="pt01.html">
+      <sub name="" link="ch01.html">
+        <sub name="NiceAgent" link="NiceAgent.html"/>
+        <sub name="NiceAddress" link="libnice-NiceAddress.html"/>
+        <sub name="NiceCandidate" link="NiceCandidate.html"/>
+      </sub>
+      <sub name="Libnice helper functions" link="ch02.html">
+        <sub name="Debug messages" link="libnice-Debug-messages.html"/>
+        <sub name="Network interfaces discovery" link="libnice-Network-interfaces-discovery.html"/>
+      </sub>
+    </sub>
+    <sub name="STUN Library" link="pt02.html">
+      <sub name="" link="ch03.html">
+        <sub name="StunAgent" link="libnice-StunAgent.html"/>
+        <sub name="StunMessage" link="libnice-StunMessage.html"/>
+        <sub name="STUN Constants" link="libnice-STUN-Constants.html"/>
+      </sub>
+      <sub name="STUN usages" link="ch04.html">
+        <sub name="Bind" link="libnice-Bind.html"/>
+        <sub name="ICE" link="libnice-ICE.html"/>
+        <sub name="TURN" link="libnice-TURN.html"/>
+        <sub name="Timer" link="libnice-Timer.html"/>
+      </sub>
+    </sub>
+    <sub name="Pseudo TCP Socket implementation" link="pt03.html">
+      <sub name="" link="ch05.html">
+        <sub name="Pseudo TCP Socket" link="libnice-Pseudo-TCP-Socket.html"/>
+      </sub>
+    </sub>
+    <sub name="Appendices" link="pt04.html">
+      <sub name="API Index" link="api-index-full.html"/>
+      <sub name="Index of deprecated symbols" link="api-index-deprecated.html"/>
+      <sub name="Index of new symbols in 0.0.4" link="ix03.html"/>
+      <sub name="Index of new symbols in 0.0.6" link="ix04.html"/>
+      <sub name="Index of new symbols in 0.0.7" link="ix05.html"/>
+      <sub name="Index of new symbols in 0.0.9" link="ix06.html"/>
+      <sub name="Index of new symbols in 0.0.10" link="ix07.html"/>
+      <sub name="Index of new symbols in 0.0.11" link="ix08.html"/>
+      <sub name="Index of new symbols in 0.1.4" link="ix09.html"/>
+      <sub name="Index of new symbols in 0.1.5" link="ix10.html"/>
+      <sub name="Index of new symbols in 0.1.6" link="ix11.html"/>
+      <sub name="Index of new symbols in 0.1.8" link="ix12.html"/>
+      <sub name="Annotation Glossary" link="annotation-glossary.html"/>
+    </sub>
+  </chapters>
+  <functions>
+    <keyword type="function" name="NiceAgentRecvFunc ()" link="NiceAgent.html#NiceAgentRecvFunc"/>
+    <keyword type="function" name="nice_agent_new ()" link="NiceAgent.html#nice-agent-new"/>
+    <keyword type="function" name="nice_agent_new_reliable ()" link="NiceAgent.html#nice-agent-new-reliable" since="0.0.11"/>
+    <keyword type="function" name="nice_agent_add_local_address ()" link="NiceAgent.html#nice-agent-add-local-address"/>
+    <keyword type="function" name="nice_agent_set_port_range ()" link="NiceAgent.html#nice-agent-set-port-range"/>
+    <keyword type="function" name="nice_agent_add_stream ()" link="NiceAgent.html#nice-agent-add-stream"/>
+    <keyword type="function" name="nice_agent_remove_stream ()" link="NiceAgent.html#nice-agent-remove-stream"/>
+    <keyword type="function" name="nice_agent_set_relay_info ()" link="NiceAgent.html#nice-agent-set-relay-info"/>
+    <keyword type="function" name="nice_agent_forget_relays ()" link="NiceAgent.html#nice-agent-forget-relays" since="0.1.6"/>
+    <keyword type="function" name="nice_agent_gather_candidates ()" link="NiceAgent.html#nice-agent-gather-candidates"/>
+    <keyword type="function" name="nice_agent_set_remote_credentials ()" link="NiceAgent.html#nice-agent-set-remote-credentials"/>
+    <keyword type="function" name="nice_agent_get_local_credentials ()" link="NiceAgent.html#nice-agent-get-local-credentials"/>
+    <keyword type="function" name="nice_agent_set_remote_candidates ()" link="NiceAgent.html#nice-agent-set-remote-candidates"/>
+    <keyword type="function" name="nice_agent_get_remote_candidates ()" link="NiceAgent.html#nice-agent-get-remote-candidates"/>
+    <keyword type="function" name="nice_agent_get_local_candidates ()" link="NiceAgent.html#nice-agent-get-local-candidates"/>
+    <keyword type="function" name="nice_agent_get_selected_pair ()" link="NiceAgent.html#nice-agent-get-selected-pair"/>
+    <keyword type="function" name="nice_agent_send ()" link="NiceAgent.html#nice-agent-send"/>
+    <keyword type="function" name="nice_agent_send_messages_nonblocking ()" link="NiceAgent.html#nice-agent-send-messages-nonblocking" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_recv ()" link="NiceAgent.html#nice-agent-recv" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_recv_messages ()" link="NiceAgent.html#nice-agent-recv-messages" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_recv_nonblocking ()" link="NiceAgent.html#nice-agent-recv-nonblocking" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_recv_messages_nonblocking ()" link="NiceAgent.html#nice-agent-recv-messages-nonblocking" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_attach_recv ()" link="NiceAgent.html#nice-agent-attach-recv"/>
+    <keyword type="function" name="nice_agent_set_selected_pair ()" link="NiceAgent.html#nice-agent-set-selected-pair"/>
+    <keyword type="function" name="nice_agent_set_selected_remote_candidate ()" link="NiceAgent.html#nice-agent-set-selected-remote-candidate"/>
+    <keyword type="function" name="nice_agent_set_stream_tos ()" link="NiceAgent.html#nice-agent-set-stream-tos" since="0.0.9"/>
+    <keyword type="function" name="nice_agent_set_software ()" link="NiceAgent.html#nice-agent-set-software" since="0.0.10"/>
+    <keyword type="function" name="nice_agent_restart ()" link="NiceAgent.html#nice-agent-restart"/>
+    <keyword type="function" name="nice_agent_restart_stream ()" link="NiceAgent.html#nice-agent-restart-stream" since="0.1.6"/>
+    <keyword type="function" name="nice_agent_set_stream_name ()" link="NiceAgent.html#nice-agent-set-stream-name" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_get_stream_name ()" link="NiceAgent.html#nice-agent-get-stream-name" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_get_default_local_candidate ()" link="NiceAgent.html#nice-agent-get-default-local-candidate"/>
+    <keyword type="function" name="nice_agent_generate_local_sdp ()" link="NiceAgent.html#nice-agent-generate-local-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_generate_local_stream_sdp ()" link="NiceAgent.html#nice-agent-generate-local-stream-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_generate_local_candidate_sdp ()" link="NiceAgent.html#nice-agent-generate-local-candidate-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_parse_remote_sdp ()" link="NiceAgent.html#nice-agent-parse-remote-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_parse_remote_stream_sdp ()" link="NiceAgent.html#nice-agent-parse-remote-stream-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_parse_remote_candidate_sdp ()" link="NiceAgent.html#nice-agent-parse-remote-candidate-sdp" since="0.1.4"/>
+    <keyword type="function" name="nice_agent_get_io_stream ()" link="NiceAgent.html#nice-agent-get-io-stream" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_get_selected_socket ()" link="NiceAgent.html#nice-agent-get-selected-socket" since="0.1.5"/>
+    <keyword type="function" name="nice_agent_get_component_state ()" link="NiceAgent.html#nice-agent-get-component-state" since="0.1.8"/>
+    <keyword type="function" name="nice_component_state_to_string ()" link="NiceAgent.html#nice-component-state-to-string" since="0.1.6"/>
+    <keyword type="struct" name="NiceAgent" link="NiceAgent.html#NiceAgent-struct"/>
+    <keyword type="enum" name="enum NiceComponentState" link="NiceAgent.html#NiceComponentState"/>
+    <keyword type="enum" name="enum NiceComponentType" link="NiceAgent.html#NiceComponentType"/>
+    <keyword type="enum" name="enum NiceProxyType" link="NiceAgent.html#NiceProxyType" since="0.0.4"/>
+    <keyword type="enum" name="enum NiceCompatibility" link="NiceAgent.html#NiceCompatibility"/>
+    <keyword type="struct" name="NiceInputMessage" link="NiceAgent.html#NiceInputMessage" since="0.1.5"/>
+    <keyword type="struct" name="NiceOutputMessage" link="NiceAgent.html#NiceOutputMessage" since="0.1.5"/>
+    <keyword type="macro" name="NICE_AGENT_MAX_REMOTE_CANDIDATES" link="NiceAgent.html#NICE-AGENT-MAX-REMOTE-CANDIDATES:CAPS"/>
+    <keyword type="property" name="The “bytestream-tcp” property" link="NiceAgent.html#NiceAgent--bytestream-tcp"/>
+    <keyword type="property" name="The “compatibility” property" link="NiceAgent.html#NiceAgent--compatibility"/>
+    <keyword type="property" name="The “controlling-mode” property" link="NiceAgent.html#NiceAgent--controlling-mode"/>
+    <keyword type="property" name="The “full-mode” property" link="NiceAgent.html#NiceAgent--full-mode"/>
+    <keyword type="property" name="The “ice-tcp” property" link="NiceAgent.html#NiceAgent--ice-tcp"/>
+    <keyword type="property" name="The “ice-udp” property" link="NiceAgent.html#NiceAgent--ice-udp"/>
+    <keyword type="property" name="The “keepalive-conncheck” property" link="NiceAgent.html#NiceAgent--keepalive-conncheck"/>
+    <keyword type="property" name="The “main-context” property" link="NiceAgent.html#NiceAgent--main-context"/>
+    <keyword type="property" name="The “max-connectivity-checks” property" link="NiceAgent.html#NiceAgent--max-connectivity-checks"/>
+    <keyword type="property" name="The “proxy-ip” property" link="NiceAgent.html#NiceAgent--proxy-ip"/>
+    <keyword type="property" name="The “proxy-password” property" link="NiceAgent.html#NiceAgent--proxy-password"/>
+    <keyword type="property" name="The “proxy-port” property" link="NiceAgent.html#NiceAgent--proxy-port"/>
+    <keyword type="property" name="The “proxy-type” property" link="NiceAgent.html#NiceAgent--proxy-type"/>
+    <keyword type="property" name="The “proxy-username” property" link="NiceAgent.html#NiceAgent--proxy-username"/>
+    <keyword type="property" name="The “reliable” property" link="NiceAgent.html#NiceAgent--reliable"/>
+    <keyword type="property" name="The “stun-pacing-timer” property" link="NiceAgent.html#NiceAgent--stun-pacing-timer"/>
+    <keyword type="property" name="The “stun-server” property" link="NiceAgent.html#NiceAgent--stun-server"/>
+    <keyword type="property" name="The “stun-server-port” property" link="NiceAgent.html#NiceAgent--stun-server-port"/>
+    <keyword type="property" name="The “upnp” property" link="NiceAgent.html#NiceAgent--upnp"/>
+    <keyword type="property" name="The “upnp-timeout” property" link="NiceAgent.html#NiceAgent--upnp-timeout"/>
+    <keyword type="signal" name="The “candidate-gathering-done” signal" link="NiceAgent.html#NiceAgent-candidate-gathering-done"/>
+    <keyword type="signal" name="The “component-state-changed” signal" link="NiceAgent.html#NiceAgent-component-state-changed"/>
+    <keyword type="signal" name="The “initial-binding-request-received” signal" link="NiceAgent.html#NiceAgent-initial-binding-request-received"/>
+    <keyword type="signal" name="The “new-candidate” signal" link="NiceAgent.html#NiceAgent-new-candidate"/>
+    <keyword type="signal" name="The “new-candidate-full” signal" link="NiceAgent.html#NiceAgent-new-candidate-full"/>
+    <keyword type="signal" name="The “new-remote-candidate” signal" link="NiceAgent.html#NiceAgent-new-remote-candidate"/>
+    <keyword type="signal" name="The “new-remote-candidate-full” signal" link="NiceAgent.html#NiceAgent-new-remote-candidate-full"/>
+    <keyword type="signal" name="The “new-selected-pair” signal" link="NiceAgent.html#NiceAgent-new-selected-pair"/>
+    <keyword type="signal" name="The “new-selected-pair-full” signal" link="NiceAgent.html#NiceAgent-new-selected-pair-full"/>
+    <keyword type="signal" name="The “reliable-transport-writable” signal" link="NiceAgent.html#NiceAgent-reliable-transport-writable"/>
+    <keyword type="signal" name="The “streams-removed” signal" link="NiceAgent.html#NiceAgent-streams-removed"/>
+    <keyword type="function" name="nice_address_init ()" link="libnice-NiceAddress.html#nice-address-init"/>
+    <keyword type="function" name="nice_address_new ()" link="libnice-NiceAddress.html#nice-address-new"/>
+    <keyword type="function" name="nice_address_free ()" link="libnice-NiceAddress.html#nice-address-free"/>
+    <keyword type="function" name="nice_address_dup ()" link="libnice-NiceAddress.html#nice-address-dup"/>
+    <keyword type="function" name="nice_address_set_ipv4 ()" link="libnice-NiceAddress.html#nice-address-set-ipv4"/>
+    <keyword type="function" name="nice_address_set_ipv6 ()" link="libnice-NiceAddress.html#nice-address-set-ipv6"/>
+    <keyword type="function" name="nice_address_set_port ()" link="libnice-NiceAddress.html#nice-address-set-port"/>
+    <keyword type="function" name="nice_address_get_port ()" link="libnice-NiceAddress.html#nice-address-get-port"/>
+    <keyword type="function" name="nice_address_set_from_string ()" link="libnice-NiceAddress.html#nice-address-set-from-string"/>
+    <keyword type="function" name="nice_address_set_from_sockaddr ()" link="libnice-NiceAddress.html#nice-address-set-from-sockaddr"/>
+    <keyword type="function" name="nice_address_copy_to_sockaddr ()" link="libnice-NiceAddress.html#nice-address-copy-to-sockaddr"/>
+    <keyword type="function" name="nice_address_equal ()" link="libnice-NiceAddress.html#nice-address-equal"/>
+    <keyword type="function" name="nice_address_equal_no_port ()" link="libnice-NiceAddress.html#nice-address-equal-no-port" since="0.1.8"/>
+    <keyword type="function" name="nice_address_to_string ()" link="libnice-NiceAddress.html#nice-address-to-string"/>
+    <keyword type="function" name="nice_address_is_private ()" link="libnice-NiceAddress.html#nice-address-is-private"/>
+    <keyword type="function" name="nice_address_is_valid ()" link="libnice-NiceAddress.html#nice-address-is-valid"/>
+    <keyword type="function" name="nice_address_ip_version ()" link="libnice-NiceAddress.html#nice-address-ip-version"/>
+    <keyword type="struct" name="NiceAddress" link="libnice-NiceAddress.html#NiceAddress"/>
+    <keyword type="macro" name="NICE_ADDRESS_STRING_LEN" link="libnice-NiceAddress.html#NICE-ADDRESS-STRING-LEN:CAPS"/>
+    <keyword type="macro" name="NICE_CANDIDATE_MAX_FOUNDATION" link="NiceCandidate.html#NICE-CANDIDATE-MAX-FOUNDATION:CAPS"/>
+    <keyword type="function" name="nice_candidate_new ()" link="NiceCandidate.html#nice-candidate-new"/>
+    <keyword type="function" name="nice_candidate_free ()" link="NiceCandidate.html#nice-candidate-free"/>
+    <keyword type="function" name="nice_candidate_copy ()" link="NiceCandidate.html#nice-candidate-copy"/>
+    <keyword type="struct" name="struct NiceCandidate" link="NiceCandidate.html#NiceCandidate-struct"/>
+    <keyword type="enum" name="enum NiceCandidateType" link="NiceCandidate.html#NiceCandidateType"/>
+    <keyword type="enum" name="enum NiceCandidateTransport" link="NiceCandidate.html#NiceCandidateTransport"/>
+    <keyword type="struct" name="struct TurnServer" link="NiceCandidate.html#TurnServer"/>
+    <keyword type="enum" name="enum NiceRelayType" link="NiceCandidate.html#NiceRelayType"/>
+    <keyword type="function" name="nice_debug_enable ()" link="libnice-Debug-messages.html#nice-debug-enable"/>
+    <keyword type="function" name="nice_debug_disable ()" link="libnice-Debug-messages.html#nice-debug-disable"/>
+    <keyword type="function" name="nice_interfaces_get_ip_for_interface ()" link="libnice-Network-interfaces-discovery.html#nice-interfaces-get-ip-for-interface"/>
+    <keyword type="function" name="nice_interfaces_get_local_interfaces ()" link="libnice-Network-interfaces-discovery.html#nice-interfaces-get-local-interfaces"/>
+    <keyword type="function" name="nice_interfaces_get_local_ips ()" link="libnice-Network-interfaces-discovery.html#nice-interfaces-get-local-ips"/>
+    <keyword type="function" name="StunMessageIntegrityValidate ()" link="libnice-StunAgent.html#StunMessageIntegrityValidate"/>
+    <keyword type="function" name="StunDebugHandler ()" link="libnice-StunAgent.html#StunDebugHandler"/>
+    <keyword type="function" name="stun_agent_init ()" link="libnice-StunAgent.html#stun-agent-init"/>
+    <keyword type="function" name="stun_agent_validate ()" link="libnice-StunAgent.html#stun-agent-validate"/>
+    <keyword type="function" name="stun_agent_default_validater ()" link="libnice-StunAgent.html#stun-agent-default-validater"/>
+    <keyword type="function" name="stun_agent_init_request ()" link="libnice-StunAgent.html#stun-agent-init-request"/>
+    <keyword type="function" name="stun_agent_init_indication ()" link="libnice-StunAgent.html#stun-agent-init-indication"/>
+    <keyword type="function" name="stun_agent_init_response ()" link="libnice-StunAgent.html#stun-agent-init-response"/>
+    <keyword type="function" name="stun_agent_init_error ()" link="libnice-StunAgent.html#stun-agent-init-error"/>
+    <keyword type="function" name="stun_agent_build_unknown_attributes_error ()" link="libnice-StunAgent.html#stun-agent-build-unknown-attributes-error"/>
+    <keyword type="function" name="stun_agent_finish_message ()" link="libnice-StunAgent.html#stun-agent-finish-message"/>
+    <keyword type="function" name="stun_agent_forget_transaction ()" link="libnice-StunAgent.html#stun-agent-forget-transaction" since="0.0.6"/>
+    <keyword type="function" name="stun_agent_set_software ()" link="libnice-StunAgent.html#stun-agent-set-software" since="0.0.10"/>
+    <keyword type="function" name="stun_debug_enable ()" link="libnice-StunAgent.html#stun-debug-enable"/>
+    <keyword type="function" name="stun_debug_disable ()" link="libnice-StunAgent.html#stun-debug-disable"/>
+    <keyword type="function" name="stun_set_debug_handler ()" link="libnice-StunAgent.html#stun-set-debug-handler"/>
+    <keyword type="typedef" name="StunAgent" link="libnice-StunAgent.html#StunAgent"/>
+    <keyword type="enum" name="enum StunCompatibility" link="libnice-StunAgent.html#StunCompatibility"/>
+    <keyword type="enum" name="enum StunAgentUsageFlags" link="libnice-StunAgent.html#StunAgentUsageFlags"/>
+    <keyword type="enum" name="enum StunValidationStatus" link="libnice-StunAgent.html#StunValidationStatus"/>
+    <keyword type="struct" name="StunDefaultValidaterData" link="libnice-StunAgent.html#StunDefaultValidaterData"/>
+    <keyword type="function" name="stun_message_init ()" link="libnice-StunMessage.html#stun-message-init"/>
+    <keyword type="function" name="stun_message_length ()" link="libnice-StunMessage.html#stun-message-length"/>
+    <keyword type="function" name="stun_message_find ()" link="libnice-StunMessage.html#stun-message-find"/>
+    <keyword type="function" name="stun_message_find_flag ()" link="libnice-StunMessage.html#stun-message-find-flag"/>
+    <keyword type="function" name="stun_message_find32 ()" link="libnice-StunMessage.html#stun-message-find32"/>
+    <keyword type="function" name="stun_message_find64 ()" link="libnice-StunMessage.html#stun-message-find64"/>
+    <keyword type="function" name="stun_message_find_string ()" link="libnice-StunMessage.html#stun-message-find-string"/>
+    <keyword type="function" name="stun_message_find_addr ()" link="libnice-StunMessage.html#stun-message-find-addr"/>
+    <keyword type="function" name="stun_message_find_xor_addr ()" link="libnice-StunMessage.html#stun-message-find-xor-addr"/>
+    <keyword type="function" name="stun_message_find_xor_addr_full ()" link="libnice-StunMessage.html#stun-message-find-xor-addr-full"/>
+    <keyword type="function" name="stun_message_find_error ()" link="libnice-StunMessage.html#stun-message-find-error"/>
+    <keyword type="function" name="stun_message_append ()" link="libnice-StunMessage.html#stun-message-append"/>
+    <keyword type="function" name="stun_message_append_bytes ()" link="libnice-StunMessage.html#stun-message-append-bytes"/>
+    <keyword type="function" name="stun_message_append_flag ()" link="libnice-StunMessage.html#stun-message-append-flag"/>
+    <keyword type="function" name="stun_message_append32 ()" link="libnice-StunMessage.html#stun-message-append32"/>
+    <keyword type="function" name="stun_message_append64 ()" link="libnice-StunMessage.html#stun-message-append64"/>
+    <keyword type="function" name="stun_message_append_string ()" link="libnice-StunMessage.html#stun-message-append-string"/>
+    <keyword type="function" name="stun_message_append_addr ()" link="libnice-StunMessage.html#stun-message-append-addr"/>
+    <keyword type="function" name="stun_message_append_xor_addr ()" link="libnice-StunMessage.html#stun-message-append-xor-addr"/>
+    <keyword type="function" name="stun_message_append_xor_addr_full ()" link="libnice-StunMessage.html#stun-message-append-xor-addr-full"/>
+    <keyword type="function" name="stun_message_append_error ()" link="libnice-StunMessage.html#stun-message-append-error"/>
+    <keyword type="function" name="stun_message_validate_buffer_length ()" link="libnice-StunMessage.html#stun-message-validate-buffer-length"/>
+    <keyword type="function" name="stun_message_validate_buffer_length_fast ()" link="libnice-StunMessage.html#stun-message-validate-buffer-length-fast" since="0.1.5"/>
+    <keyword type="function" name="stun_message_id ()" link="libnice-StunMessage.html#stun-message-id"/>
+    <keyword type="function" name="stun_message_get_class ()" link="libnice-StunMessage.html#stun-message-get-class"/>
+    <keyword type="function" name="stun_message_get_method ()" link="libnice-StunMessage.html#stun-message-get-method"/>
+    <keyword type="function" name="stun_message_has_attribute ()" link="libnice-StunMessage.html#stun-message-has-attribute"/>
+    <keyword type="function" name="stun_message_has_cookie ()" link="libnice-StunMessage.html#stun-message-has-cookie"/>
+    <keyword type="function" name="stun_optional ()" link="libnice-StunMessage.html#stun-optional"/>
+    <keyword type="function" name="stun_strerror ()" link="libnice-StunMessage.html#stun-strerror"/>
+    <keyword type="struct" name="struct StunMessage" link="libnice-StunMessage.html#StunMessage"/>
+    <keyword type="enum" name="enum StunClass" link="libnice-StunMessage.html#StunClass"/>
+    <keyword type="enum" name="enum StunMethod" link="libnice-StunMessage.html#StunMethod"/>
+    <keyword type="enum" name="enum StunAttribute" link="libnice-StunMessage.html#StunAttribute"/>
+    <keyword type="typedef" name="StunTransactionId" link="libnice-StunMessage.html#StunTransactionId"/>
+    <keyword type="enum" name="enum StunError" link="libnice-StunMessage.html#StunError"/>
+    <keyword type="enum" name="enum StunMessageReturn" link="libnice-StunMessage.html#StunMessageReturn"/>
+    <keyword type="macro" name="STUN_MESSAGE_BUFFER_INCOMPLETE" link="libnice-StunMessage.html#STUN-MESSAGE-BUFFER-INCOMPLETE:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_BUFFER_INVALID" link="libnice-StunMessage.html#STUN-MESSAGE-BUFFER-INVALID:CAPS"/>
+    <keyword type="struct" name="StunInputVector" link="libnice-StunMessage.html#StunInputVector" since="0.1.5"/>
+    <keyword type="macro" name="STUN_AGENT_MAX_SAVED_IDS" link="libnice-STUN-Constants.html#STUN-AGENT-MAX-SAVED-IDS:CAPS"/>
+    <keyword type="macro" name="STUN_AGENT_MAX_UNKNOWN_ATTRIBUTES" link="libnice-STUN-Constants.html#STUN-AGENT-MAX-UNKNOWN-ATTRIBUTES:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_HEADER_LENGTH" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-HEADER-LENGTH:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_LENGTH_LEN" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-LENGTH-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_LENGTH_POS" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-LENGTH-POS:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_TYPE_LEN" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-TYPE-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_TYPE_POS" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-TYPE-POS:CAPS"/>
+    <keyword type="macro" name="STUN_ATTRIBUTE_VALUE_POS" link="libnice-STUN-Constants.html#STUN-ATTRIBUTE-VALUE-POS:CAPS"/>
+    <keyword type="macro" name="STUN_ID_LEN" link="libnice-STUN-Constants.html#STUN-ID-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_MAGIC_COOKIE" link="libnice-STUN-Constants.html#STUN-MAGIC-COOKIE:CAPS"/>
+    <keyword type="macro" name="STUN_MAX_MESSAGE_SIZE" link="libnice-STUN-Constants.html#STUN-MAX-MESSAGE-SIZE:CAPS"/>
+    <keyword type="macro" name="STUN_MAX_MESSAGE_SIZE_IPV4" link="libnice-STUN-Constants.html#STUN-MAX-MESSAGE-SIZE-IPV4:CAPS"/>
+    <keyword type="macro" name="STUN_MAX_MESSAGE_SIZE_IPV6" link="libnice-STUN-Constants.html#STUN-MAX-MESSAGE-SIZE-IPV6:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_ATTRIBUTES_POS" link="libnice-STUN-Constants.html#STUN-MESSAGE-ATTRIBUTES-POS:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_HEADER_LENGTH" link="libnice-STUN-Constants.html#STUN-MESSAGE-HEADER-LENGTH:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_LENGTH_LEN" link="libnice-STUN-Constants.html#STUN-MESSAGE-LENGTH-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_LENGTH_POS" link="libnice-STUN-Constants.html#STUN-MESSAGE-LENGTH-POS:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_TRANS_ID_LEN" link="libnice-STUN-Constants.html#STUN-MESSAGE-TRANS-ID-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_TRANS_ID_POS" link="libnice-STUN-Constants.html#STUN-MESSAGE-TRANS-ID-POS:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_TYPE_LEN" link="libnice-STUN-Constants.html#STUN-MESSAGE-TYPE-LEN:CAPS"/>
+    <keyword type="macro" name="STUN_MESSAGE_TYPE_POS" link="libnice-STUN-Constants.html#STUN-MESSAGE-TYPE-POS:CAPS"/>
+    <keyword type="macro" name="TURN_MAGIC_COOKIE" link="libnice-STUN-Constants.html#TURN-MAGIC-COOKIE:CAPS"/>
+    <keyword type="function" name="stun_usage_bind_create ()" link="libnice-Bind.html#stun-usage-bind-create"/>
+    <keyword type="function" name="stun_usage_bind_process ()" link="libnice-Bind.html#stun-usage-bind-process"/>
+    <keyword type="function" name="stun_usage_bind_keepalive ()" link="libnice-Bind.html#stun-usage-bind-keepalive"/>
+    <keyword type="function" name="stun_usage_bind_run ()" link="libnice-Bind.html#stun-usage-bind-run"/>
+    <keyword type="enum" name="enum StunUsageBindReturn" link="libnice-Bind.html#StunUsageBindReturn"/>
+    <keyword type="function" name="stun_usage_ice_conncheck_create ()" link="libnice-ICE.html#stun-usage-ice-conncheck-create"/>
+    <keyword type="function" name="stun_usage_ice_conncheck_process ()" link="libnice-ICE.html#stun-usage-ice-conncheck-process"/>
+    <keyword type="function" name="stun_usage_ice_conncheck_create_reply ()" link="libnice-ICE.html#stun-usage-ice-conncheck-create-reply"/>
+    <keyword type="function" name="stun_usage_ice_conncheck_priority ()" link="libnice-ICE.html#stun-usage-ice-conncheck-priority"/>
+    <keyword type="function" name="stun_usage_ice_conncheck_use_candidate ()" link="libnice-ICE.html#stun-usage-ice-conncheck-use-candidate"/>
+    <keyword type="enum" name="enum StunUsageIceCompatibility" link="libnice-ICE.html#StunUsageIceCompatibility"/>
+    <keyword type="enum" name="enum StunUsageIceReturn" link="libnice-ICE.html#StunUsageIceReturn"/>
+    <keyword type="function" name="stun_usage_turn_create ()" link="libnice-TURN.html#stun-usage-turn-create"/>
+    <keyword type="function" name="stun_usage_turn_create_refresh ()" link="libnice-TURN.html#stun-usage-turn-create-refresh"/>
+    <keyword type="function" name="stun_usage_turn_process ()" link="libnice-TURN.html#stun-usage-turn-process"/>
+    <keyword type="function" name="stun_usage_turn_refresh_process ()" link="libnice-TURN.html#stun-usage-turn-refresh-process"/>
+    <keyword type="function" name="stun_usage_turn_create_permission ()" link="libnice-TURN.html#stun-usage-turn-create-permission"/>
+    <keyword type="enum" name="enum StunUsageTurnCompatibility" link="libnice-TURN.html#StunUsageTurnCompatibility"/>
+    <keyword type="enum" name="enum StunUsageTurnRequestPorts" link="libnice-TURN.html#StunUsageTurnRequestPorts"/>
+    <keyword type="enum" name="enum StunUsageTurnReturn" link="libnice-TURN.html#StunUsageTurnReturn"/>
+    <keyword type="function" name="stun_timer_start ()" link="libnice-Timer.html#stun-timer-start"/>
+    <keyword type="function" name="stun_timer_start_reliable ()" link="libnice-Timer.html#stun-timer-start-reliable"/>
+    <keyword type="function" name="stun_timer_refresh ()" link="libnice-Timer.html#stun-timer-refresh"/>
+    <keyword type="function" name="stun_timer_remainder ()" link="libnice-Timer.html#stun-timer-remainder"/>
+    <keyword type="typedef" name="StunTimer" link="libnice-Timer.html#StunTimer"/>
+    <keyword type="enum" name="enum StunUsageTimerReturn" link="libnice-Timer.html#StunUsageTimerReturn"/>
+    <keyword type="macro" name="STUN_TIMER_DEFAULT_MAX_RETRANSMISSIONS" link="libnice-Timer.html#STUN-TIMER-DEFAULT-MAX-RETRANSMISSIONS:CAPS"/>
+    <keyword type="macro" name="STUN_TIMER_DEFAULT_RELIABLE_TIMEOUT" link="libnice-Timer.html#STUN-TIMER-DEFAULT-RELIABLE-TIMEOUT:CAPS"/>
+    <keyword type="macro" name="STUN_TIMER_DEFAULT_TIMEOUT" link="libnice-Timer.html#STUN-TIMER-DEFAULT-TIMEOUT:CAPS"/>
+    <keyword type="function" name="pseudo_tcp_socket_new ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-new" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_connect ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-connect" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_recv ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_send ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-send" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_close ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_shutdown ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-shutdown" since="0.1.8"/>
+    <keyword type="function" name="pseudo_tcp_socket_is_closed ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-is-closed" since="0.1.8"/>
+    <keyword type="function" name="pseudo_tcp_socket_is_closed_remotely ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-is-closed-remotely" since="0.1.8"/>
+    <keyword type="function" name="pseudo_tcp_socket_get_error ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-error" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_get_next_clock ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_notify_clock ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-clock" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_notify_mtu ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-mtu" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_notify_packet ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-packet" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_set_debug_level ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-set-debug-level" since="0.0.11"/>
+    <keyword type="function" name="pseudo_tcp_socket_get_available_bytes ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-available-bytes" since="0.1.5"/>
+    <keyword type="function" name="pseudo_tcp_socket_can_send ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-can-send" since="0.1.5"/>
+    <keyword type="function" name="pseudo_tcp_socket_get_available_send_space ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-available-send-space" since="0.1.5"/>
+    <keyword type="function" name="pseudo_tcp_socket_notify_message ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-message" since="0.1.5"/>
+    <keyword type="function" name="pseudo_tcp_socket_set_time ()" link="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-set-time" since="0.1.8"/>
+    <keyword type="struct" name="struct PseudoTcpSocket" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket-struct"/>
+    <keyword type="enum" name="enum PseudoTcpState" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpState" since="0.0.11"/>
+    <keyword type="enum" name="enum PseudoTcpWriteResult" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpWriteResult" since="0.0.11"/>
+    <keyword type="struct" name="PseudoTcpCallbacks" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" since="0.0.11"/>
+    <keyword type="enum" name="enum PseudoTcpDebugLevel" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpDebugLevel" since="0.0.11"/>
+    <keyword type="enum" name="enum PseudoTcpShutdown" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpShutdown" since="0.1.8"/>
+    <keyword type="property" name="The “ack-delay” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--ack-delay"/>
+    <keyword type="property" name="The “callbacks” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--callbacks"/>
+    <keyword type="property" name="The “conversation” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--conversation"/>
+    <keyword type="property" name="The “no-delay” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--no-delay"/>
+    <keyword type="property" name="The “rcv-buf” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--rcv-buf"/>
+    <keyword type="property" name="The “snd-buf” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--snd-buf"/>
+    <keyword type="property" name="The “state” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--state"/>
+    <keyword type="property" name="The “support-fin-ack” property" link="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--support-fin-ack"/>
+  </functions>
+</book>

@@ -1,0 +1,1399 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: Pseudo TCP Socket</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch05.html" title="">
+<link rel="prev" href="ch05.html" title="">
+<link rel="next" href="pt04.html" title="Part IV. Appendices">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#libnice-Pseudo-TCP-Socket.description" class="shortcut">Description</a></span><span id="nav_hierarchy">  <span class="dim">|</span> 
+                  <a href="#libnice-Pseudo-TCP-Socket.object-hierarchy" class="shortcut">Object Hierarchy</a></span><span id="nav_properties">  <span class="dim">|</span> 
+                  <a href="#libnice-Pseudo-TCP-Socket.properties" class="shortcut">Properties</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch05.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="ch05.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="pt04.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="libnice-Pseudo-TCP-Socket"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnice-Pseudo-TCP-Socket.top_of_page"></a>Pseudo TCP Socket</span></h2>
+<p>Pseudo TCP Socket — Pseudo TCP implementation</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="returnvalue">PseudoTcpSocket</span></a> *
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-new" title="pseudo_tcp_socket_new ()">pseudo_tcp_socket_new</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-connect" title="pseudo_tcp_socket_connect ()">pseudo_tcp_socket_connect</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" title="pseudo_tcp_socket_recv ()">pseudo_tcp_socket_recv</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-send" title="pseudo_tcp_socket_send ()">pseudo_tcp_socket_send</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" title="pseudo_tcp_socket_close ()">pseudo_tcp_socket_close</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-shutdown" title="pseudo_tcp_socket_shutdown ()">pseudo_tcp_socket_shutdown</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-is-closed" title="pseudo_tcp_socket_is_closed ()">pseudo_tcp_socket_is_closed</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-is-closed-remotely" title="pseudo_tcp_socket_is_closed_remotely ()">pseudo_tcp_socket_is_closed_remotely</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">int</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-error" title="pseudo_tcp_socket_get_error ()">pseudo_tcp_socket_get_error</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" title="pseudo_tcp_socket_get_next_clock ()">pseudo_tcp_socket_get_next_clock</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-clock" title="pseudo_tcp_socket_notify_clock ()">pseudo_tcp_socket_notify_clock</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-mtu" title="pseudo_tcp_socket_notify_mtu ()">pseudo_tcp_socket_notify_mtu</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-packet" title="pseudo_tcp_socket_notify_packet ()">pseudo_tcp_socket_notify_packet</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-set-debug-level" title="pseudo_tcp_set_debug_level ()">pseudo_tcp_set_debug_level</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-available-bytes" title="pseudo_tcp_socket_get_available_bytes ()">pseudo_tcp_socket_get_available_bytes</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-can-send" title="pseudo_tcp_socket_can_send ()">pseudo_tcp_socket_can_send</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gsize"><span class="returnvalue">gsize</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-available-send-space" title="pseudo_tcp_socket_get_available_send_space ()">pseudo_tcp_socket_get_available_send_space</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-message" title="pseudo_tcp_socket_notify_message ()">pseudo_tcp_socket_notify_message</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">void</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-set-time" title="pseudo_tcp_socket_set_time ()">pseudo_tcp_socket_set_time</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.properties"></a><h2>Properties</h2>
+<div class="informaltable"><table border="0">
+<colgroup>
+<col width="150px" class="properties_type">
+<col width="300px" class="properties_name">
+<col width="200px" class="properties_flags">
+</colgroup>
+<tbody>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--ack-delay" title="The “ack-delay” property">ack-delay</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--callbacks" title="The “callbacks” property">callbacks</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--conversation" title="The “conversation” property">conversation</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--no-delay" title="The “no-delay” property">no-delay</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--rcv-buf" title="The “rcv-buf” property">rcv-buf</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--snd-buf" title="The “snd-buf” property">snd-buf</a></td>
+<td class="property_flags">Read / Write</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--state" title="The “state” property">state</a></td>
+<td class="property_flags">Read</td>
+</tr>
+<tr>
+<td class="property_type"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a></td>
+<td class="property_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--support-fin-ack" title="The “support-fin-ack” property">support-fin-ack</a></td>
+<td class="property_flags">Read / Write / Construct Only</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<a name="PseudoTcpSocket"></a><div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">struct</td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket-struct" title="struct PseudoTcpSocket">PseudoTcpSocket</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpState" title="enum PseudoTcpState">PseudoTcpState</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpWriteResult" title="enum PseudoTcpWriteResult">PseudoTcpWriteResult</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword"> </td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks">PseudoTcpCallbacks</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpDebugLevel" title="enum PseudoTcpDebugLevel">PseudoTcpDebugLevel</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpShutdown" title="enum PseudoTcpShutdown">PseudoTcpShutdown</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.object-hierarchy"></a><h2>Object Hierarchy</h2>
+<pre class="screen">    <a href="https://developer.gnome.org/gobject/unstable/gobject-The-Base-Object-Type.html#GObject">GObject</a>
+    <span class="lineart">╰──</span> PseudoTcpSocket
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;pseudotcp.h&gt;
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.description"></a><h2>Description</h2>
+<p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> is an object implementing a Pseudo Tcp Socket for use
+over UDP.
+The socket will implement a subset of the TCP stack to allow for a reliable
+transport over non-reliable sockets (such as UDP).</p>
+<p>See the file tests/test-pseudotcp.c in the source package for an example
+of how to use the object.</p>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-new"></a><h3>pseudo_tcp_socket_new ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="returnvalue">PseudoTcpSocket</span></a> *
+pseudo_tcp_socket_new (<em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> conversation</code></em>,
+                       <em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><span class="type">PseudoTcpCallbacks</span></a> *callbacks</code></em>);</pre>
+<p>Creates a new <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> for the specified conversation</p>
+<div class="note">
+<p>
+     The <em class="parameter"><code>callbacks</code></em> must be non-NULL, in order to get notified of packets the
+     socket needs to send.
+   </p>
+<p>
+     If the <em class="parameter"><code>callbacks</code></em> structure was dynamicly allocated, it can be freed
+     after the call <em class="parameter"><code>pseudo_tcp_socket_new</code></em>
+   </p>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.2.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>conversation</p></td>
+<td class="parameter_description"><p>The conversation id for the socket.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>callbacks</p></td>
+<td class="parameter_description"><p>A pointer to the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><span class="type">PseudoTcpCallbacks</span></a> structure for getting
+notified of the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> events.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.2.7"></a><h4>Returns</h4>
+<p> The new <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object, <a href="/usr/share/gtk-doc/html/liboil/liboil-liboiljunk.html#NULL:CAPS"><code class="literal">NULL</code></a> on error</p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-connect"></a><h3>pseudo_tcp_socket_connect ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_connect (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Connects the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> to the peer with the same conversation id.
+The connection will only be successful after the
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:PseudoTcpOpened callback is called</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.3.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.3.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> on success, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> on failure (not in <a class="link" href="libnice-Pseudo-TCP-Socket.html#TCP-LISTEN:CAPS"><code class="literal">TCP_LISTEN</code></a> state)</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-error" title="pseudo_tcp_socket_get_error ()"><code class="function">pseudo_tcp_socket_get_error()</code></a> </p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-recv"></a><h3>pseudo_tcp_socket_recv ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+pseudo_tcp_socket_recv (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                        <em class="parameter"><code><span class="type">char</span> *buffer</code></em>,
+                        <em class="parameter"><code><span class="type">size_t</span> len</code></em>);</pre>
+<p>Receive data from the socket.</p>
+<div class="note">
+<p>
+     Only call this on the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:PseudoTcpReadable callback.
+   </p>
+<p>
+     This function should be called in a loop. If this function does not
+     return -1 with EWOULDBLOCK as the error, the
+     <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:PseudoTcpReadable callback will not be called again.
+   </p>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.4.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to fill with received data</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.4.7"></a><h4>Returns</h4>
+<p> The number of bytes received or -1 in case of error</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-error" title="pseudo_tcp_socket_get_error ()"><code class="function">pseudo_tcp_socket_get_error()</code></a> </p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-send"></a><h3>pseudo_tcp_socket_send ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+pseudo_tcp_socket_send (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                        <em class="parameter"><code>const <span class="type">char</span> *buffer</code></em>,
+                        <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> len</code></em>);</pre>
+<p>Send data on the socket.</p>
+<div class="note"><p>
+     If this function return -1 with EWOULDBLOCK as the error, or if the return
+     value is lower than <em class="parameter"><code>len</code></em>, then the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:PseudoTcpWritable
+     callback will be called when the socket will become writable.
+   </p></div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.5.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer with data to send</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.5.7"></a><h4>Returns</h4>
+<p> The number of bytes sent or -1 in case of error</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-error" title="pseudo_tcp_socket_get_error ()"><code class="function">pseudo_tcp_socket_get_error()</code></a> </p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-close"></a><h3>pseudo_tcp_socket_close ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_socket_close (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                         <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a> force</code></em>);</pre>
+<p>Close the socket for sending. If <em class="parameter"><code>force</code></em>
+ is set to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a>, the socket will
+finish sending pending data before closing. If it is set to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>, the socket
+will discard pending data and close the connection immediately (sending a TCP
+RST segment).</p>
+<p>The socket will be closed in both directions – sending and receiving – and
+any pending received data must be read before calling this function, by
+calling <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" title="pseudo_tcp_socket_recv ()"><code class="function">pseudo_tcp_socket_recv()</code></a> until it blocks. If any pending data is in
+the receive buffer when <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" title="pseudo_tcp_socket_close ()"><code class="function">pseudo_tcp_socket_close()</code></a> is called, a TCP RST
+segment will be sent to the peer to notify it of the data loss.</p>
+<div class="note"><p>
+     The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:PseudoTcpClosed callback will not be called once
+     the socket gets closed. It is only used for aborted connection.
+     Instead, the socket gets closed when the <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" title="pseudo_tcp_socket_get_next_clock ()"><code class="function">pseudo_tcp_socket_get_next_clock()</code></a>
+     function returns FALSE.
+   </p></div>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" title="pseudo_tcp_socket_get_next_clock ()"><code class="function">pseudo_tcp_socket_get_next_clock()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.6.8"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>force</p></td>
+<td class="parameter_description"><p><a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> to close the socket forcefully, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> to close it gracefully</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-shutdown"></a><h3>pseudo_tcp_socket_shutdown ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_socket_shutdown (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                            <em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpShutdown" title="enum PseudoTcpShutdown"><span class="type">PseudoTcpShutdown</span></a> how</code></em>);</pre>
+<p>Shut down sending, receiving, or both on the socket, depending on the value
+of <em class="parameter"><code>how</code></em>
+. The behaviour of <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-send" title="pseudo_tcp_socket_send ()"><code class="function">pseudo_tcp_socket_send()</code></a> and
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" title="pseudo_tcp_socket_recv ()"><code class="function">pseudo_tcp_socket_recv()</code></a> will immediately change after this function returns
+(depending on the value of <em class="parameter"><code>how</code></em>
+), though the socket may continue to process
+network traffic in the background even if sending or receiving data is
+forbidden.</p>
+<p>This is equivalent to the POSIX <code class="function">shutdown()</code> function. Setting <em class="parameter"><code>how</code></em>
+ to
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#PSEUDO-TCP-SHUTDOWN-RDWR:CAPS"><code class="literal">PSEUDO_TCP_SHUTDOWN_RDWR</code></a> is equivalent to calling <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" title="pseudo_tcp_socket_close ()"><code class="function">pseudo_tcp_socket_close()</code></a>.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.7.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>how</p></td>
+<td class="parameter_description"><p>The directions of the connection to shut down.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-is-closed"></a><h3>pseudo_tcp_socket_is_closed ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_is_closed (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Gets whether the socket is closed, with the shutdown handshake completed,
+and both peers no longer able to read or write data to the connection.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.8.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.8.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the socket is closed in both directions, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-is-closed-remotely"></a><h3>pseudo_tcp_socket_is_closed_remotely ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_is_closed_remotely (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Gets whether the socket has been closed on the remote peer’s side of the
+connection (i.e. whether <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" title="pseudo_tcp_socket_close ()"><code class="function">pseudo_tcp_socket_close()</code></a> has been called there).
+This is guaranteed to return <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-is-closed" title="pseudo_tcp_socket_is_closed ()"><code class="function">pseudo_tcp_socket_is_closed()</code></a> returns
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a>. It will not return <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> after <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-close" title="pseudo_tcp_socket_close ()"><code class="function">pseudo_tcp_socket_close()</code></a> is called
+until a FIN segment is received from the remote peer.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.9.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.9.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the remote peer has closed its side of the connection,
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-get-error"></a><h3>pseudo_tcp_socket_get_error ()</h3>
+<pre class="programlisting"><span class="returnvalue">int</span>
+pseudo_tcp_socket_get_error (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Return the last encountered error.</p>
+<div class="note">
+<p>
+     The return value can be :
+     </p>
+<p>
+       EINVAL (for <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-connect" title="pseudo_tcp_socket_connect ()"><code class="function">pseudo_tcp_socket_connect()</code></a>).
+     </p>
+<p>
+     </p>
+<p>
+       EWOULDBLOCK or ENOTCONN (for <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" title="pseudo_tcp_socket_recv ()"><code class="function">pseudo_tcp_socket_recv()</code></a> and
+       <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-send" title="pseudo_tcp_socket_send ()"><code class="function">pseudo_tcp_socket_send()</code></a>).
+     </p>
+<p>
+   </p>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.10.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.10.7"></a><h4>Returns</h4>
+<p> The error code</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-connect" title="pseudo_tcp_socket_connect ()"><code class="function">pseudo_tcp_socket_connect()</code></a> </p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-recv" title="pseudo_tcp_socket_recv ()"><code class="function">pseudo_tcp_socket_recv()</code></a> </p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-send" title="pseudo_tcp_socket_send ()"><code class="function">pseudo_tcp_socket_send()</code></a> </p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-get-next-clock"></a><h3>pseudo_tcp_socket_get_next_clock ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_get_next_clock (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                                  <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint64"><span class="type">guint64</span></a> *timeout</code></em>);</pre>
+<p>Call this to determine the timeout needed before the next time call
+to <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-clock" title="pseudo_tcp_socket_notify_clock ()"><code class="function">pseudo_tcp_socket_notify_clock()</code></a> should be made.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.11.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>timeout</p></td>
+<td class="parameter_description"><p>A pointer to be filled with the new timeout.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.11.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if <em class="parameter"><code>timeout</code></em>
+was filled, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if the socket is closed and
+ready to be destroyed.</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-notify-clock" title="pseudo_tcp_socket_notify_clock ()"><code class="function">pseudo_tcp_socket_notify_clock()</code></a> </p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-notify-clock"></a><h3>pseudo_tcp_socket_notify_clock ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_socket_notify_clock (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Start the processing of receiving data, pending data or syn/acks.
+Call this based on timeout value returned by
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" title="pseudo_tcp_socket_get_next_clock ()"><code class="function">pseudo_tcp_socket_get_next_clock()</code></a>.
+It's ok to call this too frequently.</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-get-next-clock" title="pseudo_tcp_socket_get_next_clock ()"><code class="function">pseudo_tcp_socket_get_next_clock()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.12.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-notify-mtu"></a><h3>pseudo_tcp_socket_notify_mtu ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_socket_notify_mtu (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                              <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint16"><span class="type">guint16</span></a> mtu</code></em>);</pre>
+<p>Set the MTU of the socket</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.13.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>mtu</p></td>
+<td class="parameter_description"><p>The new MTU of the socket</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-notify-packet"></a><h3>pseudo_tcp_socket_notify_packet ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_notify_packet (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                                 <em class="parameter"><code>const <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gchar"><span class="type">gchar</span></a> *buffer</code></em>,
+                                 <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> len</code></em>);</pre>
+<p>Notify the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> when a new packet arrives</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.14.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer containing the received data</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.14.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the packet was processed successfully, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-set-debug-level"></a><h3>pseudo_tcp_set_debug_level ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_set_debug_level (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpDebugLevel" title="enum PseudoTcpDebugLevel"><span class="type">PseudoTcpDebugLevel</span></a> level</code></em>);</pre>
+<p>Sets the debug level to enable/disable normal/verbose debug messages.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.15.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>level</p></td>
+<td class="parameter_description"><p>The level of debug to set</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-get-available-bytes"></a><h3>pseudo_tcp_socket_get_available_bytes ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gint"><span class="returnvalue">gint</span></a>
+pseudo_tcp_socket_get_available_bytes (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Gets the number of bytes of data in the buffer that can be read without
+receiving more packets from the network.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.16.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.16.6"></a><h4>Returns</h4>
+<p> The number of bytes or -1 if the connection is not established</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.5</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-can-send"></a><h3>pseudo_tcp_socket_can_send ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_can_send (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Returns if there is space in the send buffer to send any data.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.17.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.17.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if data can be sent, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.5</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-get-available-send-space"></a><h3>pseudo_tcp_socket_get_available_send_space ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gsize"><span class="returnvalue">gsize</span></a>
+pseudo_tcp_socket_get_available_send_space
+                               (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>);</pre>
+<p>Gets the number of bytes of space available in the transmission buffer.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.18.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.18.6"></a><h4>Returns</h4>
+<p> The number of bytes, or 0 if the connection is not established.</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.5</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-notify-message"></a><h3>pseudo_tcp_socket_notify_message ()</h3>
+<pre class="programlisting"><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="returnvalue">gboolean</span></a>
+pseudo_tcp_socket_notify_message (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                                  <em class="parameter"><code><a class="link" href="NiceAgent.html#NiceInputMessage" title="NiceInputMessage"><span class="type">NiceInputMessage</span></a> *message</code></em>);</pre>
+<p>Notify the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> that a new message has arrived, and enqueue the
+data in its buffers to the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a>’s receive buffer.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.19.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>message</p></td>
+<td class="parameter_description"><p>A <a class="link" href="NiceAgent.html#NiceInputMessage" title="NiceInputMessage"><span class="type">NiceInputMessage</span></a> containing the received data.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.19.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the packet was processed successfully, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> otherwise</p>
+<p></p>
+</div>
+<p class="since">Since 0.1.5</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="pseudo-tcp-socket-set-time"></a><h3>pseudo_tcp_socket_set_time ()</h3>
+<pre class="programlisting"><span class="returnvalue">void</span>
+pseudo_tcp_socket_set_time (<em class="parameter"><code><a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> *self</code></em>,
+                            <em class="parameter"><code><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint32"><span class="type">guint32</span></a> current_time</code></em>);</pre>
+<p>Sets the current monotonic time to be used by the TCP socket when calculating
+timeouts and expiry times. If this function is not called, or is called with
+<em class="parameter"><code>current_time</code></em>
+ as zero, <a href="https://developer.gnome.org/glib/unstable/glib-Date-and-Time-Functions.html#g-get-monotonic-time"><code class="function">g_get_monotonic_time()</code></a> will be used. Otherwise, the
+specified <em class="parameter"><code>current_time</code></em>
+ will be used until it is updated by calling this
+function again.</p>
+<p>This function is intended for testing only, and should not be used in
+production code.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.11.20.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>self</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> object.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>current_time</p></td>
+<td class="parameter_description"><p>Current monotonic time, in milliseconds; or zero to use the
+system monotonic clock.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="PseudoTcpSocket-struct"></a><h3>struct PseudoTcpSocket</h3>
+<pre class="programlisting">struct PseudoTcpSocket;</pre>
+<p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> is the GObject implementing the Pseudo TCP Socket</p>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpState"></a><h3>enum PseudoTcpState</h3>
+<p>An enum representing the state of the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a>. These states
+correspond to the TCP states in RFC 793.</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket--state" title="The “state” property"><span class="type">“state”</span></a> </p>
+<div class="refsect3">
+<a name="id-1.4.2.1.12.3.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-LISTEN:CAPS"></a>TCP_LISTEN</p></td>
+<td class="enum_member_description">
+<p>The socket's initial state. The socket isn't connected and is
+listening for an incoming connection</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-SYN-SENT:CAPS"></a>TCP_SYN_SENT</p></td>
+<td class="enum_member_description">
+<p>The socket has sent a connection request (SYN) packet and is
+waiting for an answer</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-SYN-RECEIVED:CAPS"></a>TCP_SYN_RECEIVED</p></td>
+<td class="enum_member_description">
+<p>The socket has received a connection request (SYN) packet.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-ESTABLISHED:CAPS"></a>TCP_ESTABLISHED</p></td>
+<td class="enum_member_description">
+<p>The socket is connected</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-CLOSED:CAPS"></a>TCP_CLOSED</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-FIN-WAIT-1:CAPS"></a>TCP_FIN_WAIT_1</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed locally but not remotely
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-FIN-WAIT-2:CAPS"></a>TCP_FIN_WAIT_2</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed locally but not remotely
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-CLOSING:CAPS"></a>TCP_CLOSING</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed locally and remotely
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-TIME-WAIT:CAPS"></a>TCP_TIME_WAIT</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed locally and remotely
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-CLOSE-WAIT:CAPS"></a>TCP_CLOSE_WAIT</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed remotely but not locally
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="TCP-LAST-ACK:CAPS"></a>TCP_LAST_ACK</p></td>
+<td class="enum_member_description">
+<p>The socket has been closed locally and remotely
+(Since: 0.1.8)</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpWriteResult"></a><h3>enum PseudoTcpWriteResult</h3>
+<p>An enum representing the result value of the write operation requested by
+the <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a>.</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpCallbacks" title="PseudoTcpCallbacks"><code class="literal">PseudoTcpCallbacks</code></a>:WritePacket </p>
+<div class="refsect3">
+<a name="id-1.4.2.1.12.4.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="WR-SUCCESS:CAPS"></a>WR_SUCCESS</p></td>
+<td class="enum_member_description">
+<p>The write operation was successful</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="WR-TOO-LARGE:CAPS"></a>WR_TOO_LARGE</p></td>
+<td class="enum_member_description">
+<p>The socket type requires that message be sent atomically
+and the size of the message to be sent made this impossible.</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="WR-FAIL:CAPS"></a>WR_FAIL</p></td>
+<td class="enum_member_description">
+<p>There was an error sending the message</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpCallbacks"></a><h3>PseudoTcpCallbacks</h3>
+<pre class="programlisting">typedef struct {
+  gpointer user_data;
+  void  (*PseudoTcpOpened) (PseudoTcpSocket *tcp, gpointer data);
+  void  (*PseudoTcpReadable) (PseudoTcpSocket *tcp, gpointer data);
+  void  (*PseudoTcpWritable) (PseudoTcpSocket *tcp, gpointer data);
+  void  (*PseudoTcpClosed) (PseudoTcpSocket *tcp, guint32 error, gpointer data);
+  PseudoTcpWriteResult (*WritePacket) (PseudoTcpSocket *tcp,
+      const gchar * buffer, guint32 len, gpointer data);
+} PseudoTcpCallbacks;
+</pre>
+<p>A structure containing callbacks functions that will be called by the
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> when some events happen.</p>
+<p> See also: <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpWriteResult" title="enum PseudoTcpWriteResult"><span class="type">PseudoTcpWriteResult</span></a> </p>
+<div class="refsect3">
+<a name="id-1.4.2.1.12.5.6"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="struct_members_name">
+<col class="struct_members_description">
+<col width="200px" class="struct_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="struct_member_name"><p><a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a> <em class="structfield"><code><a name="PseudoTcpCallbacks.user-data"></a>user_data</code></em>;</p></td>
+<td class="struct_member_description"><p>A user defined pointer to be passed to the callbacks</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><em class="structfield"><code><a name="PseudoTcpCallbacks.PseudoTcpOpened"></a>PseudoTcpOpened</code></em> ()</p></td>
+<td class="struct_member_description"><p>The <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> is now connected</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><em class="structfield"><code><a name="PseudoTcpCallbacks.PseudoTcpReadable"></a>PseudoTcpReadable</code></em> ()</p></td>
+<td class="struct_member_description"><p>The socket is readable</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><em class="structfield"><code><a name="PseudoTcpCallbacks.PseudoTcpWritable"></a>PseudoTcpWritable</code></em> ()</p></td>
+<td class="struct_member_description"><p>The socket is writable</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><em class="structfield"><code><a name="PseudoTcpCallbacks.PseudoTcpClosed"></a>PseudoTcpClosed</code></em> ()</p></td>
+<td class="struct_member_description"><p>The socket was closed (both sides)</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+<tr>
+<td class="struct_member_name"><p><em class="structfield"><code><a name="PseudoTcpCallbacks.WritePacket"></a>WritePacket</code></em> ()</p></td>
+<td class="struct_member_description"><p>This callback is called when the socket needs to send data.</p></td>
+<td class="struct_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpDebugLevel"></a><h3>enum PseudoTcpDebugLevel</h3>
+<p>Valid values of debug levels to be set.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.12.6.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-DEBUG-NONE:CAPS"></a>PSEUDO_TCP_DEBUG_NONE</p></td>
+<td class="enum_member_description">
+<p>Disable debug messages</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-DEBUG-NORMAL:CAPS"></a>PSEUDO_TCP_DEBUG_NORMAL</p></td>
+<td class="enum_member_description">
+<p>Enable basic debug messages</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-DEBUG-VERBOSE:CAPS"></a>PSEUDO_TCP_DEBUG_VERBOSE</p></td>
+<td class="enum_member_description">
+<p>Enable verbose debug messages</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.0.11</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpShutdown"></a><h3>enum PseudoTcpShutdown</h3>
+<p>Options for which parts of a connection to shut down when calling
+<a class="link" href="libnice-Pseudo-TCP-Socket.html#pseudo-tcp-socket-shutdown" title="pseudo_tcp_socket_shutdown ()"><code class="function">pseudo_tcp_socket_shutdown()</code></a>. These correspond to the values passed to POSIX
+<code class="function">shutdown()</code>.</p>
+<div class="refsect3">
+<a name="id-1.4.2.1.12.7.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-SHUTDOWN-RD:CAPS"></a>PSEUDO_TCP_SHUTDOWN_RD</p></td>
+<td class="enum_member_description">
+<p>Shut down the local reader only</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-SHUTDOWN-WR:CAPS"></a>PSEUDO_TCP_SHUTDOWN_WR</p></td>
+<td class="enum_member_description">
+<p>Shut down the local writer only</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="PSEUDO-TCP-SHUTDOWN-RDWR:CAPS"></a>PSEUDO_TCP_SHUTDOWN_RDWR</p></td>
+<td class="enum_member_description">
+<p>Shut down both reading and writing</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<p class="since">Since 0.1.8</p>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-Pseudo-TCP-Socket.property-details"></a><h2>Property Details</h2>
+<div class="refsect2">
+<a name="PseudoTcpSocket--ack-delay"></a><h3>The <code class="literal">“ack-delay”</code> property</h3>
+<pre class="programlisting">  “ack-delay”                <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Delayed ACK timeout (in milliseconds).</p>
+<p>Flags: Read / Write</p>
+<p>Default value: 100</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--callbacks"></a><h3>The <code class="literal">“callbacks”</code> property</h3>
+<pre class="programlisting">  “callbacks”                <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gpointer"><span class="type">gpointer</span></a></pre>
+<p>Structure with the callbacks to call when PseudoTcp events happen.</p>
+<p>Flags: Read / Write</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--conversation"></a><h3>The <code class="literal">“conversation”</code> property</h3>
+<pre class="programlisting">  “conversation”             <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>The TCP Conversation ID.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--no-delay"></a><h3>The <code class="literal">“no-delay”</code> property</h3>
+<pre class="programlisting">  “no-delay”                 <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a></pre>
+<p>Disable the Nagle algorithm (like the TCP_NODELAY option).</p>
+<p>Flags: Read / Write</p>
+<p>Default value: FALSE</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--rcv-buf"></a><h3>The <code class="literal">“rcv-buf”</code> property</h3>
+<pre class="programlisting">  “rcv-buf”                  <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Receive Buffer size.</p>
+<p>Flags: Read / Write</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 61440</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--snd-buf"></a><h3>The <code class="literal">“snd-buf”</code> property</h3>
+<pre class="programlisting">  “snd-buf”                  <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>Send Buffer size.</p>
+<p>Flags: Read / Write</p>
+<p>Allowed values: &gt;= 1</p>
+<p>Default value: 92160</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--state"></a><h3>The <code class="literal">“state”</code> property</h3>
+<pre class="programlisting">  “state”                    <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#guint"><span class="type">guint</span></a></pre>
+<p>The current state (enum PseudoTcpState) of the PseudoTcp socket.</p>
+<p>Flags: Read</p>
+<p>Allowed values: &lt;= 4</p>
+<p>Default value: 0</p>
+</div>
+<hr>
+<div class="refsect2">
+<a name="PseudoTcpSocket--support-fin-ack"></a><h3>The <code class="literal">“support-fin-ack”</code> property</h3>
+<pre class="programlisting">  “support-fin-ack”          <a href="https://developer.gnome.org/glib/unstable/glib-Basic-Types.html#gboolean"><span class="type">gboolean</span></a></pre>
+<p>Whether to support the FIN–ACK extension to the pseudo-TCP protocol for
+this socket. The extension is only compatible with other libnice pseudo-TCP
+stacks, and not with Jingle pseudo-TCP stacks. If enabled, support is
+negotiatied on connection setup, so it is safe for a <a class="link" href="libnice-Pseudo-TCP-Socket.html#PseudoTcpSocket"><span class="type">PseudoTcpSocket</span></a> with
+support enabled to be used with one with it disabled, or with a Jingle
+pseudo-TCP socket which doesn’t support it at all.</p>
+<p>Support is enabled by default.</p>
+<p>Flags: Read / Write / Construct Only</p>
+<p>Default value: TRUE</p>
+<p class="since">Since 0.1.8</p>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>

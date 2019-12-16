@@ -1,0 +1,608 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>libnice Reference Manual: ICE</title>
+<meta name="generator" content="DocBook XSL Stylesheets V1.78.1">
+<link rel="home" href="index.html" title="libnice Reference Manual">
+<link rel="up" href="ch04.html" title="STUN usages">
+<link rel="prev" href="libnice-Bind.html" title="Bind">
+<link rel="next" href="libnice-TURN.html" title="TURN">
+<meta name="generator" content="GTK-Doc V1.21 (XML mode)">
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body bgcolor="white" text="black" link="#0000FF" vlink="#840084" alink="#0000FF">
+<table class="navigation" id="top" width="100%" summary="Navigation header" cellpadding="2" cellspacing="5"><tr valign="middle">
+<td width="100%" align="left" class="shortcuts">
+<a href="#" class="shortcut">Top</a><span id="nav_description">  <span class="dim">|</span> 
+                  <a href="#libnice-ICE.description" class="shortcut">Description</a></span>
+</td>
+<td><a accesskey="h" href="index.html"><img src="home.png" width="16" height="16" border="0" alt="Home"></a></td>
+<td><a accesskey="u" href="ch04.html"><img src="up.png" width="16" height="16" border="0" alt="Up"></a></td>
+<td><a accesskey="p" href="libnice-Bind.html"><img src="left.png" width="16" height="16" border="0" alt="Prev"></a></td>
+<td><a accesskey="n" href="libnice-TURN.html"><img src="right.png" width="16" height="16" border="0" alt="Next"></a></td>
+</tr></table>
+<div class="refentry">
+<a name="libnice-ICE"></a><div class="titlepage"></div>
+<div class="refnamediv"><table width="100%"><tr>
+<td valign="top">
+<h2><span class="refentrytitle"><a name="libnice-ICE.top_of_page"></a>ICE</span></h2>
+<p>ICE — STUN ICE Usage</p>
+</td>
+<td class="gallery_image" valign="top" align="right"></td>
+</tr></table></div>
+<div class="refsect1">
+<a name="libnice-ICE.stability-level"></a><h2>Stability Level</h2>
+<acronym title="The intention of a Stable interface is to enable arbitrary third parties to
+develop applications to these interfaces, release them, and have confidence that
+they will run on all minor releases of the product (after the one in which the
+interface was introduced, and within the same major release). Even at a major
+release, incompatible changes are expected to be rare, and to have strong
+justifications.
+"><span class="acronym">Stable</span></acronym>, unless otherwise indicated
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.functions"></a><h2>Functions</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="functions_return">
+<col class="functions_name">
+</colgroup>
+<tbody>
+<tr>
+<td class="function_type">
+<span class="returnvalue">size_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-create" title="stun_usage_ice_conncheck_create ()">stun_usage_ice_conncheck_create</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="returnvalue">StunUsageIceReturn</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-process" title="stun_usage_ice_conncheck_process ()">stun_usage_ice_conncheck_process</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="returnvalue">StunUsageIceReturn</span></a>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-create-reply" title="stun_usage_ice_conncheck_create_reply ()">stun_usage_ice_conncheck_create_reply</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">uint32_t</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-priority" title="stun_usage_ice_conncheck_priority ()">stun_usage_ice_conncheck_priority</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+<tr>
+<td class="function_type">
+<span class="returnvalue">bool</span>
+</td>
+<td class="function_name">
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-use-candidate" title="stun_usage_ice_conncheck_use_candidate ()">stun_usage_ice_conncheck_use_candidate</a> <span class="c_punctuation">()</span>
+</td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.other"></a><h2>Types and Values</h2>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="name">
+<col class="description">
+</colgroup>
+<tbody>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-ICE.html#StunUsageIceCompatibility" title="enum StunUsageIceCompatibility">StunUsageIceCompatibility</a></td>
+</tr>
+<tr>
+<td class="datatype_keyword">enum</td>
+<td class="function_name"><a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn">StunUsageIceReturn</a></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.includes"></a><h2>Includes</h2>
+<pre class="synopsis">#include &lt;stun/usages/ice.h&gt;
+</pre>
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.description"></a><h2>Description</h2>
+<p>The STUN ICE usage allows for easily creating and parsing STUN Binding
+requests and responses used for ICE connectivity checks. The API allows you
+to create a connectivity check message, parse a response or create a reply
+to an incoming connectivity check request.</p>
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.functions_details"></a><h2>Functions</h2>
+<div class="refsect2">
+<a name="stun-usage-ice-conncheck-create"></a><h3>stun_usage_ice_conncheck_create ()</h3>
+<pre class="programlisting"><span class="returnvalue">size_t</span>
+stun_usage_ice_conncheck_create (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                 <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                 <em class="parameter"><code><span class="type">uint8_t</span> *buffer</code></em>,
+                                 <em class="parameter"><code><span class="type">size_t</span> buffer_len</code></em>,
+                                 <em class="parameter"><code>const <span class="type">uint8_t</span> *username</code></em>,
+                                 <em class="parameter"><code>const <span class="type">size_t</span> username_len</code></em>,
+                                 <em class="parameter"><code>const <span class="type">uint8_t</span> *password</code></em>,
+                                 <em class="parameter"><code>const <span class="type">size_t</span> password_len</code></em>,
+                                 <em class="parameter"><code><span class="type">bool</span> cand_use</code></em>,
+                                 <em class="parameter"><code><span class="type">bool</span> controlling</code></em>,
+                                 <em class="parameter"><code><span class="type">uint32_t</span> priority</code></em>,
+                                 <em class="parameter"><code><span class="type">uint64_t</span> tie</code></em>,
+                                 <em class="parameter"><code>const <span class="type">char</span> *candidate_identifier</code></em>,
+                                 <em class="parameter"><code><a class="link" href="libnice-ICE.html#StunUsageIceCompatibility" title="enum StunUsageIceCompatibility"><span class="type">StunUsageIceCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Builds an ICE connectivity check STUN message.
+If the compatibility is not <a class="link" href="libnice-ICE.html#STUN-USAGE-ICE-COMPATIBILITY-RFC5245:CAPS"><span class="type">STUN_USAGE_ICE_COMPATIBILITY_RFC5245</span></a>, the
+<em class="parameter"><code>cand_use</code></em>
+, <em class="parameter"><code>controlling</code></em>
+, <em class="parameter"><code>priority</code></em>
+ and <em class="parameter"><code>tie</code></em>
+ arguments are not used.
+If the compatibility is not <a class="link" href="libnice-ICE.html#STUN-USAGE-ICE-COMPATIBILITY-WLM2009:CAPS"><span class="type">STUN_USAGE_ICE_COMPATIBILITY_WLM2009</span></a>, the
+<em class="parameter"><code>candidate_identifier</code></em>
+ argument is not used.</p>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.2.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to use to build the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer</p></td>
+<td class="parameter_description"><p>The buffer to use for creating the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buffer_len</p></td>
+<td class="parameter_description"><p>The size of the <em class="parameter"><code>buffer</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username</p></td>
+<td class="parameter_description"><p>The username to use in the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>username_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>username</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password</p></td>
+<td class="parameter_description"><p>The key to use for building the MESSAGE-INTEGRITY</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>password_len</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>password</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>cand_use</p></td>
+<td class="parameter_description"><p>Set to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> to append the USE-CANDIDATE flag to the request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>controlling</p></td>
+<td class="parameter_description"><p>Set to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if you are the controlling agent or set to
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if you are the controlled agent.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>priority</p></td>
+<td class="parameter_description"><p>The value of the PRIORITY attribute</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>tie</p></td>
+<td class="parameter_description"><p>The value of the tie-breaker to put in the ICE-CONTROLLED or
+ICE-CONTROLLING attribute</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>candidate_identifier</p></td>
+<td class="parameter_description"><p>The foundation value to put in the
+CANDIDATE-IDENTIFIER attribute</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for building the conncheck
+request</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.2.6"></a><h4>Returns</h4>
+<p> The length of the message built.</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-ice-conncheck-process"></a><h3>stun_usage_ice_conncheck_process ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="returnvalue">StunUsageIceReturn</span></a>
+stun_usage_ice_conncheck_process (<em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                  <em class="parameter"><code><span class="type">struct sockaddr_storage</span> *addr</code></em>,
+                                  <em class="parameter"><code><span class="type">socklen_t</span> *addrlen</code></em>,
+                                  <em class="parameter"><code><a class="link" href="libnice-ICE.html#StunUsageIceCompatibility" title="enum StunUsageIceCompatibility"><span class="type">StunUsageIceCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Process an ICE connectivity check STUN message and retreive the
+mapped address from the message</p>
+<p> See also <a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-priority" title="stun_usage_ice_conncheck_priority ()"><code class="function">stun_usage_ice_conncheck_priority()</code></a> and
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-use-candidate" title="stun_usage_ice_conncheck_use_candidate ()"><code class="function">stun_usage_ice_conncheck_use_candidate()</code></a> </p>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.3.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to process</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addr</p></td>
+<td class="parameter_description"><p>A pointer to a <span class="type">sockaddr</span> structure to fill with the mapped address
+that the STUN connectivity check response contains</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>addrlen</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>addr</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for processing the conncheck
+response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.3.7"></a><h4>Returns</h4>
+<p> A <a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="type">StunUsageIceReturn</span></a> value</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-ice-conncheck-create-reply"></a><h3>stun_usage_ice_conncheck_create_reply ()</h3>
+<pre class="programlisting"><a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="returnvalue">StunUsageIceReturn</span></a>
+stun_usage_ice_conncheck_create_reply (<em class="parameter"><code><a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> *agent</code></em>,
+                                       <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *req</code></em>,
+                                       <em class="parameter"><code><a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>,
+                                       <em class="parameter"><code><span class="type">uint8_t</span> *buf</code></em>,
+                                       <em class="parameter"><code><span class="type">size_t</span> *plen</code></em>,
+                                       <em class="parameter"><code>const <span class="type">struct sockaddr_storage</span> *src</code></em>,
+                                       <em class="parameter"><code><span class="type">socklen_t</span> srclen</code></em>,
+                                       <em class="parameter"><code><span class="type">bool</span> *control</code></em>,
+                                       <em class="parameter"><code><span class="type">uint64_t</span> tie</code></em>,
+                                       <em class="parameter"><code><a class="link" href="libnice-ICE.html#StunUsageIceCompatibility" title="enum StunUsageIceCompatibility"><span class="type">StunUsageIceCompatibility</span></a> compatibility</code></em>);</pre>
+<p>Tries to parse a STUN connectivity check request and builds a
+response accordingly.</p>
+<div class="note"><p>
+     In case of error, the <em class="parameter"><code>msg</code></em> is filled with the appropriate error response
+     to be sent and the value of <em class="parameter"><code>plen</code></em> is set to the size of that message.
+     If <em class="parameter"><code>plen</code></em> has a size of 0, then no error response should be sent.
+   </p></div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.4.6"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="parameter_name"><p>agent</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunAgent.html#StunAgent" title="StunAgent"><span class="type">StunAgent</span></a> to use to build the response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>req</p></td>
+<td class="parameter_description"><p>The original STUN request to reply to</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to build</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>buf</p></td>
+<td class="parameter_description"><p>The buffer to use for creating the <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a></p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>plen</p></td>
+<td class="parameter_description"><p>A pointer containing the size of the <em class="parameter"><code>buffer</code></em>
+on input.
+Will contain the length of the message built on output.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>src</p></td>
+<td class="parameter_description"><p>A pointer to a <span class="type">sockaddr</span> structure containing the source address from
+which the request was received. Will be used as the mapped address in the
+response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>srclen</p></td>
+<td class="parameter_description"><p>The length of <em class="parameter"><code>addr</code></em>
+</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>control</p></td>
+<td class="parameter_description"><p>Set to <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if you are the controlling agent or set to
+<a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if you are the controlled agent.</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>tie</p></td>
+<td class="parameter_description"><p>The value of the tie-breaker to put in the ICE-CONTROLLED or
+ICE-CONTROLLING attribute</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+<tr>
+<td class="parameter_name"><p>compatibility</p></td>
+<td class="parameter_description"><p>The compatibility mode to use for building the conncheck
+response</p></td>
+<td class="parameter_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.4.7"></a><h4>Returns</h4>
+<p> A <a class="link" href="libnice-ICE.html#StunUsageIceReturn" title="enum StunUsageIceReturn"><span class="type">StunUsageIceReturn</span></a> value</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-ice-conncheck-priority"></a><h3>stun_usage_ice_conncheck_priority ()</h3>
+<pre class="programlisting"><span class="returnvalue">uint32_t</span>
+stun_usage_ice_conncheck_priority (<em class="parameter"><code>const <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>);</pre>
+<p>Extracts the priority from a STUN message.</p>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.5.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to parse</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.5.6"></a><h4>Returns</h4>
+<p> host byte order priority, or 0 if not specified.</p>
+<p></p>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="stun-usage-ice-conncheck-use-candidate"></a><h3>stun_usage_ice_conncheck_use_candidate ()</h3>
+<pre class="programlisting"><span class="returnvalue">bool</span>
+stun_usage_ice_conncheck_use_candidate
+                               (<em class="parameter"><code>const <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> *msg</code></em>);</pre>
+<p>Extracts the USE-CANDIDATE attribute flag from a STUN message.</p>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.6.5"></a><h4>Parameters</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="150px" class="parameters_name">
+<col class="parameters_description">
+<col width="200px" class="parameters_annotations">
+</colgroup>
+<tbody><tr>
+<td class="parameter_name"><p>msg</p></td>
+<td class="parameter_description"><p>The <a class="link" href="libnice-StunMessage.html#StunMessage" title="struct StunMessage"><span class="type">StunMessage</span></a> to parse</p></td>
+<td class="parameter_annotations"> </td>
+</tr></tbody>
+</table></div>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.8.6.6"></a><h4>Returns</h4>
+<p> <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#TRUE:CAPS"><code class="literal">TRUE</code></a> if the flag is set, <a href="https://developer.gnome.org/glib/unstable/glib-Standard-Macros.html#FALSE:CAPS"><code class="literal">FALSE</code></a> if not.</p>
+<p></p>
+</div>
+</div>
+</div>
+<div class="refsect1">
+<a name="libnice-ICE.other_details"></a><h2>Types and Values</h2>
+<div class="refsect2">
+<a name="StunUsageIceCompatibility"></a><h3>enum StunUsageIceCompatibility</h3>
+<p>This enum defines which compatibility modes this ICE usage can use</p>
+<div class="warning">
+<em class="parameter"><code>STUN_USAGE_ICE_COMPATIBILITY_DRAFT19</code></em> is deprecated and should not
+be used in newly-written code. It is kept for compatibility reasons and
+represents the same compatibility as <em class="parameter"><code>STUN_USAGE_ICE_COMPATIBILITY_RFC5245</code></em>
+</div>
+<div class="refsect3">
+<a name="id-1.3.3.3.9.2.5"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-COMPATIBILITY-RFC5245:CAPS"></a>STUN_USAGE_ICE_COMPATIBILITY_RFC5245</p></td>
+<td class="enum_member_description">
+<p>The ICE compatibility with RFC 5245</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-COMPATIBILITY-GOOGLE:CAPS"></a>STUN_USAGE_ICE_COMPATIBILITY_GOOGLE</p></td>
+<td class="enum_member_description">
+<p>The ICE compatibility with Google's
+implementation of ICE</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-COMPATIBILITY-MSN:CAPS"></a>STUN_USAGE_ICE_COMPATIBILITY_MSN</p></td>
+<td class="enum_member_description">
+<p>The ICE compatibility with MSN's
+implementation of ICE</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-COMPATIBILITY-WLM2009:CAPS"></a>STUN_USAGE_ICE_COMPATIBILITY_WLM2009</p></td>
+<td class="enum_member_description">
+<p>The ICE compatibility with Windows
+Live Messenger and Microsoft Office Communicator 2007 R2 implementation of ICE</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-COMPATIBILITY-DRAFT19:CAPS"></a>STUN_USAGE_ICE_COMPATIBILITY_DRAFT19</p></td>
+<td class="enum_member_description">
+<p>The ICE compatibility with draft 19</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+<hr>
+<div class="refsect2">
+<a name="StunUsageIceReturn"></a><h3>enum StunUsageIceReturn</h3>
+<p>Return value of <a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-process" title="stun_usage_ice_conncheck_process ()"><code class="function">stun_usage_ice_conncheck_process()</code></a> and
+<a class="link" href="libnice-ICE.html#stun-usage-ice-conncheck-create-reply" title="stun_usage_ice_conncheck_create_reply ()"><code class="function">stun_usage_ice_conncheck_create_reply()</code></a> which allows you to see what
+status the function call returned.</p>
+<div class="refsect3">
+<a name="id-1.3.3.3.9.3.4"></a><h4>Members</h4>
+<div class="informaltable"><table width="100%" border="0">
+<colgroup>
+<col width="300px" class="enum_members_name">
+<col class="enum_members_description">
+<col width="200px" class="enum_members_annotations">
+</colgroup>
+<tbody>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-SUCCESS:CAPS"></a>STUN_USAGE_ICE_RETURN_SUCCESS</p></td>
+<td class="enum_member_description">
+<p>The function succeeded</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-ERROR:CAPS"></a>STUN_USAGE_ICE_RETURN_ERROR</p></td>
+<td class="enum_member_description">
+<p>There was an unspecified error</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-INVALID:CAPS"></a>STUN_USAGE_ICE_RETURN_INVALID</p></td>
+<td class="enum_member_description">
+<p>The message is invalid for processing</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-ROLE-CONFLICT:CAPS"></a>STUN_USAGE_ICE_RETURN_ROLE_CONFLICT</p></td>
+<td class="enum_member_description">
+<p>A role conflict was detected</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-INVALID-REQUEST:CAPS"></a>STUN_USAGE_ICE_RETURN_INVALID_REQUEST</p></td>
+<td class="enum_member_description">
+<p>The message is an not a request</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-INVALID-METHOD:CAPS"></a>STUN_USAGE_ICE_RETURN_INVALID_METHOD</p></td>
+<td class="enum_member_description">
+<p>The method of the request is invalid</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-MEMORY-ERROR:CAPS"></a>STUN_USAGE_ICE_RETURN_MEMORY_ERROR</p></td>
+<td class="enum_member_description">
+<p>The buffer size is too small to hold
+the STUN reply</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-INVALID-ADDRESS:CAPS"></a>STUN_USAGE_ICE_RETURN_INVALID_ADDRESS</p></td>
+<td class="enum_member_description">
+<p>The mapped address argument has
+an invalid address family</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+<tr>
+<td class="enum_member_name"><p><a name="STUN-USAGE-ICE-RETURN-NO-MAPPED-ADDRESS:CAPS"></a>STUN_USAGE_ICE_RETURN_NO_MAPPED_ADDRESS</p></td>
+<td class="enum_member_description">
+<p>The response is valid but no
+MAPPED-ADDRESS or XOR-MAPPED-ADDRESS attribute was found</p>
+</td>
+<td class="enum_member_annotations"> </td>
+</tr>
+</tbody>
+</table></div>
+</div>
+</div>
+</div>
+</div>
+<div class="footer">
+<hr>
+          Generated by GTK-Doc V1.21</div>
+</body>
+</html>
