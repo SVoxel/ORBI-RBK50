@@ -32,7 +32,7 @@
     text-align: center;
     padding:15px 20px 0px 20px;
     font-size: 10px;margin-bottom: -22px;
-    height:90.5px;
+    height:auto;
 }
 
     .card-orbi-app-header span{font-family: 'Avenir-Medium';/*font-weight: 600;*/ text-decoration: underline;}
@@ -81,7 +81,6 @@
 }
 .download-btn-orbi {
     margin-right: 13px;
-    line-height: 24px;
     padding-left: 8px;
     padding-right: 8px;
     text-decoration: none;

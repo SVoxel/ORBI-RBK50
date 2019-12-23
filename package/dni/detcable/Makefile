@@ -37,6 +37,7 @@ define Package/$(PKG_NAME)/install
 	install -d -m0755 $(1)/usr/sbin
 	install -d -m0755 $(1)/etc
 	install -m0755 $(PKG_BUILD_DIR)/detcable $(1)/usr/bin/
+	install -m0755 $(PKG_BUILD_DIR)/detcable-bin $(1)/usr/bin/
 	install -m0755 $(PKG_BUILD_DIR)/files/flushRoute $(1)/usr/bin/
 	install -m0755 $(PKG_BUILD_DIR)/files/port_detect.sh $(1)/usr/sbin/
 	install -d -m0755 $(1)/etc/init.d

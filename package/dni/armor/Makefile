@@ -38,7 +38,6 @@ define Package/armor/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bdupd_start_schedule.sh $(1)/usr/share/armor
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/get_armor_status $(1)/usr/share/armor
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/change_cloud_server.sh $(1)/usr/share/armor
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/bd_account $(1)/usr/share/armor
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/BD_START.sh $(1)/usr/share/armor
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/upgrade_bd_cfg.sh $(1)/usr/share/armor
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/bdbroker-client-cmd $(1)/usr/share/armor/
@@ -47,7 +46,6 @@ define Package/armor/install
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/armor_init $(1)/etc/init.d/
 	$(INSTALL_DIR) $(1)/lib/armor/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/phase2-upd.tar.gz $(1)/lib/armor/
 	$(call Dni_Install_Ext,$(LOCAL_PKG_NAME_EXT),$(1))
 endef
 							

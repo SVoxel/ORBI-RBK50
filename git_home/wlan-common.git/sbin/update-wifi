@@ -970,23 +970,6 @@ generate_dtim()
         wlg_arlo)
             uci set wireless.${wl_section}.dtim_period=${wl_arlo_dtim}
             ;;
-        wlg_ap_bh | wla_ap_bh | wla2_ap_bh)
-            eval guest_if_onoff=\$`echo $1`_guest_if_onoff
-            # guest network is disabled
-            if [ "$guest_if_onoff" = "off" ]; then
-                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_guest}
-            else
-                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_guest}
-            fi
-
-            eval byod_if_onoff=\$`echo $1`_byod_if_onoff
-            # byod network is disabled
-            if [ "$byod_if_onoff" = "off" ]; then
-                uci set wireless.${wl_section}.dtim_period=${wl_dtim_wo_byod}
-            else
-                uci set wireless.${wl_section}.dtim_period=${wl_dtim_w_byod}
-            fi
-            ;;
     esac
 }
 
@@ -1561,7 +1544,6 @@ if [ "$update_conf" = "wifi" -o "$update_conf" = "all" ]; then
         generate_rts $wl_vap
         # generate_protocol_setting $wl_vap
         generate_bintval $wl_vap
-        generate_dtim $wl_vap
         # generate_PIN $wl_vap
         generate_ifname $wl_vap
         generate_dyn_bw_rts $wl_vap
@@ -1674,7 +1656,6 @@ if [ "$update_conf" = "wifi" -o "$update_conf" = "all" ]; then
         generate_rts $wl_vap
         # generate_protocol_setting $wl_vap
         generate_bintval $wl_vap
-        generate_dtim $wl_vap
         # generate_PIN $wl_vap
         generate_ifname $wl_vap
         generate_doth $wl_vap
@@ -2025,7 +2006,6 @@ if [ "$update_conf" = "wifi" -o "$update_conf" = "all" ]; then
         generate_rts $wl_vap
         # generate_protocol_setting $wl_vap
         generate_bintval $wl_vap
-        generate_dtim $wl_vap
         # generate_PIN $wl_vap
         generate_ifname $wl_vap
         generate_dyn_bw_rts $wl_vap

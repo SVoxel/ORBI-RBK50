@@ -61,6 +61,7 @@ do
     dod_connect_status=`cat /tmp/dod-led` 2> /dev/null
     route_status=`route -n |grep UG`
     apmode_status=`/bin/config get ap_mode` 2> /dev/null
+    timeup=`cat /tmp/led_time`
 
     if [ "$gui_led_status" = "1" ];then
         traffic_previous_status=0
@@ -87,7 +88,6 @@ do
         fi
     
     elif [ "$wanport_status" != "1" ];then
-        timeup=`cat /tmp/led_time`
         if [ "$ping_previous_status" = "0" -a "$timeup" = "1" ];then
             traffic_previous_status=0
             ping_previous_status=1
@@ -104,7 +104,6 @@ do
 			fi
 		fi
     elif [ "$dod_connect_status" = "0" ];then
-        timeup=`cat /tmp/led_time`
         if [ "$ping_previous_status" = "0" -a "$timeup" = "1" ];then
             traffic_previous_status=0
             ping_previous_status=1
@@ -133,7 +132,9 @@ do
         fi
     fi
 
-    echo $ping_previous_status > $INTERNET_INDICATE
+    if [ "$timeup" = "1" ]; then
+    	echo $ping_previous_status > $INTERNET_INDICATE
+    fi
     sleep $INTERVAL
     wait_time=$(( $wait_time + 1 ))
     [ "$wait_time" -gt "30" ] && wait_time=0

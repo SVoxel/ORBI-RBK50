@@ -175,11 +175,11 @@ function loadvalue()
 <!--Card starts-->
 <div class="card-orbi-app">
 	<div class="card-orbi-app-header"> <img src="assets/images/orbi-logo.svg"  alt=""/>
-		<p> Fast and easy control from anywhere.</p>
-		<span class="desktop"> <a href="http://orbi-app.com/" target="_blank"> Download the app now.</a></span> </div>
+		<p>$app_basic_description2</p>
+		<span class="desktop"> <a href="http://orbi-app.com/" target="_blank">$app_basic_description3</a></span> </div>
 	<div class="device-content">
 	<div class="disp-cell"><img src="assets/images/device.svg" alt=""/> </div>
-	<div class="disp-cell"><div class="app-icon"><img src="assets/images/orbi-app.svg" class="" alt=""/></div><a href="https://itunes.apple.com/us/app/netgear-orbi/id1182184397?mt=8" class="mb app-store" target="_blank"><img src="assets/images/app-store-badge-us-black-2.svg" alt=""/></a> <a href="https://play.google.com/store/apps/details?id=com.dragonflow.android.orbi&hl=en_IN" class="google-store" target="_blank"><img src="assets/images/google-play-badge-us-2.svg" alt=""/></a></div>
+	<div class="disp-cell"><div class="app-icon"><img src="assets/images/orbi-app.svg" class="" alt=""/></div><a href="http://orbi-app.com" class="mb app-store" target="_blank"><img src="assets/images/app-store-badge-us-black-2.svg" alt=""/></a> <a href="http://orbi-app.com" class="google-store" target="_blank"><img src="assets/images/google-play-badge-us-2.svg" alt=""/></a></div>
 	</div>
 	<div class="card-orbi-app-footer"><img src="assets/images/logo-netgear.svg" style="padding-top:8px;" alt=""/></div>
 </div>
@@ -249,20 +249,20 @@ var armor_flag = 0;
 	<div class="modal-content">
 		<div class="modal-header" style="padding-top:16px">
 			<span id="armor_close" name="armor_close" class="armor-close"><img src="images/armor_close.png" style="width:13px;height:13px;margin:6px"></span>
-			<div class="modalBox-title_armor">NETGEAR Armor</div>
+			<div class="modalBox-title_armor">$netgear_armor</div>
 			<div class="circle-disney-logo" style="text-align:center"><img src="images/armor_white.png" style="width:90px;height:101px"></div>
 		</div>
 		<div class="modal-body-armor">
 		<script>
 		if(armor_time == "0") {
-			document.write('<p style="color:#fff; font-family: Avenir-Medium; font-size: 16px; letter-spacing: -0.53px;">Armor security on your router provides advanced cyber threat<br/> protection to better safeguard your network and your<br/> connected devices.</p><p style="color:#fff; font-family: Avenir-Medium; font-size: 11px; letter-spacing: -0.37px; text-align: center;">To activate your FREE trial of NETGEAR Armor, please download the orbi app<br/> TODAY at orbi-app.com on your mobile device.</p>');
+			document.write("<p style=\"color:#fff; font-family: Avenir-Medium; font-size: 16px; letter-spacing: -0.53px;\">$armor_str1</p><p style=\"color:#fff; font-family: Avenir-Medium; font-size: 11px; letter-spacing: -0.37px; text-align: center;\">$armor_str2</p>");
 		} else {
-			document.write('<p p style="color:#fff; font-family: Avenir-Medium; font-size: 16px; letter-spacing: -0.53px;">Armor security on your router provides advanced cyber threat<br/> protection to better safeguard your network and your<br/> connected devices.</p><p style="color:#fff; font-family: Avenir-Medium; font-size: 11px; letter-spacing: -0.37px; text-align: center;">To activate your 1-year FREE subscription of NETGEAR Armor, please download<br/> the orbi app TODAY at orbi-app.com on your mobile device.</p>');
+			document.write("<p p style=\"color:#fff; font-family: Avenir-Medium; font-size: 16px; letter-spacing: -0.53px;\">$armor_str1</p><p style=\"color:#fff; font-family: Avenir-Medium; font-size: 11px; letter-spacing: -0.37px; text-align: center;\">$armor_str3</p>");
 		}
 		</script>
-		<div class="modalButton-armor-QR" id="armor_app" name="armor_app"><img src="images/armor_QR.png" style="width:62px;height:62.76px"><p>Scan to download the Orbi app</p></div>
+		<div class="modalButton-armor-QR" id="armor_app" name="armor_app"><img src="images/armor_QR.png" style="width:62px;height:62.76px"><p>$scan_orbi_app</p></div>
 		<div class="modalButton-armor" id="armor_nvrm" name="armor_nvrm">$circle_never_remind</div>
-		<div class="modalButton-armor-done" id="armor_done" style="display:none"><img src="images/armor_updated.png" style="width:16px; height: 16px; color: #FFFFFF;"> &nbsp;&nbsp;Preference updated</div>
+		<div class="modalButton-armor-done" id="armor_done" style="display:none"><img src="images/armor_updated.png" style="width:16px; height: 16px; color: #FFFFFF;"> &nbsp;&nbsp;$prefer_update</div>
 		</div>
 	</div>
 </div>

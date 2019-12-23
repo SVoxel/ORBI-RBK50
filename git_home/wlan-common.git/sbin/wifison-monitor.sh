@@ -162,6 +162,20 @@ down_fronthaul() {
     wlan connection deny
 }
 
+# Check whether interface down caused by radar event
+# return 0 means all channel are occupy, so do not
+# restart the wireless
+radar_event_all_occupy_check(){
+region_avalible_chan=`iwlist $1 channel| grep Channel| grep -v Current| awk '{print$2}'`
+radar_detect_chan=`radardetect_cli -f| sed '/HT40/,$d'| grep -v HT20| awk '{print$2}'| sort`
+
+if [ "$region_avalible_chan" = "$radar_detect_chan" ]; then
+    return 0
+else
+    return 1
+fi
+}
+
 # check whether wireless basic setting 2G/5G not match
 # if not match, 5G will follow 2G
 match_wireless_basic_setting(){
@@ -704,9 +718,13 @@ if [ ! -f "$wlan_updown_lock" ];then
     for ifname in $ifnamelist
     do
         if [ "x`ifconfig $ifname 2>/dev/null |grep UP`" = "x" ];then
-            wifi_restart_event $ifname "backhaul interface not up!!!!"
-            wifi_nowork=1
-            break
+            if radar_event_all_occupy_check $ifname; then
+                break
+            else
+                wifi_restart_event $ifname "backhaul interface not up!!!!"
+                wifi_nowork=1
+                break
+            fi
         fi
     done
     if [ "x$wifi_nowork" = "x1" ];then
@@ -717,9 +735,13 @@ if [ ! -f "$wlan_updown_lock" ];then
     for ifname in $ifnamelist
     do
         if [ "x`iwconfig $ifname 2>/dev/null|grep 'Not-Associated'`" != "x" ];then
-            wifi_restart_event $ifname "backhaul ap interface Not-Associated!!!!"
-            wifi_nowork=1
-            break
+            if radar_event_all_occupy_check $ifname; then
+                break
+            else
+                wifi_restart_event $ifname "backhaul ap interface Not-Associated!!!!"
+                wifi_nowork=1
+                break
+            fi
         fi
     done
     if [ "x$wifi_nowork" = "x1" ];then

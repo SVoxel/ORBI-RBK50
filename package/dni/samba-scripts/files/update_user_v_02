@@ -1,50 +1,45 @@
 #!/bin/sh
 
-config=/bin/config
-
+CONFIG=/bin/config
 SMB_CONF_DIR=/tmp/config
-SMB_PASSWD_DIR=/etc/samba/smbpasswd
+SMB_PASSWD_FILE=/etc/samba/smbpasswd
 
-# unset
+# Unset
 rm -f $SMB_CONF_DIR/passwd+
 rm -f $SMB_CONF_DIR/gshadow
 rm -f $SMB_CONF_DIR/shadow
 
-# user setting
-echo "root:!:0:0:root:/root:/bin/ash"			> $SMB_CONF_DIR/passwd
-echo "guest:*:65534:65534:guest:/tmp/ftpadmin:/bin/ash"	>>$SMB_CONF_DIR/passwd
-echo "nobody:*:65534:65534:nobody:/var:/bin/false" 	>>$SMB_CONF_DIR/passwd
-echo "daemon:*:65534:65534:daemon:/var:/bin/false"	>>$SMB_CONF_DIR/passwd
+# User setting
+echo "root:!:0:0:root:/root:/bin/ash"			>  $SMB_CONF_DIR/passwd
+echo "guest:*:65534:65534:guest:/tmp/ftpadmin:/bin/ash"	>> $SMB_CONF_DIR/passwd
+echo "nobody:*:65534:65534:nobody:/var:/bin/false" 	>> $SMB_CONF_DIR/passwd
+echo "daemon:*:65534:65534:daemon:/var:/bin/false"	>> $SMB_CONF_DIR/passwd
 
-# group setting
-echo "root:x:0:"	> $SMB_CONF_DIR/group
-echo "admin:x:1:"	>>$SMB_CONF_DIR/group
-echo "guest:x:65534:"	>>$SMB_CONF_DIR/group
-
-(sleep 1; echo "$($config get http_passwd)"; sleep 1; echo "$($config get http_passwd)") | /usr/sbin/adduser -G admin admin -D -H -h /tmp/ftpadmin -s /bin/ash
+# Group setting
+SMB_USER=`$CONFIG get http_username`
+echo "root:x:0:"					>  $SMB_CONF_DIR/group
+echo "admin:x:1:"					>> $SMB_CONF_DIR/group
+if [ "x$SMB_USER" != "xadmin" ]; then
+	echo "$SMB_USER:x:2:"				>> $SMB_CONF_DIR/group
+fi
+echo "guest:x:65534:"					>> $SMB_CONF_DIR/group
 echo "guest::10957:0:99999:7:::"                        >> $SMB_CONF_DIR/shadow
 
-# clear smbpasswd file
-echo -n ""	> $SMB_PASSWD_DIR
+# root and admin use the same password
+(echo "$(nvram get http_passwd)"; echo "$(nvram get http_passwd)") | /usr/bin/passwd root
+(sleep 1; echo "$($CONFIG get http_passwd)"; sleep 1; echo "$($CONFIG get http_passwd)") | /usr/sbin/adduser -G admin admin -H -h /tmp/ftpadmin -s /bin/ash -a sha
 
-(config get http_passwd; config get http_passwd) | /usr/sbin/smbpasswd root -a -s
-(config get http_passwd; config get http_passwd) | /usr/sbin/smbpasswd admin -a -s
+# Access samba by http login username and password
+if [ "x$SMB_USER" != "xadmin" ]; then
+	(sleep 1; echo "$($CONFIG get http_passwd)"; sleep 1; echo "$($CONFIG get http_passwd)") | /usr/sbin/adduser -G admin $SMB_USER -H -h /tmp/ftpadmin -s /bin/ash -a sha
+fi
+
+# Clear smbpasswd file
+echo -n ""	> $SMB_PASSWD_FILE
+
+# Set samba password for root, samba user and empty password for guest
+($CONFIG get http_passwd; $CONFIG get http_passwd) | /usr/sbin/smbpasswd root -a -s
+($CONFIG get http_passwd; $CONFIG get http_passwd) | /usr/sbin/smbpasswd "$SMB_USER" -a -s
 (echo -n ""; echo -n "") | /usr/sbin/smbpasswd guest -a -s
 
-readycloud_enable=`${config} get readycloud_enable`
-if [ $readycloud_enable -eq 1 ]; then
-i=0
-id=500
-while [ $i -le 9 ]; do
-	readycloud_user="`${config} get readycloud_user$i`"
-	if [ "x$readycloud_user" != "x" ]; then
-		username=`echo $readycloud_user | awk '{print $1}'`
-		userpasswd=`echo $readycloud_user | awk '{print $3}'`
-		echo "$username:$id:XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX:$userpasswd:[U          ]:LCT-00000001:" >> $SMB_PASSWD_DIR
-	else
-		break;
-	fi
-	let i=$i+1
-	let id=$id+1
-done
-fi
+exit 0

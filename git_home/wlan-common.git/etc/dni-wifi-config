@@ -1293,17 +1293,17 @@ if [ -n "$DNI_CONFIG" ]; then
     wl_dtim_wo_guest=`dniconfig get wl_dtim_wo_guest`
     wl_dtim_w_guest=`dniconfig get wl_dtim_w_guest`
     wl_guest_dtim=`dniconfig get wl_guest_dtim`
-    wl_dtim_wo_guest=${wl_dtim_wo_guest:-3}
-    wl_dtim_w_guest=${wl_dtim_w_guest:-3}
-    wl_guest_dtim=${wl_guest_dtim:-3}
+    wl_dtim_wo_guest=${wl_dtim_wo_guest:-4}
+    wl_dtim_w_guest=${wl_dtim_w_guest:-4}
+    wl_guest_dtim=${wl_guest_dtim:-4}
 
 
     wl_dtim_wo_byod=`dniconfig get wl_dtim_wo_byod`
     wl_dtim_w_byod=`dniconfig get wl_dtim_w_byod`
     wl_byod_dtim=`dniconfig get wl_byod_dtim`
-    wl_dtim_wo_byod=${wl_dtim_wo_byod:-3}
-    wl_dtim_w_byod=${wl_dtim_w_byod:-3}
-    wl_byod_dtim=${wl_byod_dtim:-3}
+    wl_dtim_wo_byod=${wl_dtim_wo_byod:-4}
+    wl_dtim_w_byod=${wl_dtim_w_byod:-4}
+    wl_byod_dtim=${wl_byod_dtim:-4}
 
     wl_arlo_dtim=`dniconfig get wl_arlo_dtim`
     wl_arlo_dtim=${wl_arlo_dtim:-42}

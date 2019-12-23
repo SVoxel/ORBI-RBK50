@@ -56,19 +56,27 @@ font-family: 'avenir-next-medium';
 
   font-stretch: normal;
 
-  line-height: 1.08;
+  line-height: 34px;
 
   letter-spacing: normal;
 
   text-align: center;
 
   color: #000000;
-	margin-bottom: 9px;
+	max-width: 600px;
+	margin: 0 auto 20px auto;
+}
+.heading2 a{
+    color: #000000;
+    text-decoration: underline;
+}
+.heading2 a:hover{
+    text-decoration: none;
 }
 .sub-heading {
- max-width:430px; margin:auto; margin-bottom:30px;
+ max-width:580px; margin:auto; margin-bottom:30px;
 
-	  font-size: 18px;
+	font-size: 18px;
 
   font-weight: normal;
 

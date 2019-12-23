@@ -2,6 +2,7 @@
 
 CONFIG="/bin/config"
 flash_type="$($CONFIG get dgc_flash_type)"
+orbi_project=`cat /tmp/orbi_project`
 
 #EMMC flash data
 devtable_mtd_dev=$(part_dev device_table 2>/dev/null)
@@ -12,6 +13,7 @@ LOCAL_DEVICE_TABLE=/tmp/device_tables/local_device_table
 
 copy_devicetables_files()
 {
+	[ ! -e /tmp/device_tables/oui.csv ] && mkdir -p /tmp/device_tables
 	[ ! -e /tmp/device_tables/oui.csv ] && cp /etc/oui.csv /tmp/device_tables/
 	[ ! -e /tmp/device_tables/mam.csv ] && cp /etc/mam.csv /tmp/device_tables/
 	[ ! -e /tmp/device_tables/oui36.csv ] && cp /etc/oui36.csv /tmp/device_tables/
@@ -20,11 +22,10 @@ copy_devicetables_files()
 	[ ! -e /tmp/device_tables/local_device_table ] && touch /tmp/device_tables/local_device_table
 }
 
-start()
+mount_device_tbales_flash()
 {
-	mkdir -p /tmp/netscan
-	touch /tmp/device_user_defined
 	local flag=0
+	[ "$flash_type" = "" ] && return
 	if [ "x$flash_type" == "xEMMC" ];then
 		if [ "x$(df |grep $devtable_mtd_dev)" = "x" ]; then
 			[ ! -d /tmp/device_tables ] && mkdir -p /tmp/device_tables
@@ -54,32 +55,31 @@ start()
 
 		fi
 	fi
+}
 
-    #get interface info and save in /tmp/netscan_if_conf
-    /etc/init.d/netscan_if.init
-
+start()
+{
+	mkdir -p /tmp/netscan
+	touch /tmp/device_user_defined
+	mount_device_tbales_flash
+	/etc/init.d/netscan_if.init
 	copy_devicetables_files 
-
-	PS=`ps |grep net-scan | grep -v grep`
-	if [ "x$PS" = "x" ]; then
-		/usr/sbin/net-scan
-	else
-		killall -9 net-scan
-		/usr/sbin/net-scan
-	fi
-	PS=`ps |grep satellite_ctype | grep -v grep`
-	if [ "x$PS" = "x" ]; then
-		/etc/init.d/satellite_ctype start &
-	fi
+	PS=`ps |grep fing-devices | grep -v grep`
+	[ "x$PS" != "x" ] && killall fing-devices
+	PS=`ps |grep net-scan | grep -v grep|grep -v etc`
+	[ "x$PS" != "x" ] && killall -9 net-scan
+	/usr/sbin/net-scan
+	/usr/sbin/fing-devices
 }
 
 stop()
 {
 	killall -9 net-scan
+	killall fing-devices
 	if [ "x$flash_type" == "xEMMC" ];then
-		umount $devtable_mtd_dev
+		umount $devtable_mtd_dev 2>/dev/null
 	else
-		umount /tmp/device_tables
+		umount /tmp/device_tables 2>/dev/null
 	fi
 }
 

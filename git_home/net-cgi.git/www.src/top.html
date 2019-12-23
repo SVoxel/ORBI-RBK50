@@ -209,11 +209,11 @@ function loadvalue()
 
 	var app_btn = document.getElementById("ad_button");
 	if(app_from == "1")
-		app_btn.innerHTML = "GET";
+		app_btn.innerHTML = "$app_download_str1";
 	else if(app_from == "2")
-		app_btn.innerHTML = "Install";
+		app_btn.innerHTML = "$app_download_str2";
 	else
-		app_btn.innerHTML = "Learn more";
+		app_btn.innerHTML = "$learn_more";
 	if(lang_select != "Auto")
 		lang_select = gui_region;
 	document.forms[0].language.value = lang_select;
@@ -287,8 +287,9 @@ window.onresize = function(){
 	</div>
 </div>
 <!--Alert starts-->
-<div class="download-alert-orbi" id="orbi-alert" style="display:none;">Get security alerts and manage from anywhere with the Orbi App.
-<div ><a id="ad_button" href="http://orbi-app.com/" class="download-btn-orbi" target="_blank">Learn more</a> <span class="cross" id="app_cross" name="app_cross"><img src="assets/images/cross.svg" class="cross" alt=""/></span></div>
+<div class="download-alert-orbi" id="orbi-alert" style="display:none;">$app_basic_description1
+	<div><a id="ad_button" href="http://orbi-app.com/" class="download-btn-orbi" target="_blank">$learn_more</a></div>
+	<div><span class="cross" id="app_cross" name="app_cross"><img src="assets/images/cross.svg" class="cross" alt=""/></span></div>
 </div>
 <!--Alert ends-->
 <div id="firm_version" name="firm_version">$router_firmware_version<br /><% cat_file_xss("/firmware_version") %><% get_firmware_region("single_blank", "ww_blank") %></div>

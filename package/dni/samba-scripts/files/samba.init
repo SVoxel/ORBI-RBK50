@@ -34,9 +34,9 @@ start()
     /usr/sbin/detectSATA start
 
     # update smb.conf and start samba if needed
-    /usr/sbin/update_smb.sh
     /etc/init.d/dbus start
     /etc/init.d/avahi-daemon start
+    /usr/sbin/update_smb.sh
 }
 
 stop() {

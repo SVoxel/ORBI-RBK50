@@ -361,7 +361,7 @@ function getDevices()
 					else if(dev_info[i]['backhaul_sta'] == "Poor")
 						msg += '<td rowspan=1 align=center><font color=purple>$state_poor</font></td></tr>';
 					else if(dev_info[i]['backhaul_sta'] == "Config Sync")
-						msg += '<td rowspan=1 align=center><font color=gray>Config Sync</font></td></tr>';
+						msg += '<td rowspan=1 align=center><font color=gray>$config_sync</font></td></tr>';
 					else
 						msg += '<td rowspan=1 align=center><font color=red>$state_disconnect</font>&nbsp;&nbsp;<input type="button" class="add_bt" value="$remove_mark" onclick="del_satellite('+i+');"/></td></tr>';
 										

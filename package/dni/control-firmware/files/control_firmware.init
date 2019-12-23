@@ -1,0 +1,14 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2006 OpenWrt.org
+
+START=96
+boot() {
+	is_base=`cat /tmp/orbi_type`
+	if [ "x$is_base" = "xBase" ]; then
+		#for bug58012
+		touch /tmp/fwcheck_status
+		/usr/sbin/fw-checking
+		echo "control-firmware will be Running once an hour at random time !!!" > /dev/console
+		/usr/sbin/boot-notification &
+	fi
+}

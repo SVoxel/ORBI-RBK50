@@ -69,6 +69,11 @@ update() {
 		exit 0
 	fi
 
+	cloud_enable=$($config get readycloud_enable)
+	if [ "$cloud_enable" = "0" ]; then
+		exit 0
+	fi
+
 	[ "$(cat /module_name)" = "BRS50" ] && return 1
 	[ -f /tmp/.cloud_updated ] && return 1
 	PID_file=/var/run/cloud.pid

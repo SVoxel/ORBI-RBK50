@@ -11,7 +11,7 @@ start() {
 }
 
 stop() {
-	killall detcable
+	killall detcable-bin
 }
 
 restart() {

@@ -11,6 +11,12 @@ boot() {
 	if [ "x`/bin/config get dgc_func_have_circle`" != "x1" ]; then
 		exit 0
 	fi
+
+	#Check if circle is disabled
+	if [ "`/bin/config get nocircle`" = "1" ]; then
+		exit 0
+	fi
+
 	#format partition
 	mount_dev=`part_dev circle`
 	if [ -b $mount_dev ];then

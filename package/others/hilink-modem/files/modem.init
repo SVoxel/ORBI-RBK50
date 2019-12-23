@@ -1,5 +1,5 @@
 #!/bin/sh /etc/rc.common
-START=99
+START=93
 
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 CONFIG=/bin/config
@@ -45,7 +45,7 @@ start() {
 	insmod $MODULE_PATH/cdc_ether.ko
 	insmod $MODULE_PATH/rndis_host.ko
 	usbmode -s
-	sleep 10
+	sleep 15
 	ifconfig eth2 up
 
 	# Check: is modem attached
@@ -72,7 +72,7 @@ start() {
 		/etc/init.d/net-wan start
 		net-wall restart
 		killall ntpclient
-		sleep 15
+		sleep 20
 		/etc/init.d/ntpclient start
 		/etc/init.d/dnscrypt-proxy-2 start
 		/etc/init.d/stubby start

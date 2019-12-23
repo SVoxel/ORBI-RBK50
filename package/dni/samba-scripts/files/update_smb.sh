@@ -14,6 +14,8 @@ done
 
 # No disk: exit
 if [ $DISK = "0" ]; then
+	/etc/init.d/avahi-daemon stop
+	/etc/init.d/dbus stop
 	exit 0
 fi
 

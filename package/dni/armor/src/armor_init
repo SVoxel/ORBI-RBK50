@@ -1,11 +1,17 @@
 #!/bin/sh /etc/rc.common
 #To use circle function,please identify the value of "mount_dev"
 START=94
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+URL="https://www.voxel-firmware.com/Downloads/armor/2.2.57-10"
+
 boot() {
-    if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
-        exit 0
-    fi
+	if [ "x$(/bin/config get factory_mode)" = "x1" ]; then
+		exit 0
+	fi
 	if [ "`/bin/config get dgc_func_have_armor`" != "1" ]; then
+		exit 0
+	fi
+	if [ "`/bin/config get noarmor`" = "1" ]; then
 		exit 0
 	fi
 	if [ "x`cat /tmp/orbi_type`" != "xBase" ]; then
@@ -86,10 +92,18 @@ boot() {
 			
 
 	if [ ! -e "/opt/bitdefender/bitdefender-release" ]; then
+		if [ ! -d /lib/armor ]; then
+			mkdir /lib/armor
+		fi
+		wget --no-check-certificate $URL/phase2.tar.gz -O /lib/armor/phase2.tar.gz
 		[ -e /lib/armor/phase2.tar.gz ] && tar -zxvf /lib/armor/phase2.tar.gz -C / --keep-directory-symlink
 	fi
 
 	if [ ! -e "/opt/bitdefender/bin/bdupd" ]; then
+		if [ ! -d /lib/armor ]; then
+			mkdir /lib/armor
+		fi
+		wget --no-check-certificate $URL/phase2-upd.tar.gz -O /lib/armor/phase2-upd.tar.gz
 		[ -e /lib/armor/phase2-upd.tar.gz ] && tar -zxvf /lib/armor/phase2-upd.tar.gz -C /opt/bitdefender --keep-directory-symlink
 	fi
 	chown -R root:root /opt/bitdefender/

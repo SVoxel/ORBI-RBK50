@@ -70,7 +70,7 @@ bh_basic_pptp_connection_id="連線 ID/名稱"
 bh_l2tp_connection="偵測到 L2TP 網際網路連線"
 
 //BRS_03A_D_bigpond.html
-bh_bpa_connection="偵測到 BigPond 網際網路連線" 
+bh_bpa_connection="偵測到 BigPond 網際網路連線"
 
 bh_basic_bpa_auth_serv="驗證伺服器"
 
@@ -117,7 +117,7 @@ bh_basic_int_third_dns="第三個 DNS"
 //BRS_03A_E_IP_problem.html
 bh_genie_cannot_find_ip="這很可能是由下列原因之一造成的："
 bh_genie_cannot_find_ip_reason1="1.佈線步驟時未重新啟動數據機電源。"
-bh_genie_cannot_find_ip_reason1_desc="要解決此問題，請重新啟動數據機電源（先關閉電源，再重新開啟）。如果數據機是使用電池供電，則要重新啟動數據機電源，您可能需要取出電池再重新插入。電源重新啟動後，請稍候 2 分鐘，直到數據機完全啟動為止。" 
+bh_genie_cannot_find_ip_reason1_desc="要解決此問題，請重新啟動數據機電源（先關閉電源，再重新開啟）。如果數據機是使用電池供電，則要重新啟動數據機電源，您可能需要取出電池再重新插入。電源重新啟動後，請稍候 2 分鐘，直到數據機完全啟動為止。"
 bh_genie_cannot_find_ip_reason2="2.黃色乙太網路線未確實插入，或是插錯位置。"
 bh_genie_cannot_find_ip_reason2_desc="要解決此問題，請務必將黃色的乙太網路纜線牢固插入寬頻數據機連接埠和路由器的網際網路連接埠。"
 
@@ -148,7 +148,7 @@ bh_browse_mark="瀏覽"
 
 
 //BRS_03B_haveBackupFile_fileRestore.html
-bh_settings_restoring="正在還原路由器設定" 
+bh_settings_restoring="正在還原路由器設定"
 
 bh_plz_waite_restore="此程序可能需要幾分鐘；請稍候..."
 
@@ -186,17 +186,17 @@ bh_connect_success_2="此路由器已預設下列唯一的無線網路名稱 (SS
 
 bh_network_key="網路金鑰（密碼）"
 
-bh_rollover_help_text="您的路由器已預設 WPA2-PSK 無線安全性設定，以防您的網路遭受未經授權的存取。要加入該無線網路，您必須輸入網路金鑰（密碼）。這些預設設定對於此裝置是唯一的，就像序號一樣。如需變更，可稍後在路由器網頁圖形介面的「無線設定」畫面中進行變更。" 
+bh_rollover_help_text="您的路由器已預設 WPA2-PSK 無線安全性設定，以防您的網路遭受未經授權的存取。要加入該無線網路，您必須輸入網路金鑰（密碼）。這些預設設定對於此裝置是唯一的，就像序號一樣。如需變更，可稍後在路由器網頁圖形介面的「無線設定」畫面中進行變更。"
 
-bh_success_no_wireless_security_1 = "無線安全未在此路由器上啟用。NETGEAR 強烈建議"
-bh_success_no_wireless_security_2 = "按一下這裡"
-bh_success_no_wireless_security_3 = "啟用無線安全保護你的網路。"
+bh_success_no_wireless_security_1 ="無線安全未在此路由器上啟用。NETGEAR 強烈建議"
+bh_success_no_wireless_security_2 ="按一下這裡"
+bh_success_no_wireless_security_3 ="啟用無線安全保護你的網路。"
 
 bh_wirless_name="SSID"
 
 bh_wireless="無線"
 
-bh_wpa_wpa2_passpharse="網路金鑰（密碼）" 
+bh_wpa_wpa2_passpharse="網路金鑰（密碼）"
 
 bh_save_settings="保持路由器設定"
 
@@ -296,7 +296,7 @@ bh_coun_finland="芬蘭"
 bh_coun_germany="德國"
 bh_coun_hk="香港"
 bh_coun_italy="義大利"
-bh_coun_netherlands="荷蘭"  
+bh_coun_netherlands="荷蘭"
 bh_coun_newzealand="紐西蘭"
 bh_coun_norway="挪威"
 bh_coun_peru="秘魯"
@@ -445,7 +445,7 @@ bh_update_head="正在更新設定"
 bh_upgrade_str_1="注意：此動作需要大約"
 bh_upgrade_str_2="分鐘以進行韌體升級。<br>請勿關閉電源或按重設按鈕。"
 
-//ap mode detection
+//ap mode detection 
 //BRS_00_02_ap_select.html
 bh_help_me_choose="協助我選擇"
 bh_help_me_content="genie 會逐步引導您回答幾個問題，並且建議最適合您的操作模式。"
@@ -456,7 +456,7 @@ bh_router_description="此模式能讓您充分利用 NETGEAR <a href='router_fu
 bh_ap_description="此模式適用於簡易設定：若裝置已連線至您現有的路由器或閘道，或者您只想使用這個新的 NETGEAR 路由器延伸您的 WiFi 涵蓋範圍。 某些<a href='router_function.html' target='_blank'>路由器功能</a>無法在「存取點模式」中使用。"
 bh_select_tips="您似乎正將 NETGEAR 路由器安裝到現有的網際網路供應商 WiFi 路由器或閘道的後方。 您可選擇將您的路由器安裝到不同的操作模式。"
 bh_select_router_or_ap="如果您想要自行選擇模式，您必須選擇「路由器模式」或「存取點模式」選項按鈕。"
-//BRS_ap_detect_01_01.html
+//BRS_ap_detect_01_01.html 
 bh_current_network="您目前的網路"
 bh_help_choose_page1_str="genie 偵測到您使用閘道連線至網際網路。 若您希望使用新路由器的所有功能，NETGEAR 建議您使用「路由器模式」。 genie 需要詢問您幾個問題，確認您適合使用「路由器模式」。"
 //BRS_ap_detect_01_02.html
@@ -544,7 +544,7 @@ bh_India="印度"
 bh_Indonesia="印尼"
 bh_Italy="義大利"
 bh_Malaysia="馬來西亞"
-bh_Netherlands="荷蘭"  
+bh_Netherlands="荷蘭"
 bh_New_Zealand="紐西蘭"
 bh_Philippine="菲律賓"
 bh_Poland="波蘭"
@@ -590,7 +590,6 @@ bh_dsl_bridge_lan2="Enable IPTV on LAN2"
 bh_ppp_readycloud_query="若您使用 ReadyCLOUD 註冊您的路由器，路由器的網際網路連線模式將會從「指定撥號」變更為「永遠開啟」。 此變更是要讓 ReadyCLOUD 遠端存取連接的 USB 儲存裝置。 是否要繼續？"
 bh_ppp_readycloud_warning_1="若您使用 ReadyCLOUD 註冊您的路由器，您必須將路由器的網際網路連線模式從「手動連線」變更為「永遠開啟」，才能讓 ReadyCLOUD 遠端存取連接的 USB 儲存裝置。 請前往「網際網路設定」頁面進行變更。"
 bh_ppp_readycloud_warning_2="您的路由器或閘道器未連線至網際網路。 您需要網際網路連線才能在 ReadyCLOUD 註冊您的路由器或閘道器。 請將您的路由器或閘道器連線至網際網路，然後再試一次。"
-
 
 bh_admin_account="管理帳戶設定"
 bh_account_msg="管理密碼是用於登入 Orbi Router 的網頁介面。請變更管理密碼，確保網路安全。"
@@ -735,12 +734,40 @@ bh_update_all="全部更新"
 bh_orbi_sync="若要新增其他的 Orbi Satellite（非 Orbi 套件裡的Orbi Satellite，需另外購買）到您現有的 Orbi WiFi 網路，請在兩分鐘內分別按下路由器與新增的 Orbi Satellite 上的 <b>Sync</b>（同步）按鈕。"
 bh_tos_title="服務條款"
 bh_tos_agree="我同意條款與條件，而且瞭解 NETGEAR 會自動升級我的 Orbi 裝置。"
+bh_router_or_ap="Router Mode or Access Point Mode?"
+bh_mode_general="We detected that you are trying to install your new Orbi router behind another gateway, for example, the DSL or cable gateway from your Internet service provider. Usually a gateway also provides WiFi or Voice over Internet (VoIP) function. You can install your Orbi router in two different operation modes."
+bh_ap_desc1="If you want to use your new Orbi router to get better WiFi performance than your existing gateway provides, access point mode is the easiest way to do that. We recommend that you disable the WiFi function on your existing gateway, if it has WiFi functionality. With this mode, you can connect wired devices to the gateway and connect wired and WiFi devices to your new Orbi router. In this mode, by default, your new Orbi router's IP address is assigned by your gateway dynamically and is unlikely to be 192.168.1.1. However, you can still use the URL <a href='http://orbilogin.com' target='_blank'>http://orbilogin.com</a> to access the router's management GUI from a device connected to the router. Some <a href='BRS_orbi_router_function.html' target='_blank'>router functions</a> are not available in this mode, and you must use router mode if you want to use those functions."
+bh_ap_sel_desc="This mode is appropriate for easy setup if devices are already connected to your existing router or gateway, or if you want to use your new Orbi router to extend your WiFi coverage. Some <a href='BRS_orbi_router_function.html' target='_blank'>router functions</a> are not available in access point mode."
+bh_router_desc1="This mode configures your new Orbi router as a normal WiFi router behind your gateway and creates a separate network behind your gateway. To take full advantage of these router's advanced functions, we recommend that you use router mode. In router mode, the only device that can be connetcted to your existing gateway is your new Orbi router. You must connect all of your devices to the new Orbi router. If your existing gateway has a WiFi function, disable it."
+bh_router_sel_desc="This mode allows you to take advantage of Orbi <a href='BRS_orbi_router_function.html' target='_blank'>router functions</a>. The Orbi router is set up as a normal WiFi router behind your existing router or gateway. This mode requires that all of your devices connect to the new Orbi router and not to your existing gateway."
+bh_router_function_desc1="The following router features are not available in access point mode:"
+bh_router_function_desc2="The following advanced router features are not available in access point mode. If you use them in router mode, they require configuration on your existing gateway:"
+bh_access_control="Access control"
+bh_traffic_meter="Traffic meter"
+bh_block_site="Block sites"
+bh_block_service="Block service"
+bh_static_route="Static route"
+bh_port_forwarding="連接埠轉送"
+bh_port_triggering="Port triggering"
+bh_remote_management="Remote management"
+bh_vpn_termination="VPN termination"
+led_control="Lighting LEDs control"
+light_brightness ="Lighting LEDs brightness"
+light_topsc = "Turn on Top and Bottom Lighting LEDs by schedule"
+light_period = "The Lighting LED is scheduled to turn on during the following time period"
+light_onoff ="Lighting LEDs On/Off Settings"
+led_onoff ="When to turn on Lighting LEDs"
+led = "LED"
+ledoff = "LED Off"
+led_tm_err1 = "The end time can not be later than the start time!"
+led_confilct = "Your new schedule rule conflicts with the existing rules!"
 bh_must_enter_passwd="您必須輸入密碼。"
 bh_must_change_passwd="您無法使用預設的管理密碼。您必須變更管理密碼。"
 bh_passwd_condition="建議您的密碼能符合下列條件："
 bh_password_reset_conditions5_1="包含 6 到 32 個字元"
 bh_password_reset_conditions6="相同的字元不能連續出現兩個以上"
 bh_password_reset_tip3="此外，建議您的密碼能符合下列四個條件的其中三項："
+bh_orbi_connect_new_ssid_msg="If you were connected using preset Wi-Fi credentials, it's time to connect using new Wi-Fi credentials."
 bh_password_reset_conditions1="至少一個大寫字元"
 bh_password_reset_conditions2="至少一個小寫字元"
 bh_password_reset_conditions3="至少一個數字"
@@ -751,4 +778,9 @@ bh_orbi_skip_mark="跳過"
 bh_password_reset="路由器密碼重設"
 bh_verify_passwd_reset="我們已確認您的密碼重設要求。請在下方輸入新密碼、填妥其他欄位，然後按<b>下一步</b>按鈕。"
 bh_orbi_connect_new_ssid="Connect to new SSID"
-bh_orbi_connect_new_ssid_msg="If you were connected using preset Wi-Fi credentials, it's time to connect using new Wi-Fi credentials."
+bh_password_length_error="密碼必須包含至少六個字元。"
+bh_app_install_description1="如要以最快速度完成設定，請下載 Orbi 應用程式，位置為 "
+bh_app_install_description2="請前往 Orbi-App.com，將 Orbi 應用程式下載到您使用行動數據連線的手機或平板裝置，以完成 Wi-Fi 網路設定。"
+bh_app_install_description3="如要以最快速度完成設定，請下載 Nighthawk 應用程式，位置為 "
+bh_app_install_description4="請前往 Nighthawk-App.com，將 Nighthawk 應用程式下載到您使用行動數據連線的手機或平板裝置，以完成 Wi-Fi 網路設定。"
+bh_app_install_next="若您並未使用相容的智慧型手機，請按一下此處"

@@ -58,14 +58,11 @@ endef
 define Package/ntgdal/install
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dal     $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/btdm     $(1)/usr/bin/
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libdal.so    $(1)/usr/lib/libdal.so
-	
-	$(INSTALL_DIR) $(1)/usr/include
-	$(INSTALL_DATA) $(PKG_BUILD_DIR)/include/libdal.h $(1)/usr/include
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dal		$(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/btdm		$(1)/usr/bin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/libdal.so	$(1)/usr/lib/libdal.so
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/ntgdal $(1)/etc/init.d/ntgdal
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/ntgdal	$(1)/etc/init.d/ntgdal
 endef
 
 $(eval $(call BuildPackage,ntgdal))

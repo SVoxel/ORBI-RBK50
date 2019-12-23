@@ -11,16 +11,6 @@ while :; do
 			killall -SIGUSR1 net-scan
 		fi
 	fi
-	streamboost_enable=`/bin/config get streamboost_enable`
-	if [ "x$streamboost_enable" = "x1" ];then
-		streamboost status > /tmp/streamboost_status
-		downnum=`cat /tmp/streamboost_status |grep DOWN |wc -l`
-		if [ "$downnum" != "0" ] && [ "$downnum" -lt "10" ]; then
-			/etc/init.d/streamboost restart
-			time=`date '+%Y-%m-%dT%H:%M:%SZ'`
-			echo "Restart streamboost:$time" >> /tmp/restart_process_list
-		fi
-	fi
 
 	if [ "$update_count" = "1" ]; then
 		new_whatchdog_value=`cat /tmp/soapclient/watchdog_time`
@@ -57,6 +47,16 @@ while :; do
 		echo "Restart net-scan:$time" >> /tmp/restart_process_list
 		/usr/sbin/net-scan
 	fi
+
+	orbi_type=`cat /tmp/orbi_type`
+	fing_status=`ps | grep fing-devices | grep -v grep | grep -v killall`
+	if [ -z "$fing_status" -a "$orbi_type" = "Base" ];then
+		killall -9 fing-devices
+		time=`date '+%Y-%m-%dT%H:%M:%SZ'`
+		echo "Restart fing-devices:$time" >> /tmp/restart_process_list
+		/usr/sbin/fing-devices 2> /dev/null
+	fi
+
 	log_size=`wc -c /tmp/dnsmasq.log |awk '{print $1}'`
 	if [ $log_size -gt 1048576 ]; then
 		echo -n > /tmp/dnsmasq.log

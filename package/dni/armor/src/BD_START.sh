@@ -1,8 +1,5 @@
 #!/bin/sh
 
-#For bdupd apply-update case,binary will auto call bd start, we need to stop it and make some settings first
-/opt/bitdefender/bin/bd stop
-
 #Run restore, if we have backup dir, that means router has performed upgrade and backup BD configuration to backup dir
 /usr/share/armor/upgrade_bd_cfg.sh restore
 /usr/share/armor/change_cloud_server.sh set_server production

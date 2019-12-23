@@ -137,7 +137,7 @@ function checkpasswd(cf)
 	}
 	if(cf.sysNewPasswd.value.length < 6)
 	{
-		alert("Your password must contain six or more characters.");
+		alert(bh_password_length_error);
 		return false;
 	}
 	if (cf.sysNewPasswd.value.length >= 33 || cf.sysConfirmPasswd.value.length >= 33)
