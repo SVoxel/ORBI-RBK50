@@ -1,0 +1,135 @@
+#!/bin/sh /etc/rc.common
+START=99
+
+PATH=/bin:/sbin:/usr/bin:/usr/sbin
+CONFIG=/bin/config
+WIREGUARD_ON=$($CONFIG get wg-client)
+MODULE_NAME=$(cat /module_name)
+AP_MODE=$($CONFIG get ap_mode)
+BRIDGE_MODE=$($CONFIG get bridge_mode)
+EXTENDER_MODE=$($CONFIG get extender_mode)
+KVER=$(uname -a | awk -F "[ -]" '{ print $3 }')
+WGMTU="1420"
+WGConfig="/tmp/wg0.conf"
+LOG_FILE="/var/log/wireguard-client.log"
+CONF_FILE="/etc/wireguard.conf"
+
+start() {
+	# Check if WireGuard client is enabled
+	if [ ! "$WIREGUARD_ON" = "1" ]; then
+		echo "WireGuard client is not enabled in nvram. Exit." | tee -a $LOG_FILE
+		exit 0
+	fi
+
+	# Check WireGuard config file existence, exit if no such file
+	if [ ! -f "$CONF_FILE" ]; then
+		echo "Error: File $CONF_FILE not found." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check: is it router, exit if "no"
+	if [ "$MODULE_NAME" != "RBR50" ]; then
+		echo "Error: This device is not router (satellite)." | tee -a $LOG_FILE
+		exit 0
+	fi	
+
+	# Check if not router mode
+	if [ "$AP_MODE" = "1" ] || [ "$BRIDGE_MODE" = "1" ] || [ "$EXTENDER_MODE" = "1" ]; then
+		echo "Error: Not router mode." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check if wg0 interface is available
+	ifconfig | grep -q wg0
+	if [ $? -eq 0 ]; then
+		echo "Error: wg0 interface already exists." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# WireGuard config (/etc/wireguard.conf) should define the following:
+	# +-------------------------------------------------------------------------+
+	# | EndPoint="WireGuardProviderHostName"                                    |
+	# | LocalIP="xxx.xxx.xxx.xxx"                                               |
+	# | PrivateKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx="               |
+	# | PublicKey="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx="                |
+	# | Port="xxxx"                                                             |
+	# +-------------------------------------------------------------------------+
+	. $CONF_FILE
+
+	# Check if value of EndPoint is defined
+	if [ -z "$EndPoint" ]; then
+		echo "Error: No EndPoint is defined." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check if value of LocalIP is defined
+	if [ -z "$LocalIP" ]; then
+		echo "Error: No LocalIP is defined." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check if value of PublicKey is defined
+	if [ -z "$PublicKey" ]; then
+		echo "Error: No PublicKey is defined." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check if value of PrivateKey is defined
+	if [ -z "$PrivateKey" ]; then
+		echo "Error: No PrivateKey is defined." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Check if value of Port is defined
+	if [ -z "$Port" ]; then
+		echo "Error: No Port is defined." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# Get IP(v4) of EndPoint
+	IP=$(nslookup "$EndPoint" | tail -n 1 | awk '{ print $3 }')
+	if [ -z "$IP" ]; then
+		echo "Error: Cannot get IP of $EndPoint." | tee -a $LOG_FILE
+		exit 1
+	fi
+	echo "Start WireGuard client. Please wait." | tee -a $LOG_FILE
+	echo "IP of EndPoint $EndPoint is $IP." | tee -a $LOG_FILE
+
+	sleep 25
+
+	# WireGuard: create wg0 interface
+	insmod /lib/modules/"$KVER"/wireguard.ko
+	ip link add dev wg0 type wireguard
+	ip address add dev wg0 "$LocalIP"/24
+	ip link set up dev wg0
+	ifconfig wg0 mtu "$WGMTU"
+
+	# Check if wg0 interface is available
+	ifconfig | grep -q wg0
+	if [ $? -ne 0 ]; then
+		echo "Error: Cannot create wg0." | tee -a $LOG_FILE
+		exit 1
+	fi
+
+	# WireGuard: create wg0 config (wg0.conf)
+	echo "[Interface]"		>  $WGConfig
+	echo "PrivateKey = $PrivateKey"	>> $WGConfig
+	echo "[Peer]"			>> $WGConfig
+	echo "PublicKey = $PublicKey"	>> $WGConfig
+	echo "Endpoint = $IP:$Port"	>> $WGConfig
+	echo "AllowedIPs = 0.0.0.0/0"	>> $WGConfig
+
+	# Set config file for wg0 interface
+	wg setconf wg0 "$WGConfig" >>$LOG_FILE 2>>$LOG_FILE
+
+	# Route all via wg0
+	ip route add $(ip route get "$IP" | sed '/ via [0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}/{s/^\(.* via [0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\.[0-9]\{1,3\}\).*/\1/}' | head -n 1) 2>/dev/null
+	ip route add 0/1 dev wg0
+	ip route add 128/1 dev wg0
+	ip route delete default
+
+	# Restart firewall to apply iptables rules for WireGuard
+	echo "Restart firewall to apply iptables rules for WireGuard client." | tee -a $LOG_FILE
+	net-wall rule | tee -a $LOG_FILE
+	net-wall start | tee -a $LOG_FILE
+}
