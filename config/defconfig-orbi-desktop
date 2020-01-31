@@ -1477,7 +1477,7 @@ CONFIG_PACKAGE_net-web-language-table=y
 #
 # Configuration
 #
-CONFIG_NET_WEB_LANGUAGE_TABLE_GIT_TREEISH="language_tableV1.0.0.360"
+CONFIG_NET_WEB_LANGUAGE_TABLE_GIT_TREEISH="language_tableV1.0.0.370"
 # CONFIG_PACKAGE_netifd is not set
 # CONFIG_PACKAGE_om-watchdog is not set
 # CONFIG_PACKAGE_opkg is not set
@@ -2382,6 +2382,7 @@ CONFIG_LIBCURL_ZLIB=y
 # CONFIG_LIBCURL_LIBCURL_OPTION is not set
 # CONFIG_LIBCURL_VERBOSE is not set
 CONFIG_PACKAGE_libdbus=y
+CONFIG_PACKAGE_libdevmapper=y
 CONFIG_PACKAGE_libdw=m
 # CONFIG_PACKAGE_libevent2 is not set
 # CONFIG_PACKAGE_libevent2-core is not set
@@ -2779,11 +2780,12 @@ CONFIG_PACKAGE_ipset=y
 # CONFIG_PACKAGE_iputils-tracepath6 is not set
 # CONFIG_PACKAGE_iputils-traceroute6 is not set
 # CONFIG_PACKAGE_iw is not set
+CONFIG_PACKAGE_iw-full=y
 # CONFIG_PACKAGE_lacpd_dni is not set
 # CONFIG_PACKAGE_map is not set
 # CONFIG_PACKAGE_mdns is not set
 CONFIG_PACKAGE_net-dump=y
-# CONFIG_PACKAGE_attached-devices is not set
+CONFIG_PACKAGE_attached-devices=y
 
 #
 # Configuration
@@ -3106,6 +3108,7 @@ CONFIG_PACKAGE_blkid=y
 # CONFIG_PACKAGE_findfs is not set
 CONFIG_PACKAGE_hd-idle=y
 # CONFIG_PACKAGE_lsblk is not set
+CONFIG_PACKAGE_parted=y
 # CONFIG_PACKAGE_partx-utils is not set
 # CONFIG_PACKAGE_sfdisk is not set
 # CONFIG_PACKAGE_swap-utils is not set
@@ -3194,8 +3197,8 @@ CONFIG_PACKAGE_ubi-utils=y
 # CONFIG_PACKAGE_uuidgen is not set
 CONFIG_PACKAGE_vmstat=y
 # CONFIG_PACKAGE_whereis is not set
-CONFIG_PACKAGE_net-scan=y
-CONFIG_PACKAGE_net-scan-ext=y
+# CONFIG_PACKAGE_net-scan is not set
+# CONFIG_PACKAGE_net-scan-ext is not set
 
 #
 # DNI Global Configs
@@ -3308,8 +3311,8 @@ CONFIG_DGC_PRDL=""
 #
 # Firmware's information
 #
-CONFIG_DGC_FW_VERSION="9.2.5.0.43SF-HW"
-CONFIG_DGC_LG_VERSION="V1.0.0.371"
+CONFIG_DGC_FW_VERSION="9.2.5.1.11SF-HW"
+CONFIG_DGC_LG_VERSION="V9.1.0.0.370"
 CONFIG_DGC_FW_REGION=""
 CONFIG_DGC_CLOUD_VERSION="20170605"
 CONFIG_DGC_FW_KERNEL_SIZE="3932160"
