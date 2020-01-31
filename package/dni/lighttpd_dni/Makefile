@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_VERSION:=1.4.53
+PKG_VERSION:=1.4.54
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://download.lighttpd.net/lighttpd/releases-1.4.x
-PKG_MD5SUM:=1df2e4dbc965cfe6f99f008ac3db4d8d
+PKG_MD5SUM:=7abc776243c811e9872f73ab38b7f8b5
 
 PKG_LICENSE:=BSD-3c
 PKG_LICENSE_FILES:=COPYING
@@ -24,6 +24,11 @@ PKG_INSTALL:=1
 LOCAL_PKG_NAME_EXT:=lighttpd_dni
 
 include $(INCLUDE_DIR)/package.mk
+
+TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include/openssl-1.1.x $(TARGET_CPPFLAGS)
+TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS)
+TARGET_CFLAGS += -ffunction-sections -fdata-sections
+TARGET_LDFLAGS += -Wl,--gc-sections
 
 define Package/lighttpd_dni/Default
   SUBMENU:=Web Servers/Proxies
@@ -36,7 +41,7 @@ endef
 define Package/lighttpd_dni
   $(call Package/lighttpd_dni/Default)
   MENU:=1
-  DEPENDS:=+LIGHTTPD_SSL:libopenssl +libpcre +libpthread
+  DEPENDS:=+LIGHTTPD_SSL:libopenssl-1.1.x +libpcre +libpthread
   TITLE:=A flexible and lightweight web server
 endef
 
@@ -83,7 +88,7 @@ CONFIGURE_VARS+= \
 
 ifneq ($(strip $(CONFIG_LIGHTTPD_SSL)),)
   CONFIGURE_ARGS+= \
-	--with-openssl="$(STAGING_DIR)/usr"
+	--with-openssl="$(STAGING_DIR)/usr/lib/openssl-1.1.x"
 else
   CONFIGURE_ARGS+= \
 	--without-openssl
@@ -164,6 +169,7 @@ define BuildPlugin
 	$(CP) ./files/https_cert.sh $$(1)/etc/lighttpd/certs/https_cert.sh
 	$(CP) ./files/crtconfig.conf $$(1)/etc/lighttpd/certs/crtconfig.conf
 	$(CP) $(PKG_BUILD_DIR)/files/server.pem $$(1)/etc/lighttpd/certs/server.pem
+	$(CP) ./files/routerlogin.pem $$(1)/etc/lighttpd/certs/routerlogin.pem
 	$(CP) ./files/dhparam.pem $$(1)/etc/lighttpd/certs/dhparam.pem
   endef
 
@@ -205,4 +211,3 @@ $(eval $(call BuildPlugin,trigger_b4_dl,Trigger before download,+PACKAGE_lighttp
 $(eval $(call BuildPlugin,userdir,User directory,,30))
 $(eval $(call BuildPlugin,usertrack,User tracking,,30))
 $(eval $(call BuildPlugin,webdav,WebDAV,+PACKAGE_lighttpd_dni-mod-webdav:libsqlite3 +PACKAGE_lighttpd_dni-mod-webdav:libuuid +PACKAGE_lighttpd_dni-mod-webdav:libxml2,30))
-
