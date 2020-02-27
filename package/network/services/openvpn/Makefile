@@ -121,6 +121,12 @@ define Package/openvpn-$(BUILD_VARIANT)/install
 
 	ln -sv ../init.d/openvpn $(1)/etc/rc.d/S60openvpn
 
+	$(INSTALL_BIN) \
+		files/openvpn-client.init \
+		$(1)/etc/init.d/openvpn-client
+
+	ln -sv ../init.d/openvpn $(1)/etc/rc.d/S99openvpn-client
+
 	$(INSTALL_DATA) \
 		files/openvpn.upgrade \
 		$(1)/lib/upgrade/keep.d/openvpn
@@ -133,6 +139,12 @@ define Package/openvpn-$(BUILD_VARIANT)/install
 	$(INSTALL_BIN) \
 		files/vpn-firewall.sh \
 		$(1)/etc/openvpn/vpn-firewall.sh
+	$(INSTALL_BIN) \
+		files/ovpnclient-up.sh \
+		$(1)/etc/openvpn/ovpnclient-up.sh
+	$(INSTALL_BIN) \
+		files/ovpnclient-down.sh \
+		$(1)/etc/openvpn/ovpnclient-down.sh
 endef
 
 $(eval $(call BuildPackage,openvpn-openssl))
