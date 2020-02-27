@@ -97,7 +97,9 @@ $(call Package/e2fsprogs)
   DEPENDS:= +e2fsprogs
 endef
 
+TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -Os
 TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
+TARGET_LDFLAGS += -Wl,--gc-sections
 
 CONFIGURE_VARS += \
 	ac_cv_lib_pthread_sem_init=no
