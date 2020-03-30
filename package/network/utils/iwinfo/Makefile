@@ -37,7 +37,7 @@ define Package/libiwinfo
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=Generalized Wireless Information Library (iwinfo)
-  DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +libuci
+  DEPENDS:=+PACKAGE_kmod-cfg80211:libnl-tiny +libuci +libubox
   ABI_VERSION:=$(PKG_RELEASE)
 endef
 
@@ -88,6 +88,8 @@ TARGET_CFLAGS += \
 	-I$(STAGING_DIR)/usr/include/libnl-tiny \
 	-I$(STAGING_DIR)/usr/include \
 	-D_GNU_SOURCE
+
+TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib -lubox
 
 MAKE_FLAGS += \
 	FPIC="$(FPIC)" \
