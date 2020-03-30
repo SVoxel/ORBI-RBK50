@@ -23,7 +23,7 @@ PKG_INSTALL:=1
 include $(INCLUDE_DIR)/package.mk
 
 TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include/openssl-1.1.x $(TARGET_CPPFLAGS)
-TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS)
+TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS) -lunbound -lcrypto -lssl
 TARGET_CFLAGS += -std=gnu99
 
 define Package/stubby/Default
