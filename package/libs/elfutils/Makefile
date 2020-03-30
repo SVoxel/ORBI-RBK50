@@ -25,6 +25,10 @@ PKG_BUILD_DEPENDS:=USE_UCLIBC:argp-standalone USE_MUSL:argp-standalone
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
 
+TARGET_CFLAGS += -Wno-error=misleading-indentation -Wno-error=nonnull-compare \
+		 -Wno-error=implicit-fallthrough -Wno-error=stringop-overflow \
+		 -Wno-error=missing-attributes -Wno-error=absolute-value
+
 define Package/elfutils/Default
   SECTION:=libs
   CATEGORY:=Libraries
