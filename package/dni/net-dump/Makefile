@@ -25,7 +25,7 @@ define Package/net-dump/description
 	It is used for NTGR's Router Debug mode.
 endef
 
-TARGET_CFLAGS += -lconfig
+TARGET_CFLAGS += -L$(STAGING_DIR)/usr/lib -lconfig
 
 define Build/Prepare
 	mkdir -p $(PKG_BUILD_DIR)
