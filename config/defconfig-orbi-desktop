@@ -3046,6 +3046,7 @@ CONFIG_PACKAGE_whc_dni-ui=y
 #
 # Utilities
 #
+CONFIG_PACKAGE_nano=y
 
 #
 # Boot Loaders
