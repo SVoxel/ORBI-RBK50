@@ -133,7 +133,7 @@ define Package/dnipppstats/description
  This package contains an utility to report PPP statistics.
 endef
 
-TARGET_CFLAGS += -lconfig
+TARGET_CFLAGS += -L$(STAGING_DIR)/usr/lib -lconfig
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/ppp.git/* $(PKG_BUILD_DIR)/
