@@ -35,6 +35,7 @@ endif
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
+TARGET_CFLAGS += -Wno-error=format-truncation -L$(STAGING_DIR)/usr/lib
 TARGET_LDFLAGS += $(if $(CONFIG_USE_GLIBC),-lrt)
 
 define Package/procd
