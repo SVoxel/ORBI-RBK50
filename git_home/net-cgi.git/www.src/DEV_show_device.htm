@@ -96,6 +96,25 @@ back_reload_page("DEV_device.htm");
 var ts='<% cfg_get("orbi_edit_dev") %>';
 <% save_timestamp("orbi_edit_dev", "orbi_edit_led") %>
 var enable_block_device="<% cfg_get("enable_block_device") %>";
+
+function ip2int(ip) {
+	return ip.split('.').reduce (
+		function(ipInt, octet) {
+			return (ipInt<<8) + parseInt(octet, 10)
+		}, 0
+	) >>> 0;
+}
+
+Array.prototype.keySort = function(key,desc) {
+	this.sort (
+		function(a, b) {
+			var result = desc ? (ip2int(a[key]) < ip2int(b[key])) : (ip2int(a[key]) > ip2int(b[key]));
+			return result ? 1 : -1;
+		}
+	);
+	return this;
+}
+
 function goto_url()
 {
 	location.href="access_control.htm";
@@ -112,6 +131,8 @@ function update_device_info(json)
 	eval(json)
 	dev_info=[];
 	is_changed = device_changed;
+
+	device.keySort("ip");
 	
 	for(var i=0, len = device.length; i<len;i++)
 	{
