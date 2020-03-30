@@ -32,13 +32,13 @@ define Package/ubusd
   SECTION:=base
   CATEGORY:=Base system
   TITLE:=OpenWrt RPC daemon
-  DEPENDS:=+libubox
+  DEPENDS:=+libubox +libjson-c +libblobmsg-json
 endef
 
 define Package/libubus
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+libubox
+  DEPENDS:=+libubox +libjson-c +libblobmsg-json
   ABI_VERSION:=$(PKG_VERSION)
   TITLE:=OpenWrt RPC client library
 endef
@@ -51,6 +51,7 @@ define Package/libubus-lua
 endef
 
 TARGET_CFLAGS += -I$(STAGING_DIR)/usr/include
+TARGET_LDFLAGS += -L$(STAGING_DIR)/usr/lib -lblobmsg_json -ljson-c -lubox
 
 CMAKE_OPTIONS = \
 	-DLUAPATH=/usr/lib/lua
