@@ -1187,20 +1187,24 @@ int main(int argc, char**argv)
 	check_sata_dev();
 	check_sd_card_dev();
 
-	fp = fopen(USB_SMB_CONF, "w");
-	if (fp == NULL)
-		goto unlock;
+	fp = fopen(USB_SMB_CONF, "r");
+	if (fp == NULL) {
+		fp = fopen(USB_SMB_CONF, "w");
+		if (fp == NULL)
+			goto unlock;
 
-	if (argc == 2 && strlen(argv[1]) == 3 && strncmp(argv[1], "sd", 2) == 0)
-		diskname = argv[1];	/* sd[a-z] */
+		if (argc == 2 && strlen(argv[1]) == 3 && strncmp(argv[1], "sd", 2) == 0)
+			diskname = argv[1];	/* sd[a-z] */
 
-	add_smbd_global(fp);
-	load_share_info(fp, diskname);
+		add_smbd_global(fp);
+		load_share_info(fp, diskname);
 
-	fclose(fp);
+		fclose(fp);
 
-	reload_services();
-
+		reload_services();
+	} else {
+		fclose(fp);
+	}
 unlock:	
 	unlink(TMP_SAMBA_LOCK);
 	return 0;

@@ -45,8 +45,6 @@ define Package/samba-scripts/install
 	install -d -m0755 $(1)/usr/sbin
 	install -d -m0755 $(1)/tmp/samba
 	rm -f $(1)/usr/lib/smb.conf
-	ln -s /tmp/samba/smb.conf $(1)/etc/config/samba/smb.conf
-	install -m0644 ./files/smb.conf $(1)/etc/config/samba
 	install -m0644 ./files/passwd $(1)/usr/config
 	install -m0644 ./files/group $(1)/usr/config
 	install -m0755 ./files/update_user_v_02 $(1)/usr/sbin/update_user
