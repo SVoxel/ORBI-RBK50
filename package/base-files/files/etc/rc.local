@@ -1,4 +1,9 @@
+#!/bin/sh -e
+
 # Put your custom commands here that should be executed once
 # the system init finished. By default this file does nothing.
+
+# Run own user's script if exists (NG partition)
+[ -f /mnt/ntgr/rc.user ] && /bin/sh /mnt/ntgr/rc.user
 
 exit 0
