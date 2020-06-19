@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dropbear
-PKG_VERSION:=2019.78
+PKG_VERSION:=2020.79
 PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
 	http://matt.ucc.asn.au/dropbear/releases/ \
 	https://dropbear.nl/mirror/releases/
-PKG_HASH:=525965971272270995364a0eb01f35180d793182e63dd0b0c3eb0292291644a4
+PKG_MD5SUM:=830a7bf6349ac52a39c487d061efb352
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE libtomcrypt/LICENSE libtommath/LICENSE
@@ -136,9 +136,12 @@ define Package/dropbear/install
 	$(INSTALL_BIN) ./files/dropbear.init $(1)/etc/init.d/dropbear
 	$(CP) ./files/dropbear_ecdsa_host_key $(1)/etc/dropbear
 	chmod 0600 $(1)/etc/dropbear/dropbear_ecdsa_host_key
+	$(CP) ./files/dropbear_ed25519_host_key $(1)/etc/dropbear
+	chmod 0600 $(1)/etc/dropbear/dropbear_ed25519_host_key
 	$(CP) ./files/dropbear_rsa_host_key   $(1)/etc/dropbear
 	chmod 0600 $(1)/etc/dropbear/dropbear_rsa_host_key
 	$(CP) ./files/ssh_host_ecdsa_key.pub  $(1)/etc/dropbear
+	$(CP) ./files/ssh_host_ed25519_key.pub  $(1)/etc/dropbear
 	$(CP) ./files/ssh_host_rsa_key.pub    $(1)/etc/dropbear
 	$(INSTALL_DIR) $(1)/root/.ssh
 endef

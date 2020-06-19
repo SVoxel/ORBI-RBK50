@@ -1,6 +1,6 @@
---- a/svr-chansession.c
-+++ b/svr-chansession.c
-@@ -953,12 +953,12 @@ static void execchild(const void *user_d
+--- a/svr-chansession.c	2020-06-15 18:38:08.000000000 +0300
++++ b/svr-chansession.c	2020-06-17 12:40:56.663406000 +0300
+@@ -950,12 +950,12 @@
  	/* We can only change uid/gid as root ... */
  	if (getuid() == 0) {
  
