@@ -45,7 +45,7 @@ start() {
 	insmod $MODULE_PATH/cdc_ether.ko
 	insmod $MODULE_PATH/rndis_host.ko
 	usbmode -s
-	sleep 15
+	sleep 10
 	ifconfig eth2 up
 
 	# Check: is modem attached
@@ -61,7 +61,6 @@ start() {
 		/etc/init.d/detcable stop
 		killall -9 detcable-bin 2> /dev/null
 		killall -9 detcable 2> /dev/null
-		/etc/init.d/watchdog stop
 		/etc/init.d/ntpclient stop
 		echo modem > /tmp/modem
 		echo -n 1 > /tmp/port_status
@@ -70,9 +69,9 @@ start() {
 
 		# Start services and restart firewall
 		/etc/init.d/net-wan start
+		sleep 20
 		net-wall restart
 		killall ntpclient
-		sleep 20
 		/etc/init.d/ntpclient start
 		/etc/init.d/dnscrypt-proxy-2 start
 		/etc/init.d/stubby start
