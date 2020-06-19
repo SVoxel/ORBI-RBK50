@@ -1,6 +1,6 @@
 --- a/include/image.h
 +++ b/include/image.h
-@@ -51,6 +51,10 @@ struct lmb;
+@@ -44,6 +44,10 @@
  
  #endif /* USE_HOSTCC */
  
@@ -8,6 +8,6 @@
 +#define ulong unsigned long
 +#endif
 +
- #if IMAGE_ENABLE_FIT
+ #if defined(CONFIG_FIT)
  #include <hash.h>
- #include <linux/libfdt.h>
+ #include <libfdt.h>
