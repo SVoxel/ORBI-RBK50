@@ -133,16 +133,16 @@ define Package/dropbear/install
 	$(LN) dropbearmulti $(1)/usr/bin/ssh
 	$(LN) ../bin/dropbearmulti $(1)/usr/sbin/dropbear
 	$(INSTALL_DIR) $(1)/etc/{dropbear,init.d}
-	$(INSTALL_BIN) ./files/dropbear.init $(1)/etc/init.d/dropbear
-	$(CP) ./files/dropbear_ecdsa_host_key $(1)/etc/dropbear
-	chmod 0600 $(1)/etc/dropbear/dropbear_ecdsa_host_key
+	$(INSTALL_BIN) ./files/dropbear.init    $(1)/etc/init.d/dropbear
+	$(CP) ./files/dropbear_ecdsa_host_key   $(1)/etc/dropbear
 	$(CP) ./files/dropbear_ed25519_host_key $(1)/etc/dropbear
+	$(CP) ./files/dropbear_rsa_host_key     $(1)/etc/dropbear
+	chmod 0600 $(1)/etc/dropbear/dropbear_ecdsa_host_key
 	chmod 0600 $(1)/etc/dropbear/dropbear_ed25519_host_key
-	$(CP) ./files/dropbear_rsa_host_key   $(1)/etc/dropbear
 	chmod 0600 $(1)/etc/dropbear/dropbear_rsa_host_key
-	$(CP) ./files/ssh_host_ecdsa_key.pub  $(1)/etc/dropbear
+	$(CP) ./files/ssh_host_ecdsa_key.pub    $(1)/etc/dropbear
 	$(CP) ./files/ssh_host_ed25519_key.pub  $(1)/etc/dropbear
-	$(CP) ./files/ssh_host_rsa_key.pub    $(1)/etc/dropbear
+	$(CP) ./files/ssh_host_rsa_key.pub      $(1)/etc/dropbear
 	$(INSTALL_DIR) $(1)/root/.ssh
 endef
 
