@@ -2185,6 +2185,8 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
 					  if (strcmp(name, pass_domains[i]) == 0)
 						  return 0;
 				  }
+				  if(strstr(name, ".glassboxdigital.io") || strstr(name, ".glassboxcdn.com"))
+					  return 0;
 			  }
 
 #ifdef ENABLE_INSIGHT_LOG

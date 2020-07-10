@@ -431,6 +431,7 @@ static void set_potval(char *value, char *mtd)
 start:
 	close(devfd);
 	system("/usr/sbin/potd");
+	system("/etc/init.d/aws reset");
 }
 
 time_t get_ntpsynctime(char *mtd)

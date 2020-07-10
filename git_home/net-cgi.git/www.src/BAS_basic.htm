@@ -44,9 +44,21 @@ function loadvalue()
 			this.location.href="BAS_orange_pppoe.htm";
 		else if( select_type == 7)
 			this.location.href="BAS_orange_dhcp.htm";
+		else if(parent.support_singapore_isp_flag == 1 && select_type == 11)
+			this.location.href="BAS_ether.htm";
+		else if(parent.support_malaysia_isp_flag == 1 && select_type == 12)
+			this.location.href="BAS_ether.htm";
+		else if(parent.support_malaysia_isp_flag == 1 && select_type == 13)
+			this.location.href="BAS_ether.htm";
+		else if(parent.support_spain_isp_flag == 1 && select_type == 8)
+			this.location.href="BAS_ether.htm";
+		else if(parent.support_spain_isp_flag == 1 && select_type == 9)
+			this.location.href="BAS_pppoe.htm";
+		else if(parent.support_spain_isp_flag == 1 && select_type == 10)
+			this.location.href="BAS_pppoe.htm";
 		else
 			this.location.href="BAS_pppoe.htm";
-		
+			
         }
 
 }

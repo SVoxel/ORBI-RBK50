@@ -9,7 +9,7 @@
 #satellite_table tr.even_line td.device_td2
 {border-left:none;}
 .led_bt{
-	padding: 5px;
+        padding: 5px;
     font-size: 12px;
     height: auto;
     cursor: pointer;
@@ -24,17 +24,17 @@
     max-width: 215px;
     min-height: 35px;
     margin-bottom: 10px;
-	width:100px;
-	background-color: #00ADE6;
-	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+        width:100px;
+        background-color: #00ADE6;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     -webkit-transition: box-shadow .3s ease-in-out;
     -moz-transition: box-shadow .3s ease-in-out;
     -ms-transition: box-shadow .3s ease-in-out;
     -o-transition: box-shadow .3s ease-in-out;
     transition: box-shadow .3s ease-in-out;
     font-weight: 100;
-	-webkit-appearance: none;
-	height: 22px;
+        -webkit-appearance: none;
+        height: 22px;
     color: #f2f2f2;
     font-family: Arial;
     font-weight: Bold;
@@ -42,10 +42,10 @@
     border: none;
     cursor: pointer;
     padding-bottom: 2px;
-	}
+        }
 
 .led_btoff{
-	padding: 5px;
+        padding: 5px;
     font-size: 12px;
     height: auto;
     cursor: pointer;
@@ -60,17 +60,17 @@
     max-width: 215px;
     min-height: 35px;
     margin-bottom: 10px;
-	width:100px;
-	background-color: #00ADE6;
-	box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
+        width:100px;
+        background-color: #00ADE6;
+        box-shadow: 0 2px 5px 0 rgba(0,0,0,.16), 0 2px 10px 0 rgba(0,0,0,.12);
     -webkit-transition: box-shadow .3s ease-in-out;
     -moz-transition: box-shadow .3s ease-in-out;
     -ms-transition: box-shadow .3s ease-in-out;
     -o-transition: box-shadow .3s ease-in-out;
     transition: box-shadow .3s ease-in-out;
     font-weight: 100;
-	-webkit-appearance: none;
-	height: 22px;
+        -webkit-appearance: none;
+        height: 22px;
     color: #000000;
     font-family: Arial;
     font-weight: Bold;
@@ -78,16 +78,34 @@
     border: none;
     cursor: pointer;
     padding-bottom: 2px;
-	}
-	.led_bt:hover{
-	box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
-	}
-	
+        }
+        .led_bt:hover{
+        box-shadow: 0 5px 11px 0 rgba(0,0,0,.18), 0 4px 15px 0 rgba(0,0,0,.15);
+        }
+        
 .devinfo_tbl tr td{
-	border:0px;
-	padding:1px;
+        border:0px;
+        padding:1px;
 }
+
 .device_td a{TEXT-DECORATION: underline; color:#00ADE6;}
+
+.sat_table_header {
+        font-weight: bold;
+        font-size: 12px;
+        background-color: DodgerBlue;
+        color: White;
+        cursor: inherit;
+}
+
+.dev_table_header {
+        font-weight: bold;
+        font-size: 12px;
+        background-color: DodgerBlue;
+        color: White;
+        cursor: pointer;
+}
+}
 </style>
 <script>
 <% get_led_state() %>
@@ -97,27 +115,57 @@ var ts='<% cfg_get("orbi_edit_dev") %>';
 <% save_timestamp("orbi_edit_dev", "orbi_edit_led") %>
 var enable_block_device="<% cfg_get("enable_block_device") %>";
 
-function ip2int(ip) {
-	return ip.split('.').reduce (
-		function(ipInt, octet) {
-			return (ipInt<<8) + parseInt(octet, 10)
-		}, 0
-	) >>> 0;
+var AttachDeviceSortKey = "ip";
+const SetTimeoutDelay = 40000;
+
+function SetSortKey(elmnt,indx) {
+    switch(indx) {
+        case 1:
+           break;
+        case 2:
+           AttachDeviceSortKey="name";
+           break;
+        case 3:
+           AttachDeviceSortKey="ip";
+           break;
+        case 4:
+           AttachDeviceSortKey="mac";
+           break;
+        case 5:
+           AttachDeviceSortKey="contype";
+           break;
+        case 6:
+           AttachDeviceSortKey="conn_orbi_name";
+           break;
+        default:
+   }
+elmnt.style.cursor = "wait";
+document.body.style.cursor = "wait";
+clearTimeout(itime);
+init_flag = 1;
+PreviousDeviceStatus = ""; 
+getDevices();
 }
 
-Array.prototype.keySort = function(key,desc) {
-	this.sort (
-		function(a, b) {
-			var result = desc ? (ip2int(a[key]) < ip2int(b[key])) : (ip2int(a[key]) > ip2int(b[key]));
-			return result ? 1 : -1;
-		}
-	);
-	return this;
+function ip2int(ip) {
+    return ip.split('.').reduce(function(ipInt, octet) { return (ipInt<<8) + parseInt(octet, 10)}, 0) >>> 0;
+}
+
+Array.prototype.keySort = function(key, desc){
+  this.sort(function(a, b) {
+    if (key == "ip") {
+        var result = desc ? (ip2int(a[key]) < ip2int(b[key])) : (ip2int(a[key]) > ip2int(b[key]));
+    } else {
+        result = desc ? (a[key] < b[key]) : (a[key] > b[key]);
+    }
+    return result ? 1 : -1;
+  });
+  return this;
 }
 
 function goto_url()
 {
-	location.href="access_control.htm";
+        location.href="access_control.htm";
 }
 
 var dev_info = new Array();
@@ -126,91 +174,97 @@ var init_flag=1;
 var is_changed=1;
 var trend_micro_enable="<% cfg_get("trend_micro_enable") %>";
 var trend_micro_ready="<% access_file("/tmp/netscan/tm_app_flow") %>";
+var PreviousDeviceStatus;
 function update_device_info(json)
 {
-	eval(json)
-	dev_info=[];
-	is_changed = device_changed;
+   if (json == PreviousDeviceStatus) {
+        is_changed=0;
+   } else {
+        PreviousDeviceStatus = json;
+        eval(json)
+        dev_info=[];
+        is_change = device_changed;
 
-	device.keySort("ip");
-	
-	for(var i=0, len = device.length; i<len;i++)
-	{
-		var obj = {};
+        device.keySort(AttachDeviceSortKey);
+        
+        for(var i=0, len = device.length; i<len;i++)
+        {
+                var obj = {};
 
-		obj['ip']=device[i]['ip'];
-		obj['mac']=device[i]['mac'];
-		obj['contype']=device[i]['contype'];
-		obj['attachtype']=device[i]['attachtype'];
-		obj['devtype']=device[i]['devtype'];
-		obj['devtype_name']=device[i]['devtype_name'];
-		if(device[i]['model'] == "Unknown")
-			obj['model']="---";
-		else
-			obj['model']=device[i]['model'];
-		if(device[i]['name'] == "Unknown")
-			obj['name']="---";
-		else
-			obj['name']=device[i]['name'];
-		if(device[i]['attachtype']=='2')
-			obj['name']=device[i]['name'];
-		obj['accsta']=device[i]['accsta'];
-		obj['conn_orbi_name']=device[i]['conn_orbi_name'];
-		obj['conn_orbi_mac']=device[i]['conn_orbi_mac'];
-		obj['backhaul_sta']=device[i]['backhaul_sta'];
-		obj['ledstate']=device[i]['ledstate'];
-		obj['led_func']=device[i]['led_func'];
-		obj['sync_btn']=device[i]['sync_btn'];
-		obj['uprate']=device[i]['uprate'];
-		obj['downrate']=device[i]['downrate'];
-		obj['voice_orbi']=device[i]['voice_orbi'];
-		obj['voice_lwauserid']=device[i]['voice_lwauserid'];
-		obj['ceiling_power']=device[i]['ceiling_power'];
-		obj['module_name']=device[i]['module_name'];
-		dev_info.push(obj);
-	}
+                obj['ip']=device[i]['ip'];
+                obj['mac']=device[i]['mac'];
+                obj['contype']=device[i]['contype'];
+                obj['attachtype']=device[i]['attachtype'];
+                obj['devtype']=device[i]['devtype'];
+                obj['devtype_name']=device[i]['devtype_name'];
+                if(device[i]['model'] == "Unknown")
+                        obj['model']="---";
+                else
+                        obj['model']=device[i]['model'];
+                if(device[i]['name'] == "Unknown")
+                        obj['name']="---";
+                else
+                        obj['name']=device[i]['name'];
+                if(device[i]['attachtype']=='2')
+                        obj['name']=device[i]['name'];
+                obj['accsta']=device[i]['accsta'];
+                obj['conn_orbi_name']=device[i]['conn_orbi_name'];
+                obj['conn_orbi_mac']=device[i]['conn_orbi_mac'];
+                obj['backhaul_sta']=device[i]['backhaul_sta'];
+                obj['ledstate']=device[i]['ledstate'];
+                obj['led_func']=device[i]['led_func'];
+                obj['sync_btn']=device[i]['sync_btn'];
+                obj['uprate']=device[i]['uprate'];
+                obj['downrate']=device[i]['downrate'];
+                obj['voice_orbi']=device[i]['voice_orbi'];
+                obj['voice_lwauserid']=device[i]['voice_lwauserid'];
+                obj['ceiling_power']=device[i]['ceiling_power'];
+                obj['module_name']=device[i]['module_name'];
+                dev_info.push(obj);
+        }
+   }
 }
 
 function edit_dev(num)
 {
-	var cf = document.forms[0];
-	if(dev_info[num]['contype'] == "vpn")
-		return false;
-	cf.hid_mac.value = dev_info[num]['mac'];
-	cf.hid_ip.value = dev_info[num]['ip'];
-	cf.hid_name.value = dev_info[num]['name'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
-	cf.hid_model.value = dev_info[num]['model'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
-	if(dev_info[num]['attachtype']=='2')
-		cf.hid_devtype.value = 0;
-	else{
-		if(top.support_new_ntgrtype == "1")
-			cf.hid_devtype.value = dev_info[num]['devtype_name'];
-		else
-			cf.hid_devtype.value = dev_info[num]['devtype'];
-	}
-	cf.submit_flag.value="orbi_edit_dev";
-	cf.action="/apply.cgi?/Orbi_edit_dev.htm timestamp="+ts;
-	cf.submit();
+        var cf = document.forms[0];
+        if(dev_info[num]['contype'] == "vpn")
+                return false;
+        cf.hid_mac.value = dev_info[num]['mac'];
+        cf.hid_ip.value = dev_info[num]['ip'];
+        cf.hid_name.value = dev_info[num]['name'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+        cf.hid_model.value = dev_info[num]['model'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+        if(dev_info[num]['attachtype']=='2')
+                cf.hid_devtype.value = 0;
+        else{
+                if(top.support_new_ntgrtype == "1")
+                        cf.hid_devtype.value = dev_info[num]['devtype_name'];
+                else
+                        cf.hid_devtype.value = dev_info[num]['devtype'];
+        }
+        cf.submit_flag.value="orbi_edit_dev";
+        cf.action="/apply.cgi?/Orbi_edit_dev.htm timestamp="+ts;
+        cf.submit();
 }
 
 function edit_led(num)
 {
-	var cf = document.forms[0];
-	cf.hid_mac.value = dev_info[num]['mac'];
-	cf.hid_ip.value = dev_info[num]['ip'];
-	cf.hid_name.value = dev_info[num]['name'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
-	cf.hid_model.value = dev_info[num]['model'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
-	if(dev_info[num]['attachtype']=='2')
-		cf.hid_devtype.value = 0;
-	else{
-		if(top.support_new_ntgrtype == "1")
-			cf.hid_devtype.value = dev_info[num]['devtype_name'];
-		else
-			cf.hid_devtype.value = dev_info[num]['devtype'];
-	}
-	cf.submit_flag.value="orbi_edit_led";
-	cf.action="/apply.cgi?/led_controls.htm timestamp="+ts;
-	cf.submit();
+        var cf = document.forms[0];
+        cf.hid_mac.value = dev_info[num]['mac'];
+        cf.hid_ip.value = dev_info[num]['ip'];
+        cf.hid_name.value = dev_info[num]['name'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+        cf.hid_model.value = dev_info[num]['model'].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");
+        if(dev_info[num]['attachtype']=='2')
+                cf.hid_devtype.value = 0;
+        else{
+                if(top.support_new_ntgrtype == "1")
+                        cf.hid_devtype.value = dev_info[num]['devtype_name'];
+                else
+                        cf.hid_devtype.value = dev_info[num]['devtype'];
+        }
+        cf.submit_flag.value="orbi_edit_led";
+        cf.action="/apply.cgi?/led_controls.htm timestamp="+ts;
+        cf.submit();
 }
 
 function getEvent(){
@@ -243,245 +297,245 @@ function stopBubble()
 
 function del_satellite(num)
 {
-	var cf = document.forms[0];
-	cf.hid_satellite_mac.value = dev_info[num]['mac'];
-	cf.submit_flag.value="del_satellite";
-	cf.action="/apply.cgi?/DEV_device.htm timestamp="+ts;
-	cf.submit();
+        var cf = document.forms[0];
+        cf.hid_satellite_mac.value = dev_info[num]['mac'];
+        cf.submit_flag.value="del_satellite";
+        cf.action="/apply.cgi?/DEV_device.htm timestamp="+ts;
+        cf.submit();
 }
 
 function getDevices()
 {
-	var xmlhttp, xmlDoc;
-	if ( window.XMLHttpRequest)
-		xmlhttp = new XMLHttpRequest();
-	else
-		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        var xmlhttp, xmlDoc;
+        if ( window.XMLHttpRequest)
+                xmlhttp = new XMLHttpRequest();
+        else
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
 
-	xmlhttp.onreadystatechange = function()
-	{
-	var msg = '<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="satellite_table">'
-		+'<TR class=table_header>';
-		if(enable_block_device == 0)
-			msg += '<TD nowrap align=center width=10%><span class="subhead"># </span></TD>';
-		else
-			msg += '<TD nowrap align=center width=10% class="subhead_acc_control">$stalist_Status</TD>';
-		msg =msg +'<TD nowrap align=center width=20% class="subhead_acc_control" colspan="2">$adva_wlan_devicename</TD>'
-		+'<TD nowrap align=center width=13% class="subhead_acc_control">$block_ser_setup_ip_jp</TD>'
-		+'<TD nowrap align=center width=13% class="subhead_acc_control">$info_mark_mac</TD>'
-		+'<TD nowrap align=center width=13% class="subhead_acc_control" colspan="2">$trigger_contype</TD>'
-		+'<TD nowrap align=center width=14% class="subhead_acc_control">$connect_orbi</TD>'
-		+"<TD nowrap align=center width=16% class=\"subhead_acc_control\">$backhaul_status</TD/TR>";
-		
-	var msg2 = '<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="device_table">'
-		+'<TR class=table_header>';
-		if(enable_block_device == 0)
-			msg2 += '<TD nowrap align=center width=15%><span class="subhead"># </span></TD>';
-		else
-			msg2 += '<TD nowrap align=center width=15% class="subhead_acc_control">$stalist_Status</TD>';
-		msg2 =msg2 +'<TD nowrap align=center width=25% class="subhead_acc_control" colspan="2">$adva_wlan_devicename</TD>'
-		+'<TD nowrap align=center width=20% class="subhead_acc_control">$block_ser_setup_ip_jp</TD>'
-		+'<TD nowrap align=center width=20% class="subhead_acc_control">$info_mark_mac</TD>'
-		+'<TD nowrap align=center width=25% class="subhead_acc_control" colspan="2">$trigger_contype</TD>'
-		+'<TD nowrap align=center width=25% class="subhead_acc_control">$connect_orbi</TD</TR>';
-		if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 )
-		{
-			update_device_info(xmlhttp.responseText);
-			if(init_flag == 1 || is_changed == 1)
-			{
-			var s_num=0,d_num=0;
-			for(var i=0, len=dev_info.length; i<len; i++)
-			{
-				if(dev_info[i]['attachtype']=='2')//satellite
-				{
-					msg += '<tr class="even_line">';
-					msg += '<td align=center>'+(s_num+1)+'</td>';					
-					if(dev_info[i]['led_func'] == "1")//outdoor connected, show led/sync status.
-					{
-					     if(dev_info[i]['module_name'] == "RBS50Y")
-					     {
-						if(dev_info[i]['ledstate'] != "0")
-							msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor.jpg width=70px  onclick="edit_led('+i+')" height=74px/></td>';
-						else
-							msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor2.jpg width=70px  onclick="edit_led('+i+')" height=74px/></td>';
-					     }
-					     else if(dev_info[i]['module_name'] == "SRS60E")
-					     {
-						if(dev_info[i]['ledstate'] != "0")
-							msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/pro_outdoor_on.png width=70px  onclick="edit_led('+i+')" height=74px/></td>';
-						else
-							msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/pro_outdoor_off.png width=70px  onclick="edit_led('+i+')" height=74px/></td>';
-					     
-					     }
-					}
-					else if(dev_info[i]['led_func'] == "2")//outdoor disconnected, only show outdoor picture.
-						msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor2.jpg width=70px  onclick="edit_dev('+i+')" height=74px/></td>';
-					else if(dev_info[i]['module_name']=="RBS40V")
-						msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/voiceorbi.jpg width=74px  onclick="edit_dev('+i+')" height=74px/></td>';
-					else if(dev_info[i]['ceiling_power'] != "not support")
-						msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/ceiling.png width=74px  onclick="edit_dev('+i+')"/></td>';
-					else//default satellite
-						msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/'+dev_info[i]['devtype']+'.jpg width=74px  onclick="edit_dev('+i+')" height=74px/></td>';
-					//Device Name info td
-					if(dev_info[i]['led_func'] =="1")//outdoor connected, show led/sync status.
-						msg += '<td class="device_td" align=right height="100%" onclick="edit_led('+i+');" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';
-					else
-						msg += '<td class="device_td" align=right height="100%" onclick="edit_dev('+i+')" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';					
-					//model_name
-					msg += '<tr><td>'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-					//devi_name
-					msg += '<tr><td>'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-					if(dev_info[i]['led_func'] =="1")//outdoor connected, show led/sync status.
-					{
-						if(dev_info[i]['ledstate'] != 0)//led on/off
-						{
-							msg += '<tr><td><a>LED: $on_mark</a></td></tr>';
-							msg += '<tr><td><a>$brightness: '+dev_info[i]['ledstate']+'%</a></td></tr>';
-						}
-						else
-							msg += '<tr><td><a>LED: $off_mark</a></td></tr>';
-						if(dev_info[i]['sync_btn'] == 1)//sync button
-							msg += '<tr><td><a>$sync_mark: $enabled</a></td></tr>';
-						else
-							msg += '<tr><td><a>$sync_mark: $disabled</a></td></tr>';						
-					}
-					if(dev_info[i]['voice_orbi']=="1" && dev_info[i]['voice_lwauserid'].replace(/\s/g,"").length !=0)//amazon account info
-						msg += '<tr><td>'+dev_info[i]['voice_lwauserid'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-						
-					if(dev_info[i]['ceiling_power'] == "DC")//Ceiling Power Source
-						msg += '<tr><td>Power Source: DC</td></tr>';
-					else if(dev_info[i]['ceiling_power'] == "PoE")
-						msg += '<tr><td>Power Source: PoE</td></tr>';
-					
-					//ip
-					msg += '<tr><td>'+dev_info[i]['ip']+'</td></tr>';
-					
-					msg += '</table></td>';					
-					
-					msg += '<td rowspan=1 align=center>'+dev_info[i]['ip']+'</td>';
-					msg += '<td rowspan=1 align=center>'+dev_info[i]['mac']+'</td>';
-					if(dev_info[i]['contype'] == "wireless"){
-						msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /><img src=image/streamboost/5Gconnection.png /></td>';
-						msg += '<td rowspan=1 class="device_td2" align=left width=33px>$wireless</td>';}
-					else if(dev_info[i]['contype'] == "wired"){
-						msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/wiredConnection.png /></td>';
-						msg += '<td rowspan=1 class="device_td2" align=left width=33px>$acc_wired</td>';}
-					else if(dev_info[i]['contype'] == "2.4G" || dev_info[i]['contype'] == "2.4G Guest" || dev_info[i]['contype'] == "2.4GHz"){
-						msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /></td>';
-						msg += '<td rowspan=1 class="device_td2" align=left width=33px>'+dev_info[i]['contype']+'</td>';}
-					else if(dev_info[i]['contype'] == "5G" || dev_info[i]['contype'] == "5G Guest" || dev_info[i]['contype'] == "5GHz"){
-						msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/5Gconnection.png /></td>';
-						msg += '<td rowspan=1 class="device_td2" align=left width=33px>'+dev_info[i]['contype']+'</td>';}
-					else{
-						msg += '<td rowspan=1 align=right>'+dev_info[i]['contype']+'</td>';
-						msg += '<td rowspan=1 class="device_td2" align=left width=33px></td>';}
-					msg += '<td rowspan=1 align=center>'+dev_info[i]['conn_orbi_name']+'</br>'+dev_info[i]['conn_orbi_mac']+'</td>';
-					
-					if(dev_info[i]['backhaul_sta'] == "Good")
-						msg += '<td rowspan=1 align=center><font color=green>$state_good</font></td></tr>';
-					else if(dev_info[i]['backhaul_sta'] == "Poor")
-						msg += '<td rowspan=1 align=center><font color=purple>$state_poor</font></td></tr>';
-					else if(dev_info[i]['backhaul_sta'] == "Config Sync")
-						msg += '<td rowspan=1 align=center><font color=gray>$config_sync</font></td></tr>';
-					else
-						msg += '<td rowspan=1 align=center><font color=red>$state_disconnect</font>&nbsp;&nbsp;<input type="button" class="add_bt" value="$remove_mark" onclick="del_satellite('+i+');"/></td></tr>';
-										
-					s_num++;
-				}
-				else
-				{
-					msg2 += '<tr class="even_line">';
-					if(enable_block_device == 0)
-						msg2 += '<td rowspan=1 align=center>'+(d_num+1)+'</td>';
-					else
-					{
-						if(dev_info[i]['accsta']=='1')
-							msg2 += '<td rowspan=1 align=center><font color=red>$acc_block</font></td>';
-						else
-							msg2 += '<td rowspan=1 align=center><font color=green>$acc_allow</font></td>';
-					}
-					if(top.support_new_ntgrtype == "1")
-						msg2 += '<td rowspan=1 align=left onclick="edit_dev('+i+')" style="cursor:pointer"><img src=image/'+dev_info[i]['devtype_name'].replace(/\s/g, '_')+'.png width=45px height=45px /></td>';
-					else
-						msg2 += '<td rowspan=1 align=left onclick="edit_dev('+i+')" style="cursor:pointer"><img src=image/streamboost/'+dev_info[i]['devtype']+'.jpg width=45px height=45px /></td>';
-					if(trend_micro_enable == "1" && trend_micro_ready == "1")
-					{
-						msg2 += '<td class="device_td" align=center onclick="edit_dev('+i+')" style="cursor:pointer"><table class="devinfo_tbl" width=100% height=100%><tr><td align=left onclick="edit_dev('+i+')" style="cursor:pointer">DL:'+dev_info[i]['downrate']+'Mpbs</td><td align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-						msg2 += '<tr><td align=left onclick="edit_dev('+i+')" style="cursor:pointer">UL:'+dev_info[i]['uprate']+'Mpbs</td><td align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-						msg2 += '<td colspan=2 align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['ip']+'</td></tr></table></td>';
-					} else {
-					//Device info td
-						msg2 += '<td class="device_td" align=right height="100%" onclick="edit_dev('+i+')" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';
-						msg2 += '<tr><td class="device_td" align=right>'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-						msg2 += '<tr><td align=right>'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
-						msg2 += '<tr><td align=right>'+dev_info[i]['ip']+'</td></tr>';
-						msg2 += '</table></td>';//end Device info td
-					}
-					
-					msg2 += '<td rowspan=1 align=center>'+dev_info[i]['ip']+'</td>';//IP Address
-					msg2 += '<td rowspan=1 align=center>'+dev_info[i]['mac']+'</td>';//MAC Address
-					//Connection Type
-					if(dev_info[i]['contype'] == "wireless"){
-						msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /><img src=image/streamboost/5Gconnection.png /></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>$wireless</td>';}
-					else if(dev_info[i]['contype'] == "wired"){
-						msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/wiredConnection.png /></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>$acc_wired</td>';}
-					else if(dev_info[i]['contype'] == "2.4G" || dev_info[i]['contype'] == "2.4G Guest" || dev_info[i]['contype'] == "2.4GHz" || dev_info[i]['contype'] == "2.4G Wireless1" || dev_info[i]['contype'] == "2.4G Guest Portal" || dev_info[i]['contype'] == "2.4G Wireless2"){
-						msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>'+dev_info[i]['contype']+'</td>';}
-					else if(dev_info[i]['contype'] == "5G" || dev_info[i]['contype'] == "5G Guest" || dev_info[i]['contype'] == "5GHz" || dev_info[i]['contype'] == "5G Wireless1" || dev_info[i]['contype'] == "5G Guest Portal" || dev_info[i]['contype'] == "5G Wireless2"){
-						msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/5Gconnection.png /></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>'+dev_info[i]['contype']+'</td>';}
-					else if(dev_info[i]['contype'] == "vpn") {
-						msg2 += '<td rowspan=1 align=right width=23px></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left>'+dev_info[i]['contype']+'</td>';}
-					else{
-						msg2 += '<td rowspan=1 align=right width=23px></td>';
-						msg2 += '<td rowspan=1 class="device_td2" align=left>Unknown</td>';}
-					//Connected Orbi
-					msg2 += '<td rowspan=1 align=center>'+dev_info[i]['conn_orbi_name']+'</br>'+dev_info[i]['conn_orbi_mac']+'</td></tr>';
-					d_num++;
-				}
-			}
-			msg += '</table>';
-			document.getElementById("satellites").innerHTML=msg;
-			document.getElementById("devices").innerHTML=msg2;
-			if(init_flag == 1)//first enter this page
-				init_flag =0;
-			}
-			//move setTimeout here, to avoid when timeout, chrome popup login session, but it still send request.
-			setTimeout(function(){
-				xmlhttp.open("GET", "DEV_device_info.htm?ts=" + new Date().getTime(), true);
-				xmlhttp.send();
-			}, 5000);
-		}
-	};
-	xmlhttp.open("GET", "DEV_device_info.htm?ts=" + new Date().getTime(), true);
-	xmlhttp.send();
-	//itime=setTimeout("getDevices()", 5000);
+        xmlhttp.onreadystatechange = function()
+        {
+        var msg = '<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="satellite_table">'
+                +'<TR class=sat_table_header>';
+                if(enable_block_device == 0)
+                        msg += '<th nowrap align=center width=10%>#</th>';
+                else
+                        msg += '<th nowrap align=center width=10%>$stalist_Status</th>';
+                msg =msg +'<th nowrap align=center width=20% colspan="2">$adva_wlan_devicename</th>'
+                +'<th nowrap align=center width=13%>$block_ser_setup_ip_jp</th>'
+                +'<th nowrap align=center width=13%>$info_mark_mac</th>'
+                +'<th nowrap align=center width=13% colspan="2">$trigger_contype</th>'
+                +'<th nowrap align=center width=14%>$connect_orbi</th>'
+                +"<th nowrap align=center width=16%>$backhaul_status</th/TR>";
+                
+        var msg2 = '<TABLE class=tables border=0 cellpadding=2 cellspacing=0 width=100% id="device_table">'
+                +'<TR class=dev_table_header>';
+                if(enable_block_device == 0)
+                        msg2 += '<th nowrap align=center width=15%>#</th>';
+                else
+                        msg2 += '<th nowrap align=center width=15% >$stalist_Status</th>';
+                msg2 =msg2 +'<th nowrap align=center width=25% onclick="SetSortKey(this,2)" colspan="2">$adva_wlan_devicename</th>'
+                +'<th nowrap align=center width=20% onclick="SetSortKey(this,3)">$block_ser_setup_ip_jp</th>'
+                +'<th nowrap align=center width=20% onclick="SetSortKey(this,4)">$info_mark_mac</th>'
+                +'<th nowrap align=center width=25% onclick="SetSortKey(this,5)" colspan="2">$trigger_contype</th>'
+                +'<th nowrap align=center width=25% onclick="SetSortKey(this,6)">$connect_orbi</th</TR>';
+                if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 )
+                {
+                        document.body.style.cursor = "default";
+                        update_device_info(xmlhttp.responseText);
+                        if(init_flag == 1 || is_changed == 1)
+                        {
+                        var s_num=0,d_num=0;
+                        for(var i=0, len=dev_info.length; i<len; i++)
+                        {
+                                if(dev_info[i]['attachtype']=='2')//satellite
+                                {
+                                        msg += '<tr class="even_line">';
+                                        msg += '<td align=center>'+(s_num+1)+'</td>';                                   
+                                        if(dev_info[i]['led_func'] == "1")//outdoor connected, show led/sync status.
+                                        {
+                                             if(dev_info[i]['module_name'] == "RBS50Y")
+                                             {
+                                                if(dev_info[i]['ledstate'] != "0")
+                                                        msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor.jpg width=70px  onclick="edit_led('+i+')" height=74px/></td>';
+                                                else
+                                                        msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor2.jpg width=70px  onclick="edit_led('+i+')" height=74px/></td>';
+                                             }
+                                             else if(dev_info[i]['module_name'] == "SRS60E")
+                                             {
+                                                if(dev_info[i]['ledstate'] != "0")
+                                                        msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/pro_outdoor_on.png width=70px  onclick="edit_led('+i+')" height=74px/></td>';
+                                                else
+                                                        msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/pro_outdoor_off.png width=70px  onclick="edit_led('+i+')" height=74px/></td>';
+                                             
+                                             }
+                                        }
+                                        else if(dev_info[i]['led_func'] == "2")//outdoor disconnected, only show outdoor picture.
+                                                msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/outdoor2.jpg width=70px  onclick="edit_dev('+i+')" height=74px/></td>';
+                                        else if(dev_info[i]['module_name']=="RBS40V")
+                                                msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/voiceorbi.jpg width=74px  onclick="edit_dev('+i+')" height=74px/></td>';
+                                        else if(dev_info[i]['ceiling_power'] != "not support")
+                                                msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/ceiling.png width=74px  onclick="edit_dev('+i+')"/></td>';
+                                        else//default satellite
+                                                msg += '<td rowspan=1 align=left style="cursor:pointer"><img src=image/streamboost/'+dev_info[i]['devtype']+'.jpg width=74px  onclick="edit_dev('+i+')" height=74px/></td>';
+                                        //Device Name info td
+                                        if(dev_info[i]['led_func'] =="1")//outdoor connected, show led/sync status.
+                                                msg += '<td class="device_td" align=right height="100%" onclick="edit_led('+i+');" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';
+                                        else
+                                                msg += '<td class="device_td" align=right height="100%" onclick="edit_dev('+i+')" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';                                 
+                                        //model_name
+                                        msg += '<tr><td>'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                        //devi_name
+                                        msg += '<tr><td>'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                        if(dev_info[i]['led_func'] =="1")//outdoor connected, show led/sync status.
+                                        {
+                                                if(dev_info[i]['ledstate'] != 0)//led on/off
+                                                {
+                                                        msg += '<tr><td><a>LED: $on_mark</a></td></tr>';
+                                                        msg += '<tr><td><a>$brightness: '+dev_info[i]['ledstate']+'%</a></td></tr>';
+                                                }
+                                                else
+                                                        msg += '<tr><td><a>LED: $off_mark</a></td></tr>';
+                                                if(dev_info[i]['sync_btn'] == 1)//sync button
+                                                        msg += '<tr><td><a>$sync_mark: $enabled</a></td></tr>';
+                                                else
+                                                        msg += '<tr><td><a>$sync_mark: $disabled</a></td></tr>';                                                
+                                        }
+                                        if(dev_info[i]['voice_orbi']=="1" && dev_info[i]['voice_lwauserid'].replace(/\s/g,"").length !=0)//amazon account info
+                                                msg += '<tr><td>'+dev_info[i]['voice_lwauserid'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                                
+                                        if(dev_info[i]['ceiling_power'] == "DC")//Ceiling Power Source
+                                                msg += '<tr><td>Power Source: DC</td></tr>';
+                                        else if(dev_info[i]['ceiling_power'] == "PoE")
+                                                msg += '<tr><td>Power Source: PoE</td></tr>';
+                                        
+                                        //ip
+                                        msg += '<tr><td>'+dev_info[i]['ip']+'</td></tr>';
+                                        
+                                        msg += '</table></td>';                                 
+                                        
+                                        msg += '<td rowspan=1 align=center>'+dev_info[i]['ip']+'</td>';
+                                        msg += '<td rowspan=1 align=center>'+dev_info[i]['mac']+'</td>';
+                                        if(dev_info[i]['contype'] == "wireless"){
+                                                msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /><img src=image/streamboost/5Gconnection.png /></td>';
+                                                msg += '<td rowspan=1 class="device_td2" align=left width=33px>$wireless</td>';}
+                                        else if(dev_info[i]['contype'] == "wired"){
+                                                msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/wiredConnection.png /></td>';
+                                                msg += '<td rowspan=1 class="device_td2" align=left width=33px>$acc_wired</td>';}
+                                        else if(dev_info[i]['contype'] == "2.4G" || dev_info[i]['contype'] == "2.4G Guest" || dev_info[i]['contype'] == "2.4GHz"){
+                                                msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /></td>';
+                                                msg += '<td rowspan=1 class="device_td2" align=left width=33px>'+dev_info[i]['contype']+'</td>';}
+                                        else if(dev_info[i]['contype'] == "5G" || dev_info[i]['contype'] == "5G Guest" || dev_info[i]['contype'] == "5GHz"){
+                                                msg += '<td rowspan=1 align=right width=33px><img src=image/streamboost/5Gconnection.png /></td>';
+                                                msg += '<td rowspan=1 class="device_td2" align=left width=33px>'+dev_info[i]['contype']+'</td>';}
+                                        else{
+                                                msg += '<td rowspan=1 align=right>'+dev_info[i]['contype']+'</td>';
+                                                msg += '<td rowspan=1 class="device_td2" align=left width=33px></td>';}
+                                        msg += '<td rowspan=1 align=center>'+dev_info[i]['conn_orbi_name']+'</br>'+dev_info[i]['conn_orbi_mac']+'</td>';
+                                        
+                                        if(dev_info[i]['backhaul_sta'] == "Good")
+                                                msg += '<td rowspan=1 align=center><font color=green>$state_good</font></td></tr>';
+                                        else if(dev_info[i]['backhaul_sta'] == "Poor")
+                                                msg += '<td rowspan=1 align=center><font color=purple>$state_poor</font></td></tr>';
+                                        else if(dev_info[i]['backhaul_sta'] == "Config Sync")
+                                                msg += '<td rowspan=1 align=center><font color=gray>$config_sync</font></td></tr>';
+                                        else
+                                                msg += '<td rowspan=1 align=center><font color=red>$state_disconnect</font>&nbsp;&nbsp;<input type="button" class="add_bt" value="$remove_mark" onclick="del_satellite('+i+');"/></td></tr>';
+                                                                                
+                                        s_num++;
+                                }
+                                else
+                                {
+                                        msg2 += '<tr class="even_line">';
+                                        if(enable_block_device == 0)
+                                                msg2 += '<td rowspan=1 align=center>'+(d_num+1)+'</td>';
+                                        else
+                                        {
+                                                if(dev_info[i]['accsta']=='1')
+                                                        msg2 += '<td rowspan=1 align=center><font color=red>$acc_block</font></td>';
+                                                else
+                                                        msg2 += '<td rowspan=1 align=center><font color=green>$acc_allow</font></td>';
+                                        }
+                                        if(top.support_new_ntgrtype == "1")
+                                                msg2 += '<td rowspan=1 align=left onclick="edit_dev('+i+')" style="cursor:pointer"><img src=image/'+dev_info[i]['devtype_name'].replace(/\s/g, '_')+'.png width=45px height=45px /></td>';
+                                        else
+                                                msg2 += '<td rowspan=1 align=left onclick="edit_dev('+i+')" style="cursor:pointer"><img src=image/streamboost/'+dev_info[i]['devtype']+'.jpg width=45px height=45px /></td>';
+                                        if(trend_micro_enable == "1" && trend_micro_ready == "1")
+                                        {
+                                                msg2 += '<td class="device_td" align=center onclick="edit_dev('+i+')" style="cursor:pointer"><table class="devinfo_tbl" width=100% height=100%><tr><td align=left onclick="edit_dev('+i+')" style="cursor:pointer">DL:'+dev_info[i]['downrate']+'Mpbs</td><td align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                                msg2 += '<tr><td align=left onclick="edit_dev('+i+')" style="cursor:pointer">UL:'+dev_info[i]['uprate']+'Mpbs</td><td align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                                msg2 += '<td colspan=2 align=right onclick="edit_dev('+i+')" style="cursor:pointer">'+dev_info[i]['ip']+'</td></tr></table></td>';
+                                        } else {
+                                        //Device info td
+                                                msg2 += '<td class="device_td" align=right height="100%" onclick="edit_dev('+i+')" style="cursor:pointer;text-align:right;"><table class="devinfo_tbl" width=100% height=100%>';
+                                                msg2 += '<tr><td class="device_td" align=right>'+dev_info[i]['model'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                                msg2 += '<tr><td align=right>'+dev_info[i]['name'].replace(/\s/g, '&nbsp;')+'</td></tr>';
+                                                msg2 += '<tr><td align=right>'+dev_info[i]['ip']+'</td></tr>';
+                                                msg2 += '</table></td>';//end Device info td
+                                        }
+                                        
+                                        msg2 += '<td rowspan=1 align=center>'+dev_info[i]['ip']+'</td>';//IP Address
+                                        msg2 += '<td rowspan=1 align=center>'+dev_info[i]['mac']+'</td>';//MAC Address
+                                        //Connection Type
+                                        if(dev_info[i]['contype'] == "wireless"){
+                                                msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /><img src=image/streamboost/5Gconnection.png /></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>$wireless</td>';}
+                                        else if(dev_info[i]['contype'] == "wired"){
+                                                msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/wiredConnection.png /></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>$acc_wired</td>';}
+                                        else if(dev_info[i]['contype'] == "2.4G" || dev_info[i]['contype'] == "2.4G Guest" || dev_info[i]['contype'] == "2.4GHz" || dev_info[i]['contype'] == "2.4G Wireless1" || dev_info[i]['contype'] == "2.4G Guest Portal" || dev_info[i]['contype'] == "2.4G Wireless2"){
+                                                msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/24GConnection.png /></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>'+dev_info[i]['contype']+'</td>';}
+                                        else if(dev_info[i]['contype'] == "5G" || dev_info[i]['contype'] == "5G Guest" || dev_info[i]['contype'] == "5GHz" || dev_info[i]['contype'] == "5G Wireless1" || dev_info[i]['contype'] == "5G Guest Portal" || dev_info[i]['contype'] == "5G Wireless2"){
+                                                msg2 += '<td rowspan=1 align=right width=33px><img src=image/streamboost/5Gconnection.png /></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left width=45px>'+dev_info[i]['contype']+'</td>';}
+                                        else if(dev_info[i]['contype'] == "vpn") {
+                                                msg2 += '<td rowspan=1 align=right width=23px></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left>'+dev_info[i]['contype']+'</td>';}
+                                        else{
+                                                msg2 += '<td rowspan=1 align=right width=23px></td>';
+                                                msg2 += '<td rowspan=1 class="device_td2" align=left>Unknown</td>';}
+                                        //Connected Orbi
+                                        msg2 += '<td rowspan=1 align=center>'+dev_info[i]['conn_orbi_name']+'</br>'+dev_info[i]['conn_orbi_mac']+'</td></tr>';
+                                        d_num++;
+                                }
+                        }
+                        msg += '</table>';
+                        msg2 += '</table>';
+                        document.getElementById("satellites").innerHTML=msg;
+                        document.getElementById("devices").innerHTML=msg2;
+                        if(init_flag == 1) init_flag =0;
+                }
+                //move setTimeout here, to avoid when timeout, chrome popup login session, but it still send request.
+                itime = setTimeout(function(){
+                        xmlhttp.open("GET", "DEV_device_info.htm?ts=" + new Date().getTime(), true);
+                                xmlhttp.send();
+                                }, SetTimeoutDelay);
+                }
+        }
+        xmlhttp.open("GET", "DEV_device_info.htm?ts=" + new Date().getTime(), true);
+        xmlhttp.send();
 }
 
 function loadvalue()
 {
-	//for click browser back reload page.
-	var e=document.getElementById("refreshed");
-	if(e.value=="no")e.value="yes";
-	else{e.value="no";location.href="DEV_show_device.htm";}
-	
-	getDevices();
+        //for click browser back reload page.
+        var e=document.getElementById("refreshed");
+        if(e.value=="no")e.value="yes";
+        else{e.value="no";location.href="DEV_show_device.htm";}
+        
+        getDevices();
 }
 
 function click_edit()
 {
-	var cf = document.forms[0];
-	if(cf.hid_mac.value == "0")
-		return false;
-	else
-	{
-		cf.submit();
-		return true;
-	}
+        var cf = document.forms[0];
+        if(cf.hid_mac.value == "0")
+                return false;
+        else
+        {
+                cf.submit();
+                return true;
+        }
 }
 
 </script>
@@ -497,39 +551,39 @@ function click_edit()
 <% table_header() %> 
 <TR><td colspan=3><hr class=blueBar /></td></TR>
 <TR id="acc_line" style="display:none">
-	<TD nowrap colspan=3 align=right>$access_control_url1
-	<a href=# onClick="goto_url(); return false;"><font color=blue><u>$access_control_url2</u></font></a>&nbsp;
-	$access_control_url3
-	</TD>
+        <TD nowrap colspan=3 align=right>$access_control_url1
+        <a href=# onClick="goto_url(); return false;"><font color=blue><u>$access_control_url2</u></font></a>&nbsp;
+        $access_control_url3
+        </TD>
 </TR>
 <TR>
-	<TD width="40%" ><!--input type="button" class="common_bt" name="edit" value="$edit_mark" onclick="return click_edit();"/--></TD>
-	<TD>
-	<script>
-		var new_device_statue_by_default="<% cfg_get("new_device_statue_by_default") %>";
-		if(top.enable_ap_flag == "0")
-		{
-			document.getElementById("acc_line").style.display="";
-			if( enable_block_device == "0" )
-			{
-				document.write("$acc_control: $acc_turned_off");
-			}
-			else
-			{
-				document.write("$acc_control: $acc_turned_on");
-				document.write("<br/>");
-				if( new_device_statue_by_default == "Block" )
-					document.write("$acc_general_rule: $block_connect");
-				else
-					document.write("$acc_general_rule: $allow_connect");
-			}
-		}
-	</script>	
-	
-	</TD>
-	<TD nowrap align=right>
-	<input class="common_bt" type='button' name='refresh' value='$refresh_mark' onClick='location.href="DEV_device.htm";'>
-	</TD>
+        <TD width="40%" ><!--input type="button" class="common_bt" name="edit" value="$edit_mark" onclick="return click_edit();"/--></TD>
+        <TD>
+        <script>
+                var new_device_statue_by_default="<% cfg_get("new_device_statue_by_default") %>";
+                if(top.enable_ap_flag == "0")
+                {
+                        document.getElementById("acc_line").style.display="";
+                        if( enable_block_device == "0" )
+                        {
+                                document.write("$acc_control: $acc_turned_off");
+                        }
+                        else
+                        {
+                                document.write("$acc_control: $acc_turned_on");
+                                document.write("<br/>");
+                                if( new_device_statue_by_default == "Block" )
+                                        document.write("$acc_general_rule: $block_connect");
+                                else
+                                        document.write("$acc_general_rule: $allow_connect");
+                        }
+                }
+        </script>       
+        
+        </TD>
+        <TD nowrap align=right>
+        <input class="common_bt" type='button' name='refresh' value='$refresh_mark' onClick='location.href="DEV_device.htm";'>
+        </TD>
 </TR>
 </TABLE>
 

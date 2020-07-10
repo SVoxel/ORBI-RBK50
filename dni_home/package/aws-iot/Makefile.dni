@@ -4,5 +4,5 @@ endef
 
 define Package/aws-iot/install_dniext
 	rm $(1)/etc/rc.d/S99aws
-	ln -sv ../init.d/aws $(1)/etc/rc.d/S99zzaws
+	ln -sv ../init.d/aws $(1)/etc/rc.d/S20zzaws
 endef

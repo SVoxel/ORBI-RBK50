@@ -1,0 +1,94 @@
+#!/bin/sh
+connect_status=0
+check_status=0
+old_disconntimes=0
+old_checkfailtimes=0
+CONFIG=/bin/config
+while true
+do
+    hijack_status=`$CONFIG get dns_hijack`
+    wanport_status=`cat /tmp/port_status`
+	if [ "$hijack_status" != "1" ];then
+		break
+	fi
+
+	if [ "$wanport_status" != "1" ];then
+		if [ "$connect_status" = 1 ];then
+			connect_status=0
+			/usr/sbin/ra_installevent  internetdisconnect
+			check_status=0
+			/usr/sbin/ra_installevent  internetUrlChkfail
+		fi
+	else
+		pingtimes=5
+		connecttimes=0
+		disconntimes=0
+		checkoktimes=0
+		checkfailtimes=0
+		while [ $pingtimes -gt 0 ]
+		do
+			ping -c 1 www.netgear.com > /tmp/router-analytics/install_ping 2> /dev/null 
+			curl -o /tmp/router-analytics/install_urlcheck -m 1 "http://http.fw.updates1.netgear.com/sw-apps/internet-check/connection-check.ntgr" 2> /dev/null
+			result=`cat /tmp/router-analytics/install_ping`
+			checkfile="/tmp/router-analytics/install_urlcheck"
+			if [ "x$(echo $result |grep "1 packets received")" != "x" ];then
+					connecttimes=1
+					disconntimes=0
+					rm /tmp/router-analytics/install_ping
+					break
+			elif [ "x$(echo $result |grep "1 packets received")" = "x" ];then
+				if [ "$old_disconntimes" != 0 ];then
+					disconntimes=`expr $old_disconntimes + 1`
+					old_disconntimes=0
+				else
+					disconntimes=`expr $disconntimes + 1`
+				fi
+				if [ "$disconntimes" = 5 ];then
+					break
+				fi
+			fi
+			if [ -f $checkfile ] && [ "x$(cat $checkfile)" = "xNETGEAR" ];then
+					checkoktimes=1
+					checkfailtimes=0
+					rm /tmp/router-analytics/install_urlcheck
+					break
+			else
+				if [ "$old_checkfailtimes" != 0 ];then
+					checkfailtimes=`expr $old_checkfailtimes + 1`
+					old_checkfailtimes=0
+				else
+					checkfailtimes=`expr $checkfailtimes + 1`
+				fi
+				if [ "$checkfailtimes" = 5 ];then
+					break
+				fi
+			fi
+			pingtimes=`expr $pingtimes - 1`
+		done
+		old_disconntimes=$disconntimes
+		old_checkfailtimes=$checkfailtimes
+		if [ "$connecttimes" = 1 -a "$connect_status" = 0 ];then
+				connect_status=1
+				connecttimes=0
+				/usr/sbin/ra_installevent  internetconnect
+		fi
+		if [ "$disconntimes" = 5 -a "$connect_status" = 1 ];then
+				connect_status=0
+				disconntimes=0
+				old_disconntimes=0
+				/usr/sbin/ra_installevent  internetdisconnect
+		fi
+		if [ "$checkoktimes" = 1 -a "$check_status" = 0 ];then
+				check_status=1
+				checkoktimes=0
+				/usr/sbin/ra_installevent  internetUrlChkok
+		fi
+		if [ "$checkfailtimes" = 5 -a "$check_status" = 1 ];then
+				check_status=0
+				checkfailtimes=0
+				old_checkfailtimes=0
+				/usr/sbin/ra_installevent  internetUrlChkfail
+		fi
+	fi
+	sleep 1
+done

@@ -100,7 +100,8 @@ extern int h_errno;
 #define JAN_1970        0x83aa7e80      /* 2208988800 1970 - 1900 in seconds */
 #define NTP_PORT (123)
 #define DAY_TIME 86400
-#define NETGEAR_PERIOD 20
+// According to NTGR demand, reduce period to 1s.
+#define NETGEAR_PERIOD 1
 
 /* How to multiply by 4294.967296 quickly (and not quite exactly)
  * without using floating point or greater than 32-bit integers.
@@ -1291,7 +1292,7 @@ int main(int argc, char *argv[]) {
 		ntpc.set_clock, ntpc.cross_check );
 	}
 
-	printf("Configuration: NTP server : %s Interval : %d Local port : %d\n", ntps, ntpc.cycle_time, udp_local_port);
+	//printf("Configuration: NTP server : %s Interval : %d Local port : %d\n", ntps, ntpc.cycle_time, udp_local_port);
 	/* Startup sequence */
 	if ((usd=socket(AF_INET,SOCK_DGRAM,IPPROTO_UDP))==-1) {
 		perror ("socket");

@@ -802,8 +802,17 @@ set_boarddata() {
 			MX|484)
 				REGULATORY_DOMAIN=MX
 				;;
-			MY|458|CN|156|SG|702|TH|764)
+			MY|458|CN|156|TH|764)
 				REGULATORY_DOMAIN=SRRC
+				;;
+			SG|702)
+				REGULATORY_DOMAIN=Singapore
+				;;
+			VN|704)
+				REGULATORY_DOMAIN=Vietnam
+				;;
+			HK|344)
+				REGULATORY_DOMAIN=HongKong
 				;;
 		esac
 	fi

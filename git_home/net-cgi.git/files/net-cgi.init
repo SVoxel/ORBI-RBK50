@@ -36,6 +36,10 @@ CONFIG_FILE="/tmp/net-cgi.conf"
 [ "x$SUPPORT_EXT_FW" = "x" ] && SUPPORT_EXT_FW="0"
 [ "x$SUPPORT_DTV2" = "x" ] && SUPPORT_DTV2=0
 [ "x$HAVE_DHCP_OPTION" = "x" ] && HAVE_DHCP_OPTION=0
+[ "x$HAVE_SINGAPORE_ISP" = "x" ] && HAVE_SINGAPORE_ISP=0
+[ "x$HAVE_MALAYSIA_ISP" = "x" ] && HAVE_MALAYSIA_ISP=0
+[ "x$HAVE_SPAIN_ISP" = "x" ] && HAVE_SPAIN_ISP=0
+[ "x$SATE_MD5_AUTH" = "x" ] && SATE_MD5_AUTH=0
 SATELLITE_MODULE_NAME=$($CONFIG get dgc_sysinfo_module_name_cc)
 BASE_MODULE_NAME=$($CONFIG get dgc_sysinfo_module_name)
 WLANBH_IFNAME=$($CONFIG get dgc_wlan_5g_bh_phyif)
@@ -140,7 +144,10 @@ config()
 		"nc_wla1_prefix \"${WLA1_PREFIX}\"" \
 		"nc_wla_2nd_prefix \"${WLA_2ND_PREFIX}\"" \
 		"nc_have_dhcp_option \"${HAVE_DHCP_OPTION}\"" \
-
+		"nc_have_singapore_isp \"${HAVE_SINGAPORE_ISP}\"" \
+		"nc_have_malaysia_isp \"${HAVE_MALAYSIA_ISP}\"" \
+		"nc_have_spain_isp \"${HAVE_SPAIN_ISP}\"" \
+		"nc_satellite_md5_auth \"${SATE_MD5_AUTH}\"" \
 		""
 }
 

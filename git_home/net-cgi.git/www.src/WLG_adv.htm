@@ -663,7 +663,8 @@ else if(an_router_flag == 1)
                 document.write('<option value=10>$coun_na</option>');
         else
                 document.write('<option value=10>$coun_us</option>');
-
+		document.write('<option value=23>$coun_hk</option>');
+		document.write('<option value=24>Vietnam</option>');
                 document.write('</select></TD></TR>');
         if(netgear_region.toUpperCase() == "JP")
                 document.getElementsByName("WRegion")[0].value = 6;
@@ -736,7 +737,6 @@ else if(an_router_flag == 1)
                 document.write('<option value="super_wifi">Super WiFi</option>');
 </script>
 		<option value="100">100%</option>
-		<option value="75">75%</option>
 <!-- For BUG 33420 to show transmit power control 63% and 33% -->
 <script>
 	if( txctl_63_33_flag == 1)
@@ -891,7 +891,6 @@ $bluebar
                 document.write('<option value="super_wifi">Super WiFi</option>');
 </script>
 		<option value="100">100%</option>
-		<option value="75">75%</option>
 <!-- For BUG 33420 to show transmit power control 63% and 33% -->
 <script>
 	if( txctl_63_33_flag == 1)
@@ -1060,7 +1059,7 @@ $bluebar
 <% help_box("0","_wladv") %>
 <script>
 	change_web_format();
-var qca_region_arr=new Array("za", "none", "au", "ca", "eu", "il", "jp","kr", "mx", "none", "us", "cn", "none", "my", "none", "none", "tr", "sa", "ae", "ru", "sg", "tw","");
+var qca_region_arr=new Array("za", "none", "au", "ca", "eu", "il", "jp","kr", "mx", "none", "us", "cn", "none", "my", "none", "none", "tr", "sa", "ae", "ru", "sg", "tw","none","hk","vn","");
 function checkadv(form)
 {
 	if(form.rts.value == "" || form.rts_an.value == "")

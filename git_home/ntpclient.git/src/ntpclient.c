@@ -100,7 +100,8 @@ extern int h_errno;
 #define JAN_1970        0x83aa7e80      /* 2208988800 1970 - 1900 in seconds */
 #define NTP_PORT (123)
 #define DAY_TIME 86400
-#define NETGEAR_PERIOD 20
+// According to NTGR demand, reduce period to 1s.
+#define NETGEAR_PERIOD 1
 
 /* How to multiply by 4294.967296 quickly (and not quite exactly)
  * without using floating point or greater than 32-bit integers.
@@ -230,16 +231,24 @@ static void getRaCloudTime()
 
 	if(access("/tmp/xCloud_time", F_OK) == 0)
 		remove("/tmp/xCloud_time");
-
+/* No need Authorization any more.
 	if(env == 1)
 		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -H \"Authorization:%s:%s\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &", DEV_URL, CURRENT_TIME_PATH, user, pw, sn, model);
 	else if (env == 2)
 		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -H \"Authorization:%s:%s\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &",  QA_URL, CURRENT_TIME_PATH, user, pw, sn, model);
 	else
 		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -H \"Authorization:%s:%s\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &",PROD_URL, CURRENT_TIME_PATH, user, pw, sn, model);
+*/
+	if(env == 1)
+		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &", DEV_URL, CURRENT_TIME_PATH, sn, model);
+	else if (env == 2)
+		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &",  QA_URL, CURRENT_TIME_PATH, sn, model);
+	else
+		snprintf(cmd, sizeof(cmd)-1, "curl -k -X POST https://%s/%s -H \"content-type: application/json\" -d \'{\"hardwareId\":\"%s\",\"model\":\"%s\"}\' -o /tmp/xCloud_time --connect-timeout 3 &",PROD_URL, CURRENT_TIME_PATH, sn, model);
 	system(cmd);
-	system("echo getRaCloudTime > /dev/console");
+	system("echo '[ntpclient] getRaCloudTime, Query...' > /dev/console");
 }
+
 static void setRaCloudTime()
 {
 	FILE *ct_fp;
@@ -248,8 +257,6 @@ static void setRaCloudTime()
 	struct timeval tm_ra = {0};
 	int data_flag = 0, zone_flag = 0;
 
-	getRaCloudTime();
-	sleep(3);
 	ct_fp = fopen("/tmp/xCloud_time", "r");
 	if(ct_fp) {
 		while(fgets(time_buf, sizeof(time_buf)-1, ct_fp)) {
@@ -276,7 +283,9 @@ static void setRaCloudTime()
 	if(data_flag == 1) {
 		if(settimeofday(&tm_ra, NULL) < 0)
 			perror("[ntp] set ra time error");
+		system("echo '[ntpclient] setRaCloudTime' > /dev/console");
 		system("touch /tmp/ntp_RaUpdated");
+		system("/usr/sbin/ra_installevent ntpsynced");
 	}
 }
 
@@ -285,8 +294,11 @@ static inline void updateRaCloudTime()
 	if(access("/tmp/ntp_RaUpdated", F_OK) != 0)
 	{
 		getRaCloudTime();
+		sleep(3);
 		setRaCloudTime();
 	}
+	else
+		system("echo '[ntpclient] skip RaCloudTime action, It updated.' > /dev/console");
 }
 #define PPP_STATUS	"/etc/ppp/ppp0-status"
 #define PPP1_STATUS      "/etc/ppp/pppoe1-status"
@@ -539,6 +551,7 @@ void apply_settings(void)
 
 	/* log the first entry */
 	system("[ -f /tmp/ntp_updated ] || touch /tmp/ntp_updated");
+	system("/usr/sbin/ra_installevent ntpsynced");
 
 #ifdef NETGEAR_DAYLIGHT_SAVING_TIME
 	/* check the daylight saving time*/
@@ -1417,7 +1430,7 @@ int main(int argc, char *argv[]) {
 		ntpc.set_clock, ntpc.cross_check );
 	}
 
-	printf("Configuration: NTP server : %s Interval : %d Local port :%d\n", ntps, ntpc.cycle_time, udp_local_port);
+	//printf("Configuration: NTP server : %s Interval : %d Local port :%d\n", ntps, ntpc.cycle_time, udp_local_port);
 	sprintf(ntpportnum, "%d", udp_local_port);
 	config_set("ntpPortNumber",ntpportnum);
 //	config_commit(); 
@@ -1452,6 +1465,11 @@ int main(int argc, char *argv[]) {
 	if (!setup_receive(usd, INADDR_ANY, udp_local_port)
 			|| !setup_transmit(usd, ntps, NTP_PORT, &ntpc)) {
 		close(usd);
+        /* Get Cloud time from xagent.
+        * if ntp fail ,use ra method to update coarsely.
+        * it will just updated once.
+        * */
+        updateRaCloudTime();
 		to.tv_sec = ntpc.cycle_time;
 		to.tv_usec = 0;
 		select(1, NULL, NULL, NULL, &to);
@@ -1470,17 +1488,17 @@ int main(int argc, char *argv[]) {
 	close(usd);
 
 	loop:
-	/* Get Cloud time from xagent.
-	 * if ntp fail ,use ra method to update coarsely.
-	 * it will just updated once.
-	 * */
-		updateRaCloudTime();
 		/* [NETGEAR Spec 12]:Subsequent queries will double the preceding query interval 
 		 * until the interval has exceeded the steady state query interval, at which point 
 		 * and new random interval between 0.00 and 60.00 seconds is selected and the 
 		 * process repeats.
 		 */
 		if(!sysnc_ok){
+           /* Get Cloud time from xagent.
+            * if ntp fail ,use ra method to update coarsely.
+            * it will just updated once.
+            * */
+            updateRaCloudTime();
 		//	printf("NTP Sync time stamp fail, will wait %d s\n", ntpc.cycle_time);
 			to.tv_sec = ntpc.cycle_time;
 			to.tv_usec = 0;

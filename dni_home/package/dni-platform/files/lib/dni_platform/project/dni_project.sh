@@ -243,6 +243,10 @@ dni_wifi_defconfig() {
                 /bin/config set overwrite_20013="0"
                 /bin/config commit
         fi
+		#drive have removed 75%, and NTGR want to set 75 to 100
+		[ "`/bin/config get wl_tpscale`" = "75" ] && /bin/config set wl_tpscale="100"
+		[ "`/bin/config get wla_tpscale`" = "75" ] && /bin/config set wla_tpscale="100"
+		[ "`/bin/config get wla_2nd_tpscale`" = "75" ] && /bin/config set wla_2nd_tpscale="100"
 }
 
 dni_region_defconfig() {
@@ -470,8 +474,6 @@ dni_generate_board_conf() {
 		/bin/rm /sbin/udhcpc-ext
 		/bin/rm /usr/share/udhcpc/default.script-ext
 		/bin/rm /usr/share/udhcpc/default.script.ap-ext
-		/bin/rm /usr/sbin/net-scan-ext
-		/bin/rm /usr/sbin/dev-scan-ext
 		/bin/rm /usr/sbin/ntpclient-ext
 		/bin/rm /etc/init.d/ntpclient-ext
 		/bin/rm /etc/init.d/net-lan-ext
@@ -491,8 +493,6 @@ dni_generate_board_conf() {
 		/bin/mv /sbin/udhcpc-ext /sbin/udhcpc
 		/bin/mv /usr/share/udhcpc/default.script-ext /usr/share/udhcpc/default.script
 		/bin/mv /usr/share/udhcpc/default.script.ap-ext /usr/share/udhcpc/default.script.ap
-		/bin/mv /usr/sbin/net-scan-ext /usr/sbin/net-scan
-		/bin/mv /usr/sbin/dev-scan-ext /usr/sbin/dev-scan
 		/bin/mv /usr/sbin/ntpclient-ext /usr/sbin/ntpclient
 		/bin/mv /etc/init.d/ntpclient-ext /etc/init.d/ntpclient
 		/bin/mv /etc/init.d/net-lan-ext /etc/init.d/net-lan
@@ -632,6 +632,10 @@ project_boot_stage0() {
 	/sbin/cmd_sipalg
 
 	insmod /lib/ufsd/ufsd.ko
+	if [ "x$flash_type" = "xNAND_FLASH" ];then
+		# init the mtdoops to capture kernel crash log
+		insmod mtdoops
+	fi
 
 	# indicate the system first boot for first log
 	/bin/config set syslog_up_first=0

@@ -31,36 +31,73 @@
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
+#include <dirent.h>
 
 #include "aws_iot_config.h"
 #include "aws_iot_log.h"
 #include "aws_iot_version.h"
 #include "aws_iot_mqtt_client_interface.h"
+#include "JSON_checker.h"
 
 #define JSON_FILE       "/tmp/aws_json"
+#define INSTALL_FILES       "/tmp/router-analytics/ra_data/installation"
 //#define JSON_FILE_SATELLITE       "/tmp/aws_satellite_json"
 
 static char json[800000];
 //static char sjson[4096];
 static char clientKey[4096];
+static char filename[24];
 
-char *read_json(char *file)
+int check_json()
 {
-	static char buf[800000] = {0}, temp[256] = {0};
+    JSON_checker jc = new_JSON_checker(20);
+
+	FILE *fp, *ofp;
+	int c;
+	int fail = 0;
+	char cmd[256] = {0};
+	snprintf(cmd, sizeof(cmd), " mv /tmp/aws_json %s", filename);
+	system(cmd);
+
+	if((fp=fopen(filename, "r")) != NULL && (ofp=fopen("/tmp/aws_json", "w")) != NULL )
+	{
+		while((c = fgetc(fp)) != EOF){
+			if (fail == 0 && !JSON_checker_char(jc, c)) {
+				fprintf(stderr, "JSON_checker_char: ==%c== syntax error\n", c);
+				fail=1;
+			} else
+				fputc(c, ofp);
+		}
+		fclose(fp);
+		fclose(ofp);
+		if (!JSON_checker_done(jc)) {
+			fprintf(stderr, "JSON_checker_end: syntax error\n");
+			fail=1;
+		} 
+	}
+	if(fail==0){
+		snprintf(cmd, sizeof(cmd), " rm %s", filename);
+		system(cmd);
+	}
+	return fail;
+}
+
+void read_json(char *file)
+{
+	char temp[512] = {0};
 	FILE *fp;
 	int i = 0;
-	buf[0] = '\0';
+	memset(json, 0, sizeof(json));
 	fp = fopen(file, "r");
-	if(fp == NULL)
-		return buf;
-	while(fgets(temp, sizeof(temp), fp))
-		strcat(buf, temp);
-	fclose(fp);
+	if(fp != NULL) {
+		while(fgets(temp, sizeof(temp), fp))
+			strcat(json, temp);
+		fclose(fp);
+	}
 /*	while(buf[i] != '\r' &&  buf[i] != '\0' && buf[i] != '\n')
 		i++;
 	buf[i] = '\0';
 */
-	return buf;
 }
 
 /**
@@ -86,7 +123,9 @@ uint32_t port = AWS_IOT_MQTT_PORT;
  */
 uint32_t publishCount = 0;
 
-uint32_t ra_debug_flag = 0;
+//uint32_t ra_debug_flag = 0;
+uint32_t installation_count = 5;
+uint32_t installation=0;
 
 void iot_subscribe_callback_handler(AWS_IoT_Client *pClient, char *topicName, uint16_t topicNameLen,
 									IoT_Publish_Message_Params *params, void *pData) {
@@ -122,7 +161,7 @@ void disconnectCallbackHandler(AWS_IoT_Client *pClient, void *data) {
 void parseInputArgsForConnectParams(int argc, char **argv) {
 	int opt;
 
-	while(-1 != (opt = getopt(argc, argv, "h:p:c:x:k:t:i:d:"))) {
+	while(-1 != (opt = getopt(argc, argv, "h:p:c:x:k:t:i:n:e:a:"))) {
 		switch(opt) {
 			case 'h':
 				strcpy(HostAddress, optarg);
@@ -150,8 +189,14 @@ void parseInputArgsForConnectParams(int argc, char **argv) {
 			case 't':
 				strcpy(TOPIC, optarg);
 				break;
-			case 'd':
-				ra_debug_flag = atoi(optarg);
+			case 'n':
+				installation_count = atoi(optarg);
+				break;
+			case 'a':
+				installation=1;
+				break;
+			case 'e':
+				strcpy(filename, optarg);
 				break;
 			case '?':
 				if(optopt == 'c') {
@@ -168,6 +213,14 @@ void parseInputArgsForConnectParams(int argc, char **argv) {
 		}
 	}
 
+}
+
+int filer_file(const struct dirent *ent)
+{
+	if(ent->d_type == 8)
+		return 1;
+	else
+		return 0;
 }
 
 int main(int argc, char **argv) {
@@ -194,9 +247,6 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	strcpy(json, read_json(JSON_FILE));
-//	strcpy(sjson, read_json(JSON_FILE_SATELLITE));
-
 	IoT_Error_t rc = FAILURE;
 
 	AWS_IoT_Client client;
@@ -204,9 +254,18 @@ int main(int argc, char **argv) {
 	IoT_Client_Connect_Params connectParams = iotClientConnectParamsDefault;
 
 	IoT_Publish_Message_Params paramsQOS0;
-	IoT_Publish_Message_Params paramsQOS1;
 
 	parseInputArgsForConnectParams(argc, argv);
+
+	if(!installation) {
+		if(check_json()){
+			if(check_json()) {
+				goto fin;
+			} else
+				read_json(JSON_FILE);
+		} else
+			read_json(JSON_FILE);
+	}
 
 	IOT_INFO("\nAWS IoT SDK Version %d.%d.%d-%s\n", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_TAG);
 
@@ -255,102 +314,86 @@ int main(int argc, char **argv) {
 		IOT_ERROR("Unable to set Auto Reconnect to true - %d", rc);
 		goto fin;
 	}
-/*
-	IOT_INFO("Subscribing...");
-	rc = aws_iot_mqtt_subscribe(&client, "RBR50/update", 12, QOS0, iot_subscribe_callback_handler, NULL);
-	if(SUCCESS != rc) {
-		IOT_ERROR("Error subscribing : %d ", rc);
-		return rc;
-	}
-*/
-//	sprintf(cPayload, "%s : %d ", "hello from SDK", i);
-	sprintf(cPayload, "{\n%s}\n", json);
+	if(!installation) 
+		sprintf(cPayload, "%s", json);
 
 	paramsQOS0.qos = QOS0;
 	paramsQOS0.payload = (void *) cPayload;
 	paramsQOS0.isRetained = 0;
 
-	paramsQOS1.qos = QOS1;
-	paramsQOS1.payload = (void *) cPayload;
-	paramsQOS1.isRetained = 0;
-
 	if(publishCount != 0) {
 		infinitePublishFlag = false;
 	}
 
-	while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc)
-		&& (publishCount > 0 || infinitePublishFlag) && !ra_debug_flag){
+	if(!installation) {
+		while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc)
+			&& (publishCount > 0 || infinitePublishFlag)){
 
-		rc = aws_iot_mqtt_yield(&client, 100);
-		if(NETWORK_ATTEMPTING_RECONNECT == rc) {
-			continue;
-		}
-
-		IOT_INFO("-->sleep");
-		sleep(1);
-		sprintf(cPayload, "{\n%s}\n", json);
-		IOT_INFO("Publish data\n %s", cPayload);
-		paramsQOS0.payloadLen = strlen(cPayload);
-		IOT_INFO("Publish Info to TOPIC %s\n", TOPIC);
-		rc = aws_iot_mqtt_publish(&client, TOPIC, 10, &paramsQOS0);
-		if(publishCount > 0) {
-			publishCount--;
-		}
-	}
-	while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc)
-		&& (publishCount > 0 || infinitePublishFlag) && ra_debug_flag){
-
-		rc = aws_iot_mqtt_yield(&client, 100);
-		if(NETWORK_ATTEMPTING_RECONNECT == rc) {
-			continue;
-		}
-
-		IOT_INFO("-->sleep");
-		sleep(1);
-		int i=0, j=0;
-		char file[32] = {0};
-		for(i=1;;i++){
-			snprintf(file, sizeof(file)-1, "%s%d", JSON_FILE, i);
-			strcpy(json, read_json(file));
-			if(json[0] != '\0'){
-				sprintf(cPayload, "%s\n", json);
-				IOT_INFO("Publish data\n %s", cPayload);
-				paramsQOS0.payloadLen = strlen(cPayload);
-				IOT_INFO("Publish Info to TOPIC %s\n", TOPIC);
-				rc = aws_iot_mqtt_publish(&client, TOPIC, 10, &paramsQOS0);
-				publish_flag=1;
-				if(SUCCESS == rc)
-					continue;
-				else {
-					publishCount--;
-					for(j=0;j<publishCount;j++){ /*retry publishCount times*/
-						sleep(60);
-						rc = aws_iot_mqtt_publish(&client, TOPIC, 10, &paramsQOS0);
-						if(SUCCESS == rc)   /*if sucess continue publish next json */
-							break;
-					}
-					if(SUCCESS != rc) /*after retry publishCount times, break and stop to publish */
-						break;
-				}
-			} else {
-				publishCount=0;
-				break;
+			rc = aws_iot_mqtt_yield(&client, 100);
+			if(NETWORK_ATTEMPTING_RECONNECT == rc) {
+				continue;
 			}
-				
+
+			IOT_INFO("-->sleep");
+			sleep(1);
+			sprintf(cPayload, "%s", json);
+			IOT_INFO("Publish data\n %s", cPayload);
+			paramsQOS0.payloadLen = strlen(cPayload);
+			IOT_INFO("Publish Info to TOPIC %s\n", TOPIC);
+			rc = aws_iot_mqtt_publish(&client, TOPIC, 10, &paramsQOS0);
+			if(publishCount > 0) {
+				publishCount--;
+			}
 		}
-		if(publish_flag)
-			system("rm /tmp/ra_debug_tmp.log* /tmp/ra_debug.log");
+	} else {
+		int i=0, j=0, num=0, n=0;
+		struct dirent **ptr;
+		char cmd[1024] = {0};
+		num=scandir(INSTALL_FILES, &ptr, filer_file, alphasort);
+		if(num > 0) {
+			rc = aws_iot_mqtt_yield(&client, 100);
+			while(n<num) {
+				if(ptr[n]->d_type == 8)  {
+					i=publishCount;
+					rc=NETWORK_ATTEMPTING_RECONNECT;
+					while((NETWORK_ATTEMPTING_RECONNECT == rc || NETWORK_RECONNECTED == rc || SUCCESS == rc)
+					&& (i > 0 || infinitePublishFlag)){
+
+						if( NETWORK_RECONNECTED == rc) {
+							rc = aws_iot_mqtt_yield(&client, 100);
+							continue;
+						}
+
+						snprintf(cmd, sizeof(cmd)-1, "%s/%s", INSTALL_FILES, ptr[n]->d_name);
+						read_json(cmd);
+						sprintf(cPayload, "%s", json);
+						IOT_INFO("Publish data\n %s", cPayload);
+						paramsQOS0.payloadLen = strlen(cPayload);
+						IOT_INFO("Publish Info to TOPIC %s\n", TOPIC);
+						rc = aws_iot_mqtt_publish(&client, TOPIC, 10, &paramsQOS0);
+						if(i>0)
+							i--;
+					}
+					if(rc ==SUCCESS) {
+						snprintf(cmd, sizeof(cmd)-1, "rm %s/%s", INSTALL_FILES, ptr[n]->d_name);
+						system(cmd);
+					}
+					j++;
+					free(ptr[n]);
+					n++;
+					if( !installation && j>=installation_count){
+						break;
+					}
+				}
+			}
+			free(ptr);
+		}
 	}
 fin:
 	if(SUCCESS != rc) {
 		IOT_ERROR("An error occurred  %d", rc);
 	} else {
 		IOT_INFO("Publish done\n");
-	}
-
-	if(ra_debug_flag) {
-		system("rm /tmp/aws_json*");
-		system("rm /tmp/ra_debug_tmp.log*");
 	}
 	sprintf(cmd, "echo %d >/tmp/publish_status", rc);
 	system(cmd);

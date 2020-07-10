@@ -40,6 +40,9 @@ var have_l2tp = (top.l2tp_flag == 1) ? 1 : 0;
 var consolidate_device_name = parent.consolidate_device_name;
 var have_dhcp_option = top.have_dhcp_option;
 
+var support_singapore_isp = top.support_singapore_isp_flag;
+var support_malaysia_isp  = top.support_malaysia_isp_flag;
+var support_spain_isp = top.support_spain_isp_flag;
 
 function change_web_format()
 {
@@ -159,6 +162,9 @@ function loadvalue()
 		document.getElementById("option61").style.display = "";
 		document.getElementById("option61_bluebar").style.display = "";
 	}
+	if(support_singapore_isp == "1" ||  support_malaysia_isp== "1" || support_spain_isp == "1")
+		document.getElementById("other_dhcp_pppoe").style.display = "";	
+
 }
 </script>
 
@@ -360,6 +366,18 @@ $bluebar
 	</TD>
 </TR>
 <TR id="option61_bluebar" style="display:none"><td colspan=2><img src=/liteblue.gif width=100% height=12></td></TR>
+<tbody id="other_dhcp_pppoe" style="display:none">
+<TR id=vlanlink_title>
+	<TD nowrap colspan=2 class="label-td"><B>$vlan_link_title</B></TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2 class="label-td">
+	<a class="linktype" style="cursor:pointer" onclick="vlanlink_click()">$vlanlink_click</a>
+	</TD>
+</TR>
+$bluebar
+</tbody>
+
 </TABLE>
 </div> <!-- main -->
 <% help_box("0","_BAS_ether") %>

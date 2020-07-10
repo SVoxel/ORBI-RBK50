@@ -1,5 +1,8 @@
 <% http_header("style/form.css", "css/parentalControls.css", "/funcs.js", "/jquery-1.7.2.min.js") %>
 <% body_header("_parental", "parental_basic.htm", "parental") %>
+<style>
+.Arabic .pci-title-bold {margin-left: -20px;}
+</style>
 <input type="hidden" name="hidden_enable_circle">
 <input type="hidden" name="hidden_enable_opendns">
 <div class="page_title" id="page_title">$parental_control</div>
@@ -14,6 +17,7 @@ else
         document.write(' <TD nowrap colspan=2 align=center><input class="cancel1_bt" type="button" name="Cancel" id="cancel" value="$cancel_mark" disabled>&nbsp;&nbsp;<input class="apply1_bt" type="button" name="Apply" id="apply" value="$apply_mark" disabled></TD>');
 var opendns="<% cfg_get("ParentalControl") %>";
 var circle="<% cfg_get("enable_circle_plc") %>";
+var opendns_show_flag="<% cfg_get("opendns_show_flag") %>";//1 means not show
 <% circle_popout_mark() %>;
 var enable=0;
 var toggleHandler = function(toggle) {
@@ -43,6 +47,8 @@ $$(document).ready(function() {
     $$(".toggle").each(function(index, toggle) {
         toggleHandler(toggle);
     });
+    if(parent.is_dual_band!=1 || opendns_show_flag!="1")
+    	document.getElementById("parentalControlsTable2").style.display="";
 });
 
 </script>
@@ -65,12 +71,16 @@ $$(document).ready(function() {
 	</TD>
 </TR>
 <TR class="right-block">
-	<TD colspan=2><B>$circle_title</B>
+	<TD colspan=2><B>$circle_enable_title_short</B>
 	</TD>
 </TR>
 <TR class="right-block">
-        <TD colspan=2 style="height:30px">$circle_description
-        </TD>
+        <TD colspan=2 style="height:30px"><ul>
+			<li>$circle_enable_description1</li>
+			<li>$circle_enable_description2</li>
+			<li>$circle_enable_description3</li>
+			<li>$circle_enable_description4</li>
+        </ul></TD>
 </TR>
 <TR class="right-block">
 	<TD colspan=2 style="height:20px"><a class="linktype" target="_blank" href="http://www.netgear.com/circle">$learn_more</a>
@@ -87,6 +97,12 @@ $$(document).ready(function() {
 		</div>
 		<% circle_basic_info() %>
 </TR>
+</table>
+<script>
+	if(parent.is_dual_band==1 && opendns_show_flag=="1")
+		document.write("$bluebar");
+</script>
+<table id="parentalControlsTable2" width="100%%" border="0" cellpadding="0" cellspacing="3" style="border-collapse:collapse;display:none;">
 <TR class="switch-table-wrapper">
 	<TD colspan=2>
 		<div class="toggle" id="standard_plc_radio">

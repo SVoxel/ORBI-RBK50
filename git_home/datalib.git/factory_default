@@ -1,4 +1,5 @@
 #!/bin/sh
 killall traffic_meter
+/etc/init.d/aws default
 sleep 2
 config default

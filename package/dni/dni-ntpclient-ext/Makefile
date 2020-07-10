@@ -45,7 +45,7 @@ define Package/dni-ntpclient-ext/install
 	install -d -m0755 $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/src/ntpclient $(1)/usr/sbin/ntpclient-ext
 	install -d -m0755 $(1)/etc/init.d
-	install -m0755 ./files/ntpclient.init $(1)/etc/init.d/ntpclient-ext
+	install -m0755 $(PKG_BUILD_DIR)/files/ntpclient.init $(1)/etc/init.d/ntpclient-ext
 	$(call Dni_Install_Ext,$(LOCAL_PKG_NAME_EXT),$(1))
 endef
 

@@ -22,10 +22,8 @@ boot() {
             /bin/sh /sbin/factory-test.sh mode
             return
        fi
-       if [ "x$(/bin/config get factory_mode)" != "x1" ]; then
-           wlan down
-       fi
        wlan up
+	   /usr/sbin/wireless_ra_installation.sh &
        if [ "x$wig_exist" = "xon" ]; then
            wigig updateconf
            wigig down

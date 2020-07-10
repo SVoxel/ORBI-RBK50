@@ -38,11 +38,34 @@ var lan_ports_num = top.lan_ports_num;
 var enable_orange="<% cfg_get("enable_orange") %>";
 var internet_type="<% cfg_get("internet_type") %>";
 var internet_ppp_type="<% cfg_get("internet_ppp_type") %>";
-var pppoe_empty=<% cfg_get_length("wan_orange_pppoe_passwd") %>;
 //var con_endis_wl_radio="<% cfg_get("endis_wl_radio") %>";
 //var con_endis_wla_radio="<% cfg_get("endis_wla_radio") %>";
 //var get_endis_guestNet="<% cfg_get("wlg1_endis_guestNet") %>";
 //var get_endis_guestNet_an="<% cfg_get("wla1_endis_guestNet") %>";
+var orangefrance_pppoe_empty=<% cfg_get_length("wan_orange_pppoe_passwd") %>;
+var movistarspain_pppoe_empty=<% cfg_get_length("wan_movistarspain_pppoe_passwd") %>;
+var vodafonespain_pppoe_empty=<% cfg_get_length("wan_vodafonespain_pppoe_passwd") %>;
+var orangefrance_username = "<% cfg_sed_xss("wan_orange_username") %>";
+var orangespain_username = "<% cfg_sed_xss("wan_orangespain_username") %>";
+var movistarspain_username = "<% cfg_sed_xss("wan_movistarspain_username") %>";
+var vodafonespain_username = "<% cfg_sed_xss("wan_vodafonespain_username") %>";
+function edit_iptv_display(cf,ports_flag,name_flag,id_flag,priority_flag)
+{	
+	if(ports_flag == true)
+		document.getElementById("vlan_ports").style.display="";
+	else
+		document.getElementById("vlan_ports").style.display="none";
+	cf.vlan_name.disabled = name_flag;
+	cf.vlan_id.disabled = id_flag;
+	cf.vlan_priority.disabled = priority_flag;
+}
+function pppoe_password_display(cf,flag)
+{
+	if(flag == "0")
+		cf.pppoe_orange_passwd.value = "";
+	else
+		cf.pppoe_orange_passwd.value = "*********";
+}
 
 function loadvalue()
 {
@@ -56,22 +79,34 @@ function loadvalue()
 		document.getElementById("vlantype").style.display="";
 	if(default_internet == 1)
 	{
-		if(enable_orange == "1" || (internet_type == "0" && (internet_ppp_type == "6" || internet_ppp_type == "7"))) {
+		if((top.support_orange_vlan ==1 && internet_type == "0" && internet_ppp_type == "6") || (top.support_spain_isp_flag ==1 && internet_type == "0" &&  (internet_ppp_type == "9" || internet_ppp_type == "10"))) {
+ 
 			document.getElementById("orange_login").style.display ="";
-			if(internet_ppp_type == "6") {
-				document.getElementById("orange_login_password").style.display ="";
-				if(pppoe_empty == "0") {
-					cf.pppoe_orange_passwd.value = "";
-				} else {
-					cf.pppoe_orange_passwd.value = "*********";
-				}
-			} else {
-				document.getElementById("orange_login_password").style.display ="none";
-			}
+			document.getElementById("orange_login_password").style.display ="";
+			if(internet_ppp_type == "6")
+				pppoe_password_display(cf,orangefrance_pppoe_empty);
+			else if(internet_ppp_type == "9")
+				pppoe_password_display(cf,movistarspain_pppoe_empty);
+			else if(internet_ppp_type == "10")
+				pppoe_password_display(cf,vodafonespain_pppoe_empty);
+
 			cf.vlan_id.disabled = true;
 			cf.vlan_priority.disabled = true;
-		} else
+		}else if((top.support_singapore_isp_flag ==1 && internet_type == "0" &&  internet_ppp_type == "11") || (top.support_malaysia_isp_flag ==1 && internet_type == "0" && (internet_ppp_type == "12" || internet_ppp_type == "13"))){
 			document.getElementById("orange_login").style.display ="none";
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		}
+		else if((top.support_spain_isp_flag ==1 && internet_type == "0" && internet_ppp_type == "8") || (top.support_orange_flag ==1 && internet_type == "0" && internet_ppp_type == "7"))
+		{
+			document.getElementById("orange_login").style.display ="";
+			document.getElementById("orange_login_password").style.display ="none";
+			cf.vlan_id.disabled = true;
+			cf.vlan_priority.disabled = true;
+		}
+		else
+			document.getElementById("orange_login").style.display ="none";
+
 		document.getElementById("vlanname_1").style.display="none";
 		document.getElementById("vlanname_2").style.display="";
 		document.getElementById("vlan_ports").style.display="none";
@@ -81,24 +116,21 @@ function loadvalue()
 		document.getElementById("orange_login").style.display ="none";
 		document.getElementById("vlanname_1").style.display="";
 		document.getElementById("vlanname_2").style.display="none";
-		if(each_info[1] == "OrangeIPTV") {
-			document.getElementById("vlan_ports").style.display="none";
-			cf.vlan_name.disabled = true;
-			cf.vlan_id.disabled = true;
-			cf.vlan_priority.disabled = true;
-		}
-		else if(each_info[1] == "SpainIPTV") {
-			document.getElementById("vlan_ports").style.display="";
-			cf.vlan_name.disabled = true;
-			cf.vlan_id.disabled = true;
-			cf.vlan_priority.disabled = true;
-		}
+		if(top.support_orange_vlan ==1 && each_info[1] == "OrangeIPTV") 
+			edit_iptv_display(cf,false,true,true,true);
+		else if(top.support_spain_isp_flag ==1 && ((each_info[1] == "VodaSpainIPTV") || (each_info[1] == "OrangeSpainIPTV") || (each_info[1] == "MoviStarSpainIPTV")))
+			edit_iptv_display(cf,true,true,true,true);
+		else if(top.support_singapore_isp_flag ==1 && (each_info[1] == "SingTelSingaporeIPTV"))
+			edit_iptv_display(cf,true,true,true,true);
+		else if(top.support_malaysia_isp_flag ==1 && ((each_info[1] == "UnifiMalaysiaIPTV") || (each_info[1] == "MaxisMalaysiaIPTV")))
+			edit_iptv_display(cf,true,true,true,true);
 		else
 		{
 			cf.vlan_id.disabled = false;
 			cf.vlan_priority.disabled = false;
 			document.getElementById("vlan_ports").style.display="";
 		}
+
 		cf.vlan_name.value=each_info[1].replace(/&#92;/g, "\\").replace(/&lt;/g,"<").replace(/&gt;/g,">").replace(/&#40;/g,"(").replace(/&#41;/g,")").replace(/&#34;/g,'\"').replace(/&#39;/g,"'").replace(/&#35;/g,"#").replace(/&#38;/g,"&");;
 
 		var wired_port=parseInt(each_info[4],10);
@@ -150,6 +182,15 @@ function loadvalue()
 	}
 	cf.vlan_id.value=each_info[2];
 	cf.vlan_priority.value=each_info[3];
+	if(top.support_orange_vlan ==1 && internet_type=="0" && (internet_ppp_type == "7" || internet_ppp_type == "6"))
+		cf.orange_username.value = orangefrance_username;
+	else if(top.support_spain_isp_flag ==1 && internet_type=="0" && internet_ppp_type == "8")
+		cf.orange_username.value = orangespain_username;
+	else if(top.support_spain_isp_flag ==1 && internet_type=="0" && internet_ppp_type == "9")
+		cf.orange_username.value = movistarspain_username;
+	else if(top.support_spain_isp_flag ==1 && internet_type=="0" && internet_ppp_type == "10")
+		cf.orange_username.value = vodafonespain_username;
+
 }
 
 function change_pppoe_password(obj)
@@ -170,45 +211,62 @@ function change_pppoe_password(obj)
 	document.forms[0].hidden_pwd_change.value="1";
 }
 
+function change_iptv_display(cf,ports_flag,login_flag,login_pw_flag,name,name_flag,id,priority,id_flag,priority_flag){
+	if(ports_flag==true)
+ 		document.getElementById("vlan_ports").style.display ="";
+	else
+		document.getElementById("vlan_ports").style.display ="none";
+	if(login_flag==true)
+		document.getElementById("orange_login").style.display ="";
+	else
+ 		document.getElementById("orange_login").style.display ="none";
+	if(login_pw_flag==true)
+		document.getElementById("orange_login_password").style.display ="";
+	else
+		document.getElementById("orange_login_password").style.display ="none";
+	cf.vlan_name.value = name;
+	cf.vlan_name.disabled = name_flag;
+	cf.vlan_id.value = id;
+	cf.vlan_priority.value = priority;
+	cf.vlan_id.disabled = id_flag;
+	cf.vlan_priority.disabled = priority_flag;
+}
 function change_type(cf)
 {
-	if(cf.vlan_type.value == "orange_dhcp" || cf.vlan_type.value == "orange_pppoe" || cf.vlan_type.value == "orange") {
-		document.getElementById("vlan_ports").style.display ="none";
-		cf.vlan_name.value = "Orange France TV";
-		cf.vlan_name.disabled = true;
-		if(default_internet == 1) {
-			document.getElementById("orange_login").style.display ="";
-			if(cf.vlan_type.value == "orange_dhcp") {
-				document.getElementById("orange_login_password").style.display ="none";
-				cf.vlan_id.value = "832";
-				cf.vlan_id.disabled = true;
-				cf.vlan_priority.value = "6";
-				cf.vlan_priority.disabled = true;
-			} else if (cf.vlan_type.value == "orange_pppoe") {
-				document.getElementById("orange_login_password").style.display ="";
-				cf.vlan_id.value = "835";
-				cf.vlan_priority.value = "0";
-				cf.vlan_id.disabled = true;
-				cf.vlan_priority.disabled = true;
-			}
-		} else {
-			document.getElementById("orange_login").style.display ="none";
-			cf.vlan_id.value = "840";
-			cf.vlan_priority.value = "5";
-			cf.vlan_id.disabled = true;
-			cf.vlan_priority.disabled = true;
-		}
-	}else if(cf.vlan_type.value == "spain_voda_iptv")
-	{
-		document.getElementById("vlan_ports").style.display ="";
-		document.getElementById("orange_login").style.display ="none";
-		cf.vlan_name.value = "Spain Voda IPTV";
-		cf.vlan_name.disabled = true;
-		cf.vlan_id.value = "105";
-		cf.vlan_priority.value = "0";
-		cf.vlan_id.disabled = true;
-		cf.vlan_priority.disabled = true;
+	if(cf.vlan_type.value == "orange_dhcp" || cf.vlan_type.value == "orange_spain_dhcp" || cf.vlan_type.value == "orange_pppoe" || cf.vlan_type.value == "vodafone_spain_pppoe" || cf.vlan_type.value == "movistar_spain_pppoe" || cf.vlan_type.value == "singtel_singa_dhcp" || cf.vlan_type.value == "unifi_malaysia_dhcp" || cf.vlan_type.value == "maxis_malaysia_dhcp") {
+	  if(default_internet == 1){
+		if(cf.vlan_type.value == "orange_pppoe")
+			change_iptv_display(cf,false,true,true,"Orange France PPPOE",true,"835","0",true,true);
+		else if(cf.vlan_type.value == "orange_dhcp")
+			change_iptv_display(cf,false,true,false,"Orange France DHCP",true,"832","6",true,true);
+		else if(cf.vlan_type.value == "orange_spain_dhcp")
+			change_iptv_display(cf,false,true,false,"Orange Spain DHCP",true,"835","0",true,true);
+		else if(cf.vlan_type.value == "vodafone_spain_pppoe")
+			change_iptv_display(cf,false,true,true,"Vodafone Spain PPPoE",true,"100","0",true,true);
+		else if(cf.vlan_type.value == "movistar_spain_pppoe")
+			change_iptv_display(cf,false,true,true,"MoviStar Spain PPPoE",true,"6","0",true,true);
+		else if(cf.vlan_type.value == "singtel_singa_dhcp")
+			change_iptv_display(cf,false,false,false,"SingTel Singapore DHCP",true,"10","0",true,true);
+		else if(cf.vlan_type.value == "unifi_malaysia_dhcp")
+			change_iptv_display(cf,false,false,false,"Unifi Malaysia DHCP",true,"500","0",true,true);
+		else if(cf.vlan_type.value == "maxis_malaysia_dhcp")
+			change_iptv_display(cf,false,false,false,"Maxis Malaysia DHCP",true,"621","0",true,true);
+	  }
 	}
+	else if(cf.vlan_type.value == "orange")
+		change_iptv_display(cf,false,false,false,"Orange France IPTV",true,"840","5",true,true);
+	else if(cf.vlan_type.value == "voda_spain_iptv")
+		change_iptv_display(cf,true,false,false,"Vodafone Spain IPTV",true,"105","0",true,true);
+	else if(cf.vlan_type.value == "orange_spain_iptv")
+		change_iptv_display(cf,true,false,false,"Orange Spain IPTV",true,"838","0",true,true);
+	else if(cf.vlan_type.value == "movistar_spain_iptv")
+		change_iptv_display(cf,true,false,false,"MoviStar Spain IPTV",true,"2","0",true,true);
+	else if(cf.vlan_type.value == "singtel_singa_iptv")
+		change_iptv_display(cf,true,false,false,"SingTel Singapore IPTV",true,"20","4",true,true);
+	else if(cf.vlan_type.value == "unifi_malaysia_iptv")
+		change_iptv_display(cf,true,false,false,"Unifi Malaysia IPTV",true,"600","0",true,true);
+	else if(cf.vlan_type.value == "maxis_malaysia_iptv")
+		change_iptv_display(cf,true,false,false,"Maxis Malaysia IPTV",true,"823","0",true,true);
 	else {
 		if(default_internet != 1) {
 			document.getElementById("vlan_ports").style.display ="";
@@ -221,6 +279,18 @@ function change_type(cf)
 	}
 }
 
+function SelectItemByValue(selectvalue)
+{
+	var id_item = document.getElementById("vlan_type");
+	//for(var i=0;i<document.getElementById("vlan_type").options.length;i++)
+	for(var i=0;i<id_item.options.length;i++)
+	{
+		if(id_item.options[i].value==selectvalue){
+			id_item.options[i].selected = true;
+			break;
+		}
+	}
+}
 </script>
 
 <TR id="vlantype" style="display:none">
@@ -230,20 +300,71 @@ function change_type(cf)
 		var netgear_region="<% get_firmware_region() %>";
 		if(netgear_region == "WW") {
 			if (default_internet == 1) {
+				if(top.support_orange_vlan ==1)
+					document.write('<option value="orange_dhcp">$orange_dhcp</option><option value="orange_pppoe">$orange_pppoe</option>');
+				if(top.support_spain_isp_flag ==1){
+					//document.write('<option value="orange_spain_dhcp">$orange_spain_dhcp</option>');
+					document.write('<option value="movistar_spain_pppoe">$movi_spain_dhcp</option>');
+					document.write('<option value="vodafone_spain_pppoe">$voda_spain_dhcp</option>');
+				}
+				if(top.support_singapore_isp_flag ==1)
+					document.write('<option value="singtel_singa_dhcp">$singtel_singa_dhcp</option>');
+				if(top.support_malaysia_isp_flag ==1)
+					document.write('<option value="unifi_malaysia_dhcp">$unifi_malaysia_dhcp</option><option value="maxis_malaysia_dhcp">$maxis_malaysia_dhcp</option>');
+				document.write('<option value="others">Others</option>');
+
+
 				if((internet_type == "0" && (internet_ppp_type == "6")))
-					document.write('<option value="orange_dhcp">Orange France DHCP</option><option value="orange_pppoe" selected>Orange France PPPoE</option><option value="others">Others</option>');
+					SelectItemByValue("orange_pppoe");
 				else if((internet_type == "0" && (internet_ppp_type == "7")))
-					document.write('<option value="orange_dhcp" selected>Orange France DHCP</option><option value="orange_pppoe">Orange France PPPoE</option><option value="others">Others</option>');
+					SelectItemByValue("orange_dhcp");
+				else if((internet_type == "0" && (internet_ppp_type == "8")))
+					SelectItemByValue("orange_spain_dhcp");
+				else if((internet_type == "0" && (internet_ppp_type == "9")))
+					SelectItemByValue("movistar_spain_pppoe");
+				else if((internet_type == "0" && (internet_ppp_type == "10")))
+					SelectItemByValue("vodafone_spain_pppoe");
+				else if((internet_type == "0" && (internet_ppp_type == "11")))
+					SelectItemByValue("singtel_singa_dhcp");
+				else if((internet_type == "0" && (internet_ppp_type == "12")))
+					SelectItemByValue("unifi_malaysia_dhcp");
+				else if((internet_type == "0" && (internet_ppp_type == "13")))
+					SelectItemByValue("maxis_malaysia_dhcp");
 				else
-					document.write('<option value="orange_dhcp">Orange France DHCP</option><option value="orange_pppoe">Orange France PPPoE</option><option value="others" selected>Others</option>');
+					SelectItemByValue("others");
+
 			} else {
+				if(top.support_orange_vlan ==1)
+					document.write('<option value="orange">Orange France IPTV</option>');
+				/*now not support this iptv
+				if(top.support_spain_isp_flag ==1)
+				document.write('<option value="orange_spain_iptv">Orange Spain IPTV</option><option value="movistar_spain_iptv">MoviStar Spain IPTV</option><option value="voda_spain_iptv">Vodafone Spain IPTV</option>');
+				*/
+				if(top.support_singapore_isp_flag ==1)
+					document.write('<option value="singtel_singa_iptv">SingTel Singapore IPTV</option>');
+				if(top.support_malaysia_isp_flag ==1)
+					document.write('<option value="unifi_malaysia_iptv">Unifi Malaysia IPTV</option><option value="maxis_malaysia_iptv">Maxis Malaysia IPTV</option>');
+				document.write('<option value="others">Others</option>');
+
 				if(each_info[1] == "OrangeIPTV")
-					document.write('<option value="orange" selected>Orange France TV</option><option value="spain_voda_iptv">Spain Voda IPTV</option><option value="others">Others</option>');
-				else if(each_info[1] == "SpainIPTV")
-					document.write('<option value="orange">Orange France TV</option><option value="spain_voda_iptv" selected>Spain Voda IPTV</option><option value="others">Others</option>');
-				else
-					document.write('<option value="orange">Orange France TV</option><option value="spain_voda_iptv">Spain Voda IPTV</option><option value="others" selected>Others</option>');
+					SelectItemByValue("orange");
+
+				else if(each_info[1] == "OrangeSpainIPTV")
+					SelectItemByValue("orange_spain_iptv");
+				else if(each_info[1] == "MoviStarSpainIPTV")
+					SelectItemByValue("movistar_spain_iptv");
+				else if(each_info[1] == "VodaSpainIPTV")
+					SelectItemByValue("voda_spain_iptv");
+				else if(each_info[1] == "SingTelSingaporeIPTV")
+					SelectItemByValue("singtel_singa_iptv");
+				else if(each_info[1] == "UnifiMalaysiaIPTV")
+					SelectItemByValue("unifi_malaysia_iptv");
+				else if(each_info[1] == "MaxisMalaysiaIPTV")
+					SelectItemByValue("maxis_malaysia_iptv");
+				else 
+					SelectItemByValue("others");
 			}
+
 		} else {
 			document.write('<option value="others" selected>Others</option>');
 		}
@@ -305,7 +426,7 @@ $bluebar
 	<TD nowrap><input type="text" name="orange_username" id="orange_username" maxLength="64" size="20" onKeyPress="return getkey('ssid', event)" value="<% cfg_sed_xss("wan_orange_username") %>">
 	</TD></TR>
 	<TR id="orange_login_password" style="display:none"><TD nowrap><B>Password</B></TD>
-	<TD nowrap><input type="text" name="orange_password" id="orange_password" maxLength="64" size="16" onFocus="change_pppoe_password(this);" onKeyPress="return getkey('ssid', event)">
+	<TD nowrap><input type="text" name="pppoe_orange_passwd" id="orange_password" maxLength="64" size="16" onFocus="change_pppoe_password(this);" onKeyPress="return getkey('ssid', event)">
 	</TD></TR>
 </table>
 </div>

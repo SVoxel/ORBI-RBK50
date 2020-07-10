@@ -6,10 +6,6 @@ START=99
 start() {
 
 	flash_type=`cat /flash_type`
-	if [ "x$flash_type" = "xNAND_FLASH" ];then
-		# init the mtdoops to capture kernel crash log
-		insmod mtdoops
-	fi
 	# start the console log capture when user set debug boot up when boot up
 	if [ "$($CONFIG get debug_boot_up)" = "1" ]; then
 		echo 1 > /tmp/collect_debug

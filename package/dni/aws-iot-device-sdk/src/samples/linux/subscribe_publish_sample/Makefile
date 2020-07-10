@@ -11,6 +11,7 @@ APP_DIR = .
 APP_INCLUDE_DIRS += -I $(APP_DIR)
 APP_NAME = subscribe_publish_sample
 APP_SRC_FILES = $(APP_NAME).c
+APP_SRC_FILES += JSON_checker.c
 
 #IoT client directory
 IOT_CLIENT_DIR = ../../..

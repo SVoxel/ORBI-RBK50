@@ -35,7 +35,7 @@ get_time()
 	fi
 	#Get daily
 	daily_old=$2
-	if [ $daily_old -lt 10 ];then
+	if [ $daily_old -lt 10 ]; then
 		daily="0$daily_old"
 	else
 		daily=$daily_old
@@ -70,9 +70,9 @@ boot() {
 		mount_dev=`part_dev https_cert`
 	fi
 
-	if [ -b $mount_dev -a "x$partition_type" = "xEMMC" ];then
+	if [ -b $mount_dev -a "x$partition_type" = "xEMMC" ]; then
 		[ "x$mount_dev" != "x" ] && filetype=`blkid $mount_dev |grep -o 'TYPE=.*' |awk -F \" '{print $2}'`
-		if [ "x$filetype" != "xext4" -o $router_reset -eq 1 ];then
+		if [ "x$filetype" != "xext4" -o $router_reset -eq 1 ]; then
 			mkfs.ext4 $mount_dev
 		fi
 	elif [ "x$partition_type" = "xNAND_FLASH" ]; then
@@ -94,7 +94,7 @@ boot() {
 	fi
 
 	#check if crt exist and crt is out of date
-	if [ ! -e "/mnt/ntgr/https_cert/server.pem" ] || [ "x$(/bin/config get https_self_signed)" != "x1" ];then
+	if [ ! -e "/mnt/ntgr/https_cert/server.pem" ] || [ "x$(/bin/config get https_self_signed)" != "x1" ]; then
 		flag=1
 	else
 		time_check
@@ -106,12 +106,20 @@ boot() {
 		fi
 	fi
 
-	if [ "x$flag" = "x1" ];then
+	if [ "x$flag" = "x1" ]; then
 		cd /etc/lighttpd/certs/
 		./https_cert.sh
 		cp /etc/lighttpd/certs/server.pem /tmp/mnt/ntgr/https_cert/ -rf
 		/bin/config set https_self_signed=1
 	else
 		cp /tmp/mnt/ntgr/https_cert/server.pem /etc/lighttpd/certs/ -rf
+	fi
+
+	# Check if www.routerlogin.net crt exists and use it if yes
+	if [ -e "/etc/lighttpd/certs/routerlogin.pem" ]; then
+		cp -fp /etc/lighttpd/certs/routerlogin.pem /etc/lighttpd/certs/server.pem
+		if [ ! -e "/mnt/ntgr/https_cert/routerlogin.pem" ]; then
+			cp -fp /etc/lighttpd/certs/routerlogin.pem /tmp/mnt/ntgr/https_cert/
+		fi
 	fi
 }

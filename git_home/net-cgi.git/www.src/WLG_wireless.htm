@@ -123,8 +123,8 @@ var str_wpas_an="";
 
 var StartChannel = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1); 
 var FinishChannel = new Array(11,13,13,13,13,13,13,13,11,11,13,13,13); //middle east move up two line
-var StartChannelB = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,1,1,1,1);
-var FinishChannelB = new Array(11,13,13,13,11,13,13,13,13,13,13,13,11,13,13,13,13,13,13,13,13,11,11);
+var StartChannelB = new Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,1,1,1,1,1,1,1,1,1,1,1,1,1);
+var FinishChannelB = new Array(11,13,13,13,11,13,13,13,13,13,13,13,11,13,13,13,13,13,13,13,13,11,11,13,13);
 //bug 23854:The dialogue of DFS channel is not implemented
 var dfs_info="<% cat_file("/proc/sys/dfs_detect/channel_interval") %>";
 dfs_info = dfs_info.substring(0, dfs_info.length - 1);//delete the last char '#' 
@@ -476,8 +476,12 @@ function loadvalue()
 		
 	if(valid_region == 1)
 	{
-		setAChannel(form.w_channel_an);
-		
+		if(parent.is_dual_band!=1)	
+			setAChannel(form.w_channel_an);
+		else{
+			form.w_channel_an.options.length=1;
+			form.w_channel_an.options[0].value=form.w_channel_an.options[0].text=wla_get_channel;
+		}
 		form.w_channel_an.value = wla_get_channel;
 		if(form.w_channel_an.selectedIndex == -1)
 			form.w_channel_an.options[0].selected = true;

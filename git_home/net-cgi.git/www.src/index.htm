@@ -3,7 +3,7 @@
 <meta http-equiv="x-ua-compatible" content="IE=EDGE" />-->
 <!-- <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" /> -->
 <link rel="shortcut icon" href="image/favicon.ico" type="image/x-icon">
-<body onResize="setHeight_for_IE6();">
+<body onload="onload();" onResize="setHeight_for_IE6();">
 <!--[if IE 6]>
 <script type="text/javascript">
 document.execCommand("BackgroundImageCache", false, true);
@@ -144,6 +144,10 @@ function loadvalue()
 	if(window.location.href.indexOf("qq") != -1)
 		click_action("internet");
 	setHeight_for_IE6();
+}
+
+function onload()
+{
 	var modal = document.getElementById("modalBox");
 	if(circle_avaliable_note == 1)
 		modal.style.display = "block";
@@ -154,9 +158,8 @@ function loadvalue()
 		modal_armor.style.display = "block";
 	else
 		modal_armor.style.display = "none";
-}
 
-	
+}
 </script>
 <div id="top">
 	<iframe name="topframe" id="topframe" src="top.html" allowtransparency="true" height="100%" width="100%" frameborder="0"></iframe>
@@ -204,7 +207,9 @@ function loadvalue()
 		else
 		document.write("<a target=\"_blank\" href=\"http://downloadcenter.netgear.com/\">$docu_head</a> | <a target=\"_blank\" href=\"http://support.netgear.com\">$online_support</a> | <a target=\"_blank\" href=\"<% support_product_link("base") %>\">$router_faq</a> |");
 	</script>
-		<a target="_blank" href="license.htm">GNU GPL</a>
+	<a target="_blank" href="license.htm">GNU GPL</a> |
+	<a target="_blank" href="https://www.netgear.com/about/terms-and-conditions">Terms and Conditions</a> | 
+	<a target="_blank" href="https://www.netgear.com/about/privacy-policy">Privacy Policy</a> 
 </div>
 <div id="search" align=right>
 	<b> $search_help </b>
@@ -226,12 +231,21 @@ var circlets="<% cfg_get("circle_jump") %>";
 		<div class="modal-header">
 			<span class="close modal-close" onClick="jump_circle('skip')">x</span>
 			<div class="modalBox-title">$circle_enable_title</div>
-			<div class="circle-disney-logo" style="text-align:center"><img src="images/circle_with_disney_blue.png"></div>
+			<div class="circle-logo" style="text-align:center"><img src="images/Logocircle.png"></div>
 		</div>
 		<div class="modal-body">
-			<p>$circle_enable_description</p>
+			<ul style="margin-left:15%;margin-right:15%">
+				<li>$circle_enable_description1</li>
+				<li>$circle_enable_description2</li>
+				<li>$circle_enable_description3</li>
+				<li>$circle_enable_description4</li>
+			</ul>
 			<span><a class="learn-more-link" target="_blank" href="http://www.netgear.com/circle">$learn_more</a></span>
-			<div class="modalButton" name="st_circle_enable" onClick="jump_circle('enable')">$circle_enable_mark</div>
+			<p>$circle_info1</p>
+			<div class="pci-d-box">
+				<a href="https://itunes.apple.com/us/app/circle-home/id1037062934" target="__blank"><img class="ios-badge" src="images/iOS_Download_App_Store_Badge.png"></a>
+				<a href="https://play.google.com/store/apps/details?id=com.circlemedia.circlehome" target="__blank"><img class="play-badge" src="images/Google_Play_Store_Badge.png"></a>
+			</div>
 		</div>
 	</div>
 </div>

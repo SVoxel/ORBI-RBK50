@@ -35,16 +35,17 @@ echo "========================next loop==================================" >> $f
 
 
 	if [ $current_file_size -ge $single_size_limit ]; then
-	    echo "filesize is over, redirect basic_debug_log_bak.txt"
-	    filename=/tmp/debug_here_log_2.txt
+		if [ "$filename" = "/tmp/debug_here_log_1.txt" ];then
+		    echo "log1 filesize is over, will write to debug_here_log_2.txt"
+		    filename=/tmp/debug_here_log_2.txt
+		else
+		    echo "log2 filesize is over, will write to debug_here_log_1.txt"
+		    filename=/tmp/debug_here_log_1.txt
+		fi
 	    [ -f $filename  ] && [ $current_total_size -ge $total_size_limit ] && {
-		rm $filename
+		    echo "filesize is over, need delete $filename"
+			rm $filename
 	    }
-	    if [ $current_total_size -ge $total_size_limit ]; then
-		echo "backup filesize is over, redirect original file,and rm previous file"
-		filename=/tmp/debug_here_log_1.txt
-		rm $filename
-	    fi
 	fi
 	
 done

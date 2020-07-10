@@ -6,7 +6,7 @@ if [ -e /lib/armor/phase2.tar.gz ]; then
 elif [ -e /lib/armor/phase2-upd.tar.gz ]; then
 	BDagent_Prebuild=2
 fi
-URL="url=https://http.fw.updates1.netgear.com/sw-apps/armor/${model_name}/2.2/bdagent.tar"
+URL="url=https://http.fw.updates1.netgear.com/sw-apps/armor/${model_name}/2.2N/bdagent.tar"
 echo "$URL" > /tmp/mnt/bitdefender/etc/bdupd.server
 downBD_first(){
 	echo "$URL" > /tmp/mnt/bitdefender/etc/bdupd.server

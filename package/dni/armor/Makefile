@@ -43,6 +43,7 @@ define Package/armor/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/bdbroker-client-cmd $(1)/usr/share/armor/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/bdbroker-client-loop $(1)/usr/share/armor/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/bdbroker-client-thread $(1)/usr/share/armor/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/build/bdagent_check $(1)/usr/share/armor/
 	$(INSTALL_DIR) $(1)/etc/init.d/
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/armor_init $(1)/etc/init.d/
 	$(INSTALL_DIR) $(1)/lib/armor/

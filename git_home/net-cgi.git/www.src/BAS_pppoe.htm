@@ -52,6 +52,9 @@ var vlan_iptv_enable = "<% cfg_get("vlan_iptv_enable"); %>";
 var readycloud_enable = "<% cfg_get("readycloud_enable") %>";
 var upnp_enableMedia = "<% cfg_get("upnp_enableMedia") %>";
 var focus_trigger_flag = 0;
+var support_singapore_isp = top.support_singapore_isp_flag;
+var support_malaysia_isp  = top.support_malaysia_isp_flag;
+var support_spain_isp = top.support_spain_isp_flag;
 
 function change_web_format()
 {
@@ -232,6 +235,9 @@ function loadvalue()
                 form.MACAssign[2].checked = true;
                 setMAC(form, pppoe_get_this_mac);
         }
+	if(support_singapore_isp == "1" ||  support_malaysia_isp== "1" || support_spain_isp == "1")
+		document.getElementById("other_dhcp_pppoe").style.display = "";	
+
 
 	goTestApply();	
 }
@@ -540,6 +546,17 @@ $bluebar
         </TD>
 </TR>
 <TR id=bluebar style="display:none"><td colspan=2><hr class=blueBar /></td></TR>
+<tbody id="other_dhcp_pppoe" style="display:none">
+<TR id=vlanlink_title>
+	<TD nowrap colspan=2 class="label-td"><B>$vlan_link_title</B></TD>
+</TR>
+<TR>
+	<TD nowrap colspan=2 class="label-td">
+	<a class="linktype" style="cursor:pointer" onclick="vlanlink_click()">$vlanlink_click</a>
+	</TD>
+</TR>
+$bluebar
+</tbody>
 </TABLE>
 </div> <!-- main -->
 <% help_box("0","_BAS_pppoe") %>

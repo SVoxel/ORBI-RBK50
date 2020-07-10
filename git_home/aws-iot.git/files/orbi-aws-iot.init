@@ -11,27 +11,53 @@ fi
 rae_partion=$(part_dev rae)
 panic_partion=$(part_dev crashinfo)
 RAE_DIR=/tmp/router-analytics
+RAE_DATA=$RAE_DIR/ra_data
+CONFIG=/bin/config
 
-if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
-	if [ "x$(/bin/config get force_clean_ranvram_flag)" != "x1" ]; then
-		/bin/config unset RA_stage
-		/bin/config set force_clean_ranvram_flag=1
-		/bin/config commit
-	fi
-	if [ "x$(/bin/config get RA_stage)" = "x" ];then
-		/bin/config set RA_stage=prod
-		/bin/config commit
-	fi
+if [ "x$($CONFIG get RA_stage)" = "x" ];then
+	$CONFIG set aws_stage=prod
+else
+	$CONFIG set aws_stage=$($CONFIG get RA_stage)
 fi
+	
+partition_init()
+{
+	if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
+		if [ "x$(/bin/config get force_clean_ranvram_flag)" != "x1" ]; then
+			/bin/config unset RA_stage
+			/bin/config set force_clean_ranvram_flag=1
+			/bin/config commit
+		fi
+		if [ "x$(/bin/config get RA_stage)" = "x" ];then
+			/bin/config set RA_stage=prod
+			/bin/config commit
+		fi
+	fi
 
-if [ "$(/bin/config get dgc_flash_type)" != "EMMC" -a "x$(ubinfo -a |grep vol_ntgrdata)" = "x" ];then
-	ubinfo -a | grep vol_rae  || {
-		# make a new volume on ubi0 by default. Any better idea to remove the hardcode "/dev/ubi0"?
-		ubimkvol /dev/ubi0 -N vol_rae -s 2MiB
-	}
-fi
+	if [ "$(/bin/config get dgc_flash_type)" != "EMMC" -a "x$(ubinfo -a |grep vol_ntgrdata)" = "x" ];then
+		ubinfo -a | grep vol_rae  || {
+			# make a new volume on ubi0 by default. Any better idea to remove the hardcode "/dev/ubi0"?
+			ubimkvol /dev/ubi0 -N vol_rae -s 2MiB
+		}
+	fi
 
-#only run on base, MR2.x  use /tmp/orbi_type judge the orbi type
+	[ ! -d $RAE_DIR ] && mkdir -p $RAE_DIR
+	if [ "x$(ubinfo -a |grep vol_ntgr)" != "x" ]; then
+		mkdir -p /tmp/ntgr/ra_data
+		ln -s /tmp/ntgr/ra_data $RAE_DATA
+	else
+		ra_data_partion=$(part_dev ra_data)
+		[ ! -d $RAE_DATA ] && mkdir -p $RAE_DATA
+		[ "x$ra_data_partion" != "x" ] && filetype=`blkid $ra_data_partion |grep -o 'TYPE=.*' |awk -F \" '{print $2}'`
+		if [ "x$filetype" != "xext4" ];then
+			mkfs.ext4 $ra_data_partion
+		fi
+		mount $ra_data_partion $RAE_DATA
+	fi
+	[ ! -d $RAE_DATA/installation ] && mkdir -p $RAE_DATA/installation
+	#only run on base, MR2.x  use /tmp/orbi_type judge the orbi TYPE
+}
+
 start() {
 #	if [ "$(cat /tmp/orbi_type)" = "Base" ]; then
 		killall -9  aws-iot
@@ -73,7 +99,6 @@ update()
 
 check()
 {
-	mkdir $RAE_DIR
 	echo 0 >$RAE_DIR/status
 	if [ "x$(ubinfo -a |grep vol_ntgrdata)" != "x" ]; then
 		cp -rf /tmp/ntgrdata/rae/rae.tar.gz /tmp
@@ -93,8 +118,21 @@ check()
 boot()
 {
 #	echo 1 > /tmp/debug_first_report_flag
-#	if FW support router analytics installation , should create this file
-	echo 1 > /tmp/support_ra_installation
+#	if FW support router analytics installation , should create this filetype
+	partition_init
+	if [ "$(cat /tmp/orbi_type)" != "Satellite" ]; then
+		echo 1 > /tmp/support_ra_installation
+		/usr/sbin/install_agent
+		/sbin/install_ping &
+		hijack_status=`$CONFIG get dns_hijack`
+	    install_state=`$CONFIG get installState`
+		if [ "$hijack_status" = "1" ];then
+			/usr/sbin/ra_installevent  sysReboot
+		fi
+		if [ "$install_state" = "13" ];then
+			/usr/sbin/ra_installevent  fwupdatingsucess
+		fi
+	fi
 
 	#if DUT not get ntp time, use firmware release time
 	if [ "x$(date | grep 1970)" != "x" ]; then
@@ -263,6 +301,23 @@ memory_test()
 	fi
 }
 
+install_count_reset()
+{
+	echo 0 >$RAE_DATA/installation_count
+}
+
+install_count_add()
+{
+	[ ! -f $RAE_DATA/installation_count ] && echo 0 >$RAE_DATA/installation_count
+	count=`cat $RAE_DATA/installation_count`
+	if [ $count -lt 32 ];then
+		count=$(($count+1))
+		echo $count > $RAE_DATA/installation_count
+	fi
+	rm $RAE_DATA/duration
+	rm $RAE_DATA/installation -rf
+}
+
 case "$1" in 
 	"boot")
 		boot
@@ -288,8 +343,15 @@ case "$1" in
 	"memory")
 		memory_test $2
 	;;
+	"reset")
+		install_count_reset  ##only run when pot clean or ST SQA do test
+	;;
+	"default")      # run when default reset
+		install_count_add
+		/usr/sbin/ra_session_id 
+	;;
 	*)
 		echo "Unknow command" > /dev/console
-		echo "Usage: $0 boot|start|stop|restart|update" > /dev/console
+		echo "Usage: $0 boot|start|stop|restart|update|reset|default" > /dev/console
 	;;
 esac

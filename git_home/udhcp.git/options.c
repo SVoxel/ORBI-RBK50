@@ -81,66 +81,24 @@ int option_lengths[] = {
 };
 
 #ifdef	DHCPD_SHOW_CLIENT_OPTIONS
+/* get option 55 Parameter Request List. */
 void get_option_codes(struct dhcpMessage *packet, char *options)
 {
-	int i, length, buflen;
-	unsigned char *optionptr;
+	unsigned char *dhcp_param, *len;
+	int buflen = 0, i = 0;
 	char buf[8] = {0};
-	int over = 0, done = 0, curr = OPTION_FIELD;
-	
-	optionptr = packet->options;
-	i = 0;
-#ifdef DHCP_PACKET_RESIZE
-	length = sizeof(packet->options);
-#else
-	length = 308;
-#endif
-	while (!done) {
-		if (i >= length) {
-			LOG(LOG_WARNING, "bogus packet, option fields too long.");
-			return;
-		}
-		if (optionptr[i + OPT_CODE] != DHCP_PADDING) {
-			if (i + 1 + optionptr[i + OPT_LEN] >= length) {
-				LOG(LOG_WARNING, "bogus packet, option fields too long.");
-				return;
-			}
-			snprintf(buf, 4, "%d", optionptr[i + OPT_CODE]);
-			buflen = strlen(options);
-			if(buflen + 4 > 128) return;
-			if(i) strcat(options, ",");
-			strcat(options, buf);
-		}			
-		switch (optionptr[i + OPT_CODE]) {
-		case DHCP_PADDING:
-			i++;
-			break;
-		case DHCP_OPTION_OVER:
-			if (i + 1 + optionptr[i + OPT_LEN] >= length) {
-				LOG(LOG_WARNING, "bogus packet, option fields too long.");
-				return NULL;
-			}
-			over = optionptr[i + 3];
-			i += optionptr[OPT_LEN] + 2;
-			break;
-		case DHCP_END:
-			if (curr == OPTION_FIELD && over & FILE_FIELD) {
-				optionptr = packet->file;
-				i = 0;
-				length = 128;
-				curr = FILE_FIELD;
-			} else if (curr == FILE_FIELD && over & SNAME_FIELD) {
-				optionptr = packet->sname;
-				i = 0;
-				length = 64;
-				curr = SNAME_FIELD;
-			} else done = 1;
-			break;
-		default:
-			i += optionptr[OPT_LEN + i] + 2;
-		}
+
+	dhcp_param = get_option(packet, DHCP_PARAM_REQ);
+	if(!dhcp_param) return;
+
+	len = dhcp_param - 1;
+	for(i = 0; i < *len; i++) {
+		snprintf(buf, 4, "%d", *(dhcp_param+i));
+		buflen = strlen(options);
+		if(buflen + 4 > 128) return;
+		if(i) strcat(options, ",");
+		strcat(options, buf);
 	}
-	return;
 }
 
 #endif

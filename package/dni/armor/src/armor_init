@@ -97,6 +97,10 @@ boot() {
 		fi
 		wget --no-check-certificate $URL/phase2.tar.gz -O /lib/armor/phase2.tar.gz
 		[ -e /lib/armor/phase2.tar.gz ] && tar -zxvf /lib/armor/phase2.tar.gz -C / --keep-directory-symlink
+		if [ "$?" != 0 ];then
+			[ -e /lib/armor/phase2.tar.gz ] && tar -zxvf /lib/armor/phase2.tar.gz -C / --keep-directory-symlink
+		fi
+		sync
 	fi
 
 	if [ ! -e "/opt/bitdefender/bin/bdupd" ]; then
@@ -105,6 +109,10 @@ boot() {
 		fi
 		wget --no-check-certificate $URL/phase2-upd.tar.gz -O /lib/armor/phase2-upd.tar.gz
 		[ -e /lib/armor/phase2-upd.tar.gz ] && tar -zxvf /lib/armor/phase2-upd.tar.gz -C /opt/bitdefender --keep-directory-symlink
+		if [ "$?" != 0 ];then
+			[ -e /lib/armor/phase2-upd.tar.gz ] && tar -zxvf /lib/armor/phase2-upd.tar.gz -C /opt/bitdefender --keep-directory-symlink
+		fi
+		sync
 	fi
 	chown -R root:root /opt/bitdefender/
 	chmod +x /opt/bitdefender/guster/scripts/*

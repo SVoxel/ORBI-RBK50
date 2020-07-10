@@ -23,7 +23,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/aws-iot
   SECTION:=utils
   CATEGORY:=Utilities
-  DEPENDS:=+datalib +libcurl
+  DEPENDS:=+datalib +libcurl +libjson-c +libpthread
   TITLE:=The AWS IoT to Publish Topic
 endef
 
@@ -63,8 +63,12 @@ define Package/aws-iot/install
 	install -m0755 $(PKG_BUILD_DIR)/files/certs/debug/rootCA.crt $(1)/etc/router_analytics/debug/
 	install -m0755 $(PKG_BUILD_DIR)/files/ping-gateway $(1)/sbin/ping-gateway
 	install -m0755 $(PKG_BUILD_DIR)/files/collect_log.sh $(1)/sbin/collect_log.sh
+	install -m0755 $(PKG_BUILD_DIR)/files/install_ping $(1)/sbin/install_ping
 	install -m0755 $(PKG_BUILD_DIR)/aws-iot  $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/ra_check  $(1)/usr/sbin
+	install -m0755 $(PKG_BUILD_DIR)/ra_session_id  $(1)/usr/sbin
+	install -m0755 $(PKG_BUILD_DIR)/install_agent  $(1)/usr/sbin
+	install -m0755 $(PKG_BUILD_DIR)/ra_installevent  $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/files/ra_daemon_monitor.sh $(1)/usr/sbin
 	install -m0755 $(PKG_BUILD_DIR)/files/get_wireddevice_linkspeed.sh  $(1)/usr/sbin
 	ln -sv ../init.d/aws $(1)/etc/rc.d/S99aws

@@ -15,7 +15,7 @@ var ts="<% cfg_get("hijack_to_manual") %>";
 function loadvalue()
 {
 		var netgear_region = top.netgear_region;
-		if(netgear_region == "WW" && top.support_orange_vlan == "1")
+		if(netgear_region == "WW" && (top.support_orange_vlan == "1" || top.support_singapore_isp_flag == 1 || top.support_malaysia_isp_flag == 1 || top.support_spain_isp_flag == 1))
 			$$("#isp_select").show();
 }
 
@@ -103,8 +103,8 @@ function genieHelpChecking()
 						<input class="with-gap" type="radio" name="WANDetc" id="help_ISP" value="ISP" />
 						<label for="help_ISP"></label>
 					</p>
-					<div class="bullet">No, select Internet service provider(ISP)</div>
-					<span class="desc-title-bullet long-bullet">I want to select my ISP from the ISP profile list</span>
+					<div class="bullet"><script>document.write(bh_no_mark+','+bh_select_isp)</script></div>
+					<span class="desc-title-bullet long-bullet"><script>document.write(bh_select_my_isp_list)</script></span>
 				</div>
 			</div>
 

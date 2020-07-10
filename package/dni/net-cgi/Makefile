@@ -45,6 +45,7 @@ define Package/net-cgi/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/inetd.init $(1)/etc/init.d/inetd
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/get_wlan_info.sh $(1)/etc/init.d/get_wlan_info.sh
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/send_soap_api.sh $(1)/sbin/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/files/get_base_info.sh $(1)/sbin/
 	$(INSTALL_DIR) $(1)/usr/sbin
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/src/* $(1)/usr/sbin
 	$(call Dni_Install_Ext,$(LOCAL_PKG_NAME_EXT),$(1))

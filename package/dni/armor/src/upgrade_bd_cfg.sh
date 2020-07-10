@@ -17,12 +17,14 @@ Upgrade_BD_with_Prebuid()
 				cp -rf "$INSTALL_DIR/$BD_Agent_Config" $BD_BACKUP
 				rm -rf "$INSTALL_DIR"/*
 				mv $BD_BACKUP $INSTALL_DIR
+				sync
 			fi
 			;;
 		"restore")
 			if [ -d "$INSTALL_DIR/$BD_BACKUP" ]; then
 				cp -rf "$INSTALL_DIR/$BD_BACKUP/$BD_Agent_Config/storage.data" "$INSTALL_DIR/$BD_Agent_Config/"
 				rm -rf "$INSTALL_DIR/$BD_BACKUP"
+				sync
 			fi
 			;;
 	esac

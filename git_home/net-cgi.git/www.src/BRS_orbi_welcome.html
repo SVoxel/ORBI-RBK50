@@ -8,6 +8,7 @@
 
 <body>
 <script>
+<% onboarding_ra_trigger("guisetupstart") %>
 	//this assign value for waiting page cannot get top.bh_plz_wait_moment value.
 	top.bh_plz_wait_moment = bh_plz_wait_moment;
 </script>
@@ -26,7 +27,7 @@
 			<script>
 				var netgear_region="<% get_firmware_region() %>";
 				var browser_lang = "<% get_browser_language() %>";
-				if( browser_lang=="French"){
+/*				if( browser_lang=="French"){
 					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eufr.html\';return true;">');
 				}else if( browser_lang=="German"){
 					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eude.html\';return true;">');
@@ -76,13 +77,13 @@
 					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eutch.html\';return true;">');
 				}else if( browser_lang =="Japanese"){
 					document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_eujp.html\';return true;">');
-				}else{
+				}else{ */
 					if( netgear_region=="WW" || netgear_region=="PR" || netgear_region=="JP"){
 						document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos.html\';return true;">');
 					}else{
 						document.write('<button class="waves-effect waves-light btn button-nav" onclick="location.href=\'BRS_tos_usau.html\';return true;">');
 					}
-				}
+//				}
 			</script>
 				<span><script>document.write(bh_orbi_next_mark);</script></span>
 			</button>

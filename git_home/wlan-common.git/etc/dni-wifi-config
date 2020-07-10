@@ -68,6 +68,8 @@ if [ "$wla_exist" = "on" ]; then
     country_code_19="RU 643"             # Russia
     country_code_20="SG 702"             # Singapore
     country_code_21="TW 158"             # Taiwan
+    country_code_23="HK 344"             # HongKong
+    country_code_24="VN 704"             # Vietnam
 else
 
     country_code_0="ZA 710"              # Africa
@@ -111,10 +113,10 @@ wds_role_0="repeater"
 wds_role_1="rootap"
 
 tpscale_100=0
-tpscale_75=1
-tpscale_50=2
-tpscale_25=3
-tpscale_min=4
+tpscale_50=1
+tpscale_25=2
+tpscale_min=3
+#tpscale_min=4
 
 operation_mode_="normal_ap"
 operation_mode_0="none"
