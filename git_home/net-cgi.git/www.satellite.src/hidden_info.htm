@@ -177,6 +177,10 @@ if(an_router_flag == 1)
 	<TD nowrap><B>language check : </B></TD>
 	<TD nowrap> &nbsp;<% show_lang_check_result() %> &nbsp;</TD>
 </TR>
+<TR>
+	<TD nowrap><B>HW revision : </B></TD>
+	<TD nowrap> &nbsp;<% cat_file_xss("/tmp/hw_revision")%> &nbsp;</TD>
+</TR>
 <% show_bitflip_count() %>
 <TR id=dsl_upspeed style="display:none"><TD nowrap><B>DSL Link Upsteam Speed : </B></TD><TD nowrap> &nbsp;<% dsl_info("1")%>&nbsp;</TD></TR>
 <TR id=dsl_downspeed style="display:none"><TD nowrap><B>DSL Link Downsteam Speed : </B></TD><TD nowrap> &nbsp;<% dsl_info("2")%>&nbsp;</TD></TR>

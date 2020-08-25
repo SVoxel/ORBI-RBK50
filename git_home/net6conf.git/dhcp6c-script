@@ -43,8 +43,8 @@ if [ "x$REASON" = "xdecline" ] ;then
 	rm $DHCP6S_PD
 
 	#After DUT sending decline packet, stop the DHCPv6 server and autoconfigure address service(radvd)
-	killall dhcp6s
-	killall radvd
+	/etc/init.d/dhcp6s.init stop
+	/etc/init.d/radvd.init stop
 	exit
 fi
 

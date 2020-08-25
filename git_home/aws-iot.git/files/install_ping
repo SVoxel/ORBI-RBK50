@@ -35,7 +35,6 @@ do
 					connecttimes=1
 					disconntimes=0
 					rm /tmp/router-analytics/install_ping
-					break
 			elif [ "x$(echo $result |grep "1 packets received")" = "x" ];then
 				if [ "$old_disconntimes" != 0 ];then
 					disconntimes=`expr $old_disconntimes + 1`
@@ -43,15 +42,11 @@ do
 				else
 					disconntimes=`expr $disconntimes + 1`
 				fi
-				if [ "$disconntimes" = 5 ];then
-					break
-				fi
 			fi
 			if [ -f $checkfile ] && [ "x$(cat $checkfile)" = "xNETGEAR" ];then
 					checkoktimes=1
 					checkfailtimes=0
 					rm /tmp/router-analytics/install_urlcheck
-					break
 			else
 				if [ "$old_checkfailtimes" != 0 ];then
 					checkfailtimes=`expr $old_checkfailtimes + 1`
@@ -59,9 +54,9 @@ do
 				else
 					checkfailtimes=`expr $checkfailtimes + 1`
 				fi
-				if [ "$checkfailtimes" = 5 ];then
-					break
-				fi
+			fi
+			if [ "$connecttimes" = 1 -o "$disconntimes" = 5 -o "$checkoktimes" = 1 -o "$checkfailtimes" = 5 ];then
+				break
 			fi
 			pingtimes=`expr $pingtimes - 1`
 		done

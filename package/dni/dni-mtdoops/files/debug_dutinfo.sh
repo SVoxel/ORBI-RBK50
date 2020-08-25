@@ -27,19 +27,14 @@ cpu_usage()
 
 mem_usage()
 {
-	# SPEC 14, Avaliable memory/Total memory: Free+Buffer+Cache/Total
-
-	# This item used = Used - Buffer - Free
-	used_kb=`free | grep "buffers" |grep -v "total"| awk '{print $3}'`
-	used_mb=`expr ${used_kb} / 1024`
-	# This item avaliable = Free + Buffer + Cache
-	unused_kb=`free | grep "buffers" | grep -v "total"|awk '{print $4}'`
-	unused_mb=`expr ${unused_kb} / 1024`
+	
+	avaliable_kb=`cat /proc/meminfo | grep MemAvailable | awk '{print $2}'`
+	avaliable_mb=`expr ${avaliable_kb} / 1024`
 
 	total_kb=`free | grep "Mem" | awk '{print $2}'`
 	total_mb=`expr ${total_kb} / 1024`
 
-	echo "$(($total_mb - $unused_mb))MB/${total_mb}MB" > $MEM_INFO
+	echo "$(($total_mb - $avaliable_mb))MB/${total_mb}MB" > $MEM_INFO
 }
 
 session_usage()

@@ -59,7 +59,7 @@ start_radvd()
 		sed -i '/3ffe:501:ffff:101::/ s/3ffe:501:ffff:101::/'${wanprefix}'/g' /tmp/radvd.conf
 	fi
 
-	radvd -C /tmp/radvd.conf
+	/etc/init.d/radvd.init start
 }
 
 start() {

@@ -372,11 +372,11 @@ start_radvd() {
 		sleep 2
 	fi
 	# Start RA
-	/usr/sbin/radvd -C $RADVD_CONF
+	/etc/init.d/radvd.init start
 }
 
 stop_radvd() {
-	killall radvd
+	/etc/init.d/radvd.init stop
 }
 
 start_dhcp6s() {
@@ -384,9 +384,9 @@ start_dhcp6s() {
 	local OLD_DHCP6S_ENABLE=`$CONFIG get old_ipv6_dhcps_enable`
 	echo "start dhcp6s"
 	if [ "x$DHCP6S_ENABLE" = "x1" ]; then
-		/usr/sbin/dhcp6s -3 -c "$DHCP6S_CONF" "$bridge"
+		/etc/init.d/dhcp6s.init start "$DHCP6S_CONF" "$bridge"
 	else
-		/usr/sbin/dhcp6s -3 -c "$DHCP6S_CONF" -i "$bridge"
+		/etc/init.d/dhcp6s.init start "$DHCP6S_CONF" -i "$bridge"
 	fi
 
 	if [ "x$OLD_DHCP6S_ENABLE" = "x" ]; then
@@ -404,7 +404,7 @@ start_dhcp6s() {
 }
 
 stop_dhcp6s() {
-	killall dhcp6s
+	/etc/init.d/dhcp6s.init stop
 }
 
 start() {

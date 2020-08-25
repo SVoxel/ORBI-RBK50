@@ -57,6 +57,8 @@ define Package/net6conf/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/6proc $(1)/etc/net6conf/6proc
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dhcp6c-script $(1)/etc/net6conf/dhcp6c-script
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/6rd $(1)/etc/net6conf/6rd
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/dhcp6s.init $(1)/etc/init.d/
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/radvd.init $(1)/etc/init.d/
 	$(call Dni_Install_Ext,$(LOCAL_PKG_NAME_EXT),$(1))
 endef
 
