@@ -68,14 +68,14 @@ else
 	echo "  map hidden = no" >> /etc/samba/smb.conf
 	echo "  map read only = no" >> /etc/samba/smb.conf
 	echo "  map system = no" >> /etc/samba/smb.conf
-	echo "  store dos attributes = yes" >> /etc/samba/smb.conf
+	echo "  store dos attributes = no" >> /etc/samba/smb.conf
 	echo "  dos filemode = yes" >> /etc/samba/smb.conf
 	echo "  oplocks = yes" >> /etc/samba/smb.conf
 	echo "  level2 oplocks = yes" >> /etc/samba/smb.conf
 	echo "  kernel oplocks = no" >> /etc/samba/smb.conf
 	echo "  wide links = no" >> /etc/samba/smb.conf
 	echo "  min receivefile size = 16384" >> /etc/samba/smb.conf
-	echo "  socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE SO_RCVBUF=131072 SO_SNDBUF=131072" >> /etc/samba/smb.conf
+	echo "  socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE" >> /etc/samba/smb.conf
 
 	echo "[USB]" >> /etc/samba/smb.conf
 	echo "  path=$DISK" >> /etc/samba/smb.conf
