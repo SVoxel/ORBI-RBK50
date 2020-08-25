@@ -123,6 +123,7 @@ add_lan_restricted_guest_rule()
     local ETH_P_IP=0x0800
     local ETH_P_IPv6=0x86dd
     local IPPROTO_UDP=17
+    local IPPROTO_TCP=6
     local IPPROTO_ICMPv6=58
     local DHCPS_DHCPC=67:68
     local DHCP6S_DHCP6C=546:547
@@ -138,9 +139,13 @@ add_lan_restricted_guest_rule()
     ebtables -A "$Chain" -p "$ETH_P_RARP" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_UDP" --ip6-sport "$PORT_DNS" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_UDP" --ip6-dport "$PORT_DNS" -j ACCEPT
+    ebtables -A "$Chain" -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_TCP" --ip6-sport "$PORT_DNS" -j ACCEPT
+    ebtables -A "$Chain" -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_TCP" --ip6-dport "$PORT_DNS" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_UDP" --ip6-dport "$DHCP6S_DHCP6C" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IP" --ip-proto "$IPPROTO_UDP" --ip-sport "$PORT_DNS" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IP" --ip-proto "$IPPROTO_UDP" --ip-dport "$PORT_DNS" -j ACCEPT
+    ebtables -A "$Chain" -p "$ETH_P_IP" --ip-proto "$IPPROTO_TCP" --ip-sport "$PORT_DNS" -j ACCEPT
+    ebtables -A "$Chain" -p "$ETH_P_IP" --ip-proto "$IPPROTO_TCP" --ip-dport "$PORT_DNS" -j ACCEPT
     ebtables -A "$Chain" -p "$ETH_P_IP" --ip-proto "$IPPROTO_UDP" --ip-dport "$DHCPS_DHCPC" -j ACCEPT
     portal_acl_redirect_rules "$Chain" "ADD"
 
@@ -3694,6 +3699,7 @@ router_lan_restricted_access()
     local ETH_P_IP=0x0800
     local ETH_P_IPv6=0x86dd
     local IPPROTO_UDP=17
+    local IPPROTO_TCP=6
     local IPPROTO_ICMPv6=58
     local DHCPS_DHCPC=67:68
     local DHCP6S_DHCP6C=546:547
@@ -3711,9 +3717,11 @@ router_lan_restricted_access()
                 ebtables -P INPUT ACCEPT
                 ebtables -A INPUT -p "$ETH_P_IP" --ip-proto "$IPPROTO_UDP" --ip-dport "$DHCPS_DHCPC" -j ACCEPT
                 ebtables -A INPUT -p "$ETH_P_IP" --ip-proto "$IPPROTO_UDP" --ip-dport "$PORT_DNS" -j ACCEPT
+                ebtables -A INPUT -p "$ETH_P_IP" --ip-proto "$IPPROTO_TCP" --ip-dport "$PORT_DNS" -j ACCEPT
                 ebtables -A INPUT -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_ICMPv6" --ip6-icmp-type ! echo-request -j ACCEPT
                 ebtables -A INPUT -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_UDP" --ip6-dport "$DHCP6S_DHCP6C" -j ACCEPT
                 ebtables -A INPUT -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_UDP" --ip6-dport "$PORT_DNS" -j ACCEPT
+                ebtables -A INPUT -p "$ETH_P_IPv6" --ip6-proto "$IPPROTO_TCP" --ip6-dport "$PORT_DNS" -j ACCEPT
 
                 inited=1
             fi
