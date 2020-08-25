@@ -3191,6 +3191,7 @@ CONFIG_PACKAGE_qca-ssdk-shell_dni=y
 CONFIG_PACKAGE_strace=y
 CONFIG_PACKAGE_sysstat=y
 CONFIG_PACKAGE_tar=y
+CONFIG_PACKAGE_renice=y
 CONFIG_PACKAGE_taskset=y
 CONFIG_PACKAGE_ubi-utils=y
 # CONFIG_PACKAGE_uboot-envtools is not set
