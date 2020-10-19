@@ -49,7 +49,7 @@ CONFIG_TARGET_ipq806x_QSDK_Premium=y
 # CONFIG_TARGET_ipq806x_QSDK_Deluxe is not set
 CONFIG_TARGET_BOARD="ipq806x"
 CONFIG_TARGET_ARCH_PACKAGES="ipq806x"
-CONFIG_DEFAULT_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -funsafe-math-optimizations"
+CONFIG_DEFAULT_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -funsafe-math-optimizations -finline-functions -fcommon"
 CONFIG_CPU_TYPE="cortex-a7"
 CONFIG_LINUX_3_14=y
 CONFIG_DEFAULT_6rd=y
@@ -378,7 +378,7 @@ CONFIG_KERNEL_GIT_CLONE_URI=""
 # CONFIG_SRC_TREE_OVERRIDE is not set
 CONFIG_EXTRA_OPTIMIZATION="-fno-caller-saves"
 # CONFIG_TARGET_OPTIONS is not set
-CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -funsafe-math-optimizations"
+CONFIG_TARGET_OPTIMIZATION="-O2 -pipe -mcpu=cortex-a7 -mtune=cortex-a7 -mfpu=neon-vfpv4 -funsafe-math-optimizations -finline-functions -fcommon"
 CONFIG_SOFT_FLOAT=y
 # CONFIG_EXTERNAL_TOOLCHAIN is not set
 CONFIG_INSTALL_LIBSTDCPP=y
