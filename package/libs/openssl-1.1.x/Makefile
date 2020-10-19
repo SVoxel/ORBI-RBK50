@@ -96,7 +96,7 @@ $(call Package/openssl-1.1.x/Default)
   SUBMENU:=SSL
   DEPENDS:=+OPENSSL_11X_WITH_COMPRESSION:zlib \
 	   +OPENSSL_11X_ENGINE_BUILTIN_AFALG:kmod-crypto-user \
-	   +OPENSSL_11X_ENGINE_BUILTIN_DEVCRYPTO:kmod-cryptodev \
+	   +OPENSSL_11X_ENGINE_BUILTIN_DEVCRYPTO:kmod-crypto-ocf-cryptodev \
 	   +OPENSSL_11X_ENGINE_BUILTIN_PADLOCK:kmod-crypto-hw-padlock \
 	   +libpthread
   TITLE+= (libraries)
@@ -335,6 +335,10 @@ OPENSSL_11X_TARGET:=linux-$(call qstrip,$(CONFIG_ARCH))-openwrt
 
 STAMP_CONFIGURED := $(STAMP_CONFIGURED)_$(shell echo $(OPENSSL_11X_OPTIONS) | mkhash md5)
 
+TARGET_CFLAGS := -I$(CURDIR)/include $(TARGET_CFLAGS)
+TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
+TARGET_LDFLAGS += -Wl,--gc-sections
+
 define Build/Configure
 	(cd $(PKG_BUILD_DIR); \
 		./Configure $(OPENSSL_11X_TARGET) \
@@ -348,9 +352,6 @@ define Build/Configure
 		{ [ -f $(STAMP_CONFIGURED) ] || make clean; } \
 	)
 endef
-
-TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections
 
 define Build/Compile
 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \

@@ -1,0 +1,35 @@
+--- a/engines/e_afalg.c	2020-04-21 15:22:39.000000000 +0300
++++ b/engines/e_afalg.c	2020-08-28 13:38:05.514090600 +0300
+@@ -22,13 +22,13 @@
+ 
+ #include <sys/socket.h>
+ #include <linux/version.h>
+-#define K_MAJ   4
+-#define K_MIN1  1
++#define K_MAJ   3
++#define K_MIN1  10
+ #define K_MIN2  0
+ #if LINUX_VERSION_CODE < KERNEL_VERSION(K_MAJ, K_MIN1, K_MIN2) || \
+     !defined(AF_ALG)
+ # ifndef PEDANTIC
+-#  warning "AFALG ENGINE requires Kernel Headers >= 4.1.0"
++#  warning "AFALG ENGINE requires Kernel Headers >= 3.10.0"
+ #  warning "Skipping Compilation of AFALG engine"
+ # endif
+ void engine_load_afalg_int(void);
+@@ -783,6 +783,7 @@
+         str = strtok(NULL, ".");
+     }
+ 
++#if 0
+     if (KERNEL_VERSION(kver[0], kver[1], kver[2])
+         < KERNEL_VERSION(K_MAJ, K_MIN1, K_MIN2)) {
+         ALG_ERR("ASYNC AFALG not supported this kernel(%d.%d.%d)\n",
+@@ -793,6 +794,7 @@
+                  AFALG_R_KERNEL_DOES_NOT_SUPPORT_ASYNC_AFALG);
+         return 0;
+     }
++#endif
+ 
+     /* Test if we can actually create an AF_ALG socket */
+     sock = socket(AF_ALG, SOCK_SEQPACKET, 0);
