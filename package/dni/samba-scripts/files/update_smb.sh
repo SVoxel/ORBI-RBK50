@@ -75,7 +75,7 @@ else
 	echo "  kernel oplocks = no" >> /etc/samba/smb.conf
 	echo "  wide links = no" >> /etc/samba/smb.conf
 	echo "  min receivefile size = 16384" >> /etc/samba/smb.conf
-	echo "  socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE" >> /etc/samba/smb.conf
+	echo "  socket options = IPTOS_LOWDELAY TCP_NODELAY SO_KEEPALIVE SO_RCVBUF=131072 SO_SNDBUF=131072" >> /etc/samba/smb.conf
 
 	echo "[USB]" >> /etc/samba/smb.conf
 	echo "  path=$DISK" >> /etc/samba/smb.conf
