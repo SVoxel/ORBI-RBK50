@@ -20,7 +20,7 @@ fi
 
 if [ "$flow_soap_cmd" = "ResetToDefault" ]; then
 	/sbin/factory_default
-	config commits
+	config commit
 	echo "flow soap ResetToDefault reboot now......" > /dev/console
 	reboot
 fi
