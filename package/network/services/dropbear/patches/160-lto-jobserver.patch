@@ -1,6 +1,6 @@
---- a/Makefile.in	2020-06-15 18:38:08.000000000 +0300
-+++ b/Makefile.in	2020-06-17 12:38:12.058530200 +0300
-@@ -199,17 +199,17 @@
+--- b/Makefile.in	2020-10-29 16:35:50.000000000 +0300
++++ c/Makefile.in	2020-10-30 12:19:45.475288000 +0300
+@@ -198,17 +198,17 @@
  dropbearconvert: $(dropbearconvertobjs)
  
  dropbear: $(HEADERS) $(LIBTOM_DEPS) Makefile
@@ -22,7 +22,7 @@
  
  
  # multi-binary compilation.
-@@ -220,7 +220,7 @@
+@@ -219,7 +219,7 @@
  endif
  
  dropbearmulti$(EXEEXT): $(HEADERS) $(MULTIOBJS) $(LIBTOM_DEPS) Makefile
