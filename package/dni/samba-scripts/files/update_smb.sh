@@ -1,6 +1,7 @@
 #!/bin/sh
 
 CONFIG="/bin/nvram"
+SAMBA_DISABLED=$($CONFIG get samba_disable)
 
 # Check the disk name
 DISK=0
@@ -84,7 +85,12 @@ else
 	echo "  read only=no" >> /etc/samba/smb.conf
 fi
 
-# Start samba
+# Exit if samba disabled
+if [ "$SAMBA_DISABLED" = "1" ]; then
+	exit 0
+fi
+
+# Start samba if not disabled
 /usr/sbin/taskset -c 1 /usr/sbin/smbd -D > /dev/null 2>&1
 /usr/sbin/taskset -p 1 `/bin/pidof usb-storage` > /dev/null 2>&1
 /usr/sbin/nmbd -D

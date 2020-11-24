@@ -97,7 +97,9 @@ static void reload_services(void)
 	int has_usb_storage = 0;
 	struct mntent *ent;
 	struct statfs stat;
+	char *disabled;
 	FILE *fp = setmntent("/proc/mounts", "r");
+
 	while ((ent = getmntent(fp))) {
 		if (strncmp(ent->mnt_fsname, USB_STORAGE_KEYWORD, strlen(USB_STORAGE_KEYWORD)))
 			continue;
@@ -125,14 +127,17 @@ static void reload_services(void)
 
 	/* Sync with locking file, and wait 1s to not miss SIGUP for `smbd` */
 	sleep(1);
+	disabled = config_get("samba_disable");
 	ret = system("/bin/pidof smbd > /dev/zero 2>&1");
 	if (ret == 0) {
 		system("/usr/bin/killall -SIGHUP smbd");
 		system("/usr/sbin/taskset -p 3 `/bin/pidof usb-storage` > /dev/null 2>&1");
 	} else {
-		system("/usr/sbin/taskset -c 1 /usr/sbin/smbd -D > /dev/null 2>&1");
-		system("/usr/sbin/taskset -p 1 `/bin/pidof usb-storage` > /dev/null 2>&1");
-		system("/bin/sleep 5");
+		if (*disabled != '1') {
+			system("/usr/sbin/taskset -c 1 /usr/sbin/smbd -D > /dev/null 2>&1");
+			system("/usr/sbin/taskset -p 1 `/bin/pidof usb-storage` > /dev/null 2>&1");
+			system("/bin/sleep 5");
+		}
 		system("/bin/chmod 0666 /tmp/samba/smbpasswd");
 		system("/usr/sbin/update_user > /dev/null 2>&1");
 	}
@@ -141,7 +146,8 @@ static void reload_services(void)
 	system("/usr/bin/killall nmbd > /dev/null 2>&1");
 	//ret = system("/bin/pidof nmbd > /dev/zero 2>&1");
 	//if (ret != 0)
-	system("/usr/sbin/nmbd -D");
+	if (*disabled != '1')
+		system("/usr/sbin/nmbd -D");
 
 outer:
 	/* Tell 'uhttpd' to update HTTP share information */
