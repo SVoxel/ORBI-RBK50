@@ -1,6 +1,21 @@
---- a/event.c
-+++ b/event.c
-@@ -699,6 +699,7 @@ static int print_event(struct nl_msg *ms
+--- a/Makefile	2020-10-02 13:18:41.000000000 +0300
++++ b/Makefile	2020-11-19 10:20:46.926830300 +0300
+@@ -23,6 +23,12 @@
+ VERSION_OBJS := $(filter-out version.o, $(_OBJS))
+ OBJS := $(VERSION_OBJS) version.o
+ 
++OBJS_FULL = ocb offch cqm wowlan coalesce roc p2p vendor mgmt ap sha256 nan bloom measurements ftm
++ifdef IW_FULL
++  CFLAGS += -DIW_FULL
++else
++  OBJS:=$(filter-out $(patsubst %,%.o,$(OBJS_FULL)),$(OBJS))
++endif
+ ALL = iw
+ 
+ ifeq ($(NO_PKG_CONFIG),)
+--- a/event.c	2020-10-02 13:18:41.000000000 +0300
++++ b/event.c	2020-11-19 10:20:46.897283700 +0300
+@@ -944,6 +944,7 @@
  	}
  
  	switch (gnlh->cmd) {
@@ -8,15 +23,15 @@
  	case NL80211_CMD_NEW_WIPHY:
  		printf("renamed to %s\n", nla_get_string(tb[NL80211_ATTR_WIPHY_NAME]));
  		break;
-@@ -734,6 +735,7 @@ static int print_event(struct nl_msg *ms
+@@ -979,6 +980,7 @@
  	case NL80211_CMD_SCHED_SCAN_RESULTS:
  		printf("got scheduled scan results\n");
  		break;
 +#endif
+ 	case NL80211_CMD_WIPHY_REG_CHANGE:
  	case NL80211_CMD_REG_CHANGE:
- 		printf("regulatory domain change: ");
- 
-@@ -812,6 +814,7 @@ static int print_event(struct nl_msg *ms
+ 		if (gnlh->cmd == NL80211_CMD_WIPHY_REG_CHANGE)
+@@ -1061,6 +1063,7 @@
  		mac_addr_n2a(macbuf, nla_data(tb[NL80211_ATTR_MAC]));
  		printf("del station %s\n", macbuf);
  		break;
@@ -24,10 +39,10 @@
  	case NL80211_CMD_JOIN_IBSS:
  		mac_addr_n2a(macbuf, nla_data(tb[NL80211_ATTR_MAC]));
  		printf("IBSS %s joined\n", macbuf);
-@@ -989,9 +992,9 @@ static int print_event(struct nl_msg *ms
- 		parse_nan_match(tb);
+@@ -1254,9 +1257,9 @@
+ 	case NL80211_CMD_CH_SWITCH_NOTIFY:
+ 		parse_ch_switch_notify(tb, gnlh->cmd);
  		break;
- 	}
 +#endif
  	default:
 -		printf("unknown event %d (%s)\n",
@@ -36,9 +51,9 @@
  		break;
  	}
  
---- a/info.c
-+++ b/info.c
-@@ -164,6 +164,7 @@ static int print_phy_handler(struct nl_m
+--- a/info.c	2020-10-02 13:18:41.000000000 +0300
++++ b/info.c	2020-11-19 10:20:46.904740600 +0300
+@@ -167,6 +167,7 @@
  			    tb_band[NL80211_BAND_ATTR_VHT_MCS_SET])
  				print_vht_info(nla_get_u32(tb_band[NL80211_BAND_ATTR_VHT_CAPA]),
  					       nla_data(tb_band[NL80211_BAND_ATTR_VHT_MCS_SET]));
@@ -46,7 +61,7 @@
  			if (tb_band[NL80211_BAND_ATTR_IFTYPE_DATA]) {
  				struct nlattr *nl_iftype;
  				int rem_band;
-@@ -171,6 +172,7 @@ static int print_phy_handler(struct nl_m
+@@ -174,6 +175,7 @@
  				nla_for_each_nested(nl_iftype, tb_band[NL80211_BAND_ATTR_IFTYPE_DATA], rem_band)
  					print_he_info(nl_iftype);
  			}
@@ -54,7 +69,7 @@
  			if (tb_band[NL80211_BAND_ATTR_FREQS]) {
  				if (!band_had_freq) {
  					printf("\t\tFrequencies:\n");
-@@ -213,6 +215,7 @@ next:
+@@ -216,6 +218,7 @@
  				}
  			}
  
@@ -62,7 +77,7 @@
  			if (tb_band[NL80211_BAND_ATTR_RATES]) {
  			printf("\t\tBitrates (non-HT):\n");
  			nla_for_each_nested(nl_rate, tb_band[NL80211_BAND_ATTR_RATES], rem_rate) {
-@@ -229,6 +232,7 @@ next:
+@@ -232,6 +235,7 @@
  				printf("\n");
  			}
  			}
@@ -70,7 +85,7 @@
  		}
  	}
  
-@@ -294,6 +298,7 @@ next:
+@@ -297,6 +301,7 @@
  		printf("\tCoverage class: %d (up to %dm)\n", coverage, 450 * coverage);
  	}
  
@@ -78,7 +93,7 @@
  	if (tb_msg[NL80211_ATTR_CIPHER_SUITES]) {
  		int num = nla_len(tb_msg[NL80211_ATTR_CIPHER_SUITES]) / sizeof(__u32);
  		int i;
-@@ -305,6 +310,7 @@ next:
+@@ -308,6 +313,7 @@
  					cipher_name(ciphers[i]));
  		}
  	}
@@ -86,7 +101,7 @@
  
  	if (tb_msg[NL80211_ATTR_WIPHY_ANTENNA_AVAIL_TX] &&
  	    tb_msg[NL80211_ATTR_WIPHY_ANTENNA_AVAIL_RX])
-@@ -324,11 +330,13 @@ next:
+@@ -327,11 +333,13 @@
  			printf("\t\t * %s\n", iftype_name(nla_type(nl_mode)));
  	}
  
@@ -100,7 +115,7 @@
  
  	if (tb_msg[NL80211_ATTR_INTERFACE_COMBINATIONS]) {
  		struct nlattr *nl_combi;
-@@ -425,6 +433,7 @@ broken_combination:
+@@ -428,6 +436,7 @@
  			printf("\tinterface combinations are not supported\n");
  	}
  
@@ -108,7 +123,7 @@
  	if (tb_msg[NL80211_ATTR_SUPPORTED_COMMANDS]) {
  		printf("\tSupported commands:\n");
  		nla_for_each_nested(nl_cmd, tb_msg[NL80211_ATTR_SUPPORTED_COMMANDS], rem_cmd)
-@@ -522,6 +531,7 @@ broken_combination:
+@@ -525,6 +534,7 @@
  				printf("\t\t * wake up on TCP connection\n");
  		}
  	}
@@ -116,7 +131,7 @@
  
  	if (tb_msg[NL80211_ATTR_ROAM_SUPPORT])
  		printf("\tDevice supports roaming.\n");
-@@ -560,6 +570,7 @@ broken_combination:
+@@ -563,6 +573,7 @@
  		}
  	}
  
@@ -124,7 +139,7 @@
  	if (tb_msg[NL80211_ATTR_FEATURE_FLAGS]) {
  		unsigned int features = nla_get_u32(tb_msg[NL80211_ATTR_FEATURE_FLAGS]);
  
-@@ -624,6 +635,7 @@ broken_combination:
+@@ -627,6 +638,7 @@
  		if (features & NL80211_FEATURE_ND_RANDOM_MAC_ADDR)
  			printf("\tDevice supports randomizing MAC-addr in net-detect scans.\n");
  	}
@@ -132,7 +147,7 @@
  
  	if (tb_msg[NL80211_ATTR_TDLS_SUPPORT])
  		printf("\tDevice supports T-DLS.\n");
-@@ -732,6 +744,7 @@ TOPLEVEL(list, NULL, NL80211_CMD_GET_WIP
+@@ -762,6 +774,7 @@
  	 "List all wireless devices and their capabilities.");
  TOPLEVEL(phy, NULL, NL80211_CMD_GET_WIPHY, NLM_F_DUMP, CIB_NONE, handle_info, NULL);
  
@@ -140,7 +155,7 @@
  static int handle_commands(struct nl80211_state *state, struct nl_msg *msg,
  			   int argc, char **argv, enum id_input id)
  {
-@@ -743,6 +756,7 @@ static int handle_commands(struct nl8021
+@@ -773,6 +786,7 @@
  }
  TOPLEVEL(commands, NULL, NL80211_CMD_GET_WIPHY, 0, CIB_NONE, handle_commands,
  	 "list all known commands and their decimal & hex value");
@@ -148,9 +163,54 @@
  
  static int print_feature_handler(struct nl_msg *msg, void *arg)
  {
---- a/scan.c
-+++ b/scan.c
-@@ -1195,6 +1195,9 @@ static void print_ht_op(const uint8_t ty
+--- a/interface.c	2020-10-02 13:18:41.000000000 +0300
++++ b/interface.c	2020-11-19 10:20:46.938488200 +0300
+@@ -627,9 +627,11 @@
+  nla_put_failure:
+ 	return -ENOBUFS;
+ }
++#ifdef IW_FULL
+ COMMAND(set, peer, "<MAC address>",
+ 	NL80211_CMD_SET_WDS_PEER, 0, CIB_NETDEV, handle_interface_wds_peer,
+ 	"Set interface WDS peer.");
++#endif
+ 
+ static int set_mcast_rate(struct nl80211_state *state,
+ 			  struct nl_msg *msg,
+@@ -719,6 +721,7 @@
+ 	return handle_chanfreq(state, msg, true, argc, argv, id);
+ }
+ 
++#ifdef IW_FULL
+ SECTION(switch);
+ COMMAND(switch, freq,
+ 	"<freq> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz] [beacons <count>] [block-tx]\n"
+@@ -990,3 +993,4 @@
+ 	"  $ iw dev wlan0 set tidconf peer xx:xx:xx:xx:xx:xx tids 0x2 bitrates auto\n"
+ 	"  $ iw dev wlan0 set tidconf peer xx:xx:xx:xx:xx:xx tids 0x2 bitrates limit vht-mcs-5 4:9\n"
+ 	);
++#endif
+--- a/phy.c	2020-11-19 10:19:57.038713600 +0300
++++ b/phy.c	2020-11-19 10:20:46.944985800 +0300
+@@ -369,6 +369,7 @@
+ 		free(cac_trigger_argv);
+ 	return err;
+ }
++#ifdef IW_FULL
+ TOPLEVEL(cac, "channel <channel> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz]\n"
+ 	      "freq <freq> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz]\n"
+ 	      "freq <control freq> [5|10|20|40|80|80+80|160] [<center1_freq> [<center2_freq>]]",
+@@ -380,6 +381,7 @@
+ 	NL80211_CMD_RADAR_DETECT, 0, CIB_NETDEV, handle_cac_trigger,
+ 	"Start or trigger a channel availability check (CAC) looking to look for\n"
+ 	"radars on the given channel.");
++#endif
+ 
+ static int handle_fragmentation(struct nl80211_state *state,
+ 				struct nl_msg *msg,
+--- a/scan.c	2020-10-02 13:18:41.000000000 +0300
++++ b/scan.c	2020-11-19 10:20:46.911470900 +0300
+@@ -1297,6 +1297,9 @@
  	printf("\t\t * secondary channel offset: %s\n",
  		ht_secondary_offset[data[1] & 0x3]);
  	printf("\t\t * STA channel width: %s\n", sta_chan_width[(data[1] & 0x4)>>2]);
@@ -160,7 +220,7 @@
  	printf("\t\t * RIFS: %d\n", (data[1] & 0x8)>>3);
  	printf("\t\t * HT protection: %s\n", protection[data[2] & 0x3]);
  	printf("\t\t * non-GF present: %d\n", (data[2] & 0x4) >> 2);
-@@ -1522,6 +1525,14 @@ static void print_ie(const struct ie_pri
+@@ -1707,6 +1710,14 @@
  
  static const struct ie_print ieprinters[] = {
  	[0] = { "SSID", print_ssid, 0, 32, BIT(PRINT_SCAN) | BIT(PRINT_LINK), },
@@ -175,12 +235,15 @@
  	[1] = { "Supported rates", print_supprates, 0, 255, BIT(PRINT_SCAN), },
  	[3] = { "DS Parameter set", print_ds, 1, 1, BIT(PRINT_SCAN), },
  	[5] = { "TIM", print_tim, 4, 255, BIT(PRINT_SCAN), },
-@@ -1531,21 +1542,15 @@ static const struct ie_print ieprinters[
+@@ -1716,26 +1727,20 @@
  	[32] = { "Power constraint", print_powerconstraint, 1, 1, BIT(PRINT_SCAN), },
  	[35] = { "TPC report", print_tpcreport, 2, 2, BIT(PRINT_SCAN), },
  	[42] = { "ERP", print_erp, 1, 255, BIT(PRINT_SCAN), },
 -	[45] = { "HT capabilities", print_ht_capa, 26, 26, BIT(PRINT_SCAN), },
  	[47] = { "ERP D4.0", print_erp, 1, 255, BIT(PRINT_SCAN), },
+ 	[51] = { "AP Channel Report", print_ap_channel_report, 1, 255, BIT(PRINT_SCAN), },
+ 	[59] = { "Supported operating classes", print_supp_op_classes, 1, 255, BIT(PRINT_SCAN), },
+ 	[66] = { "Measurement Pilot Transmission", print_measurement_pilot_tx, 1, 255, BIT(PRINT_SCAN), },
  	[74] = { "Overlapping BSS scan params", print_obss_scan_params, 14, 255, BIT(PRINT_SCAN), },
 -	[61] = { "HT operation", print_ht_op, 22, 22, BIT(PRINT_SCAN), },
 -	[62] = { "Secondary Channel Offset", print_secchan_offs, 1, 1, BIT(PRINT_SCAN), },
@@ -188,17 +251,19 @@
 -	[192] = { "VHT operation", print_vht_oper, 5, 255, BIT(PRINT_SCAN), },
 -	[48] = { "RSN", print_rsn, 2, 255, BIT(PRINT_SCAN), },
  	[50] = { "Extended supported rates", print_supprates, 0, 255, BIT(PRINT_SCAN), },
+ 	[70] = { "RM enabled capabilities", print_rm_enabled_capabilities, 5, 5, BIT(PRINT_SCAN), },
  	[113] = { "MESH Configuration", print_mesh_conf, 7, 7, BIT(PRINT_SCAN), },
 -	[114] = { "MESH ID", print_ssid, 0, 32, BIT(PRINT_SCAN) | BIT(PRINT_LINK), },
  	[127] = { "Extended capabilities", print_capabilities, 0, 255, BIT(PRINT_SCAN), },
  	[107] = { "802.11u Interworking", print_interworking, 0, 255, BIT(PRINT_SCAN), },
  	[108] = { "802.11u Advertisement", print_11u_advert, 0, 255, BIT(PRINT_SCAN), },
- 	[111] = { "802.11u Roaming Consortium", print_11u_rcon, 0, 255, BIT(PRINT_SCAN), },
+ 	[111] = { "802.11u Roaming Consortium", print_11u_rcon, 2, 255, BIT(PRINT_SCAN), },
+ 	[195] = { "Transmit Power Envelope", print_tx_power_envelope, 2, 5, BIT(PRINT_SCAN), },
 +#endif
  };
  
  static void print_wifi_wpa(const uint8_t type, uint8_t len, const uint8_t *data,
-@@ -2024,6 +2029,7 @@ void print_ies(unsigned char *ie, int ie
+@@ -2279,6 +2284,7 @@
  		    ieprinters[ie[0]].flags & BIT(ptype)) {
  			print_ie(&ieprinters[ie[0]],
  				 ie[0], ie[1], ie + 2, &ie_buffer);
@@ -206,7 +271,7 @@
  		} else if (ie[0] == 221 /* vendor */) {
  			print_vendor(ie[1], ie + 2, unknown, ptype);
  		} else if (unknown) {
-@@ -2033,6 +2039,7 @@ void print_ies(unsigned char *ie, int ie
+@@ -2288,6 +2294,7 @@
  			for (i=0; i<ie[1]; i++)
  				printf(" %.2x", ie[2+i]);
  			printf("\n");
@@ -214,7 +279,7 @@
  		}
  		ielen -= ie[1] + 2;
  		ie += ie[1] + 2;
-@@ -2073,6 +2080,7 @@ static void print_capa_non_dmg(__u16 cap
+@@ -2328,6 +2335,7 @@
  		printf(" ESS");
  	if (capa & WLAN_CAPABILITY_IBSS)
  		printf(" IBSS");
@@ -222,7 +287,7 @@
  	if (capa & WLAN_CAPABILITY_CF_POLLABLE)
  		printf(" CfPollable");
  	if (capa & WLAN_CAPABILITY_CF_POLL_REQUEST)
-@@ -2101,6 +2109,7 @@ static void print_capa_non_dmg(__u16 cap
+@@ -2356,6 +2364,7 @@
  		printf(" DelayedBACK");
  	if (capa & WLAN_CAPABILITY_IMM_BACK)
  		printf(" ImmediateBACK");
@@ -230,7 +295,7 @@
  }
  
  static int print_bss_handler(struct nl_msg *msg, void *arg)
-@@ -2185,8 +2194,10 @@ static int print_bss_handler(struct nl_m
+@@ -2440,8 +2449,10 @@
  	if (bss[NL80211_BSS_FREQUENCY]) {
  		int freq = nla_get_u32(bss[NL80211_BSS_FREQUENCY]);
  		printf("\tfreq: %d\n", freq);
@@ -241,7 +306,7 @@
  	}
  	if (bss[NL80211_BSS_BEACON_INTERVAL])
  		printf("\tbeacon interval: %d TUs\n",
-@@ -2380,6 +2391,7 @@ static int handle_stop_sched_scan(struct
+@@ -2635,6 +2646,7 @@
  	return 0;
  }
  
@@ -249,57 +314,14 @@
  COMMAND(scan, sched_start,
  	SCHED_SCAN_OPTIONS,
  	NL80211_CMD_START_SCHED_SCAN, 0, CIB_NETDEV, handle_start_sched_scan,
-@@ -2390,3 +2402,4 @@ COMMAND(scan, sched_start,
+@@ -2645,3 +2657,4 @@
  COMMAND(scan, sched_stop, "",
  	NL80211_CMD_STOP_SCHED_SCAN, 0, CIB_NETDEV, handle_stop_sched_scan,
  	"Stop an ongoing scheduled scan.");
 +#endif
---- a/util.c
-+++ b/util.c
-@@ -153,6 +153,7 @@ static const char *commands[NL80211_CMD_
- 
- static char cmdbuf[100];
- 
-+#ifdef IW_FULL
- const char *command_name(enum nl80211_commands cmd)
- {
- 	if (cmd <= NL80211_CMD_MAX && commands[cmd])
-@@ -160,6 +161,7 @@ const char *command_name(enum nl80211_co
- 	sprintf(cmdbuf, "Unknown command (%d)", cmd);
- 	return cmdbuf;
- }
-+#endif
- 
- int ieee80211_channel_to_frequency(int chan, enum nl80211_band band)
- {
-@@ -298,6 +300,9 @@ int parse_keys(struct nl_msg *msg, char
- 	char keybuf[13];
- 	int pos = 0;
- 
-+#ifndef IW_FULL
-+	return 1;
-+#endif
- 	if (!*argc)
- 		return 1;
- 
---- a/Makefile
-+++ b/Makefile
-@@ -22,6 +22,12 @@ _OBJS := $(sort $(patsubst %.c,%.o,$(wil
- VERSION_OBJS := $(filter-out version.o, $(_OBJS))
- OBJS := $(VERSION_OBJS) version.o
- 
-+OBJS_FULL = ocb offch cqm wowlan coalesce roc p2p vendor mgmt ap sha256 nan bloom measurements ftm
-+ifdef IW_FULL
-+  CFLAGS += -DIW_FULL
-+else
-+  OBJS:=$(filter-out $(patsubst %,%.o,$(OBJS_FULL)),$(OBJS))
-+endif
- ALL = iw
- 
- ifeq ($(NO_PKG_CONFIG),)
---- a/station.c
-+++ b/station.c
-@@ -759,10 +759,12 @@ static int handle_station_set_plink(stru
+--- a/station.c	2020-10-02 13:18:41.000000000 +0300
++++ b/station.c	2020-11-19 10:20:46.931072500 +0300
+@@ -777,10 +777,12 @@
   nla_put_failure:
  	return -ENOBUFS;
  }
@@ -312,7 +334,7 @@
  
  static int handle_station_set_vlan(struct nl80211_state *state,
  				   struct nl_msg *msg,
-@@ -857,11 +859,13 @@ static int handle_station_set_mesh_power
+@@ -875,11 +877,13 @@
  nla_put_failure:
  	return -ENOBUFS;
  }
@@ -326,48 +348,31 @@
  
  static int handle_station_set_airtime_weight(struct nl80211_state *state,
  					     struct nl_msg *msg,
---- a/interface.c
-+++ b/interface.c
-@@ -627,9 +627,11 @@ static int handle_interface_wds_peer(str
-  nla_put_failure:
- 	return -ENOBUFS;
- }
-+#ifdef IW_FULL
- COMMAND(set, peer, "<MAC address>",
- 	NL80211_CMD_SET_WDS_PEER, 0, CIB_NETDEV, handle_interface_wds_peer,
- 	"Set interface WDS peer.");
-+#endif
+--- a/util.c	2020-10-02 13:18:41.000000000 +0300
++++ b/util.c	2020-11-19 10:20:46.920613300 +0300
+@@ -153,6 +153,7 @@
  
- static int set_mcast_rate(struct nl80211_state *state,
- 			  struct nl_msg *msg,
-@@ -719,6 +721,7 @@ static int handle_chan(struct nl80211_st
- 	return handle_chanfreq(state, msg, true, argc, argv, id);
- }
+ static char cmdbuf[100];
  
 +#ifdef IW_FULL
- SECTION(switch);
- COMMAND(switch, freq,
- 	"<freq> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz] [beacons <count>] [block-tx]\n"
-@@ -727,3 +730,4 @@ COMMAND(switch, freq,
- 	"Switch the operating channel by sending a channel switch announcement (CSA).");
- COMMAND(switch, channel, "<channel> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz] [beacons <count>] [block-tx]",
- 	NL80211_CMD_CHANNEL_SWITCH, 0, CIB_NETDEV, handle_chan, NULL);
-+#endif
---- a/phy.c
-+++ b/phy.c
-@@ -369,6 +369,7 @@ err_out:
- 		free(cac_trigger_argv);
- 	return err;
+ const char *command_name(enum nl80211_commands cmd)
+ {
+ 	if (cmd <= NL80211_CMD_MAX && commands[cmd])
+@@ -160,6 +161,7 @@
+ 	sprintf(cmdbuf, "Unknown command (%d)", cmd);
+ 	return cmdbuf;
  }
-+#ifdef IW_FULL
- TOPLEVEL(cac, "channel <channel> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz]\n"
- 	      "freq <freq> [NOHT|HT20|HT40+|HT40-|5MHz|10MHz|80MHz]\n"
- 	      "freq <control freq> [5|10|20|40|80|80+80|160] [<center1_freq> [<center2_freq>]]",
-@@ -380,6 +381,7 @@ COMMAND(cac, trigger,
- 	NL80211_CMD_RADAR_DETECT, 0, CIB_NETDEV, handle_cac_trigger,
- 	"Start or trigger a channel availability check (CAC) looking to look for\n"
- 	"radars on the given channel.");
 +#endif
  
- static int handle_fragmentation(struct nl80211_state *state,
- 				struct nl_msg *msg,
+ int ieee80211_channel_to_frequency(int chan, enum nl80211_band band)
+ {
+@@ -311,6 +313,9 @@
+ 	char keybuf[13];
+ 	int pos = 0;
+ 
++#ifndef IW_FULL
++	return 1;
++#endif
+ 	if (!*argc)
+ 		return 1;
+ 

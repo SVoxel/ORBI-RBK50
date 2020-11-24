@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=iw
-PKG_VERSION:=5.4
+PKG_VERSION:=5.9
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/software/network/iw
-PKG_MD5SUM:=0d8bd345449c14249e39ce4b1f09cd64
+PKG_MD5SUM:=7a47d6f749ec69afcaf351166fd12f6f
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=GPL-2.0
@@ -55,7 +55,7 @@ ifeq ($(BUILD_VARIANT),full)
 endif
 
 MAKE_FLAGS += \
-	CFLAGS="$(TARGET_CPPFLAGS) $(TARGET_CFLAGS) -ffunction-sections -fdata-sections" \
+	CFLAGS="$(TARGET_CPPFLAGS) $(TARGET_CFLAGS) -DCLOCK_BOOTTIME=7 -ffunction-sections -fdata-sections" \
 	LDFLAGS="$(TARGET_LDFLAGS) -Wl,--gc-sections -flto" \
 	NL1FOUND="" NL2FOUND=Y \
 	NLLIBNAME="libnl-tiny" \
