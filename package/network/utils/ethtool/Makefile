@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ethtool
-PKG_VERSION:=5.4
+PKG_VERSION:=5.9
 PKG_RELEASE:=1
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/software/network/ethtool
-PKG_MD5SUM:=3d4bbf2be9fb25059186691918eaffe9
+PKG_MD5SUM:=d421e014c1e8388694728a738a107e55
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
@@ -44,6 +44,8 @@ define Package/ethtool/config
 		depends on PACKAGE_ethtool
 		bool "Enable pretty printing"
 endef
+
+CONFIGURE_ARGS += --disable-netlink
 
 ifeq ($(CONFIG_ETHTOOL_PRETTY_DUMP),y)
 CONFIGURE_ARGS += --enable-pretty-dump
