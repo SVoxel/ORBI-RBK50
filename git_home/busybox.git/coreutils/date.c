@@ -317,16 +317,13 @@ int date_main(int argc UNUSED_PARAM, char **argv)
 		syscall(__NR_clock_gettime, CLOCK_REALTIME, &ts);
 #else
 		time(&ts.tv_sec);
+		time_zone = get_time_zone();
+		if (*time_zone != '\0')
+			setenv("TZ", time_zone, 1);
 #endif
 	}
 
 	/* Get local time value according to time zone setting */
-	time_zone = get_time_zone();
-	if (*time_zone != '\0') {
-		time(&tm_time);
-		setenv("TZ", time_zone, 1);
-	}
-
 	localtime_r(&ts.tv_sec, &tm_time);
 
 	/* If date string is given, update tm_time, and maybe set date */
