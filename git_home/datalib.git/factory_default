@@ -1,5 +1,26 @@
 #!/bin/sh
-killall traffic_meter
-/etc/init.d/aws default
-sleep 2
-config default
+
+# killall traffic_meter
+# /etc/init.d/aws default
+# sleep 2
+# config default
+
+logmsg () {
+	txt="[RESET BUTTON] [$(date +'%F %T')]: $*"
+	echo "$txt"
+	echo "$txt" >>/var/log/messages
+}
+
+# Turn on amber light.
+/sbin/ledcontrol ledcontrol -n all -c amber -s on
+logmsg "Information: Reset to factory default settings is disabled."
+
+# Run own script when reset button is pressed
+if [ -x /opt/scripts/reset-button.sh ]; then
+	logmsg "Information: Running user's custom script."
+	/opt/scripts/reset-button.sh
+fi
+
+# Turn off amber light.
+/bin/sleep 1
+/sbin/ledcontrol ledcontrol -n all -c amber -s off
