@@ -8,12 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=ngrep
-PKG_VERSION:=1.45
-PKG_RELEASE:=3
+PKG_VERSION:=1.47
+PKG_RELEASE:=1
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
-PKG_SOURCE_URL:=@SF/ngrep
-PKG_MD5SUM:=bc8150331601f3b869549c94866b4f1c
+PKG_SOURCE_PROTO:=git
+PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
+PKG_SOURCE_URL:=https://github.com/jpr5/ngrep.git
+PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
+PKG_SOURCE_VERSION:=351ac491358f89a7860bbbe9963cb4bc7d60000f
 
 PKG_INSTALL:=1
 
@@ -36,14 +38,14 @@ define Package/ngrep/description
 	like tcpdump and snoop.
 endef
 
-CONFIGURE_ARGS+= \
+TARGET_CFLAGS += -D_DEFAULT_SOURCE
+
+CONFIGURE_ARGS += \
 	--with-pcap-includes=$(STAGING_DIR)/usr/include \
 	--enable-pcre \
 	--with-pcre=$(STAGING_DIR)/usr \
 	--disable-dropprivs \
-
-CONFIGURE_VARS+= \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpcre" \
+	LDFLAGS="$(TARGET_LDFLAGS) -lpcre"
 
 define Package/ngrep/install	
 	$(INSTALL_DIR) $(1)/usr/bin
