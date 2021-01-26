@@ -2,7 +2,7 @@
 # Makefile for the Linux fat filesystem support.
 #
 
-KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -O3
+KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -Os
 
 obj-$(CONFIG_FAT_FS) += fat.o
 obj-$(CONFIG_VFAT_FS) += vfat.o
