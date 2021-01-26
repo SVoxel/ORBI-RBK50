@@ -68,7 +68,7 @@ define Package/samba36-server/description
  to as the LanManager or Netbios protocol.
 endef
 
-TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -O3
+TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -Os
 TARGET_CFLAGS += -DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA_MAX_DEBUG_LEVEL) -D__location__=\\\"\\\" -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
