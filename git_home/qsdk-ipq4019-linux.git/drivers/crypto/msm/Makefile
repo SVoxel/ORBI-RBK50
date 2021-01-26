@@ -1,3 +1,5 @@
+KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -O3
+
 ifeq ($(CONFIG_FIPS_ENABLE), y)
 	obj-$(CONFIG_CRYPTO_DEV_QCEDEV) += qcedev_fips.o
 endif
