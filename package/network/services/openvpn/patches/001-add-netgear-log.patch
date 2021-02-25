@@ -1,5 +1,5 @@
---- a/src/openvpn/forward.c	2020-10-28 10:25:23.000000000 +0300
-+++ b/src/openvpn/forward.c	2020-12-09 12:21:28.243896400 +0300
+--- a/src/openvpn/forward.c	2021-02-24 11:18:16.000000000 +0300
++++ b/src/openvpn/forward.c	2021-02-25 10:10:17.020139800 +0300
 @@ -655,6 +655,9 @@
  
      /* restart if ping not received */
@@ -19,8 +19,8 @@
  #if PORT_SHARE
          if (port_share && socket_foreign_protocol_detected(c->c2.link_socket))
          {
---- a/src/openvpn/push.c	2020-10-28 10:25:23.000000000 +0300
-+++ b/src/openvpn/push.c	2020-12-09 12:21:28.266680400 +0300
+--- a/src/openvpn/push.c	2021-02-24 11:18:16.000000000 +0300
++++ b/src/openvpn/push.c	2021-02-25 10:10:17.044850300 +0300
 @@ -552,6 +552,8 @@
      const int safe_cap = BCAP(&buf) - extra;
      bool push_sent = false;
@@ -30,9 +30,9 @@
      buf_printf(&buf, "%s", push_reply_cmd);
  
      /* send options which are common to all clients */
---- a/src/openvpn/ssl.c	2020-10-28 10:25:23.000000000 +0300
-+++ b/src/openvpn/ssl.c	2020-12-09 12:21:28.272446000 +0300
-@@ -2970,6 +2970,7 @@
+--- a/src/openvpn/ssl.c	2021-02-24 11:18:16.000000000 +0300
++++ b/src/openvpn/ssl.c	2021-02-25 10:10:17.052299900 +0300
+@@ -2969,6 +2969,7 @@
      tls_clear_error();
      ks->state = S_ERROR;
      msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");
