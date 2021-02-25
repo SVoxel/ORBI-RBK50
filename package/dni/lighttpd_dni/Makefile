@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_VERSION:=1.4.58
+PKG_VERSION:=1.4.59
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://download.lighttpd.net/lighttpd/releases-1.4.x
-PKG_MD5SUM:=8d12a31bd3fdd7eab85cf9a6d2cfa92e
+PKG_MD5SUM:=a8838dac90fcddbcc05c0d1877bd8cdf
 
 PKG_LICENSE:=BSD-3c
 PKG_LICENSE_FILES:=COPYING
