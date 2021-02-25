@@ -1,3 +1,5 @@
+KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -O3
+
 EXTRA_CFLAGS += -I$(srctree)/arch/arm/mach-qcom/include
 obj-y			:= board.o
 obj-$(CONFIG_SMP)	+= platsmp.o
