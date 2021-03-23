@@ -1,0 +1,10 @@
+--- a/gnu/getrandom.c	2021-01-07 17:28:40.000000000 +0300
++++ b/gnu/getrandom.c	2021-03-11 19:58:42.018943400 +0300
+@@ -19,6 +19,7 @@
+ 
+ #include <config.h>
+ 
++#include <stddef.h>
+ #include <sys/random.h>
+ 
+ #include <errno.h>
