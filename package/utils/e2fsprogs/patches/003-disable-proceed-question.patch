@@ -1,6 +1,6 @@
---- a/misc/util.c	2018-12-16 08:39:33.000000000 +0300
-+++ b/misc/util.c	2019-11-17 22:01:41.622788500 +0300
-@@ -104,7 +104,9 @@
+--- a/misc/util.c	2021-03-01 05:46:44.000000000 +0300
++++ b/misc/util.c	2021-03-01 12:08:40.941466300 +0300
+@@ -105,7 +105,9 @@
  		printf(_("Proceed anyway (or wait %d seconds to proceed) ? (y,N) "),
  		       delay);
  		alarm(delay);
@@ -11,7 +11,7 @@
  		fputs(_("Proceed anyway? (y,N) "), stdout);
  	buf[0] = 0;
  	if (!fgets(buf, sizeof(buf), stdin) ||
-@@ -112,6 +114,7 @@
+@@ -115,6 +117,7 @@
  		putc('\n', stdout);
  		exit(1);
  	}
@@ -19,3 +19,13 @@
  	signal(SIGALRM, SIG_IGN);
  }
  
+--- a/util/subst.c	2021-03-01 05:46:44.000000000 +0300
++++ b/util/subst.c	2021-03-01 11:43:29.901227000 +0300
+@@ -10,6 +10,7 @@
+ #else
+ #define HAVE_SYS_STAT_H
+ #define HAVE_SYS_TIME_H
++#define HAVE_SYS_STAT_H
+ #endif
+ #include <stdio.h>
+ #include <errno.h>
