@@ -1,13 +1,15 @@
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -119,10 +119,8 @@ endif
+--- a/Makefile.am	2021-03-10 11:03:54.064495300 +0300
++++ b/Makefile.am	2021-03-10 11:16:07.256941600 +0300
+@@ -118,12 +118,8 @@
  SUBDIRS = contrib
  
- install-exec-hook:
--	(cd $(ROOTSBINDIR) && ln -sf mount.cifs mount.smb3)
+ install-exec-hook: install-sbinPROGRAMS
+-	(cd $(DESTDIR)$(ROOTSBINDIR) && ln -sf mount.cifs mount.smb3)
  
  install-data-hook:
--	(cd $(man8dir) && ln -sf mount.cifs.8 mount.smb3.8)
+-if CONFIG_MAN
+-	( cd $(DESTDIR)$(man8dir) && ln -sf mount.cifs.8 mount.smb3.8)
+-endif
  
  uninstall-hook:
- 	(cd $(ROOTSBINDIR) && rm -f $(ROOTSBINDIR)/mount.smb3)
+ 	(cd $(DESTDIR)$(ROOTSBINDIR) && rm -f $(ROOTSBINDIR)/mount.smb3)
