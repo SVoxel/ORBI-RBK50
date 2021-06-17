@@ -476,6 +476,8 @@ TARGET_CFLAGS += \
 	-ffunction-sections -fdata-sections \
 	-DNO_LEGACY
 
+TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -O3
+
 TARGET_LDFLAGS += \
 	-Wl,--gc-sections
 
