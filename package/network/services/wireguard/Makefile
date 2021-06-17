@@ -11,12 +11,12 @@ include $(INCLUDE_DIR)/kernel.mk
 
 PKG_NAME:=wireguard
 
-PKG_VERSION:=1.0.20210424
+PKG_VERSION:=1.0.20210606
 PKG_RELEASE:=1
 
 PKG_SOURCE:=wireguard-linux-compat-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=https://git.zx2c4.com/wireguard-linux-compat/snapshot/
-PKG_MD5SUM:=a0b43709f873374591671a35ad76b183
+PKG_MD5SUM:=27d301bb1b1413df1437d0ce1f620996
 
 PKG_LICENSE:=GPL-2.0
 PKG_LICENSE_FILES:=COPYING
