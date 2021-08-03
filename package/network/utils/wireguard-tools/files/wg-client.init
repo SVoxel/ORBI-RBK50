@@ -28,7 +28,7 @@ start() {
 	fi
 
 	# Check: is it router, exit if "no"
-	if [ "$MODULE_NAME" != "RBR50" ]; then
+	if [ "$MODULE_NAME" != "RBR50" ] && [ "$MODULE_NAME" != "LBR20" ]; then
 		echo "Error: This device is not router (satellite)." | tee -a $LOG_FILE
 		exit 0
 	fi	
@@ -112,12 +112,15 @@ start() {
 	fi
 
 	# WireGuard: create wg0 config (wg0.conf)
-	echo "[Interface]"		>  $WGConfig
-	echo "PrivateKey = $PrivateKey"	>> $WGConfig
-	echo "[Peer]"			>> $WGConfig
-	echo "PublicKey = $PublicKey"	>> $WGConfig
-	echo "Endpoint = $IP:$Port"	>> $WGConfig
-	echo "AllowedIPs = 0.0.0.0/0"	>> $WGConfig
+	echo "[Interface]"				>  $WGConfig
+	echo "PrivateKey = $PrivateKey"			>> $WGConfig
+	echo "[Peer]"					>> $WGConfig
+	echo "PublicKey = $PublicKey"			>> $WGConfig
+	if [ ! -z "$PresharedKey" ]; then
+		echo "PresharedKey = $PresharedKey"	>> $WGConfig
+	fi
+	echo "Endpoint = $IP:$Port"			>> $WGConfig
+	echo "AllowedIPs = 0.0.0.0/0"			>> $WGConfig
 
 	# Set config file for wg0 interface
 	wg setconf wg0 "$WGConfig" >>$LOG_FILE 2>>$LOG_FILE
