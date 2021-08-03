@@ -19,13 +19,3 @@
  	signal(SIGALRM, SIG_IGN);
  }
  
---- a/util/subst.c	2021-03-01 05:46:44.000000000 +0300
-+++ b/util/subst.c	2021-03-01 11:43:29.901227000 +0300
-@@ -10,6 +10,7 @@
- #else
- #define HAVE_SYS_STAT_H
- #define HAVE_SYS_TIME_H
-+#define HAVE_SYS_STAT_H
- #endif
- #include <stdio.h>
- #include <errno.h>
