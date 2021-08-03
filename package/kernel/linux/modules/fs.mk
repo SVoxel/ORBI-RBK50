@@ -91,6 +91,7 @@ define KernelPackage/fs-cifs
   AUTOLOAD:=$(call AutoLoad,30,cifs)
   $(call AddDepends/nls)
   DEPENDS+= \
+    +kmod-fs-fscache \
     +kmod-crypto-arc4 \
     +kmod-crypto-hmac \
     +kmod-crypto-md5 \
