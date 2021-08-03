@@ -1,5 +1,5 @@
---- a/src/openvpn/forward.c	2021-04-25 11:34:46.138003600 +0300
-+++ b/src/openvpn/forward.c	2021-04-25 11:36:14.339211800 +0300
+--- a/src/openvpn/forward.c	2021-06-23 10:26:16.858037600 +0300
++++ b/src/openvpn/forward.c	2021-06-23 10:27:24.671301000 +0300
 @@ -600,6 +600,7 @@
  static void
  process_coarse_timers(struct context *c)
@@ -55,8 +55,8 @@
  #if PORT_SHARE
          if (port_share && socket_foreign_protocol_detected(c->c2.link_socket))
          {
---- a/src/openvpn/push.c	2021-04-25 11:34:46.173983400 +0300
-+++ b/src/openvpn/push.c	2021-04-25 11:36:14.348694900 +0300
+--- a/src/openvpn/push.c	2021-06-23 10:26:16.909052100 +0300
++++ b/src/openvpn/push.c	2021-06-23 10:27:24.677811400 +0300
 @@ -551,8 +551,16 @@
      const int extra = 84; /* extra space for possible trailing ifconfig and push-continuation */
      const int safe_cap = BCAP(&buf) - extra;
@@ -75,9 +75,9 @@
  
      buf_printf(&buf, "%s", push_reply_cmd);
  
---- a/src/openvpn/ssl.c	2021-04-25 11:34:46.182569500 +0300
-+++ b/src/openvpn/ssl.c	2021-04-25 11:36:14.356322500 +0300
-@@ -2654,6 +2654,7 @@
+--- a/src/openvpn/ssl.c	2021-06-23 10:26:16.909052100 +0300
++++ b/src/openvpn/ssl.c	2021-06-23 10:27:24.677811400 +0300
+@@ -2660,6 +2660,7 @@
      bool active = false;
      struct key_state *ks = &session->key[KS_PRIMARY];      /* primary key */
      struct key_state *ks_lame = &session->key[KS_LAME_DUCK]; /* retiring key */
@@ -85,7 +85,7 @@
  
      /* Make sure we were initialized and that we're not in an error state */
      ASSERT(ks->state != S_UNDEF);
-@@ -3000,7 +3001,17 @@
+@@ -3006,7 +3007,17 @@
      tls_clear_error();
      ks->state = S_ERROR;
      msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");
