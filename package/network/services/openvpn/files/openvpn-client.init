@@ -16,7 +16,7 @@ OPT_ARGS="--dev tun21 --fast-io --nice -20 --auth-nocache --sndbuf 786432 --rcvb
 
 start() {
 	# Check: is it router, exit if "no"
-	if [ "$MODULE_NAME" != "RBR50" ]; then
+	if [ "$MODULE_NAME" != "RBR50" ] && [ "$MODULE_NAME" != "LBR20" ]; then
 		echo "This device is not router (satellite). Exit."
 		exit 0
 	fi	
