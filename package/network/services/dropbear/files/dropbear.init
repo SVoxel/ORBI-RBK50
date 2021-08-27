@@ -15,6 +15,10 @@ start() {
 
 	# Start SSH server
 	$DROPBEAR -p $PORT -a -P $PIDFILE
+	/usr/sbin/net-wall rule
+	/usr/sbin/net-wall start
+	/usr/sbin/net-wall -6 rule
+	/usr/sbin/net-wall -6 start
 }
 
 stop() {
