@@ -9,8 +9,8 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=e2fsprogs
 PKG_CPE_ID:=cpe:/a:e2fsprogs_project:e2fsprogs
-PKG_VERSION:=1.46.3
-PKG_HASH:=86d1580facdd49f2e0e6b027e26b1e6c48af538762dc40aeed2a87153c1f11b7
+PKG_VERSION:=1.46.4
+PKG_HASH:=b11042533c1b1dcf17512f0da48e05b0c573dada1dd8b762864d10f4dc399713
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
