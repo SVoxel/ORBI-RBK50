@@ -2340,7 +2340,7 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libcharset is not set
 # CONFIG_PACKAGE_libconfig is not set
 CONFIG_PACKAGE_libgdbm=y
-CONFIG_PACKAGE_libelf1=m
+CONFIG_PACKAGE_libelf=m
 # CONFIG_PACKAGE_libasm is not set
 CONFIG_PACKAGE_libbfd=m
 CONFIG_PACKAGE_libcurl=y
