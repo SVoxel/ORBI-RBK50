@@ -42,7 +42,9 @@ endef
 
 define Build/Prepare
 	$(CP) $(GIT_HOME)/ez-ipupdate.git/* $(PKG_BUILD_DIR)/
-	touch $(PKG_BUILD_DIR)/*
+	mkdir -p $(PKG_BUILD_DIR)/files
+	$(CP) ./files/* $(PKG_BUILD_DIR)/files/
+	(cd $(PKG_BUILD_DIR)/;touch aclocal.m4; touch configure; touch Makefile.in; touch config.h.in)
 endef
 
 define Package/ez-ipupdate/install
