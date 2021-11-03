@@ -79,7 +79,7 @@ CONFIG_DEFAULT_iptables-mod-conntrack-extra=y
 CONFIG_DEFAULT_iptables-mod-extra=y
 CONFIG_DEFAULT_iptables-mod-filter=y
 CONFIG_DEFAULT_iptables-mod-ipopt=y
-CONFIG_DEFAULT_iptables-mod-ipsec=y
+# CONFIG_DEFAULT_iptables-mod-ipsec is not set
 CONFIG_DEFAULT_iputils-tracepath=y
 CONFIG_DEFAULT_iputils-tracepath6=y
 CONFIG_DEFAULT_isc-dhcp-relay-ipv4=y
@@ -1660,7 +1660,7 @@ CONFIG_PACKAGE_kmod-crypto-arc4=y
 CONFIG_PACKAGE_kmod-crypto-authenc=y
 CONFIG_PACKAGE_kmod-crypto-cbc=y
 # CONFIG_PACKAGE_kmod-crypto-ccm is not set
-CONFIG_PACKAGE_kmod-crypto-core=y
+# CONFIG_PACKAGE_kmod-crypto-core is not set
 CONFIG_PACKAGE_kmod-crypto-crc32c=y
 # CONFIG_PACKAGE_kmod-crypto-ctr is not set
 CONFIG_PACKAGE_kmod-crypto-deflate=y
@@ -1677,7 +1677,7 @@ CONFIG_PACKAGE_kmod-crypto-hmac=y
 # CONFIG_PACKAGE_kmod-crypto-hw-padlock is not set
 # CONFIG_PACKAGE_kmod-crypto-hw-talitos is not set
 CONFIG_PACKAGE_kmod-crypto-iv=y
-CONFIG_PACKAGE_kmod-crypto-manager=y
+# CONFIG_PACKAGE_kmod-crypto-manager is not set
 CONFIG_PACKAGE_kmod-crypto-md4=y
 CONFIG_PACKAGE_kmod-crypto-md5=y
 # CONFIG_PACKAGE_kmod-crypto-michael-mic is not set
@@ -1687,7 +1687,7 @@ CONFIG_PACKAGE_kmod-crypto-ocf=y
 # CONFIG_PACKAGE_kmod-crypto-ocf-hifn7751 is not set
 # CONFIG_PACKAGE_kmod-crypto-ocf-hifnhipp is not set
 # CONFIG_PACKAGE_kmod-crypto-pcbc is not set
-CONFIG_PACKAGE_kmod-crypto-pcompress=y
+# CONFIG_PACKAGE_kmod-crypto-pcompress is not set
 CONFIG_PACKAGE_kmod-crypto-qcrypto=y
 CONFIG_PACKAGE_kmod-crypto-rng=y
 # CONFIG_PACKAGE_kmod-crypto-seqiv is not set
@@ -1855,8 +1855,8 @@ CONFIG_PACKAGE_kmod-ipt-filter=y
 CONFIG_PACKAGE_kmod-ipt-ipopt=y
 # CONFIG_PACKAGE_kmod-ipt-ipp2p is not set
 # CONFIG_PACKAGE_kmod-ipt-iprange is not set
-CONFIG_PACKAGE_kmod-ipt-ipsec=y
-CONFIG_PACKAGE_kmod-ipt-ipset=y
+# CONFIG_PACKAGE_kmod-ipt-ipsec is not set
+# CONFIG_PACKAGE_kmod-ipt-ipset is not set
 # CONFIG_PACKAGE_kmod-ipt-ipv4options is not set
 # CONFIG_PACKAGE_kmod-ipt-led is not set
 # CONFIG_PACKAGE_kmod-ipt-length2 is not set
@@ -1890,7 +1890,7 @@ CONFIG_PACKAGE_kmod-nf-nat=y
 # CONFIG_PACKAGE_kmod-nf-nat6 is not set
 CONFIG_PACKAGE_kmod-nf-nathelper=y
 CONFIG_PACKAGE_kmod-nf-nathelper-extra=y
-CONFIG_PACKAGE_kmod-nfnetlink=y
+# CONFIG_PACKAGE_kmod-nfnetlink is not set
 CONFIG_PACKAGE_kmod-nfnetlink-log=y
 CONFIG_PACKAGE_kmod-nfnetlink-queue=y
 # CONFIG_PACKAGE_kmod-nft-core is not set
@@ -1967,7 +1967,7 @@ CONFIG_PACKAGE_kmod-bonding=y
 CONFIG_PACKAGE_kmod-bridge=y
 # CONFIG_PACKAGE_kmod-capi is not set
 # CONFIG_PACKAGE_kmod-dnsresolver is not set
-CONFIG_PACKAGE_kmod-gre=y
+# CONFIG_PACKAGE_kmod-gre is not set
 # CONFIG_PACKAGE_kmod-gre6 is not set
 # CONFIG_PACKAGE_kmod-ip6-tunnel is not set
 # CONFIG_PACKAGE_kmod-ipip is not set
@@ -1990,7 +1990,7 @@ CONFIG_PACKAGE_kmod-ppp=y
 CONFIG_PACKAGE_kmod-pppoe=y
 CONFIG_PACKAGE_kmod-pppol2tp=y
 CONFIG_PACKAGE_kmod-pppox=y
-CONFIG_PACKAGE_kmod-pptp=y
+# CONFIG_PACKAGE_kmod-pptp is not set
 # CONFIG_PACKAGE_kmod-qca-mcs_dni is not set
 # CONFIG_PACKAGE_kmod-qca-nss-ecm_dni is not set
 CONFIG_PACKAGE_kmod-wireguard=y
@@ -2018,8 +2018,8 @@ CONFIG_PACKAGE_kmod-slhc=y
 CONFIG_PACKAGE_kmod-stp=y
 # CONFIG_PACKAGE_kmod-trelay is not set
 CONFIG_PACKAGE_kmod-tun=y
-CONFIG_PACKAGE_kmod-udptunnel4=y
-CONFIG_PACKAGE_kmod-udptunnel6=y
+# CONFIG_PACKAGE_kmod-udptunnel4 is not set
+# CONFIG_PACKAGE_kmod-udptunnel6 is not set
 # CONFIG_PACKAGE_kmod-veth is not set
 # CONFIG_PACKAGE_kmod-vxlan is not set
 
@@ -2145,7 +2145,7 @@ CONFIG_PACKAGE_kmod-usb2=y
 # CONFIG_PACKAGE_kmod-usbip is not set
 # CONFIG_PACKAGE_kmod-usbip-client is not set
 # CONFIG_PACKAGE_kmod-usbip-server is not set
-# CONFIG_PACKAGE_kmod-usbmon is not set
+CONFIG_PACKAGE_kmod-usbmon=y
 
 #
 # Video Support
@@ -2522,7 +2522,7 @@ CONFIG_PACKAGE_iptables-mod-filter=y
 CONFIG_PACKAGE_iptables-mod-ipopt=y
 # CONFIG_PACKAGE_iptables-mod-ipp2p is not set
 # CONFIG_PACKAGE_iptables-mod-iprange is not set
-CONFIG_PACKAGE_iptables-mod-ipsec=y
+# CONFIG_PACKAGE_iptables-mod-ipsec is not set
 # CONFIG_PACKAGE_iptables-mod-ipv4options is not set
 # CONFIG_PACKAGE_iptables-mod-led is not set
 # CONFIG_PACKAGE_iptables-mod-length2 is not set
@@ -3132,7 +3132,7 @@ CONFIG_PACKAGE_aws-iot=y
 # Configuration
 #
 CONFIG_AWSIOT_EXTRA_FLAGS="-DHAVE_ARMOR -DHAVE_FING"
-CONFIG_PACKAGE_aws-iot-device-sdk=y
+# CONFIG_PACKAGE_aws-iot-device-sdk is not set
 CONFIG_PACKAGE_bc=y
 # CONFIG_PACKAGE_cal is not set
 # CONFIG_PACKAGE_charlietalk is not set
