@@ -1,10 +1,10 @@
---- a/configure.ac	2021-02-02 16:11:28.000000000 +0300
-+++ b/configure.ac	2021-02-04 13:37:54.789433600 +0300
-@@ -101,7 +101,6 @@
-   getopt.h \
+--- a/configure.ac
++++ b/configure.ac
+@@ -99,7 +99,6 @@
+   malloc.h \
    poll.h \
    port.h \
 -  pwd.h \
    stdlib.h \
+   stdint.h \
    strings.h \
-   sys/devpoll.h \
