@@ -152,6 +152,7 @@ iptables extensions for packet content inspection.
 Includes support for:
 
  Matches:
+  - layer7
   - string
 
 endef
@@ -572,19 +573,24 @@ define BuildPlugin
   $$(eval $$(call BuildPackage,$(1)))
 endef
 
+L7_INSTALL:=\
+	$(INSTALL_DIR) $$(1)/etc/l7-protocols; \
+	$(CP) files/l7/*.pat $$(1)/etc/l7-protocols/; \
+	$(INSTALL_DIR) $$(1)/usr/lib/iptables; \
+	$(CP) $(PKG_BUILD_DIR)/extensions/libxt_layer7.so $$(1)/usr/lib/iptables
+
 $(eval $(call BuildPackage,iptables))
 $(eval $(call BuildPlugin,iptables-mod-conntrack-extra,$(IPT_CONNTRACK_EXTRA-m)))
 $(eval $(call BuildPlugin,iptables-mod-extra,$(IPT_EXTRA-m)))
-$(eval $(call BuildPlugin,iptables-mod-filter,$(IPT_FILTER-m)))
+$(eval $(call BuildPlugin,iptables-mod-filter,$(IPT_FILTER-m),$(L7_INSTALL)))
 $(eval $(call BuildPlugin,iptables-mod-ipopt,$(IPT_IPOPT-m)))
 $(eval $(call BuildPlugin,iptables-mod-ipsec,$(IPT_IPSEC-m)))
-$(eval $(call BuildPlugin,iptables-mod-nat-extra,$(IPT_NAT_EXTRA-m)))
 $(eval $(call BuildPlugin,iptables-mod-iprange,$(IPT_IPRANGE-m)))
 $(eval $(call BuildPlugin,iptables-mod-cluster,$(IPT_CLUSTER-m)))
 $(eval $(call BuildPlugin,iptables-mod-clusterip,$(IPT_CLUSTERIP-m)))
 $(eval $(call BuildPlugin,iptables-mod-ulog,$(IPT_ULOG-m)))
 $(eval $(call BuildPlugin,iptables-mod-hashlimit,$(IPT_HASHLIMIT-m)))
-$(eval $(call BuildPlugin,iptables-mod-rpfilter,$(IPT_RPFILTER-m)))
+$(eval $(call BuildPlugin,iptables-mod-rpfilter,ipt_rpfilter))
 $(eval $(call BuildPlugin,iptables-mod-led,$(IPT_LED-m)))
 $(eval $(call BuildPlugin,iptables-mod-tproxy,$(IPT_TPROXY-m)))
 $(eval $(call BuildPlugin,iptables-mod-tee,$(IPT_TEE-m)))
