@@ -235,14 +235,14 @@
  struct tc_fifo_qopt {
 --- a/tc/Makefile
 +++ b/tc/Makefile
-@@ -56,6 +56,7 @@ TCMODULES += q_fq_codel.o
+@@ -64,6 +64,7 @@
  TCMODULES += q_fq.o
  TCMODULES += q_pie.o
  TCMODULES += q_hhf.o
 +TCMODULES += q_nss.o
+ TCMODULES += e_bpf.o
  
  ifeq ($(TC_CONFIG_IPSET), y)
-   ifeq ($(TC_CONFIG_XT), y)
 --- /dev/null
 +++ b/tc/q_nss.c
 @@ -0,0 +1,1411 @@
