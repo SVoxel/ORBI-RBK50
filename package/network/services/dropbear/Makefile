@@ -63,6 +63,7 @@ endef
 
 define Package/dropbear/conffiles
 $(if $(CONFIG_DROPBEAR_ECC),/etc/dropbear/dropbear_ecdsa_host_key)
+$(if $(CONFIG_DROPBEAR_CURVE25519),/etc/dropbear/dropbear_ed25519_host_key)
 /etc/dropbear/dropbear_rsa_host_key
 endef
 
