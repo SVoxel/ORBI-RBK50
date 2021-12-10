@@ -1,11 +1,11 @@
---- a/tools/mkimage.h	2021-02-18 11:45:36.755840100 +0300
-+++ b/tools/mkimage.h	2021-02-18 11:49:46.280211500 +0300
-@@ -42,7 +42,7 @@
+--- a/tools/mkimage.h
++++ b/tools/mkimage.h
+@@ -41,7 +41,7 @@
  
  #define MKIMAGE_TMPFILE_SUFFIX		".tmp"
  #define MKIMAGE_MAX_TMPFILE_LEN		2048
 -#define MKIMAGE_DEFAULT_DTC_OPTIONS	"-I dts -O dtb -p 500"
 +#define MKIMAGE_DEFAULT_DTC_OPTIONS	"-I dts -O dtb -p 1000"
- #define MKIMAGE_MAX_DTC_CMDLINE_LEN	2048
+ #define MKIMAGE_MAX_DTC_CMDLINE_LEN	2 * MKIMAGE_MAX_TMPFILE_LEN + 35
  
  #endif /* _MKIIMAGE_H_ */
