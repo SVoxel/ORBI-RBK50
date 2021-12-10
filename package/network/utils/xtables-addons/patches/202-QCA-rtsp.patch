@@ -1,14 +1,3 @@
-Permission to use, copy, modify, and/or distribute this software for any
-purpose with or without fee is hereby granted, provided that the above
-copyright notice and this permission notice appear in all copies.
-
-THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
-WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
-WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
-ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
-OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 --- a/extensions/rtsp/netfilter_helpers.h
 +++ b/extensions/rtsp/netfilter_helpers.h
 @@ -1,4 +1,6 @@
@@ -62,7 +51,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
   * (C) 2003 by Tom Marshall <tmarshall at real.com>
   * based on ip_conntrack_irc.c
   *
-@@ -35,6 +38,7 @@
+@@ -36,6 +39,7 @@
  #include <net/tcp.h>
  
  #include <net/netfilter/nf_conntrack.h>
@@ -70,7 +59,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  #include <net/netfilter/nf_conntrack_expect.h>
  #include <net/netfilter/nf_conntrack_helper.h>
  #include "nf_conntrack_rtsp.h"
-@@ -253,13 +257,48 @@ rtsp_parse_transport(char* ptran, uint t
+@@ -254,13 +258,48 @@
  	return rc;
  }
  
@@ -124,7 +113,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  }
  
  /*** conntrack functions ***/
-@@ -304,6 +343,12 @@ help_out(struct sk_buff *skb, unsigned c
+@@ -305,6 +344,12 @@
  					&transoff, &translen))
  			break;      /* not a valid message */
  		
@@ -137,7 +126,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  		if (strncmp(pdata+cmdoff, "SETUP ", 6) != 0)
  			continue;   /* not a SETUP message */
  		pr_debug("found a setup message\n");
-@@ -343,10 +388,10 @@ help_out(struct sk_buff *skb, unsigned c
+@@ -344,10 +389,10 @@
  			//exp->mask.dst.u.udp.port  = 0xfffe;
  		}
  
@@ -183,7 +172,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  
  static char*    stunaddr = NULL;
  static char*    destaction = NULL;
-@@ -117,12 +124,14 @@ rtsp_mangle_tran(enum ip_conntrack_info
+@@ -117,12 +124,14 @@
      uint        off = 0;
      uint        diff;           /* Number of bytes we removed */
  
@@ -198,7 +187,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  
      get_skb_tcpdata(skb, &ptcp, &tcplen);
      ptran = ptcp+tranoff;
-@@ -141,8 +150,12 @@ rtsp_mangle_tran(enum ip_conntrack_info
+@@ -141,8 +150,12 @@
      t = &exp->tuple;
      t->dst.u3.ip = newip;
  
@@ -213,7 +202,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
      pr_debug("stunaddr=%s (%s)\n", szextaddr, (extip?"forced":"auto"));
  
      rbuf1len = rbufalen = 0;
-@@ -170,9 +183,33 @@ rtsp_mangle_tran(enum ip_conntrack_info
+@@ -170,9 +183,33 @@
              t->dst.u.udp.port = htons(loport);
              if (nf_ct_expect_related(exp) == 0)
              {
@@ -248,7 +237,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
              }
          }
          if (loport != 0)
-@@ -257,7 +294,7 @@ rtsp_mangle_tran(enum ip_conntrack_info
+@@ -257,7 +294,7 @@
                  {
                      diff = nextfieldoff-off;
                      if (!nf_nat_mangle_tcp_packet(skb, ct, ctinfo,
@@ -257,7 +246,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
                      {
                          /* mangle failed, all we can do is bail */
  			nf_ct_unexpect_related(exp);
-@@ -432,7 +469,7 @@ help(struct sk_buff *skb, enum ip_conntr
+@@ -432,7 +469,7 @@
  
  static void expected(struct nf_conn* ct, struct nf_conntrack_expect *exp)
  {
@@ -266,7 +255,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
      u_int32_t newdstip, newsrcip, newip;
  
      struct nf_conn *master = ct->master;
-@@ -440,18 +477,18 @@ static void expected(struct nf_conn* ct,
+@@ -440,18 +477,18 @@
      newdstip = master->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u3.ip;
      newsrcip = ct->tuplehash[IP_CT_DIR_ORIGINAL].tuple.src.u3.ip;
      //FIXME (how to port that ?)
