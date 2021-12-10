@@ -1,0 +1,13 @@
+--- a/src/Kbuild
++++ b/src/Kbuild
+@@ -7,6 +7,10 @@
+ ccflags-$(CONFIG_WIREGUARD_DEBUG) += -DDEBUG -g
+ ccflags-$(if $(WIREGUARD_VERSION),y,) += -D'WIREGUARD_VERSION="$(WIREGUARD_VERSION)"'
+ 
++KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -O3
++TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -O3
++ccflags-y := $(filter-out -O%,$(ccflags-y)) -O3
++
+ wireguard-y := main.o noise.o device.o peer.o timers.o queueing.o send.o receive.o socket.o peerlookup.o allowedips.o ratelimiter.o cookie.o netlink.o
+ 
+ include $(src)/crypto/Kbuild.include
