@@ -1,5 +1,5 @@
---- a/src/openvpn/forward.c	2021-06-23 10:26:16.858037600 +0300
-+++ b/src/openvpn/forward.c	2021-06-23 10:27:24.671301000 +0300
+--- a/src/openvpn/forward.c
++++ b/src/openvpn/forward.c
 @@ -600,6 +600,7 @@
  static void
  process_coarse_timers(struct context *c)
@@ -55,8 +55,8 @@
  #if PORT_SHARE
          if (port_share && socket_foreign_protocol_detected(c->c2.link_socket))
          {
---- a/src/openvpn/push.c	2021-06-23 10:26:16.909052100 +0300
-+++ b/src/openvpn/push.c	2021-06-23 10:27:24.677811400 +0300
+--- a/src/openvpn/push.c
++++ b/src/openvpn/push.c
 @@ -551,8 +551,16 @@
      const int extra = 84; /* extra space for possible trailing ifconfig and push-continuation */
      const int safe_cap = BCAP(&buf) - extra;
@@ -75,8 +75,8 @@
  
      buf_printf(&buf, "%s", push_reply_cmd);
  
---- a/src/openvpn/ssl.c	2021-06-23 10:26:16.909052100 +0300
-+++ b/src/openvpn/ssl.c	2021-06-23 10:27:24.677811400 +0300
+--- a/src/openvpn/ssl.c
++++ b/src/openvpn/ssl.c
 @@ -2660,6 +2660,7 @@
      bool active = false;
      struct key_state *ks = &session->key[KS_PRIMARY];      /* primary key */
