@@ -1,5 +1,5 @@
---- a/engines/e_afalg.c	2020-04-21 15:22:39.000000000 +0300
-+++ b/engines/e_afalg.c	2020-08-28 13:38:05.514090600 +0300
+--- a/engines/e_afalg.c
++++ b/engines/e_afalg.c
 @@ -22,13 +22,13 @@
  
  #include <sys/socket.h>
@@ -17,7 +17,7 @@
  #  warning "Skipping Compilation of AFALG engine"
  # endif
  void engine_load_afalg_int(void);
-@@ -783,6 +783,7 @@
+@@ -780,6 +780,7 @@
          str = strtok(NULL, ".");
      }
  
@@ -25,7 +25,7 @@
      if (KERNEL_VERSION(kver[0], kver[1], kver[2])
          < KERNEL_VERSION(K_MAJ, K_MIN1, K_MIN2)) {
          ALG_ERR("ASYNC AFALG not supported this kernel(%d.%d.%d)\n",
-@@ -793,6 +794,7 @@
+@@ -790,6 +791,7 @@
                   AFALG_R_KERNEL_DOES_NOT_SUPPORT_ASYNC_AFALG);
          return 0;
      }
