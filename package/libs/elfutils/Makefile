@@ -7,12 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=elfutils
-PKG_VERSION:=0.182
+PKG_VERSION:=0.186
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://sourceware.org/$(PKG_NAME)/ftp/$(PKG_VERSION)
-PKG_MD5SUM:=ebd95e1858280095fd60d0f765d50fef
+PKG_MD5SUM:=2c095e31e35d6be7b3718477b6d52702
 
 PKG_MAINTAINER:=Luiz Angelo Daros de Luca <luizluca@gmail.com>
 PKG_LICENSE:=GPL-3.0-or-later
@@ -26,6 +26,7 @@ PKG_BUILD_DEPENDS:=!USE_GLIBC:argp-standalone
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
+include $(INCLUDE_DIR)/host-build.mk
 
 define Package/elfutils/Default
   SECTION:=libs
@@ -43,7 +44,7 @@ endef
 
 define Package/libdw
   $(call Package/elfutils/Default)
-  DEPENDS:=+libelf +libbz2
+  DEPENDS:=+libelf +libbz2 +USE_MUSL:musl-fts
   TITLE+= (libdw)
 endef
 
@@ -60,12 +61,24 @@ else
 CONFIGURE_ARGS += --disable-nls
 endif
 
+HOST_CONFIGURE_ARGS += \
+	--disable-debuginfod \
+	--disable-libdebuginfod \
+	--without-lzma \
+	--without-zstd
+
 CONFIGURE_ARGS += \
 	--program-prefix=eu- \
 	--disable-debuginfod \
 	--disable-libdebuginfod \
 	--without-lzma \
 	--without-zstd
+
+HOST_CONFIGURE_VARS += \
+	ac_cv_search__obstack_free=yes
+
+CONFIGURE_VARS += \
+	ac_cv_search__obstack_free=yes
 
 TARGET_CFLAGS += -D_GNU_SOURCE -Wno-unused-result -Wno-format-nonliteral
 
@@ -97,6 +110,7 @@ define Package/libelf/install
 endef
 
 # these lines need to be ordered by dependency because of ABI versioning
+$(eval $(call HostBuild))
 $(eval $(call BuildPackage,libelf))
 $(eval $(call BuildPackage,libdw))
 $(eval $(call BuildPackage,libasm))
