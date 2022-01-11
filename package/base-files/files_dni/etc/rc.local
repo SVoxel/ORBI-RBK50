@@ -6,4 +6,7 @@
 # Run own user's script if exists (NG partition)
 [ -f /mnt/ntgr/rc.user ] && /bin/sh /mnt/ntgr/rc.user
 
+# Run own user's script for v2 user if exists (Bitdefender partition)
+[ -f /mnt/bitdefender/rc.user ] && /bin/sh /mnt/bitdefender/rc.user
+
 exit 0
