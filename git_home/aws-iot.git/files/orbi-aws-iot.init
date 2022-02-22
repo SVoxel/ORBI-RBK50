@@ -1,7 +1,9 @@
 #!/bin/sh
-# Copyright (C) 2006 OpenWrt.org 
 
 #START=99
+
+CONFIG=/bin/config
+AWS_DISABLED=$($CONFIG get noaws)
 
 factory_mode_flag=`/bin/config get factory_mode`
 if [ "x$factory_mode_flag" = "x1" ]; then
@@ -318,6 +320,12 @@ install_count_add()
 	rm $RAE_DATA/installation -rf
 }
 
+# Check if AWS is disabled
+if [ "$AWS_DISABLED" = "1" ]; then
+	exit 0
+fi
+
+# Process arguments
 case "$1" in 
 	"boot")
 		boot
