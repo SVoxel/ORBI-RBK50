@@ -36,7 +36,7 @@ define Package/libusb-1.0/description
   many different operating systems.
 endef
 
-TARGET_CFLAGS += $(FPIC)
+TARGET_CFLAGS += $(FPIC) -Wno-error=maybe-uninitialized
 CONFIGURE_ARGS += \
 	--disable-udev \
 	--disable-log
