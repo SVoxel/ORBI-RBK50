@@ -32,7 +32,6 @@ CONFIGURE_ARGS += \
 
 MAKE_FLAGS += \
 	ARCH="$(LINUX_KARCH)" \
-	SHELL="$(BASH)"
 
 IPSET_MODULES:= \
 	ipset/ip_set \

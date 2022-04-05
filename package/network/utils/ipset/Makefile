@@ -37,7 +37,6 @@ CONFIGURE_ARGS += \
 
 MAKE_FLAGS += \
 	ARCH="$(LINUX_KARCH)" \
-	SHELL="$(BASH)"
 
 define Build/Compile
 	$(call Build/Compile/Default)
