@@ -1,7 +1,7 @@
 --- a/cli-runopts.c
 +++ b/cli-runopts.c
-@@ -299,6 +299,8 @@ void cli_getopts(int argc, char ** argv)
- 					debug_trace = 1;
+@@ -305,6 +305,8 @@
+ 					debug_trace++;
  					break;
  #endif
 +				case 'x':

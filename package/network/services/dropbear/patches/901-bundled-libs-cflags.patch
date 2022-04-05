@@ -1,5 +1,5 @@
---- a/libtomcrypt/makefile_include.mk	2020-06-15 18:38:08.000000000 +0300
-+++ b/libtomcrypt/makefile_include.mk	2020-06-17 12:44:41.679166500 +0300
+--- a/libtomcrypt/makefile_include.mk
++++ b/libtomcrypt/makefile_include.mk
 @@ -94,6 +94,13 @@
  
  LTC_CFLAGS += -Wno-type-limits
@@ -24,8 +24,8 @@
  
  ifneq ($(findstring clang,$(CC)),)
  LTC_CFLAGS += -Wno-typedef-redefinition -Wno-tautological-compare -Wno-builtin-requires-header -Wno-missing-field-initializers
---- a/libtommath/makefile_include.mk	2020-06-15 18:38:08.000000000 +0300
-+++ b/libtommath/makefile_include.mk	2020-06-17 12:44:41.700070600 +0300
+--- a/libtommath/makefile_include.mk
++++ b/libtommath/makefile_include.mk
 @@ -70,6 +70,9 @@
  LTM_CFLAGS += -Wsystem-headers
  endif
