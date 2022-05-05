@@ -12,4 +12,10 @@ else
 	killall -SIGUSR2 dnsmasq
 	sleep 1
 	killall -SIGUSR2 dnsmasq
+	
+	#Disable nmrp function after install done
+	nmrp_flag=`/sbin/artmtd -r nmrp | cut -d' ' -f 2`
+	if [ "$nmrp_flag" = "1" ]; then
+		/sbin/artmtd -w nmrp 0
+	fi
 fi

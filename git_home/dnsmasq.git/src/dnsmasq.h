@@ -1272,6 +1272,9 @@ extern char *pc_table_file;
 extern char *wan_ifname;
 extern int bind_wan_success;
 #endif
+extern char *lan_ifname;
+extern int ppp_dial_demand_enable;
+extern int ap_mode_enable;
 
 /* cache.c */
 void cache_init(void);

@@ -1308,8 +1308,8 @@ int get_lan_ipaddr(struct in_addr *inp)
 
 	memset(&ifr, 0, sizeof(ifr));
 	ifr.ifr_addr.sa_family = AF_INET;
-	strcpy(ifr.ifr_name, "br0");
-	if (ioctl(fd, SIOCGIFADDR, &ifr) == 0) {
+	strcpy(ifr.ifr_name, lan_ifname);
+ 	if (ioctl(fd, SIOCGIFADDR, &ifr) == 0) {
 		ret = 1;
 		*inp = ((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr;
 		// my_syslog(LOG_INFO, _("DNS Hijack LAN Address: %s"), inet_ntoa(*inp));	
@@ -1376,7 +1376,7 @@ int get_lan_linklocal_ipaddr6(struct in6_addr *inp6, int global_flag)
 		flags = strtok(NULL, delim);
 		name = strtok(NULL, delim);
 
-		if (strcmp(name, "br0"))
+		if (strcmp(name, lan_ifname))
 			continue;
 		if (global_flag && IPV6_ADDR_GLOBAL != (unsigned int)strtoul(scope, NULL, 16))
 			continue;
@@ -2086,8 +2086,6 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
 			  "as.xboxlive.com",
 			  "tgs.xboxlive.com",
 			  "macs.xboxlive.com",
-			  "http.fw.updates1.netgear.com",
-			  "www.google.com",
 			  "as.xboxlive.com.local",
 			  "tgs.xboxlive.com.local",
 			  "macs.xboxlive.com.local",
@@ -2106,20 +2104,55 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
 			  "connectivitycheck.gstatic.com",
 			  "http.fw.updates1.netgear.com",
 			  "www.google.com",
+			  "connectivitycheck.android.com",
+			  "itunes.apple.com",
+			  "play.google.com",
+
+			  "ocapicep-dev.netgear.com",
+			  "ocapicep-qa.netgear.com",
+			  "ocapi.netgear.com",
+ 			  "appcom-dev.up.netgear.com",
+			  "devcom-dev.up.netgear.com",
+			  "appcom-qa.up.netgear.com",
+			  "devcom-qa.up.netgear.com",
+			  "appcom-staging.up.netgear.com",
+			  "devcom-staging.up.netgear.com",
+			  "appcom.up.netgear.com",
+			  "devcom.up.netgear.com",
+
+			  "detectportal.firefox.com",
+			  "console.netgear.glassboxdigital.io",
+			  "play.googleapis.com",
+			  "connectivity.samsung.com.cn",
+			  "www.msftconnecttest.com",
+			  "connectivitycheck.platfrom.hiclould.com",
+			  "apple.com",
+			  "pingid.com",
+			  "swrve.com",
+			  "instabug.com",
+			  "crashlytics.com",
+			  "firebase.com",
+			  "firebaseio.com",
+			  "optimizely.com",
+			  "s3.amazonaws.com",
+			  "glassboxdigital.io",
+			  "glassboxcdn.com",
+              "cloudflare-dns.com",
+              "mozilla.cloudflare-dns.com",
 
 			  NULL    /* The End One */
 		  };
 
 		  static char *hijack_domains[] = {
-			"www.routerlogin.com",
-			"www.routerlogin.net",
-			"routerlogin.com",
-			"routerlogin.net",
-			"readyshare.routerlogin.net",
-			"orbilogin.com",
-			"orbilogin.net",
-			"www.orbilogin.com",
-			"www.orbilogin.net",
+			  "www.routerlogin.com",
+			  "www.routerlogin.net",
+			  "www.orbilogin.com",
+			  "www.orbilogin.net",
+			  "routerlogin.com",
+			  "routerlogin.net",
+			  "orbilogin.com",
+			  "orbilogin.net",
+			  "mini-app.funjsq.com",
 
 #if defined(USBSHARE_DOMAIN_SUPPORT)
 			  "readyshare.routerlogin.net",
@@ -2185,7 +2218,8 @@ size_t answer_request(struct dns_header *header, char *limit, size_t qlen,
 					  if (strcmp(name, pass_domains[i]) == 0)
 						  return 0;
 				  }
-				  if(strstr(name, ".glassboxdigital.io") || strstr(name, ".glassboxcdn.com"))
+				  if(strstr(name, ".glassboxdigital.io") || strstr(name, ".glassboxcdn.com") || strstr(name, ".swrve.com") 
+						  || strstr(name, ".firebase.com") || strstr(name, ".optimizely.com"))
 					  return 0;
 			  }
 

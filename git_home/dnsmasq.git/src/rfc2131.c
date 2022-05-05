@@ -15,6 +15,7 @@
 */
 
 #include "dnsmasq.h"
+#include <syslog.h>
 
 #ifdef HAVE_DHCP
 
@@ -1464,8 +1465,13 @@ size_t dhcp_reply(struct dhcp_context *context, char *iface_name, int int_index,
 	    override = lease->override;
 
 	  daemon->metrics[METRIC_DHCPACK]++;
-	  log_packet("DHCPACK", &mess->yiaddr, emac, emac_len, iface_name, hostname, NULL, mess->xid);  
 
+	  log_packet("DHCPACK", &mess->yiaddr, emac, emac_len, iface_name, hostname, NULL, mess->xid); 
+ 	  
+	  char log_mac[64] = {0};
+	  print_mac(log_mac, emac, emac_len);
+	  
+	  syslog(6, "[DHCP IP: %s] to MAC address %s,", inet_ntoa(mess->yiaddr), log_mac); 
 	  clear_packet(mess, end);
 	  option_put(mess, end, OPTION_MESSAGE_TYPE, 1, DHCPACK);
 	  option_put(mess, end, OPTION_SERVER_IDENTIFIER, INADDRSZ, ntohl(server_id(context, override, fallback).s_addr));

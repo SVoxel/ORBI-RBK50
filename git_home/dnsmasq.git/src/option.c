@@ -181,6 +181,10 @@ struct myoption {
 #define LOPT_WAN_INTERFACE 903
 #endif
 
+#define LOPT_LAN_INTERFACE 904
+#define LOPT_PPP_DIAL_DEMAND  905
+#define LOPT_AP_MODE  906
+
 #ifdef HAVE_GETOPT_LONG
 static const struct option opts[] =  
 #else
@@ -365,6 +369,10 @@ static const struct myoption opts[] =
 #endif
 	
 	{"try-all-ns", 0, 0, LOPT_TRY_ALL_NS },
+
+	{"lan-interface", 1, 0, LOPT_LAN_INTERFACE},
+	{"ppp-dial-demand", 2, 0, LOPT_PPP_DIAL_DEMAND},
+	{"ap-mode", 2, 0, LOPT_AP_MODE},
 
     { NULL, 0, 0, 0 }
   };
@@ -559,6 +567,10 @@ static struct {
 
 
   { LOPT_TRY_ALL_NS, ARG_ONE, "    --try-all-ns", gettext_noop("Try all name servers in tandem on NXDOMAIN replies (use with strict-order)."), NULL },
+ 
+  { LOPT_LAN_INTERFACE, ARG_ONE, "    --lan-interface=name", gettext_noop("interface name of lan, such as \"br0\"."), NULL },
+  { LOPT_PPP_DIAL_DEMAND, ARG_ONE, "    --ppp-dial-demand", gettext_noop("PPP(PPPoE/PPTP/L2TP) Dial Demand Enable"), NULL },
+  { LOPT_AP_MODE, ARG_ONE, "    --ap-mode", gettext_noop("AP Mode Enable"), NULL },
 
   { 0, 0, NULL, NULL, NULL }
 }; 
@@ -4342,6 +4354,24 @@ err:
 		  break;
 	  }
 #endif
+
+	case LOPT_LAN_INTERFACE:
+	  {
+		  lan_ifname = opt_string_alloc(arg);
+		  break;
+	  }
+
+	case LOPT_PPP_DIAL_DEMAND:
+	  {
+		  ppp_dial_demand_enable = 1;
+		  break;
+	  }
+
+	case LOPT_AP_MODE:
+	  {
+		  ap_mode_enable = 1;
+		  break;
+	  }
 
     case LOPT_TRY_ALL_NS: /* --continue try next nameserver 
 							 if receive reply with NXDOMAIN 

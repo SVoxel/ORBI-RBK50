@@ -24,9 +24,6 @@ struct daemon *daemon;
 static volatile pid_t pid = 0;
 static volatile int pipewrite;
 
-/* libconfig.so */
-extern char *config_get(char *name);
-extern int config_match(char *name, char *match);
 
 #ifdef DNI_IPV6_FEATURE
 extern void check_timeout_forward(struct daemon *daemon, time_t now);
@@ -49,6 +46,9 @@ char *pc_table_file = "/tmp/parentalcontrol.conf";
 char *wan_ifname = NULL; /* interface name of WAN */
 int bind_wan_success = 0; /* To fix bug 22747, indicate whether server socket bind to WAN interface successfully */
 #endif
+char *lan_ifname = "br0"; /* interface name of LAN */
+int ppp_dial_demand_enable = 0;
+int ap_mode_enable = 0;
 
 #ifdef ENABLE_INSIGHT_LOG
 #define EXTEND_PASS_DOMAIN_FILE    "/tmp/extend_pass_domains"
@@ -1736,11 +1736,20 @@ static int set_dns_listeners(time_t now)
   return wait;
 }
 
+#define PPP_DOD		"/tmp/ppp/ppp_dod"
+
+static int file_exist( const char *f)
+{
+	if( access( f, F_OK))
+		return 0;
+
+	return 1;
+}
+
 static void check_dns_listeners(time_t now)
 {
   struct serverfd *serverfdp;
   struct listener *listener;
-  char *buf = NULL;
   short dial_flag = 0;
   int i;
 
@@ -1756,21 +1765,16 @@ static void check_dns_listeners(time_t now)
   
   for (listener = daemon->listeners; listener; listener = listener->next)
     {
-      if (listener->fd != -1 && poll_check(listener->fd, POLLIN)){
-	      buf = config_get("wan_proto");
-	      if(!strncmp(buf, "pppoe", 5) || !strncmp(buf, "pptp", 4) || !strncmp(buf, "l2tp", 4) || !strncmp(buf, "mulpppoe1", 9))
-	      {
-		      if(config_match("wan_pppoe_demand","1")
-				      || config_match("wan_pptp_demand","1")
-				      || config_match("wan_l2tp_demand","1")
-				      || config_match("wan_mulpppoe_demand", "1"))
-		      {
-			      dial_flag = 1;
-			      system("echo \"1\">/proc/sys/net/dni/dial_on_demand_dns");
-		      }
-	      }
-	      if(listener->family == AF_PACKET)
-		      receive_raw_query(listener, now);
+	    if (listener->fd != -1 && poll_check(listener->fd, POLLIN)){
+
+		    if(ppp_dial_demand_enable == 1)
+		    {
+			    dial_flag = 1;
+			    system("echo \"1\">/proc/sys/net/dni/dial_on_demand_dns");
+		    }
+
+		    if(listener->family == AF_PACKET)
+			    receive_raw_query(listener, now);
 	      else
 			receive_query(listener, now); 
 	      if(dial_flag)

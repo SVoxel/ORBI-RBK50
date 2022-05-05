@@ -1,8 +1,8 @@
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2007 OpenWrt.org
 
-START=61
-
+START=60
+PID_FILE=/var/run/dnsmasq.pid
 PATH=/bin:/sbin:/usr/bin:/usr/sbin
 
 trap 'echo "dnsmasq script will not exit with SIGUSR1"' SIGUSR1
@@ -30,17 +30,8 @@ start() {
 
 	local opt_argv=""
 	local resolv_file="/tmp/resolv.conf"
-
-	# start parental ctl config
-	# According to SPEC v13, ParentalControl is not supported in AP mode temporarily.
-	if [ "$($CONFIG get ParentalControl)" = "1" -a "$($CONFIG get i_opmode)" != "apmode" ]; then
-		$CONFIG get ParentalControl_table > /tmp/parentalcontrol.conf
-		opt_argv="$opt_argv --parental-control"
-		resolv_file="/tmp/resolv_opendns.conf"
-		echo "nameserver 208.67.222.222" > $resolv_file
-		echo "nameserver 208.67.220.220" >> $resolv_file
-	fi
-	# end parental ctl config
+	
+	opt_argv="$opt_argv --lan-interface=$($CONFIG get lan_ifname)"
 
 	# start wan ifname config
 	if [ "$($CONFIG get ap_mode)" = "1" -o "$($CONFIG get bridge_mode)" = "1" ]; then
@@ -53,7 +44,18 @@ start() {
 #		fi
 	fi
 	# end wan ifname config
+	if [ "$($CONFIG get ap_mode)" = "1" ]; then
+		opt_argv="$opt_argv --ap-mode"
+	fi
 
+
+	if [ "$($CONFIG get wan_proto)" = "pppoe" -o "$($CONFIG get wan_proto)" = "pptp" -o "$($CONFIG get wan_proto)" = "l2tp" -o "$($CONFIG get wan_proto)" = "mulpppoe" ]; then
+		local ppp=$($CONFIG get wan_proto)
+		local ppp_demand=$($CONFIG get wan_"$ppp"_demand)
+		if [ "$ppp_demand" = "1" ]; then
+			opt_argv="$opt_argv --ppp-dial-demand"
+		fi
+	fi
 	# start static pptp config
 	local static_pptp_enable=1
 	[ "$($CONFIG get GUI_Region)" = "Russian" ] || static_pptp_enable=0
@@ -76,10 +78,10 @@ start() {
 	# end static pptp config
 
 	#If circle enabled, change listen port to 5300 to get query forwarded by circle
-	if [ "$($CONFIG get enable_circle_plc)" = "1" -a "$($CONFIG get i_opmode)" = "normal" -a "$($CONFIG get reboot_flag_for_circle)" = "0" ]; then
+	if [ "$($CONFIG get enable_circle_plc)" = "1" -a "$($CONFIG get i_opmode)" = "normal" -a "$($CONFIG get reboot_flag_for_circle)" = "0" -a "$($CONFIG get dgc_func_have_circle)" = "1" ]; then
 		/usr/sbin/dnsmasq -h -n -c 0 -N -i $BR_IF -r $resolv_file -u root -p 5300
 	else
-		/usr/sbin/dnsmasq --except-interface=lo -r $resolv_file -P 4096 $opt_argv --log-facility /tmp/dnsmasq.log --log-queries
+		[ -f $PID_FILE ] || /usr/sbin/dnsmasq --except-interface=lo -r $resolv_file -u root -P 4096 $opt_argv -x $PID_FILE --log-facility /tmp/dnsmasq.log --log-queries
 	fi
 
 	[ "$($CONFIG get dns_hijack)" = "1" ] && set_hijack &

@@ -36,7 +36,7 @@ static int trans_deviceid(char *deviceid, char *deviceid_b);
 extern int extract_name(struct dns_header *header, size_t plen, unsigned char **pp, 
 		 char *name, int isExtract, int extrabytes);
 
-static struct server* get_first_server(struct daemon *daemon, unsigned short gotname, int type);
+static struct server* get_first_server(struct daemon *daemon, unsigned short gotname, int type, struct frec *forward);
 /* Send a UDP packet with its source address set as "source" 
    unless nowild is true, when we just send it with the kernel default */
 int send_from(int fd, int nowild, char *packet, size_t len, 
@@ -299,7 +299,7 @@ int mulpppoe_skip_dns(struct in_addr srv, char *name)
 {
 	FILE *fdns, *fdomain, *fp;
 	char buf[32] = {0}, buffer[512] = {0}, *p;
-	int ppp1_dns = 0, ppp1_domain = 0, skip = 0, ppp0_dns = 0;
+	int i, ppp1_dns = 0, ppp1_domain = 0, skip = 0, ppp0_dns = 0;
 	if((fp = fopen("/etc/ppp/enable_ppp1", "r")) == NULL )
 	{
 		my_syslog(LOG_INFO, "ppp1 not enable, return");
@@ -524,6 +524,13 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
 		  GETSHORT(forward->class, p);
 	  }
 	  forward->fwd_sign = 0;
+#else
+	  unsigned char *p = (unsigned char *)(header+1);
+	  if (F_IPV4 == gotname || F_IPV6 == gotname)
+	  {
+		  memset(forward->name, 0x00, sizeof(forward->name));
+		  extract_name(header, plen, &p, forward->name, 1, 4);
+	  }
 #endif
 	  forward->flags = 0;
 	  if (norebind)
@@ -541,7 +548,7 @@ static int forward_query(int udpfd, union mysockaddr *udpaddr,
 	  header->id = htons(forward->new_id);
 	 
 #if 1
-	  start = get_first_server(daemon, gotname, type);
+	  start = get_first_server(daemon, gotname, type, forward);
 #else
 
 	  /* In strict_order mode, always try servers in the order 
@@ -1039,7 +1046,7 @@ static size_t process_reply(struct dns_header *header, time_t now, struct server
   return resize_packet(header, n, pheader, plen);
 }
 
-static struct server* get_first_server(struct daemon *daemon, unsigned short gotname, int type)
+static struct server* get_first_server(struct daemon *daemon, unsigned short gotname, int type, struct frec *forward)
 {
 	struct server *serv;
 
@@ -1050,10 +1057,15 @@ static struct server* get_first_server(struct daemon *daemon, unsigned short got
 			break;
 	}
 
-	if (serv)
+	if (serv){
+		forward->forwardall = 1;
 		return serv;
+	}
 	if (type != 0 || !daemon->last_server || (daemon->options & OPT_ORDER))
+	{
+		forward->forwardall = 1;
 		return daemon->servers;
+	}
 	else
 		return daemon->last_server;
 }
@@ -1641,7 +1653,7 @@ static unsigned short checksum(unsigned short *start, int len)
 
 void receive_raw_query(struct listener *listen, time_t now)
 {
-	if(config_match("ap_mode", "0"))
+	if(ap_mode_enable == 0)
 		return 0;
 
 	HEADER *reply_header ;
@@ -1656,6 +1668,19 @@ void receive_raw_query(struct listener *listen, time_t now)
 	struct in6_addr source, dest;
 	char *data, *p, dns[256];
 	char sendbuf[1500];
+
+	static char *hijack_dns[] = {
+		"www.routerlogin.com",
+		"www.routerlogin.net",
+		"routerlogin.com",
+		"routerlogin.net",
+		"readyshare.routerlogin.net",
+		"orbilogin.com",
+		"orbilogin.net",
+		"www.orbilogin.com",
+		"www.orbilogin.net",
+		NULL
+	};
 
 	fromlen = sizeof(src);
 	memset(&src, 0x00, sizeof(src));
@@ -1720,8 +1745,45 @@ void receive_raw_query(struct listener *listen, time_t now)
 	}
 
 	memcpy(sendbuf, rawhdr.data, (sizeof(rawhdr.data)));
-	data = rawhdr.data;
+	data = rawhdr.data + 12;
 	p = &dns[0];
+
+	char *tail;
+
+	tail = data;
+	while(*tail != '\0')
+		tail++;
+	while((data < tail) && (n = *data++))
+	{
+		if (n & 0xC0) {
+			my_syslog(LOG_INFO, "dnshijack: Don't support compressed DNS encoding.\n");
+			return -1;
+		}
+		if ((p - dns + n + 1) >= sizeof(dns)) {
+			my_syslog(LOG_INFO,"Too long subdomain name :%d, the buffer is :%d\n", n, sizeof(dns));
+			return -1;
+		}
+		if ((data + n) > tail) {
+			my_syslog(LOG_INFO,"The domain is invalid encoded!\n");
+			return -1;
+		}
+		for (i = 0; i < n; i++)
+			*p++ = *data++;
+		*p++ = '.';
+	}
+	if (p != &dns[0])
+		p--;
+	*p = 0;
+	my_syslog(LOG_INFO,"The hijacked DNS is : %s\n", (char *)dns);
+	for (i = 0; hijack_dns[i]; i++) {
+		if (strcmp((const char *)dns, hijack_dns[i]) == 0) {
+			flag=1;	
+			break;
+		}
+	}
+	if(!flag)
+		return -1;
+
 	/* add the response */
 	int tolen = 0, msglen;
 	struct sockaddr_in6 dst;

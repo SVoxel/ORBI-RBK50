@@ -737,7 +737,7 @@ static int make_sock(union mysockaddr *addr, int type, int dienow)
       return -1;
     }	
   
-  if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1 || !fix_fd(fd))
+  if (setsockopt(fd, SOL_SOCKET, SO_REUSEPORT, &opt, sizeof(opt)) == -1 || !fix_fd(fd))
     goto err;
   
 #ifdef HAVE_IPV6
@@ -935,8 +935,8 @@ static struct listener *create_listeners(union mysockaddr *addr, int do_tftp, in
 #if defined(HAVE_IPV6)
 static int create_raw_ipv6_listener(struct listener **link, int port)
 {
-  if(config_match("ap_mode", "0"))
-	  return 0;
+  if(ap_mode_enable == 0)
+	return 0;
 
   struct sockaddr_ll sock;
   struct listener *l;
@@ -970,7 +970,7 @@ static int create_raw_ipv6_listener(struct listener **link, int port)
 
   sock.sll_family = AF_PACKET;
   sock.sll_protocol = htons(ETH_P_IPV6);
-  sock.sll_ifindex = (int)if_nametoindex("br0");
+  sock.sll_ifindex = (int)if_nametoindex(lan_ifname);
 
   if(bind(fd, (struct sockaddr *) &sock, sizeof(sock)) < 0){
     fprintf(stderr," bind calll failed\n");   
@@ -988,7 +988,7 @@ static int create_raw_ipv6_listener(struct listener **link, int port)
 
   l = safe_malloc(sizeof(struct listener));
   l->fd = fd;
-  l->tcpfd = tcpfd;
+  l->tcpfd = -1;
   l->tftpfd = -1;
   l->family = AF_PACKET;
   l->next = NULL;
@@ -1030,9 +1030,9 @@ void create_wildcard_listeners(void)
   else 
     l = l6;
 #endif
-
-	if(config_match("ap_mode", "1"))
+	if(ap_mode_enable == 1)
 		l6->next = ll6;
+
   daemon->listeners = l;
 }
 

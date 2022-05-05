@@ -26,6 +26,7 @@ BUILDDIR      = $(SRC)
 DESTDIR       = 
 CFLAGS        = -Wall -W -O2
 LDFLAGS       = 
+EXTRA_LDFLAGS +=
 # Default disable HAVE_INOTIFY
 COPTS         = -DNO_INOTIFY
 RPM_OPT_FLAGS = 
@@ -162,7 +163,7 @@ $(objs): $(copts_conf) $(hdrs)
 	$(CC) $(CFLAGS) $(COPTS) $(i18n) $(build_cflags) $(RPM_OPT_FLAGS) -c $<	
 
 dnsmasq : $(objs)
-	$(CC) $(LDFLAGS) -o $@ $(objs) $(build_libs) $(LIBS) 
+	$(CC) $(CFLAGS) $(LDFLAGS) $(EXTRA_LDFLAGS) -o $@ $(objs) $(build_libs) $(LIBS) 
 
 dnsmasq.pot : $(objs:.o=.c) $(hdrs)
 	$(XGETTEXT) -d dnsmasq --foreign-user --omit-header --keyword=_ -o $@ -i $(objs:.o=.c)
