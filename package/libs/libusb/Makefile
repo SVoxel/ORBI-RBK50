@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libusb
-PKG_VERSION:=1.0.25
+PKG_VERSION:=1.0.26
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=@SF/$(PKG_NAME)
-PKG_MD5SUM:=4d8d9aa4656ec1e97eda5ef8d2071aaf
+PKG_MD5SUM:=9c75660dfe1d659387c37b28c91e3160
 
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=0
@@ -36,7 +36,7 @@ define Package/libusb-1.0/description
   many different operating systems.
 endef
 
-TARGET_CFLAGS += $(FPIC) -Wno-error=maybe-uninitialized
+TARGET_CFLAGS += $(FPIC)
 CONFIGURE_ARGS += \
 	--disable-udev \
 	--disable-log
