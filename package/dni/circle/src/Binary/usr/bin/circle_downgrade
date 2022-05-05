@@ -1,0 +1,7 @@
+#!/bin/sh
+
+circle_version=`/usr/bin/get_circle_status circle_version`
+if [ $circle_version = "2" ];then
+	#remove all the partition
+	rm -rf /mnt/circle/*
+fi

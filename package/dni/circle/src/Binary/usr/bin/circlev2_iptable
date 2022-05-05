@@ -1,0 +1,12 @@
+#!/bin/sh
+# reset the circlev2 agent
+pidof csh > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+	AP_mode=`d2 -s general[0].RouterMode`
+	if [ "$AP_mode" != "ap" ];then
+		d2 -c sealServiceStateUpdates[0].ServiceIptable none
+		sleep 1
+		d2 -c sealServiceStateUpdates[0].ServiceIptable reset
+		sleep 1
+	fi
+fi

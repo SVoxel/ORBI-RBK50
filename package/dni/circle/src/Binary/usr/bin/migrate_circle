@@ -1,0 +1,49 @@
+#!/bin/sh
+
+disable_opendns()
+{
+	/bin/config set ParentalControl=0
+	/usr/sbin/net-wall restart
+	/etc/init.d/dnsmasq stop
+	/etc/init.d/dnsmasq start
+}
+
+disable_circle()
+{
+	/bin/config set enable_circle_plc=0
+	[ `/bin/config get reboot_flag_for_circle` -eq 1 ] && return
+	/mnt/circle/shares/usr/bin/stopcircle orbi
+	/usr/sbin/net-wall restart
+	/etc/init.d/dnsmasq stop
+	/etc/init.d/dnsmasq start
+	echo 1 > /sys/kernel/debug/circle_pcc/unregister
+	rmmod circle_pcc
+	killall circle_check_account
+}
+
+disable_spc()
+{
+	/etc/init.d/CSH stop
+	rm /tmp/dal/d2d/Circle*
+	/usr/bin/circlectl stop
+}
+circle_version=`cat /mnt/circle/circle_version`
+if [ "$circle_version" = "1" ]; then
+	opendns_enable=`/bin/config get ParentalControl`
+	if [ "$opendns_enable" = "1" ];then
+		disable_opendns
+	fi
+	circle_enable=`/bin/config get enable_circle_plc`
+	if [ "$circle_enable" = "1" ];then
+		disable_circle
+	fi
+	killall -9 circled
+	rm -rf /mnt/circle/*
+	echo 2 > /mnt/circle/circle_version
+	reboot
+elif [ "$circle_version" = "2" ];then
+	disable_spc
+	rm -rf /mnt/circle/*
+	echo 1 > /mnt/circle/circle_version
+	reboot
+fi

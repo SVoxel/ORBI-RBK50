@@ -1,0 +1,201 @@
+#!/bin/sh /etc/rc.common
+#To use circle function,please identify the value of "mount_dev"
+START=90
+
+cmp_version(){
+	l_version1=`echo $1 | awk -F "." '{print $1}'`
+	l_version2=`echo $1 | awk -F "." '{print $2}'`
+	l_version3=`echo $1 | awk -F "." '{print $3}'`
+	l_version4=`echo $1 | awk -F "." '{print $4}'`
+	u_version1=`echo $2 | awk -F "." '{print $1}'`
+	u_version2=`echo $2 | awk -F "." '{print $2}'`
+	u_version3=`echo $2 | awk -F "." '{print $3}'`
+	u_version4=`echo $2 | awk -F "." '{print $4}'`
+
+	if [ $l_version1 -gt $u_version1 ]; then
+		echo 0
+		return
+	elif [ $l_version1 -lt $u_version1 ] ;then
+		echo 1
+		return
+	else
+		if [ $l_version2 -gt $u_version2 ]; then
+			echo 0
+			return
+		elif [ $l_version2 -lt $u_version2 ] ;then
+			echo 1
+			return
+		else
+			if [ $l_version3 -gt $u_version3 ]; then
+				echo 0
+				return
+			elif [ $l_version3 -lt $u_version3 ] ;then
+				echo 1
+				return
+			else
+				if [ $l_version4 -gt $u_version4 ]; then
+					echo 0
+					return
+				elif [ $l_version4 -lt $u_version4 ] ;then
+					echo 1
+					return
+				else
+					echo 0
+				fi
+			fi
+
+		fi
+	fi
+}
+
+load_spc_tar() {
+	rm -rf /mnt/circle/circlev2/
+	mkdir -p /mnt/circle/circlev2/
+	tar -zxvf /lib/circle/spc.tar.gz -C /mnt/circle/circlev2/
+}
+
+boot() {
+	factory_mode_flag=`/bin/config get factory_mode`
+	if [ "x$factory_mode_flag" = "x1" ]; then
+		exit 0
+	fi
+
+	#Check if project support circle feature
+	if [ "x`/bin/config get dgc_func_have_circle`" != "x1" ]; then
+		exit 0
+	fi
+
+	#Check if circle is disabled
+	if [ "`/bin/config get nocircle`" = "1" ]; then
+		exit 0
+	fi
+
+	#format partition
+	mount_dev=`part_dev circle`
+	if [ -b $mount_dev ];then
+		[ "x$mount_dev" != "x" ] && filetype=`blkid $mount_dev |grep -o 'TYPE=.*' |awk -F \" '{print $2}' | cut -c 1-3`
+		if [ "x$filetype" != "xext" ];then
+			mkfs.ext4 $mount_dev
+		fi
+	fi
+
+	if [ "x`cat /tmp/orbi_type`" != "xBase" ]; then
+		exit 0
+	fi
+
+	local router_region=`artmtd -r region |grep REGION|awk -F ': ' '{print $2}'`
+	if [ "x$router_region" = "xPR" ]; then
+		exit 0
+	fi
+	
+	echo 1 > /tmp/circle_enable
+	
+	#partiton
+	partition_type=`cat /flash_type`
+	if [ "x$partition_type" != "xEMMC" ]; then
+		ubidev=$(ubinfo -a | grep -B5 vol_circle | sed -nr 's/Volume ID:.*\(on (ubi.*)\)/\1/p')
+		if [ "$ubidev" = "" -a "$(ubinfo -a | grep vol_ntgrdata)" != "" ]; then
+			#For project RBR10
+			have_vol_ntgrdata=1
+			argv_part=
+		else
+			argv_part="-U $ubidev"
+		fi
+	else
+		partition_num=`echo "$mount_dev" | awk -F '/' '{printf $3}'`
+		argv_part="-P $partition_num"
+	fi
+
+	if [ "x`mount |grep '/tmp/mnt/circle'`" = "x" -a "$have_vol_ntgrdata" = "" ]; then
+		[ ! -d '/tmp/mnt/circle' ] && mkdir '/tmp/mnt/circle'
+		if [ "x$partition_type" != "xEMMC" ]; then
+			mount -t ubifs $ubidev:vol_circle '/tmp/mnt/circle'
+		else
+			mount $mount_dev '/tmp/mnt/circle'
+		fi
+	elif [ "$have_vol_ntgrdata" = "1" ]; then
+		[ ! -d "/tmp/ntgrdata/circle" ] && mkdir -p "/tmp/ntgrdata/circle"
+		ln -s "/tmp/ntgrdata/circle" '/tmp/mnt/circle'
+	fi
+	
+	echo $argv_part > /tmp/circle_part
+
+	if [ ! -f "/mnt/circle/circle_version" ];then
+		cp -rf "/lib/circle/circle_version" "/mnt/circle/circle_version"
+	fi
+
+	circle_version=`cat  /mnt/circle/circle_version`
+	if [ $circle_version = "0" ];then
+		#first bootup
+		touch /mnt/circle/circle_version
+		if [ -f "/mnt/circle/shares/usr/bin/app_list" -o "x`/bin/config get ParentalControl`" = "x1" ];then
+			echo 1 > /mnt/circle/circle_version
+		else
+			#remove all circlev1 binary
+			rm -rf /mnt/circle/*
+			cp -rf "/lib/circle/circle_version" "/mnt/circle/circle_version"
+			echo 2 > /mnt/circle/circle_version
+			cp /lib/circle/Orbi.ini /mnt/circle/Orbi.ini
+		fi
+	fi
+	
+	circle_version=`/usr/bin/get_circle_status circle_version`
+
+	#circlev2
+	if [ $circle_version = "2" ];then
+
+		/bin/config set enable_circle_plc=0 
+		/bin/config set ParentalControl=0 
+		kernel_version=`uname -a | awk -F " " '{print $3}'`
+		insmod /lib/modules/$kernel_version/circle_pcc.ko
+		echo 1 > /sys/kernel/debug/ecm/ecm_db/defunct_all
+
+		router_reset=`/bin/config get reset_flag`
+		FW_is_upraded=`/bin/config get fwupgrade_performed`
+		if [ ! -f "/mnt/circle/circlev2/shares/VERSION" ]; then
+			load_spc_tar
+		fi
+
+		if [ "$FW_is_upraded" = "1" ]; then
+			mkdir -p /tmp/circle_tmp/
+			tar -zxvf /lib/circle/spc.tar.gz -C /tmp/circle_tmp/
+			upgrade_version=`cat /tmp/circle_tmp/shares/VERSION`
+			local_version=`cat /mnt/circle/circlev2/shares/VERSION`
+			check_version=`cmp_version $local_version $upgrade_version`
+			if [ "$check_version" = "1" ]; then
+				rm -rf /mnt/circle/circlev2/
+				mkdir -p /mnt/circle/circlev2/
+				cp -rf /tmp/circle_tmp/* /mnt/circle/circlev2/
+			fi
+			rm -rf /tmp/circle_tmp/
+		fi
+
+		if [ "$router_reset" = "1" ]; then
+			load_spc_tar
+			rm -rf /mnt/circle/data/
+		fi
+
+		cp /lib/circle/Orbi.ini /mnt/circle/Orbi.ini
+
+		mkdir -p /mnt/circle/data
+		mkdir -p /tmp/circle/run
+		mkdir -p /tmp/circle/db
+		mkdir -p /tmp/circle/log
+
+		opmode=`/bin/config get i_opmode`
+		if [ "$opmode" = "apmode"  -o "$opmode" = "brmode" ]; then
+			d2 -c general[0].RouterMode ap
+		else
+			d2 -c general[0].RouterMode router
+		fi
+
+		export CIRCLE_ROOT=/mnt/circle/circlev2/shares/usr/bin
+		export CIRCLE_DATA=/mnt/circle/data
+		LD_LIBRARY_PATH=/mnt/circle/circlev2/shares/usr/lib ${CIRCLE_ROOT}/apid --makecert &
+		LD_LIBRARY_PATH=/mnt/circle/circlev2/shares/usr/lib ${CIRCLE_ROOT}/webd --makecert &
+
+		net-wall restart
+
+	fi
+
+}	

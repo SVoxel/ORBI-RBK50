@@ -17,10 +17,11 @@ else
 	done
 fi
 if [ "$i" -eq "60" ]; then
+	/bin/config set "enable_circle_plc=0"
+	sleep 5
 	echo 1 > /sys/kernel/debug/circle_pcc/unregister
 	rmmod circle_pcc
-	/mnt/circle/shares/usr/bin/stopcircle &
-	/bin/config set "enable_circle_plc=0"
+	/mnt/circle/shares/usr/bin/stopcircle orbi &
 	echo "account create overtime...stop circle!" > /dev/console
 fi
 

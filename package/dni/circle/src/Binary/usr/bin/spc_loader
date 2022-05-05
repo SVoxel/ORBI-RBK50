@@ -1,0 +1,148 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+circle_version=`/usr/bin/get_circle_status circle_version`
+circle_activate=`/usr/bin/get_circle_status activate`
+if [ $circle_version != "2" -o $circle_activate != "1" ];then
+	exit 0
+fi
+remove_files(){
+	rm /tmp/SPCinfo.txt
+	rm /tmp/circle_agent.zip
+}
+
+cmp_version(){
+	l_version1=`echo $1 | awk -F "." '{print $1}'`
+	l_version2=`echo $1 | awk -F "." '{print $2}'`
+	l_version3=`echo $1 | awk -F "." '{print $3}'`
+	l_version4=`echo $1 | awk -F "." '{print $4}'`
+	s_version1=`echo $2 | awk -F "." '{print $1}'`
+	s_version2=`echo $2 | awk -F "." '{print $2}'`
+	s_version3=`echo $2 | awk -F "." '{print $3}'`
+	s_version4=`echo $2 | awk -F "." '{print $4}'`
+
+	if [ $l_version1 -gt $s_version1 ]; then
+		echo 0
+		return
+	elif [ $l_version1 -lt $s_version1 ] ;then
+		echo 1
+		return
+	else
+		if [ $l_version2 -gt $s_version2 ]; then
+			echo 0
+			return
+		elif [ $l_version2 -lt $s_version2 ] ;then
+			echo 1
+			return
+		else
+			if [ $l_version3 -gt $s_version3 ]; then
+				echo 0
+				return
+			elif [ $l_version3 -lt $s_version3 ] ;then
+				echo 1
+				return
+			else
+				if [ $l_version4 -gt $s_version4 ]; then
+					echo 0
+					return
+				elif [ $l_version4 -lt $s_version4 ] ;then
+					echo 1
+					return
+				else
+					echo 0
+				fi
+			fi
+
+		fi
+	fi
+	
+}
+update_circle()
+{
+	echo "[$(date)]Start uprade circle agent" >> /tmp/spc_loader_log
+	circle_json=`/usr/bin/circlectl status -j`
+	json_load "$circle_json"
+	json_get_var circle_runing "circle-running"
+	json_close_object
+	if [ "$circle_runing" = "true" ];then
+		echo "[$(date)]Circle agent running" >> /tmp/spc_loader_log
+		/usr/bin/circlectl stop
+		sleep 5
+		rm -rf /mnt/circle/circlev2/
+		mkdir -p /mnt/circle/circlev2/
+		unzip /tmp/circle_agent.zip -d /mnt/circle/circlev2/
+		sleep 5
+		/usr/bin/circlectl start
+	else
+		echo "[$(date)]Circle agent not running" >> /tmp/spc_loader_log
+		rm -rf /mnt/circle/circlev2/
+		mkdir -p /mnt/circle/circlev2/
+		unzip /tmp/circle_agent.zip -d /mnt/circle/circlev2/
+	fi
+
+}
+day_check()
+{
+	local loader_version="1.0"
+	local model_name=`cat /module_name | tr 'A-Z' 'a-z'`
+	local firmware_version=`cat /firmware_version`
+	local spc_download_server=`/bin/config get spc_download_server`
+
+
+	if [ "x$spc_download_server" = "x" ];then
+		spc_download_server="https://http.fw.updates1.netgear.com/sw-apps/SPC/${model_name}"
+	fi
+
+	echo "[$(date)]Start spc daily check" >> /tmp/spc_loader_log
+	echo "[$(date)]Model:$model_nale  Firmware_version:$firmware_version  loader_version:$loader_version  Download URL:$spc_download_server" >> /tmp/spc_loader_log
+
+	i=0
+	while [ $i -lt 3 ]
+	do
+		i=`expr $i + 1` 
+		echo "[$(date)]Try $i times" >> /tmp/spc_loader_log
+		circle_json=`/usr/bin/circlectl version -j`
+		json_load "$circle_json"
+		json_get_var local_circle_version "agent-version"
+		json_close_object
+		curl -L --capath /etc/ssl/certs $spc_download_server/SPCinfo.txt -o /tmp/SPCinfo.txt 2>/dev/null
+		server_circle_version=`cat /tmp/SPCinfo.txt | grep circle_agent_ver | awk -F " " '{print $2}'`
+		file_md5_sum=`cat /tmp/SPCinfo.txt | grep circle_agent_checksum | awk -F " " '{print $2}'`
+
+		if [ "x$server_circle_version" = "x" -o "x$file_md5_sum" = "x" ];then
+			echo "[$(date)]Get the SPC fileinfo fail" >> /tmp/spc_loader_log
+			sleep 60
+			continue
+		fi
+		
+		echo "[$(date)]Local circle agent version:$local_circle_version  Server circle agent version:$server_circle_version" >> /tmp/spc_loader_log
+
+		check_version=`cmp_version $local_circle_version $server_circle_version`
+		if [ "$check_version" = "0" ] ;then
+			echo "[$(date)]Server hasn't newer circle agent" >> /tmp/spc_loader_log
+			remove_files
+			exit
+		fi
+		curl -L --capath /etc/ssl/certs $spc_download_server/SPCAgent-${model_name}-$server_circle_version.zip -o /tmp/circle_agent.zip 2>/dev/null
+		agent_md5_sum=`md5sum /tmp/circle_agent.zip | awk -F ' ' '{print $1}'`
+		if [ $file_md5_sum != $agent_md5_sum ];then
+			echo "[$(date)]Check md5sum fail" >> /tmp/spc_loader_log
+			sleep 60
+			continue
+		fi
+		update_circle
+		echo "[$(date)]Upgrade Successfully" >> /tmp/spc_loader_log
+		remove_files
+		exit
+	done
+	echo "[$(date)]Try 3 times fail" >> /tmp/spc_loader_log
+	remove_files
+}
+
+case $1 in
+	"day-check")
+		day_check
+		;;
+esac
+

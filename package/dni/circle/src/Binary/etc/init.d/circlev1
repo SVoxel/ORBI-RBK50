@@ -1,0 +1,50 @@
+#!/bin/sh /etc/rc.common
+#To use circle function,please identify the value of "mount_dev"
+START=96
+boot() {
+	circle_enable=`cat /tmp/circle_enable`
+	if [ "x$circle_enable" != "x1" ]; then
+		exit 0
+	fi
+	circle_version=`/usr/bin/get_circle_status circle_version`
+	if [ $circle_version = "1" ];then
+		#insmod circle_pcc.ko
+		kernel_version=`uname -a | awk -F " " '{print $3}'`
+		#insmod /lib/modules/$kernel_version/circle_pcc.ko
+
+		#circled start
+		local circle_module_name=`cat /module_name | tr '[A-Z]' '[a-z]'`
+		local circle_path=`echo "https://http.fw.updates1.netgear.com/sw-apps/parental-control/circle/$circle_module_name/mr22/"`
+		local server_path=`/bin/config get "server_path"`
+		if [ "x$server_path" != "x" ]; then
+			circle_path=`echo "https://http.fw.updates1.netgear.com/$server_path/sw-apps/parental-control/circle/$circle_module_name/mr22/"`
+		fi
+		echo "$circle_path" >> /tmp/circle_down_path
+		/usr/sbin/net-wall restart	
+		local enable_circle_plc=`/bin/config get "enable_circle_plc"`
+		agent_version_type=`cat /mnt/circle/shares/VERSION |awk -F '.' '{print NF}'`
+		agent_version=`cat /mnt/circle/shares/VERSION | sed 's/\.//g'`
+		#When the firmware is switching from MR2.1 to MR2.2
+		if [ $agent_version_type = "4" ] && [ $agent_version -le 2080 ]; then
+			rm /mnt/circle/shares/VERSION
+		fi
+
+		killall -9 csh
+		argv_part=`cat /tmp/circle_part`
+		if [ "x`/bin/config get i_opmode`" != "xapmode" ]; then
+			/usr/bin/circled -c /etc/ssl/certs/* $argv_part &
+			/etc/init.d/check_connect &
+		
+			#For GUI promtp window
+			/bin/config set "reboot_flag_for_circle=1"
+		else
+			/bin/config set "reboot_flag_for_circle=0"
+		fi
+		/etc/init.d/dnsmasq restart
+	elif [ $circle_version = "2" ];then
+		/bin/config set "reset_flag=0"
+	fi
+	#remove tmp files
+	rm /tmp/circle_enable
+	rm /tmp/circle_part
+}	
