@@ -1,8 +1,8 @@
 --- a/nl80211.h
 +++ b/nl80211.h
-@@ -2639,6 +2639,9 @@
-  *	Mandatory parameter for the transmitting interface to enable MBSSID.
-  *	Optional for the non-transmitting interfaces.
+@@ -2663,6 +2663,9 @@
+  *	association request when used with NL80211_CMD_NEW_STATION). Can be set
+  *	only if %NL80211_STA_FLAG_WME is set.
   *
 + * @NL80211_ATTR_WIPHY_ANTENNA_GAIN: Configured antenna gain. Used to reduce
 + *	transmit power to stay within regulatory limits. u32, dBi.
@@ -10,9 +10,9 @@
   * @NUM_NL80211_ATTR: total number of nl80211_attrs available
   * @NL80211_ATTR_MAX: highest attribute number currently defined
   * @__NL80211_ATTR_AFTER_LAST: internal use
-@@ -3145,6 +3148,8 @@
- 	NL80211_ATTR_MBSSID_CONFIG,
- 	NL80211_ATTR_MBSSID_ELEMS,
+@@ -3177,6 +3180,8 @@
+ 
+ 	NL80211_ATTR_DISABLE_EHT,
  
 +	NL80211_ATTR_WIPHY_ANTENNA_GAIN,
 +
