@@ -35,7 +35,10 @@ endif
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/cmake.mk
 
-TARGET_CFLAGS += -Wno-error=format-truncation -L$(STAGING_DIR)/usr/lib
+TARGET_CFLAGS += -Wno-error=format-truncation -Wno-error=array-bounds -L$(STAGING_DIR)/usr/lib
+ifdef CONFIG_GCC_USE_VERSION_12
+  TARGET_CFLAGS += -Wno-use-after-free
+endif
 TARGET_LDFLAGS += $(if $(CONFIG_USE_GLIBC),-lrt)
 
 define Package/procd
