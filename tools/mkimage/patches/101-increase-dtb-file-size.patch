@@ -1,6 +1,6 @@
 --- a/tools/mkimage.h
 +++ b/tools/mkimage.h
-@@ -43,7 +43,7 @@
+@@ -45,7 +45,7 @@
  
  #define MKIMAGE_TMPFILE_SUFFIX		".tmp"
  #define MKIMAGE_MAX_TMPFILE_LEN		2048
