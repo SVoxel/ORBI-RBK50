@@ -26,7 +26,6 @@ PKG_BUILD_DEPENDS:=!USE_GLIBC:argp-standalone
 
 include $(INCLUDE_DIR)/package.mk
 include $(INCLUDE_DIR)/nls.mk
-include $(INCLUDE_DIR)/host-build.mk
 
 define Package/elfutils/Default
   SECTION:=libs
@@ -44,7 +43,7 @@ endef
 
 define Package/libdw
   $(call Package/elfutils/Default)
-  DEPENDS:=+libelf +libbz2 +USE_MUSL:musl-fts
+  DEPENDS:=+libelf +libbz2 +libpthread +USE_MUSL:musl-fts
   TITLE+= (libdw)
 endef
 
@@ -62,6 +61,8 @@ CONFIGURE_ARGS += --disable-nls
 endif
 
 HOST_CONFIGURE_ARGS += \
+	--disable-shared \
+	--disable-nls \
 	--disable-debuginfod \
 	--disable-libdebuginfod \
 	--without-lzma \
@@ -110,7 +111,6 @@ define Package/libelf/install
 endef
 
 # these lines need to be ordered by dependency because of ABI versioning
-$(eval $(call HostBuild))
 $(eval $(call BuildPackage,libelf))
 $(eval $(call BuildPackage,libdw))
 $(eval $(call BuildPackage,libasm))
