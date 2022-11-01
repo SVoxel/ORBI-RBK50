@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2006-2015 OpenWrt.org
+# Copyright (C) 2006-2012 OpenWrt.org
 #
 # This is free software, licensed under the GNU General Public License v2.
 # See /LICENSE for more information.
@@ -7,15 +7,14 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=gettext-full
-PKG_VERSION:=0.21
+PKG_NAME:=gettext
+PKG_VERSION:=0.21.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=gettext-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/gettext
-PKG_MD5SUM:=40996bbaf7d1356d3c22e33a8b255b31
+PKG_MD5SUM:=27fcc8a42dbc8f334f23a08f1f2fe00a
 PKG_BUILD_DIR:=$(BUILD_DIR)/gettext-$(PKG_VERSION)
-HOST_BUILD_DIR:=$(BUILD_DIR_HOST)/gettext-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
 PKG_LICENSE:=GPL-3.0+
@@ -23,28 +22,17 @@ PKG_LICENSE:=GPL-3.0+
 PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=0
-PKG_BUILD_DEPENDS:=gettext-full/host
 
 include $(INCLUDE_DIR)/package.mk
-include $(INCLUDE_DIR)/host-build.mk
 
 define Package/libintl-full
   SECTION:=libs
   CATEGORY:=Libraries
-  DEPENDS:=+librt +libpthread
   TITLE:=GNU Internationalization library
   URL:=http://www.gnu.org/software/gettext/
 endef
 
 TARGET_CFLAGS += $(FPIC)
-ifneq ($(HOST_OS),Linux)
-  TARGET_CFLAGS += -I$(STAGING_DIR_HOST)/include
-endif
-ifdef CONFIG_USE_MUSL
-  TARGET_CFLAGS += -D__UCLIBC__
-endif
-
-TARGET_LDFLAGS += -lrt -lpthread
 
 CONFIGURE_ARGS += \
 	--enable-shared \
@@ -58,9 +46,6 @@ CONFIGURE_ARGS += \
 	--without-libintl-prefix \
 	--without-libexpat-prefix \
 	--without-emacs
-
-HOST_CONFIGURE_ARGS += \
-	--with-included-libxml --without-libxml2-prefix --with-included-libcroco
 
 define Build/InstallDev
 	$(INSTALL_DIR) $(1)/usr/lib/libintl-full/include
@@ -78,5 +63,4 @@ define Package/libintl-full/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libintl.so* $(1)/usr/lib/
 endef
 
-$(eval $(call HostBuild))
 $(eval $(call BuildPackage,libintl-full))
