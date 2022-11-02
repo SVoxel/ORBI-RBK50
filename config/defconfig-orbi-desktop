@@ -2341,7 +2341,7 @@ CONFIG_PACKAGE_libblobmsg-json=y
 # CONFIG_PACKAGE_libcharset is not set
 # CONFIG_PACKAGE_libconfig is not set
 CONFIG_PACKAGE_libgdbm=y
-CONFIG_PACKAGE_libelf=m
+# CONFIG_PACKAGE_libelf is not set
 # CONFIG_PACKAGE_libasm is not set
 CONFIG_PACKAGE_libbfd=m
 CONFIG_PACKAGE_libcurl=y
@@ -2390,7 +2390,7 @@ CONFIG_LIBCURL_ZLIB=y
 # CONFIG_LIBCURL_VERBOSE is not set
 CONFIG_PACKAGE_libdbus=y
 CONFIG_PACKAGE_libdevmapper=y
-CONFIG_PACKAGE_libdw=m
+# CONFIG_PACKAGE_libdw is not set
 # CONFIG_PACKAGE_libevent2 is not set
 # CONFIG_PACKAGE_libevent2-core is not set
 # CONFIG_PACKAGE_libevent2-extra is not set
