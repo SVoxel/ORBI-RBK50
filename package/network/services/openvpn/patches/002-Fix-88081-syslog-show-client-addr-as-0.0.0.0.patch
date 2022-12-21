@@ -57,7 +57,7 @@
          {
 --- a/src/openvpn/push.c
 +++ b/src/openvpn/push.c
-@@ -551,8 +551,16 @@
+@@ -550,8 +550,16 @@
      const int extra = 84; /* extra space for possible trailing ifconfig and push-continuation */
      const int safe_cap = BCAP(&buf) - extra;
      bool push_sent = false;
@@ -77,7 +77,7 @@
  
 --- a/src/openvpn/ssl.c
 +++ b/src/openvpn/ssl.c
-@@ -2660,6 +2660,7 @@
+@@ -2658,6 +2658,7 @@
      bool active = false;
      struct key_state *ks = &session->key[KS_PRIMARY];      /* primary key */
      struct key_state *ks_lame = &session->key[KS_LAME_DUCK]; /* retiring key */
@@ -85,7 +85,7 @@
  
      /* Make sure we were initialized and that we're not in an error state */
      ASSERT(ks->state != S_UNDEF);
-@@ -3006,7 +3007,17 @@
+@@ -3004,7 +3005,17 @@
      tls_clear_error();
      ks->state = S_ERROR;
      msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");

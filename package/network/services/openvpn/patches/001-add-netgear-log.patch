@@ -21,7 +21,7 @@
          {
 --- a/src/openvpn/push.c
 +++ b/src/openvpn/push.c
-@@ -552,6 +552,8 @@
+@@ -551,6 +551,8 @@
      const int safe_cap = BCAP(&buf) - extra;
      bool push_sent = false;
  
@@ -32,7 +32,7 @@
      /* send options which are common to all clients */
 --- a/src/openvpn/ssl.c
 +++ b/src/openvpn/ssl.c
-@@ -3006,6 +3006,7 @@
+@@ -3004,6 +3004,7 @@
      tls_clear_error();
      ks->state = S_ERROR;
      msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");
