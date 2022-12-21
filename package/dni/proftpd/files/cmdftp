@@ -207,7 +207,7 @@ EOF
 print_common_head()
 {
 	cat <<EOF
-ServerName		NETGEAR-R7800
+ServerName		NETGEAR-RBK50
 ServerType		standalone
 UseReverseDNS		off
 Umask			022

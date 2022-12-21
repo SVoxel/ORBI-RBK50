@@ -122,7 +122,7 @@ EOF
 
 # let radvd know prefix lifetime is available
 if ! lease_changed ; then
-	killall -SIGUSR2 radvd #R7800 SIGUSR1 will kill radvd
+	killall -SIGUSR2 radvd #RBK50 SIGUSR1 will kill radvd
 	echo "dhcp6c lease is not changed !" > /dev/console
 	exit 0
 fi
