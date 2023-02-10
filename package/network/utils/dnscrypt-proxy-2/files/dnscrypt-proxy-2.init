@@ -31,7 +31,7 @@ settime () {
 		if [ -e /tmp/ntp_updated ]; then
 			logmsg "Information: NTP time service is working!"
 			break
-		elif [ "$(grep -c "\[Time synchronized with NTP server]" /var/log/log-message)" -ne "0" ]; then
+		elif [ "$(grep -c "\[Time synchronized with NTP server]" /var/log/log_message)" -ne "0" ]; then
 			logmsg "Information: NTP time service is working!"
 			break
 		else

@@ -97,7 +97,7 @@ disabled_server_names = []
 force_tcp = false
 
 
-## Enable support for HTTP/3 (DoH3, HTTP over QUIC)
+## Enable *experimental* support for HTTP/3 (DoH3, HTTP over QUIC)
 ## Note that, like DNSCrypt but unlike other HTTP versions, this uses
 ## UDP and (usually) port 443 instead of TCP.
 
@@ -125,7 +125,7 @@ http3 = false
 timeout = 5000
 
 
-## Keepalive for HTTP (HTTPS, HTTP/2) queries, in seconds
+## Keepalive for HTTP (HTTPS, HTTP/2, HTTP/3) queries, in seconds
 
 keepalive = 30
 
@@ -186,6 +186,13 @@ keepalive = 30
 ## Delay, in minutes, after which certificates are reloaded
 
 cert_refresh_delay = 240
+
+
+## Initially don't check DNSCrypt server certificates for expiration, and
+## only start checking them after a first successful connection to a resolver.
+## This can be useful on routers with no battery-backed clock.
+
+# cert_ignore_timestamp = false
 
 
 ## DNSCrypt: Create a new, unique key for every single DNS query
