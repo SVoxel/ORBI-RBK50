@@ -1,6 +1,6 @@
 --- a/jffsX-utils/Makemodule.am
 +++ b/jffsX-utils/Makemodule.am
-@@ -4,7 +4,10 @@
+@@ -4,7 +4,10 @@ mkfs_jffs2_SOURCES = \
  	jffsX-utils/compr_zlib.c \
  	jffsX-utils/compr.h \
  	jffsX-utils/rbtree.c \
@@ -12,7 +12,7 @@
  	jffsX-utils/compr.c \
  	jffsX-utils/compr_rtime.c \
  	jffsX-utils/compr.h \
-@@ -12,8 +15,13 @@
+@@ -12,8 +15,13 @@ mkfs_jffs2_SOURCES = \
  	jffsX-utils/summary.h \
  	include/linux/jffs2.h \
  	include/mtd/jffs2-user.h
@@ -5020,7 +5020,7 @@
 +}
 --- a/jffsX-utils/mkfs.jffs2.c
 +++ b/jffsX-utils/mkfs.jffs2.c
-@@ -1667,11 +1667,11 @@ int main(int argc, char **argv)
+@@ -1668,11 +1668,11 @@ int main(int argc, char **argv)
  						  }
  						  erase_block_size *= units;
  
