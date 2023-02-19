@@ -24,6 +24,8 @@ PKG_FIXUP:=autoreconf
 PKG_INSTALL:=1
 PKG_BUILD_PARALLEL:=1
 
+INSTALL_UPX:=upx --ultra-brute -o
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/ethtool
@@ -59,7 +61,7 @@ endif
 
 define Package/ethtool/install
 	$(INSTALL_DIR) $(1)/usr/sbin
-	$(INSTALL_BIN) $(PKG_BUILD_DIR)/ethtool $(1)/usr/sbin
+	$(INSTALL_UPX) $(1)/usr/sbin/ethtool $(PKG_BUILD_DIR)/ethtool
 endef
 
 Package/ethtool-full/install=$(Package/ethtool/install)
