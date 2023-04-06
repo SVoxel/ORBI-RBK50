@@ -2,6 +2,8 @@
 # Makefile for kernel SPI drivers.
 #
 
+KBUILD_CFLAGS := $(filter-out -O%,$(KBUILD_CFLAGS)) -O3
+
 ccflags-$(CONFIG_SPI_DEBUG) := -DDEBUG
 
 # small core, mostly translating board-specific
