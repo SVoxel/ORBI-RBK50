@@ -33,7 +33,7 @@ tools-$(CONFIG_powerpc) += upx
 tools-$(CONFIG_TARGET_x86) += qemu
 tools-$(CONFIG_TARGET_mxs) += elftosb
 tools-$(CONFIG_TARGET_brcm2708)$(CONFIG_TARGET_sunxi)$(CONFIG_TARGET_mxs) += mtools dosfstools
-tools-$(CONFIG_TARGET_ar71xx) += lzma-old squashfs
+tools-$(CONFIG_TARGET_ar71xx) += lzma-old squashfs3-lzma
 tools-$(CONFIG_TARGET_ipq806x) += ramdump-parser
 tools-y += lzma squashfs4
 tools-$(BUILD_B43_TOOLS) += b43-tools
@@ -70,7 +70,7 @@ $(curdir)/ppl/compile := $(curdir)/gmp/install
 $(curdir)/qemu/compile := $(curdir)/e2fsprogs/install
 $(curdir)/quilt/compile := $(curdir)/sed/install $(curdir)/autoconf/install $(curdir)/findutils/install
 $(curdir)/sdcc/compile := $(curdir)/bison/install
-$(curdir)/squashfs/compile := $(curdir)/lzma-old/install
+$(curdir)/squashfs3-lzma/compile := $(curdir)/lzma-old/install
 $(curdir)/squashfs4/compile := $(curdir)/xz/install
 $(curdir)/upslug2/compile := $(curdir)/libtool/install
 
