@@ -10,7 +10,10 @@ start)
 	echo -n "traffic_meter start : "
 	cp -arf /usr/traffic_meter/ /tmp/
 	/sbin/generate_traffic_meter_conf
-	/sbin/traffic_meter
+	if [ "x`/bin/config get i_opmode`" != "xbrmode" -a "x`/bin/config get i_opmode`" != "xapmode" ]; then
+		echo -n "Router mode, start trafficmeter"
+		/sbin/traffic_meter
+	fi
 	echo "."
 	;;
 
