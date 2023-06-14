@@ -1,6 +1,6 @@
 --- a/configure.ac
 +++ b/configure.ac
-@@ -98,7 +98,6 @@
+@@ -106,7 +106,6 @@
    getopt.h \
    inttypes.h \
    poll.h \
