@@ -584,7 +584,7 @@ all: vmlinux
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os $(EXTRA_OPTIMIZATION) $(call cc-disable-warning,maybe-uninitialized,)
 else
-KBUILD_CFLAGS	+= -O2 -fno-reorder-blocks -fno-tree-ch -finline-functions $(EXTRA_OPTIMIZATION)
+KBUILD_CFLAGS	+= -O3 -fno-reorder-blocks -fno-tree-ch -finline-functions -ftree-vectorize -fvect-cost-model=dynamic $(EXTRA_OPTIMIZATION)
 endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
