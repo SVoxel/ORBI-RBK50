@@ -8,15 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=libnl-tiny
-PKG_VERSION:=2023-04-02-11b7c5f0
+PKG_VERSION:=2023-07-27-bc92a280
 PKG_RELEASE:=1
 
 PKG_SOURCE_PROTO:=git
 PKG_SOURCE_URL=$(PROJECT_GIT)/project/libnl-tiny.git
 PKG_SOURCE_SUBDIR:=$(PKG_NAME)-$(PKG_VERSION)
-PKG_SOURCE_VERSION:=11b7c5f0
+PKG_SOURCE_VERSION:=bc92a280
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
-PKG_MIRROR_MD5SUM:=99f3d4ed99324ae4d32bd8b9275d26ae
+PKG_MIRROR_MD5SUM:=6616797acea9ba7b16a3f5cd16f3a2e8
 CMAKE_INSTALL:=1
 
 PKG_LICENSE:=LGPL-2.1
@@ -44,7 +44,7 @@ endef
 
 define Package/libnl-tiny/install
 	$(INSTALL_DIR) $(1)/usr/lib
-	$(INSTALL_DATA) $(PKG_INSTALL_DIR)/usr/lib/libnl-tiny.so $(1)/usr/lib/
+	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libnl-tiny.so.* $(1)/usr/lib/
 endef
 
 $(eval $(call BuildPackage,libnl-tiny))
