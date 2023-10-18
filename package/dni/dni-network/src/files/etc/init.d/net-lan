@@ -161,6 +161,8 @@ start_stage0() # $1: boot/start
 
 	/etc/init.d/lltd $1          # Link Layer Topology Discovery Daemon
 	/etc/init.d/telnet $1        # telnet daemon for Router Debugging Mode ...
+	# create users, groups
+	/usr/sbin/update_user
 	
 	#Workaround for br0 not up
 	ifconfig $BR_IF up
