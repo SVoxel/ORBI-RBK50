@@ -8,15 +8,15 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gettext
-PKG_VERSION:=0.21.1
+PKG_VERSION:=0.22.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=gettext-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/gettext
-PKG_MD5SUM:=27fcc8a42dbc8f334f23a08f1f2fe00a
+PKG_MD5SUM:=460b38ae5e520253dcd06165dd3e281f
 PKG_BUILD_DIR:=$(BUILD_DIR)/gettext-$(PKG_VERSION)
 
-PKG_MAINTAINER:=Jo-Philipp Wich <jow@openwrt.org>
+PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
 PKG_LICENSE:=GPL-3.0+
 
 PKG_FIXUP:=autoreconf
