@@ -78,7 +78,7 @@ generate_server_conf_file() {
 			cipher="CHACHA20-POLY1305"
 			complz4="compress lz4-v2"
 			pushlz4="push \"compress lz4-v2\""
-			fastio=";fast-io"
+			fastio="# fast-io"
 			sndbuf=0
 			rcvbuf=0
 		fi
@@ -102,8 +102,8 @@ status /tmp/openvpnd.status
 mtu-disc yes
 topology subnet
 script-security 2
-ncp-ciphers CHACHA20-POLY1305:AES-128-GCM:AES-256-GCM:AES-128-CBC:AES-256-CBC
 cipher $cipher
+data-ciphers CHACHA20-POLY1305:AES-128-GCM:AES-256-GCM:AES-128-CBC:AES-256-CBC
 auth sha1
 tls-server
 client-to-client
@@ -137,7 +137,7 @@ EOF
 			cipher="CHACHA20-POLY1305"
 			complz4="compress lz4-v2"
 			pushlz4="push \"compress lz4-v2\""
-			fastio=";fast-io"
+			fastio="# fast-io"
 			sndbuf=0
 			rcvbuf=0
 		fi
@@ -161,8 +161,8 @@ status /tmp/openvpnd_tun.status
 mtu-disc yes
 topology subnet
 script-security 2
-ncp-ciphers CHACHA20-POLY1305:AES-128-GCM:AES-256-GCM:AES-128-CBC:AES-256-CBC
 cipher $cipher
+data-ciphers CHACHA20-POLY1305:AES-128-GCM:AES-256-GCM:AES-128-CBC:AES-256-CBC
 auth sha1
 client-to-client
 duplicate-cn
@@ -293,7 +293,7 @@ start() {
 
     	set_up_ethernet_bridge
 
-	# open the door to let client in 
+	# Open the door to let client in 
 	net-wall rule
 	net-wall start
 
@@ -318,7 +318,7 @@ stop() {
 	brctl delif $br $tap
 	$PROG --rmtun --dev $tap
 
-	#close the door
+	# Close the door
 	net-wall rule
 	net-wall start
 }
