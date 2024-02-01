@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=curl
-PKG_VERSION:=8.4.0
+PKG_VERSION:=8.6.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
@@ -16,7 +16,7 @@ PKG_SOURCE_URL:=https://dl.uxnr.de/mirror/curl/ \
 	http://curl.mirror.anstey.ca/ \
 	http://curl.askapache.com/download/ \
 	https://curl.haxx.se/download/
-PKG_MD5SUM:=8424597f247da68b6041dd7f9ca367fe
+PKG_MD5SUM:=8f28f7e08c91cc679a45fccf66184fbc
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=COPYING
@@ -108,6 +108,7 @@ CONFIGURE_ARGS += \
 	--without-nss \
 	--without-librtmp \
 	--without-nghttp2 \
+	--without-libpsl \
 	\
 	$(call autoconf_bool,CONFIG_IPV6,ipv6) \
 	\
