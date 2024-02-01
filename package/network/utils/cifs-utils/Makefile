@@ -29,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/cifsmount
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+kmod-fs-cifs
+  DEPENDS:=+kmod-fs-cifs +libcap-ng
   TITLE:=CIFS mount
   URL:=https://wiki.samba.org/index.php/LinuxCIFS_utils
 endef
@@ -37,7 +37,7 @@ endef
 define Package/smbinfo
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+kmod-fs-cifs
+  DEPENDS:=+kmod-fs-cifs +libcap-ng
   TITLE:=SMB info
   URL:=https://wiki.samba.org/index.php/LinuxCIFS_utils
 endef
