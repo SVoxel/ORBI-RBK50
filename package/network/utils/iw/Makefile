@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=iw
-PKG_VERSION:=5.19
+PKG_VERSION:=6.7
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@KERNEL/software/network/iw
-PKG_MD5SUM:=fd17ca2dd5f160a5d9e5fd3f8a69f416
+PKG_MD5SUM:=a63e81b0dcae9caf9ed3a20f2c445a07
 
 PKG_MAINTAINER:=Felix Fietkau <nbd@nbd.name>
 PKG_LICENSE:=GPL-2.0
@@ -26,14 +26,6 @@ define Package/iw
   TITLE:=cfg80211 interface configuration utility
   URL:=http://wireless.kernel.org/en/users/Documentation/iw
   DEPENDS:= +libnl-tiny
-  VARIANT:=tiny
-endef
-
-define Package/iw-full
-  $(Package/iw)
-  TITLE += (full version)
-  VARIANT:=full
-  PROVIDES:=iw
 endef
 
 define Build/Configure
@@ -49,11 +41,6 @@ TARGET_CPPFLAGS:= \
 	-D_GNU_SOURCE \
 	-flto
 
-ifeq ($(BUILD_VARIANT),full)
-  TARGET_CPPFLAGS += -DIW_FULL
-  MAKE_FLAGS += IW_FULL=1
-endif
-
 MAKE_FLAGS += \
 	CFLAGS="$(TARGET_CPPFLAGS) $(TARGET_CFLAGS) -DCLOCK_BOOTTIME=7 -ffunction-sections -fdata-sections" \
 	LDFLAGS="$(TARGET_LDFLAGS) -Wl,--gc-sections -flto" \
@@ -67,7 +54,4 @@ define Package/iw/install
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/iw $(1)/usr/sbin/
 endef
 
-Package/iw-full/install=$(Package/iw/install)
-
 $(eval $(call BuildPackage,iw))
-$(eval $(call BuildPackage,iw-full))

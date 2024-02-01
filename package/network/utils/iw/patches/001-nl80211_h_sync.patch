@@ -1,8 +1,8 @@
 --- a/nl80211.h
 +++ b/nl80211.h
-@@ -2663,6 +2663,9 @@
-  *	association request when used with NL80211_CMD_NEW_STATION). Can be set
-  *	only if %NL80211_STA_FLAG_WME is set.
+@@ -2851,6 +2851,9 @@
+  *      mapping is as defined in section 9.4.2.314 (TID-To-Link Mapping element)
+  *      in Draft P802.11be_D4.0.
   *
 + * @NL80211_ATTR_WIPHY_ANTENNA_GAIN: Configured antenna gain. Used to reduce
 + *	transmit power to stay within regulatory limits. u32, dBi.
@@ -10,9 +10,9 @@
   * @NUM_NL80211_ATTR: total number of nl80211_attrs available
   * @NL80211_ATTR_MAX: highest attribute number currently defined
   * @__NL80211_ATTR_AFTER_LAST: internal use
-@@ -3177,6 +3180,8 @@
- 
- 	NL80211_ATTR_DISABLE_EHT,
+@@ -3394,6 +3397,8 @@
+ 	NL80211_ATTR_MLO_TTLM_DLINK,
+ 	NL80211_ATTR_MLO_TTLM_ULINK,
  
 +	NL80211_ATTR_WIPHY_ANTENNA_GAIN,
 +
