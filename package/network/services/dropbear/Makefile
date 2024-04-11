@@ -8,14 +8,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=dropbear
-PKG_VERSION:=2022.83
+PKG_VERSION:=2024.84
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:= \
 	http://matt.ucc.asn.au/dropbear/releases/ \
 	https://dropbear.nl/mirror/releases/
-PKG_MD5SUM:=a75a34bcc03cacf71a2db9da3b7c94a5
+PKG_MD5SUM:=2ca37e2342d19f72a35c689db26e9d07
 
 PKG_LICENSE:=MIT
 PKG_LICENSE_FILES:=LICENSE libtomcrypt/LICENSE libtommath/LICENSE
@@ -23,7 +23,6 @@ PKG_CPE_ID:=cpe:/a:matt_johnston:dropbear_ssh_server
 
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
-PKG_FIXUP:=autoreconf
 
 PKG_CONFIG_DEPENDS:= \
 	CONFIG_TARGET_INIT_PATH CONFIG_DROPBEAR_ECC CONFIG_DROPBEAR_ECC_FULL \
@@ -80,25 +79,26 @@ CONFIGURE_ARGS += \
 	$(if $(CONFIG_DROPBEAR_PUTUTLINE),,--disable-pututline) \
 	--disable-pututxline \
 	$(if $(CONFIG_DROPBEAR_ZLIB),,--disable-zlib) \
-	--enable-bundled-libtom
+	--enable-bundled-libtom \
+	--disable-harden
 
 TARGET_CFLAGS += -DARGTYPE=3 -ffunction-sections -fdata-sections -flto
 TARGET_LDFLAGS += -Wl,--gc-sections -flto=jobserver
 
 define Build/Configure
-	: > $(PKG_BUILD_DIR)/localoptions.h
+	: > $(PKG_BUILD_DIR)/src/localoptions.h
 
 	$(Build/Configure/Default)
 
 	echo '#define DEFAULT_PATH "$(TARGET_INIT_PATH)"' >> \
-		$(PKG_BUILD_DIR)/localoptions.h
+		$(PKG_BUILD_DIR)/src/localoptions.h
 
 	echo '#define DROPBEAR_CURVE25519 $(if $(CONFIG_DROPBEAR_CURVE25519),1,0)' >> \
-		$(PKG_BUILD_DIR)/localoptions.h
+		$(PKG_BUILD_DIR)/src/localoptions.h
 
 	for OPTION in DROPBEAR_ECDSA DROPBEAR_ECDH; do \
 		echo "#define $$$$OPTION $(if $(CONFIG_DROPBEAR_ECC),1,0)" >> \
-			$(PKG_BUILD_DIR)/localoptions.h; \
+			$(PKG_BUILD_DIR)/src/localoptions.h; \
 	done
 
 	# disable legacy/unsafe methods and unused functionality
@@ -106,11 +106,11 @@ define Build/Configure
 	DROPBEAR_3DES DROPBEAR_DSS DROPBEAR_ENABLE_CBC_MODE \
 	DROPBEAR_SHA1_96_HMAC DROPBEAR_USE_PASSWORD_ENV; do \
 		echo "#define $$$$OPTION 0" >> \
-			$(PKG_BUILD_DIR)/localoptions.h; \
+			$(PKG_BUILD_DIR)/src/localoptions.h; \
 	done
 
 	# Enforce rebuild of svr-chansession.c
-	rm -f $(PKG_BUILD_DIR)/svr-chansession.o
+	rm -f $(PKG_BUILD_DIR)/obj/svr-chansession.o
 
 	# Rebuild them on config change
 	+$(MAKE) -C $(PKG_BUILD_DIR)/libtomcrypt clean

@@ -1,6 +1,6 @@
---- a/cli-runopts.c
-+++ b/cli-runopts.c
-@@ -306,6 +306,8 @@
+--- a/src/cli-runopts.c
++++ b/src/cli-runopts.c
+@@ -317,6 +317,8 @@
  					debug_trace++;
  					break;
  #endif

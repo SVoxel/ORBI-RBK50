@@ -1,6 +1,6 @@
---- a/svr-chansession.c
-+++ b/svr-chansession.c
-@@ -985,12 +985,12 @@
+--- a/src/svr-chansession.c
++++ b/src/svr-chansession.c
+@@ -987,12 +987,12 @@
  	/* We can only change uid/gid as root ... */
  	if (getuid() == 0) {
  
