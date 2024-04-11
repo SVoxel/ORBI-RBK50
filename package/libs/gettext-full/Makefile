@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=gettext
-PKG_VERSION:=0.22.4
+PKG_VERSION:=0.22.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=gettext-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=@GNU/gettext
-PKG_MD5SUM:=2d8507d003ef3ddd1c172707ffa97ed8
+PKG_MD5SUM:=3ae5580599d84be93e6213930facb2db
 PKG_BUILD_DIR:=$(BUILD_DIR)/gettext-$(PKG_VERSION)
 
 PKG_MAINTAINER:=Jo-Philipp Wich <jo@mein.io>
