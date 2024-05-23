@@ -29,8 +29,6 @@ PKG_CPE_ID:=cpe:/a:openvpn:openvpn
 
 include $(INCLUDE_DIR)/package.mk
 
-TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include/openssl-1.1.x $(TARGET_CPPFLAGS)
-TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS)
 TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -O3
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
@@ -48,7 +46,7 @@ define Package/openvpn/Default
   PROVIDES:=openvpn openvpn-crypto
 endef
 
-Package/openvpn-openssl=$(call Package/openvpn/Default,openssl,OpenSSL,+PACKAGE_openvpn-openssl:libopenssl-1.1.x)
+Package/openvpn-openssl=$(call Package/openvpn/Default,openssl,OpenSSL,+PACKAGE_openvpn-openssl:libopenssl)
 Package/openvpn-mbedtls=$(call Package/openvpn/Default,mbedtls,mbedTLS,+PACKAGE_openvpn-mbedtls:libmbedtls)
 Package/openvpn-wolfssl=$(call Package/openvpn/Default,wolfssl,WolfSSL,+PACKAGE_openvpn-wolfssl:libwolfssl)
 

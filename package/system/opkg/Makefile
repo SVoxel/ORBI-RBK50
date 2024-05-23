@@ -72,7 +72,7 @@ endef
 define Package/opkg-smime
   $(call Package/opkg/Default)
   TITLE+= (with S/MIME signature support)
-  DEPENDS+=+libopenssl
+  DEPENDS+=+libopenssl-1.0.2
   VARIANT:=smime
 endef
 
@@ -84,6 +84,9 @@ endef
 
 Package/opkg-smime/conffiles = $(Package/opkg/conffiles)
 
+TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/local/include $(TARGET_CPPFLAGS)
+TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/local/lib $(TARGET_LDFLAGS)
+TARGET_CFLAGS:=-L$(STAGING_DIR)/usr/local/lib $(TARGET_CFLAGS)
 TARGET_CFLAGS += $(if $(CONFIG_GCC_VERSION_4_3)$(CONFIG_GCC_VERSION_4_4),-Wno-array-bounds)
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 EXTRA_CFLAGS += $(TARGET_CPPFLAGS)

@@ -22,15 +22,13 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)-$(BUILD_VARIANT)/$(PKG_NAME)-$(PKG_VERSI
 
 include $(INCLUDE_DIR)/package.mk
 
-TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include/openssl-1.1.x $(TARGET_CPPFLAGS)
-TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS)
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
 define Package/wget/Default
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libpcre
+  DEPENDS:=+libpcre2
   SUBMENU:=File Transfer
   TITLE:=Non-interactive network downloader
   URL:=http://www.gnu.org/software/wget/index.html
@@ -47,7 +45,7 @@ endef
 
 define Package/wget
 $(call Package/wget/Default)
-  DEPENDS+= +libopenssl-1.1.x +librt +zlib
+  DEPENDS+= +libopenssl +librt +zlib
   TITLE+= (with SSL support)
   VARIANT:=ssl
 endef
@@ -79,8 +77,7 @@ CONFIGURE_VARS += \
 
 ifeq ($(BUILD_VARIANT),ssl)
 	CONFIGURE_ARGS+= \
-		--with-ssl=openssl \
-		--with-libssl-prefix="$(STAGING_DIR)/usr/lib/openssl-1.1.x"
+		--with-ssl=openssl
 endif
 
 ifeq ($(BUILD_VARIANT),nossl)

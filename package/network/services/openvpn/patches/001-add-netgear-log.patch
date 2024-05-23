@@ -1,0 +1,42 @@
+--- a/src/openvpn/forward.c
++++ b/src/openvpn/forward.c
+@@ -765,6 +765,9 @@
+ 
+     /* restart if ping not received */
+     check_ping_restart(c);
++    if (c->sig->signal_received == SIGUSR1)
++        /* for udp connection drop */
++        syslog(4, "[OpenVPN, connection drop] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
+     if (c->sig->signal_received)
+     {
+         return;
+@@ -930,6 +933,8 @@
+ 
+     if (socket_connection_reset(c->c2.link_socket, status))
+     {
++        /* for tcp connection drop */ 
++        syslog(4, "[OpenVPN, connection drop] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
+ #if PORT_SHARE
+         if (port_share && socket_foreign_protocol_detected(c->c2.link_socket))
+         {
+--- a/src/openvpn/push.c
++++ b/src/openvpn/push.c
+@@ -779,6 +779,8 @@
+     const int safe_cap = BCAP(&buf) - extra;
+     bool push_sent = false;
+ 
++    syslog(4, "[OpenVPN, connection successfully] from remote IP address: %s", inet_ntoa(c->c2.to_link_addr->dest.addr.in4.sin_addr));
++
+     buf_printf(&buf, "%s", push_reply_cmd);
+ 
+     /* send options which are common to all clients */
+--- a/src/openvpn/ssl.c
++++ b/src/openvpn/ssl.c
+@@ -3021,6 +3021,7 @@
+     tls_clear_error();
+     ks->state = S_ERROR;
+     msg(D_TLS_ERRORS, "TLS Error: TLS handshake failed");
++    syslog(4, "[OpenVPN, connection fail] from remote IP address: %s", inet_ntoa(ks->remote_addr.dest.addr.in4.sin_addr));
+     INCR_ERROR;
+     return false;
+ 
