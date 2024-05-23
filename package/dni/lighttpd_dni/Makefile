@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=lighttpd
-PKG_VERSION:=1.4.75
+PKG_VERSION:=1.4.76
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
 PKG_SOURCE_URL:=http://download.lighttpd.net/lighttpd/releases-1.4.x
-PKG_MD5SUM:=9418b63c3e11ac1c51e63feba2d5e2a3
+PKG_MD5SUM:=f9018cda389b1aa6dae4c5f962c20825
 
 PKG_LICENSE:=BSD-3c
 PKG_LICENSE_FILES:=COPYING
@@ -25,8 +25,6 @@ LOCAL_PKG_NAME_EXT:=lighttpd_dni
 
 include $(INCLUDE_DIR)/package.mk
 
-TARGET_CPPFLAGS:=-I$(STAGING_DIR)/usr/include/openssl-1.1.x $(TARGET_CPPFLAGS)
-TARGET_LDFLAGS:=-L$(STAGING_DIR)/usr/lib/openssl-1.1.x $(TARGET_LDFLAGS)
 TARGET_CFLAGS += -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
 
@@ -41,7 +39,7 @@ endef
 define Package/lighttpd_dni
   $(call Package/lighttpd_dni/Default)
   MENU:=1
-  DEPENDS:=+LIGHTTPD_SSL:libopenssl-1.1.x +libpcre +libpthread
+  DEPENDS:=+LIGHTTPD_SSL:libopenssl +libpcre2 +libpthread
   TITLE:=A flexible and lightweight web server
 endef
 
@@ -79,16 +77,16 @@ CONFIGURE_ARGS+= \
 	--without-ldap \
 	--with-lua \
 	--without-memcache \
-	--with-pcre \
+	--with-pcre2 \
 	--without-valgrind \
 	 $(call autoconf_bool,CONFIG_IPV6,ipv6)
 
 CONFIGURE_VARS+= \
-	PCRE_LIB="-lpcre" \
+	PCRE_LIB="-lpcre2" \
 
 ifneq ($(strip $(CONFIG_LIGHTTPD_SSL)),)
   CONFIGURE_ARGS+= \
-	--with-openssl="$(STAGING_DIR)/usr/lib/openssl-1.1.x"
+	--with-openssl="$(STAGING_DIR)/usr"
 else
   CONFIGURE_ARGS+= \
 	--without-openssl
@@ -120,8 +118,8 @@ define Build/Configure
 ./https_cert.sh)
 $(call Build/Configure/Default)
 	# XXX: override pcre (mis)detection by ./configure when cross-compiling
-	echo "#define HAVE_LIBPCRE 1" >>$(PKG_BUILD_DIR)/config.h
-	echo "#define HAVE_PCRE_H 1" >>$(PKG_BUILD_DIR)/config.h
+	echo "#define HAVE_LIBPCRE2 1" >>$(PKG_BUILD_DIR)/config.h
+	echo "#define HAVE_PCRE2_H 1" >>$(PKG_BUILD_DIR)/config.h
 endef
 
 define Package/lighttpd_dni/conffiles
@@ -179,7 +177,7 @@ endef
 $(eval $(call BuildPackage,lighttpd_dni))
 
 # First, permit redirect from HTTP to HTTPS.
-$(eval $(call BuildPlugin,redirect,URL redirection,+PACKAGE_lighttpd_dni-mod-redirect:libpcre,10))
+$(eval $(call BuildPlugin,redirect,URL redirection,+PACKAGE_lighttpd_dni-mod-redirect:libpcre2,10))
 
 # Next, permit authentication.
 $(eval $(call BuildPlugin,auth,Authentication,,20))
@@ -199,15 +197,15 @@ $(eval $(call BuildPlugin,flv_streaming,FLV streaming,,30))
 $(eval $(call BuildPlugin,magnet,Magnet,+liblua,30))
 $(eval $(call BuildPlugin,mysql_vhost,Mysql virtual hosting,+PACKAGE_lighttpd_dni-mod-mysql_vhost:libmysqlclient,30))
 $(eval $(call BuildPlugin,proxy,Proxy,,30))
-$(eval $(call BuildPlugin,rewrite,URL rewriting,+PACKAGE_lighttpd_dni-mod-rewrite:libpcre,30))
+$(eval $(call BuildPlugin,rewrite,URL rewriting,+PACKAGE_lighttpd_dni-mod-rewrite:libpcre2,30))
 $(eval $(call BuildPlugin,rrdtool,RRDtool,,30))
 $(eval $(call BuildPlugin,scgi,SCGI,,30))
 $(eval $(call BuildPlugin,secdownload,Secure and fast download,,30))
 $(eval $(call BuildPlugin,setenv,Environment variable setting,,30))
 $(eval $(call BuildPlugin,simple_vhost,Simple virtual hosting,,30))
-$(eval $(call BuildPlugin,ssi,SSI,+libpcre,30))
+$(eval $(call BuildPlugin,ssi,SSI,+libpcre2,30))
 $(eval $(call BuildPlugin,status,Server status display,,30))
-$(eval $(call BuildPlugin,trigger_b4_dl,Trigger before download,+PACKAGE_lighttpd_dni-mod-trigger_b4_dl:libpcre,30))
+$(eval $(call BuildPlugin,trigger_b4_dl,Trigger before download,+PACKAGE_lighttpd_dni-mod-trigger_b4_dl:libpcre2,30))
 $(eval $(call BuildPlugin,userdir,User directory,,30))
 $(eval $(call BuildPlugin,usertrack,User tracking,,30))
 $(eval $(call BuildPlugin,webdav,WebDAV,+PACKAGE_lighttpd_dni-mod-webdav:libsqlite3 +PACKAGE_lighttpd_dni-mod-webdav:libuuid +PACKAGE_lighttpd_dni-mod-webdav:libxml2,30))
