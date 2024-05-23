@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 #For some disk,the first partition is sda4,and there is no sda1 in mnt.
 #This script is used to accquire the default partition of greendownload.
 local upper_dir=/mnt

@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 FLAG="$1"
 if [ "$FLAG" = "on" ]; then

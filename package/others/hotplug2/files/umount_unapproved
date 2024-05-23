@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 FILE_PATH=/tmp/mnt/$1/.NETGEAR_disk_share_info
 if [ "$(config get usb_enableUSB)" = "1" ]; then
 	if [ ! -f /tmp/mnt/$1/.NETGEAR_disk_share_info ]; then  # if not find the file, umount

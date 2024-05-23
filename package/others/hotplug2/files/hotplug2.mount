@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 DISK_FIND_TABLE=/tmp/find_disk_abcxzy
 download_state="$(/bin/config get green_download_enable)"
@@ -112,7 +112,7 @@ fi
 
 # Copy overlay
 if [ -d /mnt/$1/overlay ]; then
-	cp -arp //mnt/$1/overlay/* /
+	cp -arp /mnt/$1/overlay/* /
 fi
 
 # Run autorun script

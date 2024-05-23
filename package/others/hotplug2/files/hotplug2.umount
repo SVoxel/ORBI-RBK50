@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/bin/sh
 
 TMP_UMOUNT_TABLE=/tmp/umounting_table_fgd456
 TMP_DEVICE_NAME=/tmp/mounting_divice_name
