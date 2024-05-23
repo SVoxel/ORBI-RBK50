@@ -24,7 +24,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/ngrep
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+libpcap +libpcre
+  DEPENDS:=+libpcap
   TITLE:=network grep
   URL:=http://ngrep.sourceforge.net
 endef
@@ -42,10 +42,7 @@ TARGET_CFLAGS += -D_DEFAULT_SOURCE
 
 CONFIGURE_ARGS += \
 	--with-pcap-includes=$(STAGING_DIR)/usr/include \
-	--enable-pcre \
-	--with-pcre=$(STAGING_DIR)/usr \
-	--disable-dropprivs \
-	LDFLAGS="$(TARGET_LDFLAGS) -lpcre"
+	--disable-dropprivs
 
 define Package/ngrep/install	
 	$(INSTALL_DIR) $(1)/usr/bin
