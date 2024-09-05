@@ -9,4 +9,7 @@
 # Run own user's script for v2 user if exists (Bitdefender partition)
 [ -f /mnt/bitdefender/rc.user ] && /bin/sh /mnt/bitdefender/rc.user
 
+# Run own user's script if exists (DAL partition)
+[ -f /tmp/dal/rc.user ] && /bin/sh /tmp/dal/rc.user
+
 exit 0
