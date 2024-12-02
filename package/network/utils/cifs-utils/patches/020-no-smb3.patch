@@ -1,6 +1,6 @@
---- a/Makefile.am	2021-03-10 11:03:54.064495300 +0300
-+++ b/Makefile.am	2021-03-10 11:16:07.256941600 +0300
-@@ -118,12 +118,8 @@
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -121,12 +121,8 @@
  SUBDIRS = contrib
  
  install-exec-hook: install-sbinPROGRAMS

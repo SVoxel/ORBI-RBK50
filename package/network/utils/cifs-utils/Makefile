@@ -8,12 +8,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=cifs-utils
-PKG_VERSION:=7.0
+PKG_VERSION:=7.1
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.bz2
 PKG_SOURCE_URL:=https://download.samba.org/pub/linux-cifs/cifs-utils/
-PKG_MD5SUM:=518431bf43f23e6aacd97e80e2060df7
+PKG_MD5SUM:=3007afcad0bc3850028566f2cfc49a4c
 
 PKG_MAINTAINER:=
 PKG_LICENSE:=GPL-3.0-or-later
@@ -29,7 +29,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/cifsmount
   SECTION:=net
   CATEGORY:=Network
-  DEPENDS:=+kmod-fs-cifs +libcap-ng
+  DEPENDS:=+kmod-fs-cifs +libcap-ng +libtalloc
   TITLE:=CIFS mount
   URL:=https://wiki.samba.org/index.php/LinuxCIFS_utils
 endef
@@ -43,7 +43,6 @@ define Package/smbinfo
 endef
 
 CONFIGURE_ARGS += \
-	--disable-cifsupcall \
 	--disable-cifscreds \
 	--disable-cifsidmap \
 	--disable-cifsacl \
