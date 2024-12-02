@@ -35,7 +35,7 @@ define Package/samba36-server
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS server
   URL:=https://www.samba.org/
-  DEPENDS:=+USE_GLIBC:librt $(ICONV_DEPENDS)
+  DEPENDS:=+USE_GLIBC:librt +libtalloc $(ICONV_DEPENDS)
 endef
 
 define Package/samba36-client
@@ -43,7 +43,7 @@ define Package/samba36-client
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS client
   URL:=https://www.samba.org/
-  DEPENDS:=+libreadline +libncurses
+  DEPENDS:=+libreadline +libncurses +libtalloc
 endef
 
 define Package/samba36-net
@@ -51,7 +51,7 @@ define Package/samba36-net
   CATEGORY:=Network
   TITLE:=Samba 3.6 SMB/CIFS net commands
   URL:=https://www.samba.org/
-  DEPENDS:=+libreadline +libncurses
+  DEPENDS:=+libreadline +libncurses +libtalloc
 endef
 
 define Package/samba36-server/config
@@ -70,7 +70,7 @@ endef
 
 TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -Os
 TARGET_CFLAGS += -DMAX_DEBUG_LEVEL=$(CONFIG_PACKAGE_SAMBA_MAX_DEBUG_LEVEL) -D__location__=\\\"\\\" -ffunction-sections -fdata-sections
-TARGET_LDFLAGS += -Wl,--gc-sections
+TARGET_LDFLAGS += -Wl,--gc-sections -ltalloc
 
 CONFIGURE_VARS += \
 	ac_cv_lib_attr_getxattr=no \
@@ -125,7 +125,6 @@ CONFIGURE_ARGS += \
 	--without-pam \
 	--without-winbind \
 	--without-libtdb \
-	--without-libtalloc \
 	--without-libnetapi \
 	--without-libsmbclient \
 	--without-libsmbsharemodes \
