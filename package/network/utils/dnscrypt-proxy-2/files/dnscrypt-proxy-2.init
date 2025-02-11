@@ -24,15 +24,15 @@ settime () {
 	# Check that NTP time service is working:
 	# It's needed for dnscrypt to work
 	#------------------------------------------------------------------------------
-	logmsg "Information: Checking that time is synchronized"
+	logmsg "Information: Checking that time is synchronized."
 	rm -f /tmp/dnscrypt_curl_time >/dev/null
 	count=0
 	while true; do
 		if [ -e /tmp/ntp_updated ]; then
-			logmsg "Information: NTP time service is working"
+			logmsg "Information: NTP time service is working!"
 			break
 		elif [ "$(grep -c "\[Time synchronized with NTP server]" /var/log/log_message)" -ne "0" ]; then
-			logmsg "Information: NTP time service is working"
+			logmsg "Information: NTP time service is working!"
 			break
 		else
 			if which curl >/dev/null; then
@@ -52,7 +52,7 @@ settime () {
 					SecsTZadjusted=$(echo "$(date -d "$T" -D '%b %d %H %M %S %Y' +'%s') $(date +%z | awk '{print ($1*3600/100) }')" | awk '{print ($1+$2)}'); #1587807751
 					date -s "$(date -d "$SecsTZadjusted" -D '%s' +'%m%d%H%M%Y.%S')"
 					touch /tmp/dnscrypt_curl_time
-					logmsg "Information: Using $i time: $(date -d "$SecsTZadjusted" -D '%s' +'%F %T')"
+					logmsg "Information: Using $i time: $(date -d "$SecsTZadjusted" -D '%s' +'%F %T')."
 					break
 				fi
 				done
@@ -60,20 +60,20 @@ settime () {
 			fi
 		fi
 		count=$((count+1))
-		logmsg "Information: Time is not working after $count tries. Still trying to get it"
+		logmsg "Information: Time is not working after $count tries. Still trying to get it."
 		if [ $count -ge 30 ]; then
-			logmsg "ERROR: Time is not working after $count tries"
+			logmsg "ERROR: Time is not working after $count tries."
 			exit 1
 		fi
 		sleep 1
 	done
-	logmsg "Information: Time is OK"
+	logmsg "Information: Time is OK."
 }
 
 start() {
 	# Check if dnscrypt-proxy-2 is enabled
 	if [ ! "$DNSCRYPTPROXY2_ON" = "1" ]; then
-		logmsg "DNSCrypt-Proxy-2 is not enabled in nvram. Exit"
+		logmsg "DNSCrypt-Proxy-2 is not enabled in nvram. Exit."
 		exit 1
 	fi
 
@@ -104,7 +104,7 @@ start() {
 	# Set time from NTP server if not disabled in NVRAM
 	if [ ! "$SETTIME_OFF" = "1" ]; then
 		if ! settime; then
-			logmsg "Time can not be set. Exit"
+			logmsg "Time can not be set. Exit."
 			stop
 			exit 1
 		fi
@@ -117,13 +117,13 @@ start() {
 	/etc/init.d/dnsmasq stop 2> /dev/null
 	/etc/init.d/dnsmasq start 2> /dev/null
 
-	logmsg "Started"
+	logmsg "Started."
 }
 
 stop() {
 	# Check if dnscrypt-proxy-2 is enabled
 	if [ ! "$DNSCRYPTPROXY2_ON" = "1" ]; then
-		logmsg "DNSCrypt-Proxy-2 is not enabled in nvram. Exit"
+		logmsg "DNSCrypt-Proxy-2 is not enabled in nvram. Exit."
 		exit 1
 	fi
 
@@ -140,5 +140,5 @@ stop() {
 	/etc/init.d/dnsmasq stop 2> /dev/null
 	/etc/init.d/dnsmasq start 2> /dev/null
 
-	logmsg "Terminated"
+	logmsg "Terminated."
 }
