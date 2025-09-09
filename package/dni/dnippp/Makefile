@@ -133,6 +133,7 @@ define Package/dnipppstats/description
  This package contains an utility to report PPP statistics.
 endef
 
+TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -O3
 TARGET_CFLAGS += -L$(STAGING_DIR)/usr/lib -lconfig
 
 define Build/Prepare
