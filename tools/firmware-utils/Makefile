@@ -11,6 +11,7 @@ PKG_NAME := firmware-utils
 include $(INCLUDE_DIR)/host-build.mk
 include $(INCLUDE_DIR)/kernel.mk
 
+HOST_CFLAGS += -Wno-implicit-function-declaration -Wno-implicit-int
 HOST_LDFLAGS += -DDGC_PRDL="\"$(call qstrip,$(CONFIG_DGC_PRDL))\""
 
 define cc
