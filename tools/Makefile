@@ -23,11 +23,11 @@ ifneq ($(CONFIG_PACKAGE_kmod-b43)$(CONFIG_PACKAGE_kmod-b43legacy)$(CONFIG_BRCMSM
   BUILD_B43_TOOLS = y
 endif
 
-tools-$(BUILD_TOOLCHAIN) += gmp mpfr mpc libelf
+tools-$(BUILD_TOOLCHAIN) += gmp mpfr mpc
 tools-y += m4 libtool autoconf automake flex bison pkg-config sed mklibs
 tools-y += sstrip make-ext4fs e2fsprogs mtd-utils mkimage
 tools-y += firmware-utils patch-image patch quilt yaffs2 flock padjffs2
-tools-y += mm-macros missing-macros xz scons bc findutils gengetopt patchelf zlib
+tools-y += mm-macros missing-macros xz scons findutils gengetopt patchelf zlib
 tools-$(CONFIG_TARGET_orion_generic) += wrt350nv2-builder upslug2
 tools-$(CONFIG_powerpc) += upx
 tools-$(CONFIG_TARGET_x86) += qemu
@@ -45,7 +45,6 @@ tools-$(CONFIG_USE_SPARSE) += sparse
 $(curdir)/autoconf/compile := $(curdir)/m4/install
 $(curdir)/automake/compile := $(curdir)/m4/install $(curdir)/autoconf/install $(curdir)/pkg-config/install $(curdir)/xz/install
 $(curdir)/b43-tools/compile := $(curdir)/bison/install
-$(curdir)/bc/compile := $(curdir)/bison/install
 $(curdir)/bison/compile := $(curdir)/flex/install
 $(curdir)/cloog/compile := $(curdir)/ppl/install
 $(curdir)/cloog/compile := $(curdir)/ppl/install
@@ -54,7 +53,6 @@ $(curdir)/findutils/compile := $(curdir)/bison/install
 $(curdir)/flex/compile := $(curdir)/libtool/install
 $(curdir)/gengetopt/compile := $(curdir)/libtool/install
 $(curdir)/gmp/compile := $(curdir)/libtool/install
-$(curdir)/libelf/compile := $(curdir)/libtool/install
 $(curdir)/libtool/compile := $(curdir)/sed/install $(curdir)/m4/install $(curdir)/autoconf/install $(curdir)/automake/install $(curdir)/missing-macros/install
 $(curdir)/missing-macros/compile := $(curdir)/autoconf/install
 $(curdir)/mkimage/compile := $(curdir)/sed/install
