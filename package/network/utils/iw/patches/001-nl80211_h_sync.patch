@@ -1,8 +1,8 @@
 --- a/nl80211.h
 +++ b/nl80211.h
-@@ -2856,6 +2856,9 @@
-  *	%NL80211_CMD_ASSOCIATE indicating the SPP A-MSDUs
-  *	are used on this connection
+@@ -2928,6 +2928,9 @@
+  *	required alongside this attribute. Refer to
+  *	@enum nl80211_s1g_short_beacon_attrs for the attribute definitions.
   *
 + * @NL80211_ATTR_WIPHY_ANTENNA_GAIN: Configured antenna gain. Used to reduce
 + *	transmit power to stay within regulatory limits. u32, dBi.
@@ -10,9 +10,9 @@
   * @NUM_NL80211_ATTR: total number of nl80211_attrs available
   * @NL80211_ATTR_MAX: highest attribute number currently defined
   * @__NL80211_ATTR_AFTER_LAST: internal use
-@@ -3401,6 +3404,8 @@
- 
- 	NL80211_ATTR_ASSOC_SPP_AMSDU,
+@@ -3490,6 +3493,8 @@
+ 	NL80211_ATTR_S1G_LONG_BEACON_PERIOD,
+ 	NL80211_ATTR_S1G_SHORT_BEACON,
  
 +	NL80211_ATTR_WIPHY_ANTENNA_GAIN,
 +

@@ -1,6 +1,6 @@
 --- a/phy.c
 +++ b/phy.c
-@@ -897,3 +897,30 @@
+@@ -905,3 +905,30 @@
  COMMAND(get, txq, "",
  	NL80211_CMD_GET_WIPHY, 0, CIB_PHY, handle_get_txq,
  	"Get TXQ parameters.");
