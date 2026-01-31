@@ -6,13 +6,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=talloc
-PKG_VERSION:=2.4.3
+PKG_VERSION:=2.4.4
 MAJOR_VERSION:=2
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://www.samba.org/ftp/talloc
-PKG_MD5SUM:=a51e4220fda52f4ae39413ed7e281f38
+PKG_MD5SUM:=a385dd581b4b588873338d182294cf36
 
 PKG_MAINTAINER:=Ted Hess <thess@kitschensync.net>
 PKG_LICENSE:=LGPL-3.0-or-later
