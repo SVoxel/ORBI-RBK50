@@ -1,11 +1,13 @@
 --- a/src/cli-runopts.c
 +++ b/src/cli-runopts.c
-@@ -317,6 +317,8 @@
- 					debug_trace++;
+@@ -340,6 +340,10 @@ void cli_getopts(int argc, char ** argv)
+ 				case 'z':
+ 					opts.disable_ip_tos = 1;
  					break;
- #endif
 +				case 'x':
++					/* compatibility with openssh cli
++					 * ("-x" disables X11 forwarding) */
 +					break;
- 				case 'F':
- 				case 'e':
- #if !DROPBEAR_USER_ALGO_LIST
+ 				default:
+ 					fprintf(stderr,
+ 						"WARNING: Ignoring unknown option -%c\n", c);
