@@ -8,7 +8,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=openssl
-PKG_VERSION:=3.5.4
+PKG_VERSION:=3.5.5
 PKG_RELEASE:=1
 PKG_BUILD_FLAGS:=no-mips16 gc-sections no-lto
 
@@ -21,7 +21,7 @@ PKG_SOURCE_URL:= \
 	https://www.openssl.org/source/old/$(PKG_BASE)/ \
 	https://github.com/openssl/openssl/releases/download/$(PKG_NAME)-$(PKG_VERSION)/
 
-PKG_MD5SUM:=570a7ab371147b6ba72c6d0fed93131f
+PKG_MD5SUM:=9c86d929c3d1067e2c88239d7d1ce81b
 
 PKG_LICENSE:=Apache-2.0
 PKG_LICENSE_FILES:=LICENSE.txt
@@ -391,6 +391,8 @@ define Build/Configure
 	)
 endef
 
+# Set TLS Security Level to '1' instead of default '2'
+TARGET_CFLAGS += -DOPENSSL_TLS_SECURITY_LEVEL=1
 TARGET_CFLAGS += $(FPIC)
 
 define Build/Compile
