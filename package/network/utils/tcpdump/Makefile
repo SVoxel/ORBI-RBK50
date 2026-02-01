@@ -44,7 +44,6 @@ define Package/tcpdump-mini
   $(Package/tcpdump/default)
   TITLE+= (minimal version)
   VARIANT:=mini
-  PROVIDES:=tcpdump
 endef
 
 CONFIGURE_ARGS += \
