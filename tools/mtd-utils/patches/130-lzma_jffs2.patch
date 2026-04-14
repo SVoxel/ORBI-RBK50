@@ -1,208 +1,45 @@
---- a/jffsX-utils/Makemodule.am
-+++ b/jffsX-utils/Makemodule.am
-@@ -9,8 +9,9 @@ mkfs_jffs2_SOURCES = \
- 	include/mtd/jffs2-user.h \
- 	include/list.h \
- 	include/rbtree.h
-+
- mkfs_jffs2_LDADD = libmtd.a $(ZLIB_LIBS) $(LZO_LIBS)
--mkfs_jffs2_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CFLAGS) $(LZO_CFLAGS)
-+mkfs_jffs2_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CFLAGS) $(LZO_CFLAGS) -I./include/linux/lzma
- 
- jffs2reader_SOURCES = jffsX-utils/jffs2reader.c	include/mtd/jffs2-user.h
- jffs2reader_LDADD = libmtd.a $(ZLIB_LIBS) $(LZO_LIBS)
-@@ -32,6 +33,14 @@ if WITH_ZLIB
- mkfs_jffs2_SOURCES += jffsX-utils/compr_zlib.c
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -19,6 +19,10 @@
+ AM_CPPFLAGS += -DWITH_ZSTD
  endif
  
 +if WITH_LZMA
-+mkfs_jffs2_SOURCES += \
-+	jffsX-utils/compr_lzma.c \
-+	jffsX-utils/lzma/LzFind.c \
-+	jffsX-utils/lzma/LzmaEnc.c \
-+	jffsX-utils/lzma/LzmaDec.c
++AM_CPPFLAGS += -DWITH_LZMA
 +endif
 +
- EXTRA_DIST += jffsX-utils/device_table.txt jffsX-utils/mkfs.jffs2.1
+ if WITH_SELINUX
+ AM_CPPFLAGS += -DWITH_SELINUX
+ endif
+--- a/configure.ac
++++ b/configure.ac
+@@ -96,6 +96,10 @@
+ 	[AS_HELP_STRING([--with-zstd], [Support for ZSTD compression])],
+ 	[], [with_zstd="check"])
  
- dist_man1_MANS += jffsX-utils/mkfs.jffs2.1
---- a/jffsX-utils/compr.c
-+++ b/jffsX-utils/compr.c
-@@ -471,6 +471,9 @@ int jffs2_compressors_init(void)
- #ifdef WITH_LZO
- 	jffs2_lzo_init();
- #endif
-+#ifdef WITH_LZMA
-+	jffs2_lzma_init();
-+#endif
- 	return 0;
- }
- 
-@@ -485,5 +488,8 @@ int jffs2_compressors_exit(void)
- #ifdef WITH_LZO
- 	jffs2_lzo_exit();
- #endif
-+#ifdef WITH_LZMA
-+	jffs2_lzma_exit();
-+#endif
- 	return 0;
- }
---- a/jffsX-utils/compr.h
-+++ b/jffsX-utils/compr.h
-@@ -22,8 +22,9 @@
- #define JFFS2_RUBINMIPS_PRIORITY 10
- #define JFFS2_DYNRUBIN_PRIORITY  20
- #define JFFS2_RTIME_PRIORITY     50
--#define JFFS2_ZLIB_PRIORITY      60
--#define JFFS2_LZO_PRIORITY       80
-+#define JFFS2_LZMA_PRIORITY      70
-+#define JFFS2_ZLIB_PRIORITY      80
-+#define JFFS2_LZO_PRIORITY       90
- 
- #define JFFS2_COMPR_MODE_NONE       0
- #define JFFS2_COMPR_MODE_PRIORITY   1
-@@ -110,5 +111,10 @@ void jffs2_rtime_exit(void);
- int jffs2_lzo_init(void);
- void jffs2_lzo_exit(void);
- #endif
-+#ifdef WITH_LZMA
-+int jffs2_lzma_init(void);
-+void jffs2_lzma_exit(void);
-+#endif
++AC_ARG_WITH([lzma],
++	[AS_HELP_STRING([--with-lzma], [Support for LZMA compression])],
++	[], [with_lzma="check"])
 +
- 
- #endif /* __JFFS2_COMPR_H__ */
---- /dev/null
-+++ b/jffsX-utils/compr_lzma.c
-@@ -0,0 +1,128 @@
-+/*
-+ * JFFS2 -- Journalling Flash File System, Version 2.
-+ *
-+ * For licensing information, see the file 'LICENCE' in this directory.
-+ *
-+ * JFFS2 wrapper to the LZMA C SDK
-+ *
-+ */
-+
-+#include <linux/lzma.h>
-+#include "compr.h"
-+
-+#ifdef __KERNEL__
-+	static DEFINE_MUTEX(deflate_mutex);
-+#endif
-+
-+CLzmaEncHandle *p;
-+Byte propsEncoded[LZMA_PROPS_SIZE];
-+SizeT propsSize = sizeof(propsEncoded);
-+
-+STATIC void lzma_free_workspace(void)
-+{
-+	LzmaEnc_Destroy(p, &lzma_alloc, &lzma_alloc);
-+}
-+
-+STATIC int INIT lzma_alloc_workspace(CLzmaEncProps *props)
-+{
-+	if ((p = (CLzmaEncHandle *)LzmaEnc_Create(&lzma_alloc)) == NULL)
-+	{
-+		PRINT_ERROR("Failed to allocate lzma deflate workspace\n");
-+		return -ENOMEM;
-+	}
-+
-+	if (LzmaEnc_SetProps(p, props) != SZ_OK)
-+	{
-+		lzma_free_workspace();
-+		return -1;
-+	}
-+	
-+	if (LzmaEnc_WriteProperties(p, propsEncoded, &propsSize) != SZ_OK)
-+	{
-+		lzma_free_workspace();
-+		return -1;
-+	}
-+
-+	return 0;
-+}
-+
-+STATIC int jffs2_lzma_compress(unsigned char *data_in, unsigned char *cpage_out,
-+			      uint32_t *sourcelen, uint32_t *dstlen)
-+{
-+	SizeT compress_size = (SizeT)(*dstlen);
-+	int ret;
-+
-+	#ifdef __KERNEL__
-+		mutex_lock(&deflate_mutex);
-+	#endif
-+
-+	ret = LzmaEnc_MemEncode(p, cpage_out, &compress_size, data_in, *sourcelen,
-+		0, NULL, &lzma_alloc, &lzma_alloc);
-+
-+	#ifdef __KERNEL__
-+		mutex_unlock(&deflate_mutex);
-+	#endif
-+
-+	if (ret != SZ_OK)
-+		return -1;
-+
-+	*dstlen = (uint32_t)compress_size;
-+
-+	return 0;
-+}
-+
-+STATIC int jffs2_lzma_decompress(unsigned char *data_in, unsigned char *cpage_out,
-+				 uint32_t srclen, uint32_t destlen)
-+{
-+	int ret;
-+	SizeT dl = (SizeT)destlen;
-+	SizeT sl = (SizeT)srclen;
-+	ELzmaStatus status;
-+	
-+	ret = LzmaDecode(cpage_out, &dl, data_in, &sl, propsEncoded,
-+		propsSize, LZMA_FINISH_ANY, &status, &lzma_alloc);
-+
-+	if (ret != SZ_OK || status == LZMA_STATUS_NOT_FINISHED || dl != (SizeT)destlen)
-+		return -1;
-+
-+	return 0;
-+}
-+
-+static struct jffs2_compressor jffs2_lzma_comp = {
-+	.priority = JFFS2_LZMA_PRIORITY,
-+	.name = "lzma",
-+	.compr = JFFS2_COMPR_LZMA,
-+	.compress = &jffs2_lzma_compress,
-+	.decompress = &jffs2_lzma_decompress,
-+	.disabled = 0,
-+};
-+
-+int INIT jffs2_lzma_init(void)
-+{
-+	int ret;
-+	CLzmaEncProps props;
-+	LzmaEncProps_Init(&props);
-+
-+	props.dictSize = LZMA_BEST_DICT(0x2000);
-+	props.level = LZMA_BEST_LEVEL;
-+	props.lc = LZMA_BEST_LC;
-+	props.lp = LZMA_BEST_LP;
-+	props.pb = LZMA_BEST_PB;
-+	props.fb = LZMA_BEST_FB;
-+
-+	ret = lzma_alloc_workspace(&props);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = jffs2_register_compressor(&jffs2_lzma_comp);
-+	if (ret)
-+		lzma_free_workspace();
-+	
-+	return ret;
-+}
-+
-+void jffs2_lzma_exit(void)
-+{
-+	jffs2_unregister_compressor(&jffs2_lzma_comp);
-+	lzma_free_workspace();
-+}
+ AC_ARG_WITH([selinux],
+ 	[AS_HELP_STRING([--with-selinux],
+ 		[Support for selinux extended attributes])],
+@@ -283,6 +287,7 @@
+ AM_CONDITIONAL([WITH_LZO], [test "x$with_lzo" = "xyes"])
+ AM_CONDITIONAL([WITH_ZLIB], [test "x$with_zlib" = "xyes"])
+ AM_CONDITIONAL([WITH_ZSTD], [test "x$with_zstd" = "xyes"])
++AM_CONDITIONAL([WITH_LZMA], [test "x$with_lzma" = "xyes"])
+ AM_CONDITIONAL([WITH_XATTR], [test "x$with_xattr" = "xyes"])
+ AM_CONDITIONAL([WITH_SELINUX], [test "x$with_selinux" = "xyes"])
+ AM_CONDITIONAL([WITH_CRYPTO], [test "x$with_crypto" = "xyes"])
+@@ -340,6 +345,7 @@
+ 	lzo support:       ${with_lzo}
+ 	zlib support:      ${with_zlib}
+ 	zstd support:      ${with_zstd}
++	lzma support:      ${with_lzma}
+ 	xattr/acl support: ${with_xattr}
+ 	SELinux support:   ${with_selinux}
+ 	fscrypt support:   ${with_crypto}
 --- a/include/linux/jffs2.h
 +++ b/include/linux/jffs2.h
 @@ -47,6 +47,7 @@
@@ -213,71 +50,7 @@
  /* Compatibility flags. */
  #define JFFS2_COMPAT_MASK 0xc000      /* What do to if an unknown nodetype is found */
  #define JFFS2_NODE_ACCURATE 0x2000
---- /dev/null
-+++ b/include/linux/lzma.h
-@@ -0,0 +1,61 @@
-+#ifndef __LZMA_H__
-+#define __LZMA_H__
-+
-+#ifdef __KERNEL__
-+	#include <linux/kernel.h>
-+	#include <linux/sched.h>
-+	#include <linux/slab.h>
-+	#include <linux/vmalloc.h>
-+	#include <linux/init.h>
-+	#define LZMA_MALLOC vmalloc
-+	#define LZMA_FREE vfree
-+	#define PRINT_ERROR(msg) printk(KERN_WARNING #msg)
-+	#define INIT __init
-+	#define STATIC static
-+#else
-+	#include <stdint.h>
-+	#include <stdlib.h>
-+	#include <stdio.h>
-+	#include <unistd.h>
-+	#include <string.h>
-+	#include <errno.h>
-+	#include <linux/jffs2.h>
-+	#ifndef PAGE_SIZE
-+		extern int page_size;
-+		#define PAGE_SIZE page_size
-+	#endif
-+	#define LZMA_MALLOC malloc
-+	#define LZMA_FREE free
-+	#define PRINT_ERROR(msg) fprintf(stderr, msg)
-+	#define INIT
-+	#define STATIC static
-+#endif
-+
-+#include "lzma/LzmaDec.h"
-+#include "lzma/LzmaEnc.h"
-+
-+#define LZMA_BEST_LEVEL (9)
-+#define LZMA_BEST_LC    (0)
-+#define LZMA_BEST_LP    (0)
-+#define LZMA_BEST_PB    (0)
-+#define LZMA_BEST_FB  (273)
-+
-+#define LZMA_BEST_DICT(n) (((int)((n) / 2)) * 2)
-+
-+static void *p_lzma_malloc(void *p, size_t size)
-+{
-+	if (size == 0)
-+		return NULL;
-+
-+	return LZMA_MALLOC(size);
-+}
-+
-+static void p_lzma_free(void *p, void *address)
-+{
-+	if (address != NULL)
-+		LZMA_FREE(address);
-+}
-+
-+static ISzAlloc lzma_alloc = {p_lzma_malloc, p_lzma_free};
-+
-+#endif
---- /dev/null
+--- a/include/linux/lzma/LzFind.h
 +++ b/include/linux/lzma/LzFind.h
 @@ -0,0 +1,116 @@
 +/* LzFind.h  -- Match finder for LZ algorithms
@@ -396,7 +169,7 @@
 +void Hc3Zip_MatchFinder_Skip(CMatchFinder *p, UInt32 num);
 +
 +#endif
---- /dev/null
+--- a/include/linux/lzma/LzHash.h
 +++ b/include/linux/lzma/LzHash.h
 @@ -0,0 +1,56 @@
 +/* LzHash.h  -- HASH functions for LZ algorithms
@@ -455,7 +228,7 @@
 +  hash4Value = (temp ^ ((UInt32)cur[2] << 8) ^ (p->crc[cur[3]] << 5)) & (kHash4Size - 1); }
 +
 +#endif
---- /dev/null
+--- a/include/linux/lzma/LzmaDec.h
 +++ b/include/linux/lzma/LzmaDec.h
 @@ -0,0 +1,232 @@
 +/* LzmaDec.h -- LZMA Decoder
@@ -690,7 +463,7 @@
 +    ELzmaStatus *status, ISzAlloc *alloc);
 +
 +#endif
---- /dev/null
+--- a/include/linux/lzma/LzmaEnc.h
 +++ b/include/linux/lzma/LzmaEnc.h
 @@ -0,0 +1,74 @@
 +/*  LzmaEnc.h -- LZMA Encoder
@@ -767,7 +540,7 @@
 +    ICompressProgress *progress, ISzAlloc *alloc, ISzAlloc *allocBig);
 +
 +#endif
---- /dev/null
+--- a/include/linux/lzma/Types.h
 +++ b/include/linux/lzma/Types.h
 @@ -0,0 +1,130 @@
 +/* Types.h -- Basic types
@@ -900,7 +673,276 @@
 +#define IAlloc_Free(p, a) (p)->Free((p), a)
 +
 +#endif
---- /dev/null
+--- a/include/linux/lzma.h
++++ b/include/linux/lzma.h
+@@ -0,0 +1,61 @@
++#ifndef __LZMA_H__
++#define __LZMA_H__
++
++#ifdef __KERNEL__
++	#include <linux/kernel.h>
++	#include <linux/sched.h>
++	#include <linux/slab.h>
++	#include <linux/vmalloc.h>
++	#include <linux/init.h>
++	#define LZMA_MALLOC vmalloc
++	#define LZMA_FREE vfree
++	#define PRINT_ERROR(msg) printk(KERN_WARNING #msg)
++	#define INIT __init
++	#define STATIC static
++#else
++	#include <stdint.h>
++	#include <stdlib.h>
++	#include <stdio.h>
++	#include <unistd.h>
++	#include <string.h>
++	#include <errno.h>
++	#include <linux/jffs2.h>
++	#ifndef PAGE_SIZE
++		extern int page_size;
++		#define PAGE_SIZE page_size
++	#endif
++	#define LZMA_MALLOC malloc
++	#define LZMA_FREE free
++	#define PRINT_ERROR(msg) fprintf(stderr, msg)
++	#define INIT
++	#define STATIC static
++#endif
++
++#include "lzma/LzmaDec.h"
++#include "lzma/LzmaEnc.h"
++
++#define LZMA_BEST_LEVEL (9)
++#define LZMA_BEST_LC    (0)
++#define LZMA_BEST_LP    (0)
++#define LZMA_BEST_PB    (0)
++#define LZMA_BEST_FB  (273)
++
++#define LZMA_BEST_DICT(n) (((int)((n) / 2)) * 2)
++
++static void *p_lzma_malloc(void *p, size_t size)
++{
++	if (size == 0)
++		return NULL;
++
++	return LZMA_MALLOC(size);
++}
++
++static void p_lzma_free(void *p, void *address)
++{
++	if (address != NULL)
++		LZMA_FREE(address);
++}
++
++static ISzAlloc lzma_alloc = {p_lzma_malloc, p_lzma_free};
++
++#endif
+--- a/jffsX-utils/Makemodule.am
++++ b/jffsX-utils/Makemodule.am
+@@ -9,8 +9,9 @@
+ 	include/mtd/jffs2-user.h \
+ 	include/list.h \
+ 	include/rbtree.h
++
+ mkfs_jffs2_LDADD = libmtd.a $(ZLIB_LIBS) $(LZO_LIBS)
+-mkfs_jffs2_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CFLAGS) $(LZO_CFLAGS)
++mkfs_jffs2_CPPFLAGS = $(AM_CPPFLAGS) $(ZLIB_CFLAGS) $(LZO_CFLAGS) -I./include/linux/lzma
+ 
+ jffs2reader_SOURCES = jffsX-utils/jffs2reader.c	include/mtd/jffs2-user.h
+ jffs2reader_LDADD = libmtd.a $(ZLIB_LIBS) $(LZO_LIBS)
+@@ -32,6 +33,14 @@
+ mkfs_jffs2_SOURCES += jffsX-utils/compr_zlib.c
+ endif
+ 
++if WITH_LZMA
++mkfs_jffs2_SOURCES += \
++	jffsX-utils/compr_lzma.c \
++	jffsX-utils/lzma/LzFind.c \
++	jffsX-utils/lzma/LzmaEnc.c \
++	jffsX-utils/lzma/LzmaDec.c
++endif
++
+ EXTRA_DIST += jffsX-utils/device_table.txt jffsX-utils/mkfs.jffs2.1
+ 
+ dist_man1_MANS += jffsX-utils/mkfs.jffs2.1
+--- a/jffsX-utils/compr.c
++++ b/jffsX-utils/compr.c
+@@ -471,6 +471,9 @@
+ #ifdef WITH_LZO
+ 	jffs2_lzo_init();
+ #endif
++#ifdef WITH_LZMA
++	jffs2_lzma_init();
++#endif
+ 	return 0;
+ }
+ 
+@@ -485,5 +488,8 @@
+ #ifdef WITH_LZO
+ 	jffs2_lzo_exit();
+ #endif
++#ifdef WITH_LZMA
++	jffs2_lzma_exit();
++#endif
+ 	return 0;
+ }
+--- a/jffsX-utils/compr.h
++++ b/jffsX-utils/compr.h
+@@ -22,8 +22,9 @@
+ #define JFFS2_RUBINMIPS_PRIORITY 10
+ #define JFFS2_DYNRUBIN_PRIORITY  20
+ #define JFFS2_RTIME_PRIORITY     50
+-#define JFFS2_ZLIB_PRIORITY      60
+-#define JFFS2_LZO_PRIORITY       80
++#define JFFS2_LZMA_PRIORITY      70
++#define JFFS2_ZLIB_PRIORITY      80
++#define JFFS2_LZO_PRIORITY       90
+ 
+ #define JFFS2_COMPR_MODE_NONE       0
+ #define JFFS2_COMPR_MODE_PRIORITY   1
+@@ -110,5 +111,10 @@
+ int jffs2_lzo_init(void);
+ void jffs2_lzo_exit(void);
+ #endif
++#ifdef WITH_LZMA
++int jffs2_lzma_init(void);
++void jffs2_lzma_exit(void);
++#endif
++
+ 
+ #endif /* __JFFS2_COMPR_H__ */
+--- a/jffsX-utils/compr_lzma.c
++++ b/jffsX-utils/compr_lzma.c
+@@ -0,0 +1,128 @@
++/*
++ * JFFS2 -- Journalling Flash File System, Version 2.
++ *
++ * For licensing information, see the file 'LICENCE' in this directory.
++ *
++ * JFFS2 wrapper to the LZMA C SDK
++ *
++ */
++
++#include <linux/lzma.h>
++#include "compr.h"
++
++#ifdef __KERNEL__
++	static DEFINE_MUTEX(deflate_mutex);
++#endif
++
++CLzmaEncHandle *p;
++Byte propsEncoded[LZMA_PROPS_SIZE];
++SizeT propsSize = sizeof(propsEncoded);
++
++STATIC void lzma_free_workspace(void)
++{
++	LzmaEnc_Destroy(p, &lzma_alloc, &lzma_alloc);
++}
++
++STATIC int INIT lzma_alloc_workspace(CLzmaEncProps *props)
++{
++	if ((p = (CLzmaEncHandle *)LzmaEnc_Create(&lzma_alloc)) == NULL)
++	{
++		PRINT_ERROR("Failed to allocate lzma deflate workspace\n");
++		return -ENOMEM;
++	}
++
++	if (LzmaEnc_SetProps(p, props) != SZ_OK)
++	{
++		lzma_free_workspace();
++		return -1;
++	}
++	
++	if (LzmaEnc_WriteProperties(p, propsEncoded, &propsSize) != SZ_OK)
++	{
++		lzma_free_workspace();
++		return -1;
++	}
++
++	return 0;
++}
++
++STATIC int jffs2_lzma_compress(unsigned char *data_in, unsigned char *cpage_out,
++			      uint32_t *sourcelen, uint32_t *dstlen)
++{
++	SizeT compress_size = (SizeT)(*dstlen);
++	int ret;
++
++	#ifdef __KERNEL__
++		mutex_lock(&deflate_mutex);
++	#endif
++
++	ret = LzmaEnc_MemEncode(p, cpage_out, &compress_size, data_in, *sourcelen,
++		0, NULL, &lzma_alloc, &lzma_alloc);
++
++	#ifdef __KERNEL__
++		mutex_unlock(&deflate_mutex);
++	#endif
++
++	if (ret != SZ_OK)
++		return -1;
++
++	*dstlen = (uint32_t)compress_size;
++
++	return 0;
++}
++
++STATIC int jffs2_lzma_decompress(unsigned char *data_in, unsigned char *cpage_out,
++				 uint32_t srclen, uint32_t destlen)
++{
++	int ret;
++	SizeT dl = (SizeT)destlen;
++	SizeT sl = (SizeT)srclen;
++	ELzmaStatus status;
++	
++	ret = LzmaDecode(cpage_out, &dl, data_in, &sl, propsEncoded,
++		propsSize, LZMA_FINISH_ANY, &status, &lzma_alloc);
++
++	if (ret != SZ_OK || status == LZMA_STATUS_NOT_FINISHED || dl != (SizeT)destlen)
++		return -1;
++
++	return 0;
++}
++
++static struct jffs2_compressor jffs2_lzma_comp = {
++	.priority = JFFS2_LZMA_PRIORITY,
++	.name = "lzma",
++	.compr = JFFS2_COMPR_LZMA,
++	.compress = &jffs2_lzma_compress,
++	.decompress = &jffs2_lzma_decompress,
++	.disabled = 0,
++};
++
++int INIT jffs2_lzma_init(void)
++{
++	int ret;
++	CLzmaEncProps props;
++	LzmaEncProps_Init(&props);
++
++	props.dictSize = LZMA_BEST_DICT(0x2000);
++	props.level = LZMA_BEST_LEVEL;
++	props.lc = LZMA_BEST_LC;
++	props.lp = LZMA_BEST_LP;
++	props.pb = LZMA_BEST_PB;
++	props.fb = LZMA_BEST_FB;
++
++	ret = lzma_alloc_workspace(&props);
++	if (ret < 0)
++		return ret;
++
++	ret = jffs2_register_compressor(&jffs2_lzma_comp);
++	if (ret)
++		lzma_free_workspace();
++	
++	return ret;
++}
++
++void jffs2_lzma_exit(void)
++{
++	jffs2_unregister_compressor(&jffs2_lzma_comp);
++	lzma_free_workspace();
++}
+--- a/jffsX-utils/lzma/LzFind.c
 +++ b/jffsX-utils/lzma/LzFind.c
 @@ -0,0 +1,753 @@
 +/* LzFind.c  -- Match finder for LZ algorithms
@@ -1656,7 +1698,7 @@
 +    vTable->Skip = (Mf_Skip_Func)Bt4_MatchFinder_Skip;
 +  }
 +}
---- /dev/null
+--- a/jffsX-utils/lzma/LzmaDec.c
 +++ b/jffsX-utils/lzma/LzmaDec.c
 @@ -0,0 +1,1014 @@
 +/* LzmaDec.c -- LZMA Decoder
@@ -2673,7 +2715,7 @@
 +  LzmaDec_FreeProbs(&p, alloc);
 +  return res;
 +}
---- /dev/null
+--- a/jffsX-utils/lzma/LzmaEnc.c
 +++ b/jffsX-utils/lzma/LzmaEnc.c
 @@ -0,0 +1,2335 @@
 +/* LzmaEnc.c -- LZMA Encoder
@@ -5013,7 +5055,7 @@
 +}
 --- a/jffsX-utils/mkfs.jffs2.c
 +++ b/jffsX-utils/mkfs.jffs2.c
-@@ -1668,11 +1668,11 @@ int main(int argc, char **argv)
+@@ -1668,11 +1668,11 @@
  						  }
  						  erase_block_size *= units;
  
@@ -5029,45 +5071,3 @@
  						  }
  						  break;
  					  }
---- a/Makefile.am
-+++ b/Makefile.am
-@@ -19,6 +19,10 @@ if WITH_ZSTD
- AM_CPPFLAGS += -DWITH_ZSTD
- endif
- 
-+if WITH_LZMA
-+AM_CPPFLAGS += -DWITH_LZMA
-+endif
-+
- if WITH_SELINUX
- AM_CPPFLAGS += -DWITH_SELINUX
- endif
---- a/configure.ac
-+++ b/configure.ac
-@@ -96,6 +96,10 @@ AC_ARG_WITH([zstd],
- 	[AS_HELP_STRING([--with-zstd], [Support for ZSTD compression])],
- 	[], [with_zstd="check"])
- 
-+AC_ARG_WITH([lzma],
-+	[AS_HELP_STRING([--with-lzma], [Support for LZMA compression])],
-+	[], [with_lzma="check"])
-+
- AC_ARG_WITH([selinux],
- 	[AS_HELP_STRING([--with-selinux],
- 		[Support for selinux extended attributes])],
-@@ -283,6 +287,7 @@ fi
- AM_CONDITIONAL([WITH_LZO], [test "x$with_lzo" = "xyes"])
- AM_CONDITIONAL([WITH_ZLIB], [test "x$with_zlib" = "xyes"])
- AM_CONDITIONAL([WITH_ZSTD], [test "x$with_zstd" = "xyes"])
-+AM_CONDITIONAL([WITH_LZMA], [test "x$with_lzma" = "xyes"])
- AM_CONDITIONAL([WITH_XATTR], [test "x$with_xattr" = "xyes"])
- AM_CONDITIONAL([WITH_SELINUX], [test "x$with_selinux" = "xyes"])
- AM_CONDITIONAL([WITH_CRYPTO], [test "x$with_crypto" = "xyes"])
-@@ -339,6 +344,7 @@ AC_MSG_RESULT([
- 	lzo support:       ${with_lzo}
- 	zlib support:      ${with_zlib}
- 	zstd support:      ${with_zstd}
-+	lzma support:      ${with_lzma}
- 	xattr/acl support: ${with_xattr}
- 	SELinux support:   ${with_selinux}
- 	fscrypt support:   ${with_crypto}
