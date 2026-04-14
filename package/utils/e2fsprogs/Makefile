@@ -8,8 +8,8 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=e2fsprogs
-PKG_VERSION:=1.47.3
-PKG_MD5SUM:=a346be0eb57b68227ddb1a51817ca3f5
+PKG_VERSION:=1.47.4
+PKG_MD5SUM:=0584bea6055d8a220cbad815c07752c0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.xz
@@ -19,10 +19,6 @@ PKG_BUILD_DEPENDS:=util-linux
 PKG_INSTALL:=1
 
 PKG_BUILD_PARALLEL:=1
-
-ifeq ($(OPENWRT_BUILD_TYPE),DNI_BUILD)
-PATCH_DIR:=./patches_dni
-endif
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -49,7 +45,7 @@ $(call Package/e2fsprogs/Default)
   SECTION:=libs
   CATEGORY:=Libraries
   TITLE:=ext2/3/4 filesystem library
-  DEPENDS:=+libpthread
+  DEPENDS:=+librt
 endef
 
 define Package/libext2fs/description
@@ -98,6 +94,18 @@ $(call Package/e2fsprogs)
   DEPENDS:= +e2fsprogs
 endef
 
+define Package/chattr
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem chattr utility
+  DEPENDS:= +e2fsprogs
+endef
+
+define Package/lsattr
+$(call Package/e2fsprogs)
+  TITLE:=Ext2 Filesystem lsattr utility
+  DEPENDS:= +e2fsprogs
+endef
+
 TARGET_CFLAGS := $(filter-out -O%,$(TARGET_CFLAGS)) -Os
 TARGET_CFLAGS += $(FPIC) -ffunction-sections -fdata-sections
 TARGET_LDFLAGS += -Wl,--gc-sections
@@ -106,10 +114,11 @@ CONFIGURE_VARS += \
 	ac_cv_lib_pthread_sem_init=no
 
 CONFIGURE_ARGS += \
-	--disable-testio-debug \
+	--disable-testio-debug  \
 	--enable-elf-shlibs	\
 	--disable-libuuid	\
 	--enable-libblkid	\
+	--disable-defrag	\
 	--disable-uuidd		\
 	--disable-tls		\
 	--disable-nls		\
@@ -123,12 +132,12 @@ endef
 define Build/Compile
 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR)/util \
 		BUILDCC="$(HOSTCC)" \
-		CFLAGS="$(TARGET_CFLAGS)" \
+		CFLAGS="" \
 		CPPFLAGS="" \
-		LDFLAGS="$(TARGET_LDFLAGS)" \
+		LDFLAGS="" \
 		subst
 	+$(MAKE) $(PKG_JOBS) -C $(PKG_BUILD_DIR) \
-		LDFLAGS="-Wl,--gc-sections $(TARGET_LDFLAGS)" \
+		LDFLAGS="$(TARGET_LDFLAGS)" \
 		BUILDCC="$(HOSTCC)" \
 		DESTDIR="$(PKG_INSTALL_DIR)" \
 		LIBBLKID="$(PKG_BUILD_DIR)/lib/libblkid.a -luuid" \
@@ -166,9 +175,7 @@ define Package/e2fsprogs/install
 	$(LN) e2fsck $(1)/usr/sbin/fsck.ext4
 	$(INSTALL_DIR) $(1)/usr/lib
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libe2p.so.* $(1)/usr/lib/
-	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_DIR) $(1)/lib/functions/fsck
-	$(INSTALL_DATA) ./files/e2fsck.sh $(1)/lib/functions/fsck/
+	$(INSTALL_DIR) $(1)/etc
 	$(INSTALL_DATA) ./files/e2fsck.conf $(1)/etc/e2fsck.conf
 endef
 
@@ -226,6 +233,16 @@ define Package/debugfs/install
 	$(CP) $(PKG_INSTALL_DIR)/usr/lib/libss.so.* $(1)/usr/lib/
 endef
 
+define Package/chattr/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/chattr $(1)/usr/bin/
+endef
+
+define Package/lsattr/install
+	$(INSTALL_DIR) $(1)/usr/bin
+	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/lsattr $(1)/usr/bin/
+endef
+
 $(eval $(call BuildPackage,e2fsprogs))
 $(eval $(call BuildPackage,libext2fs))
 $(eval $(call BuildPackage,tune2fs))
@@ -235,3 +252,5 @@ $(eval $(call BuildPackage,dumpe2fs))
 $(eval $(call BuildPackage,e2freefrag))
 $(eval $(call BuildPackage,filefrag))
 $(eval $(call BuildPackage,debugfs))
+$(eval $(call BuildPackage,chattr))
+$(eval $(call BuildPackage,lsattr))
