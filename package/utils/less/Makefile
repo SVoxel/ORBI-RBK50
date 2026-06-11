@@ -8,13 +8,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=less
-PKG_VERSION:=692
+PKG_VERSION:=704
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:= @GNU/less \
 	http://www.greenwoodsoftware.com/less
-PKG_MD5SUM:=4efd31e34ecf7682a6c62a3c53007600
+PKG_MD5SUM:=c4c9eea5b1862783b078c67ca67c9185
 
 PKG_LICENSE:=GPL-3.0-or-later
 PKG_LICENSE_FILES:=COPYING
