@@ -28,7 +28,7 @@
      }
 --- a/tests/unit_tests/openvpn/test_ssl.c
 +++ b/tests/unit_tests/openvpn/test_ssl.c
-@@ -614,7 +614,7 @@
+@@ -616,7 +616,7 @@
                              '3', '4', '5', '6', '7', 'A', 'B', 'C', 'D', 'E', 'F',
                              'G', 'H', 'j', 'k', 'u', 'c', 'h', 'e', 'n', 'l' };
  
