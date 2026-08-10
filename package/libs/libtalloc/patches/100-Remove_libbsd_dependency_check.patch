@@ -1,8 +1,8 @@
 --- a/lib/replace/wscript
 +++ b/lib/replace/wscript
-@@ -441,33 +441,13 @@ def configure(conf):
+@@ -441,33 +441,13 @@
  
-     conf.CHECK_FUNCS('prctl dirname basename')
+     conf.CHECK_FUNCS('dirname basename')
  
 -    strlcpy_in_bsd = False
 +    # Not checking for libbsd
@@ -40,7 +40,7 @@
  
      conf.CHECK_CODE('''
                  struct ucred cred;
-@@ -850,9 +830,6 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
+@@ -850,9 +830,6 @@
  
      # look for a method of finding the list of network interfaces
      for method in ['HAVE_IFACE_GETIFADDRS', 'HAVE_IFACE_AIX', 'HAVE_IFACE_IFCONF', 'HAVE_IFACE_IFREQ']:
@@ -50,7 +50,7 @@
          if conf.CHECK_CODE('''
                             #define %s 1
                             #define NO_CONFIG_H 1
-@@ -865,7 +842,7 @@ syscall(SYS_copy_file_range,0,NULL,0,NUL
+@@ -865,7 +842,7 @@
                             #include "tests/getifaddrs.c"
                             ''' % method,
                             method,
@@ -59,7 +59,7 @@
                             addmain=False,
                             execute=True):
              break
-@@ -913,7 +890,6 @@ def build(bld):
+@@ -913,7 +890,6 @@
                  break
  
      extra_libs = ''
